@@ -577,7 +577,7 @@ if __name__ == '__main__':
     print("="*50)
     print("URL: http://localhost:5002")
     print("MongoDB:", app.config['MONGO_URI'])
-    print("Database:", app.config['DB_NAME'])
+    print("Database: qwanyx_central")
     print("="*50 + "\n")
     
     app.run(
