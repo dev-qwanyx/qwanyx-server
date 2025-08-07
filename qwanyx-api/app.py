@@ -25,7 +25,9 @@ app.config['SMTP_PASS'] = os.getenv('SMTP_PASS')
 app.config['SMTP_FROM'] = os.getenv('SMTP_FROM', 'QWANYX <noreply@qwanyx.com>')
 
 # Extensions
-CORS(app, origins="*", supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}}, 
+     allow_headers=["Content-Type", "Authorization"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 jwt = JWTManager(app)
 
 # MongoDB
@@ -268,7 +270,7 @@ def verify_code():
         return jsonify({'error': str(e)}), 500
 
 # Authentication endpoints
-@app.route('/auth/register', methods=['POST'])
+@app.route('/auth/register', methods=['POST', 'OPTIONS'])
 def register():
     try:
         data = request.get_json()
