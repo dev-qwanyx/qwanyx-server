@@ -1,0 +1,21 @@
+sudo systemctl status qwanyx-api
+● qwanyx-api.service - QWANYX API Service
+     Loaded: loaded (/etc/systemd/system/qwanyx-api.service; enabled; preset: enabled)      
+     Active: active (running) since Thu 2025-08-07 13:15:22 CEST; 7s ago
+   Main PID: 9050 (gunicorn)
+      Tasks: 13 (limit: 76995)
+     Memory: 91.5M
+        CPU: 384ms
+     CGroup: /system.slice/qwanyx-api.service
+             ├─9050 /opt/qwanyx/apps/qwanyx-server/qwanyx-api/venv/bin/python3 /opt/qwanyx/>
+             ├─9051 /opt/qwanyx/apps/qwanyx-server/qwanyx-api/venv/bin/python3 /opt/qwanyx/>
+             ├─9052 /opt/qwanyx/apps/qwanyx-server/qwanyx-api/venv/bin/python3 /opt/qwanyx/>
+             └─9061 /opt/qwanyx/apps/qwanyx-server/qwanyx-api/venv/bin/python3 /opt/qwanyx/>
+
+Aug 07 13:15:22 qwanyx-server systemd[1]: Started qwanyx-api.service - QWANYX API Service.  
+Aug 07 13:15:22 qwanyx-server gunicorn[9050]: [2025-08-07 13:15:22 +0200] [9050] [INFO] Sta>
+Aug 07 13:15:22 qwanyx-server gunicorn[9050]: [2025-08-07 13:15:22 +0200] [9050] [INFO] Lis>
+Aug 07 13:15:22 qwanyx-server gunicorn[9050]: [2025-08-07 13:15:22 +0200] [9050] [INFO] Usi>
+Aug 07 13:15:22 qwanyx-server gunicorn[9051]: [2025-08-07 13:15:22 +0200] [9051] [INFO] Boo>
+Aug 07 13:15:22 qwanyx-server gunicorn[9052]: [2025-08-07 13:15:22 +0200] [9052] [INFO] Boo>
+Aug 07 13:15:22 qwanyx-server gunicorn[9061]: [2025-08-07 13:15:22 +0200] [9061] [INFO] Boo
