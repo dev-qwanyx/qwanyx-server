@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .schedule-section {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .receivable-header {
+        background: #27ae60;
+        color: white;
+        padding: 10px;
+        margin: -20px -20px 15px -20px;
+        border-radius: 5px 5px 0 0;
+    }
+    .payable-item {
+        padding: 10px;
+        margin: 5px 0;
+        border-left: 4px solid #e74c3c;
+        background: #f8f9fa;
+    }
+    .priority-item {
+        border-left-color: #f39c12;
+        background: #fef9e7;
+    }
+    .total-row {
+        font-weight: bold;
+        padding-top: 10px;
+        border-top: 2px solid #ddd;
+        margin-top: 10px;
+    }
+    .warning {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+    .success {
+        color: #27ae60;
+        font-weight: bold;
+    }
+</style>
+
+<h2>Payment Schedule</h2>
+
+<!-- Priority Payments Section -->
+{% if priority_payables %}
+<div class="schedule-section">
+    <div class="receivable-header">
+        <h3 style="margin: 0;">Priority Payments (Pay Immediately)</h3>
+    </div>
+    {% for payable in priority_payables %}
+    <div class="payable-item priority-item">
+        <strong>{{ payable.counterparty_name }}</strong> - 
+        ${{ "%.2f"|format(payable.remaining_amount) }}
+        {% if payable.due_date %}
+        - Due: {{ payable.due_date.strftime('%Y-%m-%d') }}
+        {% endif %}
+        {% if payable.description %}
+        <br><small>{{ payable.description }}</small>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <div class="total-row">
+        Total Priority: ${{ "%.2f"|format(total_priority) }}
+    </div>
+</div>
+{% endif %}
+
+<!-- Scheduled Payments by Receivable -->
+{% for schedule in payment_schedule %}
+<div class="schedule-section">
+    <div class="receivable-header">
+        <h3 style="margin: 0;">
+            {% if schedule.receivable %}
+                Receivable: {{ schedule.receivable.counterparty_name }} - 
+                ${{ "%.2f"|format(schedule.receivable.amount) }}
+                {% if schedule.receivable.due_date %}
+                (Due: {{ schedule.receivable.due_date.strftime('%Y-%m-%d') }})
+                {% endif %}
+            {% else %}
+                Current Available Funds
+            {% endif %}
+        </h3>
+    </div>
+    
+    <p>
+        Available: <span class="success">${{ "%.2f"|format(schedule.available) }}</span>
+        {% if schedule.overflow > 0 %}
+        | Overflow to next: <span class="warning">${{ "%.2f"|format(schedule.overflow) }}</span>
+        {% endif %}
+    </p>
+    
+    {% if schedule.payables %}
+        {% for payable in schedule.payables %}
+        <div class="payable-item">
+            <strong>{{ payable.counterparty_name }}</strong> - 
+            ${{ "%.2f"|format(payable.amount_to_pay) }}
+            {% if payable.amount_to_pay < payable.remaining_amount %}
+            <span style="color: #f39c12;">(Partial: ${{ "%.2f"|format(payable.remaining_amount - payable.amount_to_pay) }} remaining)</span>
+            {% endif %}
+            - Due: {{ payable.due_date.strftime('%Y-%m-%d') if payable.due_date else 'No date' }}
+            {% if payable.description %}
+            <br><small>{{ payable.description }}</small>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        <div class="total-row">
+            Total Scheduled: ${{ "%.2f"|format(schedule.total_scheduled) }}
+            {% if schedule.remaining > 0 %}
+            | Remaining Funds: <span class="success">${{ "%.2f"|format(schedule.remaining) }}</span>
+            {% endif %}
+        </div>
+    {% else %}
+        <p style="color: #999;">No payables scheduled for this period</p>
+    {% endif %}
+</div>
+{% endfor %}
+
+<!-- Unscheduled Payables -->
+{% if unscheduled_payables %}
+<div class="schedule-section">
+    <div class="receivable-header" style="background: #e74c3c;">
+        <h3 style="margin: 0;">Unscheduled Payables (Insufficient Funds)</h3>
+    </div>
+    {% for payable in unscheduled_payables %}
+    <div class="payable-item">
+        <strong>{{ payable.counterparty_name }}</strong> - 
+        ${{ "%.2f"|format(payable.remaining_amount) }}
+        - Due: {{ payable.due_date.strftime('%Y-%m-%d') if payable.due_date else 'No date' }}
+        {% if payable.description %}
+        <br><small>{{ payable.description }}</small>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <div class="total-row warning">
+        Total Unscheduled: ${{ "%.2f"|format(total_unscheduled) }}
+    </div>
+</div>
+{% endif %}
+
+<!-- Summary -->
+<div class="card">
+    <h3>Summary</h3>
+    <p>Total Receivables Expected: <span class="success">${{ "%.2f"|format(total_receivables) }}</span></p>
+    <p>Total Payables Due: <span class="warning">${{ "%.2f"|format(total_payables) }}</span></p>
+    <p>Net Position: 
+        <span class="{% if total_receivables - total_payables >= 0 %}success{% else %}warning{% endif %}">
+            ${{ "%.2f"|format(total_receivables - total_payables) }}
+        </span>
+    </p>
+</div>
+
+{% endblock %}

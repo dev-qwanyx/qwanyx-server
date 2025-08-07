@@ -1,0 +1,509 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .editable {
+        cursor: pointer;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+    .editable:hover {
+        background-color: #ecf0f1;
+    }
+    .editing {
+        background-color: #fff3cd;
+    }
+    .debt-row:hover {
+        background-color: #f8f9fa;
+    }
+    .action-buttons {
+        opacity: 0.3;
+        transition: opacity 0.2s;
+    }
+    .debt-row:hover .action-buttons {
+        opacity: 1;
+    }
+    .filter-section {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+    .expandable-content {
+        display: none;
+        padding: 15px;
+        background-color: #f8f9fa;
+    }
+    .expanded .expandable-content {
+        display: block;
+    }
+    .expand-toggle {
+        cursor: pointer;
+        user-select: none;
+    }
+</style>
+
+<div class="stats">
+    <div class="stat-box danger">
+        <h2>${{ "%.2f"|format(total_debt) }}</h2>
+        <p>Total Debt</p>
+    </div>
+    <div class="stat-box success">
+        <h2>${{ "%.2f"|format(total_paid) }}</h2>
+        <p>Total Paid</p>
+    </div>
+    <div class="stat-box">
+        <h2>${{ "%.2f"|format(remaining) }}</h2>
+        <p>Remaining</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card filter-section">
+    <h3>Filters</h3>
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <div>
+            <label>Status:</label>
+            <select id="filterStatus" onchange="applyFilters()">
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="paid">Paid</option>
+                <option value="overdue">Overdue</option>
+            </select>
+        </div>
+        <div>
+            <label>Creditor:</label>
+            <select id="filterCreditor" onchange="applyFilters()">
+                <option value="all">All</option>
+                {% for creditor in creditors %}
+                <option value="{{ creditor.name }}">{{ creditor.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label>Sort by:</label>
+            <select id="sortBy" onchange="applyFilters()">
+                <option value="due_date">Due Date</option>
+                <option value="amount">Amount</option>
+                <option value="creditor">Creditor</option>
+                <option value="remaining">Remaining</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Debts Management</h2>
+    <table id="debtsTable">
+        <thead>
+            <tr>
+                <th width="20"></th>
+                <th>Creditor</th>
+                <th>Total</th>
+                <th>Paid</th>
+                <th>Remaining</th>
+                <th>Due Date</th>
+                <th>Plan to Pay</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for debt in debts %}
+            <tr class="debt-row" data-debt-id="{{ debt.id }}" data-status="{{ debt.status }}" data-creditor="{{ debt.creditor_name or debt.creditor_obj.name }}">
+                <td class="expand-toggle" onclick="toggleExpand({{ debt.id }})">▶</td>
+                <td>{{ debt.creditor_name or debt.creditor_obj.name }}</td>
+                <td>
+                    <span class="editable" 
+                          data-field="amount" 
+                          data-debt-id="{{ debt.id }}"
+                          onclick="makeEditable(this, 'number')">
+                        ${{ "%.2f"|format(debt.amount) }}
+                    </span>
+                </td>
+                <td>${{ "%.2f"|format(debt.amount - debt.remaining_amount) }}</td>
+                <td id="remaining_{{ debt.id }}">${{ "%.2f"|format(debt.remaining_amount) }}</td>
+                <td>
+                    <span class="editable" 
+                          data-field="due_date" 
+                          data-debt-id="{{ debt.id }}"
+                          data-value="{{ debt.due_date.strftime('%Y-%m-%d') if debt.due_date else '' }}"
+                          onclick="makeEditable(this, 'date')">
+                        {% if debt.due_date %}
+                            {% set days_until_due = (debt.due_date - datetime.now()).days %}
+                            <span style="color: {% if days_until_due < 0 %}#e74c3c{% elif days_until_due < 7 %}#f39c12{% else %}#27ae60{% endif %};">
+                                {{ debt.due_date.strftime('%Y-%m-%d') }}
+                                {% if days_until_due < 0 %}
+                                    ({{ -days_until_due }}d late)
+                                {% elif days_until_due < 7 %}
+                                    ({{ days_until_due }}d)
+                                {% endif %}
+                            </span>
+                        {% else %}
+                            <span style="color: #999;">No date</span>
+                        {% endif %}
+                    </span>
+                </td>
+                <td>
+                    <input type="date" 
+                           id="planned_date_{{ debt.id }}" 
+                           value="{{ debt.planned_pay_date.strftime('%Y-%m-%d') if debt.planned_pay_date else '' }}"
+                           onchange="updatePlannedPayDate({{ debt.id }})"
+                           style="border: 1px solid #ddd; padding: 5px; border-radius: 3px; width: 130px;"
+                           {% if debt.status == 'paid' %}disabled{% endif %}>
+                </td>
+                <td id="status_{{ debt.id }}">
+                    {% if debt.status == 'paid' %}
+                        <span class="status-paid">PAID</span>
+                    {% else %}
+                        <span class="status-pending">PENDING</span>
+                    {% endif %}
+                </td>
+                <td class="action-buttons">
+                    {% if debt.status != 'paid' %}
+                        <button onclick="quickPayment({{ debt.id }}, {{ debt.remaining_amount }}, 'full')" 
+                                class="btn btn-success" 
+                                style="font-size: 11px; padding: 3px 8px;">
+                            Pay Full
+                        </button>
+                        <button onclick="showQuickPaymentForm({{ debt.id }})" 
+                                class="btn" 
+                                style="font-size: 11px; padding: 3px 8px;">
+                            Partial
+                        </button>
+                    {% endif %}
+                    <button onclick="deleteDebt({{ debt.id }})" 
+                            class="btn btn-danger" 
+                            style="font-size: 11px; padding: 3px 8px;">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+            <tr id="expand_{{ debt.id }}" style="display: none;">
+                <td colspan="9" class="expandable-content">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <p><strong>Description:</strong> 
+                                <span class="editable" 
+                                      data-field="description" 
+                                      data-debt-id="{{ debt.id }}"
+                                      onclick="makeEditable(this, 'text')">
+                                    {{ debt.description or 'Click to add description' }}
+                                </span>
+                            </p>
+                            <p><strong>Structured Communication:</strong> 
+                                <span class="editable" 
+                                      data-field="structured_communication" 
+                                      data-debt-id="{{ debt.id }}"
+                                      onclick="makeEditable(this, 'text')">
+                                    {% if debt.structured_communication %}
+                                        <code>+++{{ debt.structured_communication }}+++</code>
+                                    {% else %}
+                                        <span style="color: #999;">Click to add</span>
+                                    {% endif %}
+                                </span>
+                            </p>
+                            <p><strong>Created:</strong> {{ debt.created_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                        </div>
+                        <div>
+                            <h4>Payment History</h4>
+                            {% if debt.payments %}
+                                <ul style="margin: 0; padding-left: 20px;">
+                                {% for payment in debt.payments %}
+                                    <li>{{ payment.payment_date.strftime('%Y-%m-%d') }} - ${{ "%.2f"|format(payment.amount) }} ({{ payment.payment_method }})</li>
+                                {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p style="color: #999;">No payments yet</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Quick Payment Modal (reused from original) -->
+<div id="quickPaymentModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;">
+    <h3>Quick Payment</h3>
+    <form id="quickPaymentForm" onsubmit="submitQuickPayment(event)">
+        <input type="hidden" id="quick_debt_id" name="debt_id">
+        <label>Amount:</label>
+        <input type="number" id="quick_amount" name="amount" step="0.01" required>
+        <label>Payment Method:</label>
+        <select name="payment_method" required>
+            <option value="cash">Cash</option>
+            <option value="bank_transfer">Bank Transfer</option>
+            <option value="check">Check</option>
+            <option value="online">Online Payment</option>
+        </select>
+        <label>Reference (optional):</label>
+        <input type="text" name="reference_number" placeholder="Transaction/Check #">
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn btn-success">Confirm Payment</button>
+            <button type="button" onclick="closeQuickPayment()" class="btn btn-danger">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;" onclick="closeQuickPayment()"></div>
+
+<script>
+// Expandable rows
+function toggleExpand(debtId) {
+    const row = document.getElementById(`expand_${debtId}`);
+    const toggle = event.target;
+    
+    if (row.style.display === 'none') {
+        row.style.display = 'table-row';
+        toggle.textContent = '▼';
+    } else {
+        row.style.display = 'none';
+        toggle.textContent = '▶';
+    }
+}
+
+// Inline editing
+function makeEditable(element, type) {
+    if (element.classList.contains('editing')) return;
+    
+    element.classList.add('editing');
+    const currentValue = element.getAttribute('data-value') || element.textContent.replace('$', '').replace('Click to add description', '').replace('Click to add', '').trim();
+    
+    let input;
+    if (type === 'number') {
+        input = document.createElement('input');
+        input.type = 'number';
+        input.step = '0.01';
+        input.value = currentValue;
+    } else if (type === 'date') {
+        input = document.createElement('input');
+        input.type = 'date';
+        input.value = element.getAttribute('data-value') || '';
+    } else {
+        input = document.createElement('input');
+        input.type = 'text';
+        input.value = currentValue === 'No date' ? '' : currentValue;
+    }
+    
+    input.style.width = '100%';
+    input.style.padding = '2px 5px';
+    
+    const originalContent = element.innerHTML;
+    element.innerHTML = '';
+    element.appendChild(input);
+    input.focus();
+    input.select();
+    
+    const saveEdit = () => {
+        const newValue = input.value;
+        const debtId = element.getAttribute('data-debt-id');
+        const field = element.getAttribute('data-field');
+        
+        // Update via AJAX
+        fetch('/update_debt_field', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                debt_id: debtId,
+                field: field,
+                value: newValue
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update display
+                if (type === 'number') {
+                    element.innerHTML = `$${parseFloat(newValue).toFixed(2)}`;
+                } else if (type === 'date') {
+                    if (newValue) {
+                        element.setAttribute('data-value', newValue);
+                        element.innerHTML = newValue;
+                    } else {
+                        element.innerHTML = '<span style="color: #999;">No date</span>';
+                    }
+                } else {
+                    element.innerHTML = newValue || '<span style="color: #999;">Click to add</span>';
+                }
+                
+                // Update remaining amount if needed
+                if (field === 'amount' && data.remaining_amount !== undefined) {
+                    document.getElementById(`remaining_${debtId}`).textContent = `$${data.remaining_amount.toFixed(2)}`;
+                }
+            } else {
+                alert('Error: ' + data.error);
+                element.innerHTML = originalContent;
+            }
+            element.classList.remove('editing');
+        });
+    };
+    
+    input.addEventListener('blur', saveEdit);
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveEdit();
+        }
+    });
+}
+
+// Delete debt
+function deleteDebt(debtId) {
+    if (confirm('Are you sure you want to delete this debt?')) {
+        fetch(`/delete_debt_ajax/${debtId}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the row and its expand row
+                const row = document.querySelector(`tr[data-debt-id="${debtId}"]`);
+                const expandRow = document.getElementById(`expand_${debtId}`);
+                row.remove();
+                if (expandRow) expandRow.remove();
+                
+                // Could update totals here via AJAX
+                location.reload(); // Simple reload for now
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+}
+
+// Filters
+function applyFilters() {
+    const status = document.getElementById('filterStatus').value;
+    const creditor = document.getElementById('filterCreditor').value;
+    const sortBy = document.getElementById('sortBy').value;
+    
+    const rows = Array.from(document.querySelectorAll('.debt-row'));
+    
+    // Filter
+    rows.forEach(row => {
+        let show = true;
+        
+        if (status !== 'all') {
+            const rowStatus = row.getAttribute('data-status');
+            if (status === 'overdue') {
+                // Check if due date is past
+                const dueDateCell = row.querySelector('[data-field="due_date"]');
+                const isOverdue = dueDateCell && dueDateCell.textContent.includes('late');
+                show = show && isOverdue;
+            } else {
+                show = show && rowStatus === status;
+            }
+        }
+        
+        if (creditor !== 'all') {
+            const rowCreditor = row.getAttribute('data-creditor');
+            show = show && rowCreditor === creditor;
+        }
+        
+        row.style.display = show ? '' : 'none';
+        // Also hide/show expand row
+        const expandRow = document.getElementById(`expand_${row.getAttribute('data-debt-id')}`);
+        if (expandRow) {
+            expandRow.style.display = show && expandRow.style.display === 'table-row' ? 'table-row' : 'none';
+        }
+    });
+    
+    // Sort (simplified - would need more complex implementation)
+    // For now, just reload with sort parameter
+}
+
+// Reuse functions from original dashboard
+function showQuickPaymentForm(debtId) {
+    document.getElementById('quick_debt_id').value = debtId;
+    document.getElementById('quickPaymentModal').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+
+function closeQuickPayment() {
+    document.getElementById('quickPaymentModal').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('quickPaymentForm').reset();
+}
+
+function quickPayment(debtId, amount, type) {
+    if (type === 'full') {
+        if (confirm(`Confirm full payment of $${amount.toFixed(2)}?`)) {
+            fetch('/quick_payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    debt_id: debtId,
+                    amount: amount,
+                    payment_method: 'bank_transfer',
+                    note: 'Full payment via quick action'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            });
+        }
+    }
+}
+
+function submitQuickPayment(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    
+    fetch('/quick_payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    });
+}
+
+function updatePlannedPayDate(debtId) {
+    const dateInput = document.getElementById(`planned_date_${debtId}`);
+    const plannedDate = dateInput.value;
+    
+    fetch('/update_planned_pay_date', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            debt_id: debtId,
+            planned_date: plannedDate
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            dateInput.style.backgroundColor = '#27ae60';
+            setTimeout(() => {
+                dateInput.style.backgroundColor = '';
+            }, 1000);
+        } else {
+            alert('Error: ' + data.error);
+        }
+    });
+}
+</script>
+{% endblock %}

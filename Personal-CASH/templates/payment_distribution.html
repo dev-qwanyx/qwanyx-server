@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Payment Distribution Planner</h2>
+    <p>Plan how to distribute payments based on expected income</p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+    <!-- Expected Income Section -->
+    <div class="card">
+        <h3>Expected Income</h3>
+        <form id="addIncomeForm" onsubmit="addExpectedIncome(event)">
+            <input type="number" name="amount" placeholder="Amount (€)" step="0.01" required>
+            <input type="date" name="expected_date" required>
+            <button type="submit" class="btn btn-success">Add Income</button>
+        </form>
+        
+        <div id="incomeList" style="margin-top: 20px;">
+            <!-- Income entries will appear here -->
+        </div>
+        
+        <div style="margin-top: 20px; padding: 10px; background: #ecf0f1;">
+            <strong>Total Expected: €<span id="totalExpected">0.00</span></strong>
+        </div>
+    </div>
+    
+    <!-- Distribution Plan Section -->
+    <div class="card">
+        <h3>Payment Distribution</h3>
+        <div id="distributionPlan">
+            <!-- Distribution suggestions will appear here -->
+        </div>
+        
+        <button onclick="autoDistribute()" class="btn btn-success" style="margin-top: 20px;">
+            Auto-Distribute Payments
+        </button>
+    </div>
+</div>
+
+<!-- Unpaid Debts Summary -->
+<div class="card" style="margin-top: 20px;">
+    <h3>Unpaid Debts (€{{ "%.2f"|format(total_remaining) }} total)</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Creditor</th>
+                <th>Amount Due</th>
+                <th>Due Date</th>
+                <th>Days Until Due</th>
+                <th>Assigned To</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for debt in unpaid_debts %}
+            <tr id="debt_row_{{ debt.id }}">
+                <td>{{ debt.creditor_name or debt.creditor_obj.name }}</td>
+                <td>€{{ "%.2f"|format(debt.remaining_amount) }}</td>
+                <td>{{ debt.due_date.strftime('%Y-%m-%d') if debt.due_date else 'No due date' }}</td>
+                <td>
+                    {% if debt.due_date %}
+                        {% set days = (debt.due_date - datetime.now()).days %}
+                        <span style="color: {% if days < 0 %}red{% elif days < 7 %}orange{% else %}green{% endif %}">
+                            {{ days }} days
+                        </span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    <select id="assign_{{ debt.id }}" onchange="updateAssignment({{ debt.id }})">
+                        <option value="">Unassigned</option>
+                        <!-- Income options will be added dynamically -->
+                    </select>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+let incomeEntries = [];
+let assignments = {};
+
+function addExpectedIncome(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const income = {
+        id: Date.now(),
+        amount: parseFloat(formData.get('amount')),
+        date: formData.get('expected_date'),
+        assigned: 0,
+        payments: []
+    };
+    
+    incomeEntries.push(income);
+    incomeEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    updateIncomeDisplay();
+    updateAssignmentOptions();
+    event.target.reset();
+}
+
+function updateIncomeDisplay() {
+    const incomeList = document.getElementById('incomeList');
+    const totalExpected = document.getElementById('totalExpected');
+    
+    let html = '';
+    let total = 0;
+    
+    incomeEntries.forEach(income => {
+        const available = income.amount - income.assigned;
+        total += income.amount;
+        
+        html += `
+            <div style="margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                <strong>${income.date}</strong><br>
+                €${income.amount.toFixed(2)}
+                <span style="color: ${available > 0 ? 'green' : 'gray'}">
+                    (€${available.toFixed(2)} available)
+                </span>
+                <button onclick="removeIncome(${income.id})" class="btn btn-danger" style="float: right; padding: 2px 8px; font-size: 12px;">×</button>
+            </div>
+        `;
+    });
+    
+    incomeList.innerHTML = html || '<p style="color: #999;">No expected income added yet</p>';
+    totalExpected.textContent = total.toFixed(2);
+}
+
+function updateAssignmentOptions() {
+    // Update all assignment dropdowns
+    document.querySelectorAll('select[id^="assign_"]').forEach(select => {
+        const currentValue = select.value;
+        select.innerHTML = '<option value="">Unassigned</option>';
+        
+        incomeEntries.forEach(income => {
+            const available = income.amount - income.assigned;
+            select.innerHTML += `
+                <option value="${income.id}">
+                    ${income.date} (€${available.toFixed(2)} available)
+                </option>
+            `;
+        });
+        
+        select.value = currentValue;
+    });
+}
+
+function updateAssignment(debtId) {
+    const select = document.getElementById(`assign_${debtId}`);
+    const incomeId = select.value;
+    
+    // Clear previous assignment for this debt
+    incomeEntries.forEach(income => {
+        income.payments = income.payments.filter(p => p.debtId !== debtId);
+    });
+    
+    // Add new assignment if selected
+    if (incomeId) {
+        const income = incomeEntries.find(i => i.id == incomeId);
+        const debtAmount = parseFloat(document.querySelector(`#debt_row_${debtId} td:nth-child(2)`).textContent.replace('€', ''));
+        
+        income.payments.push({
+            debtId: debtId,
+            amount: debtAmount
+        });
+    }
+    
+    // Recalculate assigned amounts
+    recalculateAssignments();
+    updateIncomeDisplay();
+    updateDistributionPlan();
+}
+
+function recalculateAssignments() {
+    incomeEntries.forEach(income => {
+        income.assigned = income.payments.reduce((sum, p) => sum + p.amount, 0);
+    });
+}
+
+function autoDistribute() {
+    // Clear all assignments
+    incomeEntries.forEach(income => {
+        income.payments = [];
+        income.assigned = 0;
+    });
+    
+    // Get all debts sorted by due date
+    const debts = Array.from(document.querySelectorAll('tr[id^="debt_row_"]')).map(row => {
+        const id = parseInt(row.id.replace('debt_row_', ''));
+        const amount = parseFloat(row.cells[1].textContent.replace('€', ''));
+        const dueDateText = row.cells[2].textContent;
+        const dueDate = dueDateText !== 'No due date' ? new Date(dueDateText) : new Date('9999-12-31');
+        
+        return { id, amount, dueDate, row };
+    }).sort((a, b) => a.dueDate - b.dueDate);
+    
+    // Assign debts to income in order
+    for (const debt of debts) {
+        for (const income of incomeEntries) {
+            const available = income.amount - income.assigned;
+            if (available >= debt.amount) {
+                // Assign this debt to this income
+                income.payments.push({
+                    debtId: debt.id,
+                    amount: debt.amount
+                });
+                income.assigned += debt.amount;
+                
+                // Update the dropdown
+                document.getElementById(`assign_${debt.id}`).value = income.id;
+                break;
+            }
+        }
+    }
+    
+    updateIncomeDisplay();
+    updateDistributionPlan();
+}
+
+function updateDistributionPlan() {
+    const planDiv = document.getElementById('distributionPlan');
+    let html = '';
+    
+    incomeEntries.forEach(income => {
+        if (income.payments.length > 0) {
+            html += `<div style="margin-bottom: 20px;">
+                <h4>${income.date} - €${income.amount.toFixed(2)}</h4>
+                <ul>`;
+            
+            income.payments.forEach(payment => {
+                const debtRow = document.getElementById(`debt_row_${payment.debtId}`);
+                const creditor = debtRow.cells[0].textContent;
+                html += `<li>${creditor}: €${payment.amount.toFixed(2)}</li>`;
+            });
+            
+            const remaining = income.amount - income.assigned;
+            html += `</ul>
+                <p>Remaining after payments: €${remaining.toFixed(2)}</p>
+            </div>`;
+        }
+    });
+    
+    planDiv.innerHTML = html || '<p style="color: #999;">No distribution plan yet. Add expected income and click Auto-Distribute.</p>';
+}
+
+function removeIncome(incomeId) {
+    // Remove income entry
+    incomeEntries = incomeEntries.filter(i => i.id !== incomeId);
+    
+    // Clear any assignments to this income
+    document.querySelectorAll('select[id^="assign_"]').forEach(select => {
+        if (select.value == incomeId) {
+            select.value = '';
+        }
+    });
+    
+    updateIncomeDisplay();
+    updateAssignmentOptions();
+    updateDistributionPlan();
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', function() {
+    updateIncomeDisplay();
+    updateAssignmentOptions();
+});
+</script>
+{% endblock %}

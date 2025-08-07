@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Invoice Processor</h2>
+    <p>Drop PDF invoices in the <strong>IN</strong> folder and they will appear here for processing.</p>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 10px; margin: 10px 0; background-color: {% if category == 'success' %}#27ae60{% else %}#3498db{% endif %}; color: white; border-radius: 5px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    {% if not invoices %}
+        <p style="margin-top: 20px; color: #7f8c8d;">No invoices found in the IN folder. Drop some PDF files there!</p>
+    {% endif %}
+    
+    {% for invoice in invoices %}
+    <div class="card" style="background-color: #ecf0f1; margin-top: 20px;">
+        <h3>{{ invoice.filename }}</h3>
+        
+        {% if invoice.error %}
+            <p style="color: #e74c3c;">Error reading PDF: {{ invoice.error }}</p>
+            <form method="POST" action="{{ url_for('skip_invoice') }}" style="display: inline;">
+                <input type="hidden" name="filepath" value="{{ invoice.filepath }}">
+                <button type="submit" class="btn btn-danger">Skip</button>
+            </form>
+        {% else %}
+            <form method="POST" action="{{ url_for('process_invoice') }}">
+                <input type="hidden" name="filepath" value="{{ invoice.filepath }}">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>Extracted Information</h4>
+                        <p><strong>Detected Creditor:</strong> {{ invoice.creditor or 'Not found' }}</p>
+                        <p><strong>Detected Amount:</strong> ${{ "%.2f"|format(invoice.amount) if invoice.amount else 'Not found' }}</p>
+                        <p><strong>Detected Due Date:</strong> {{ invoice.due_date.strftime('%Y-%m-%d') if invoice.due_date else 'Not found' }}</p>
+                        <p><strong>Invoice #:</strong> {{ invoice.invoice_number or 'Not found' }}</p>
+                        <p><strong>Structured Communication:</strong> {{ invoice.structured_communication or 'Not found' }}</p>
+                        
+                        <details style="margin-top: 10px;">
+                            <summary style="cursor: pointer; color: #3498db;">Show extracted text preview</summary>
+                            <pre style="background: white; padding: 10px; margin-top: 10px; font-size: 12px; overflow: auto; max-height: 200px;">{{ invoice.full_text }}</pre>
+                        </details>
+                    </div>
+                    
+                    <div>
+                        <h4>Confirm/Edit Information</h4>
+                        
+                        <label>Creditor:</label>
+                        <select name="creditor_id" id="creditor_select_{{ loop.index }}" required onchange="toggleNewCreditor{{ loop.index }}()">
+                            <option value="">Select a Creditor</option>
+                            {% for creditor in creditors %}
+                                <option value="{{ creditor.id }}" {% if invoice.creditor and creditor.name.lower() in invoice.creditor.lower() %}selected{% endif %}>
+                                    {{ creditor.name }}
+                                </option>
+                            {% endfor %}
+                            <option value="new">+ Add New Creditor</option>
+                        </select>
+                        
+                        <div id="new_creditor_fields_{{ loop.index }}" class="hidden">
+                            <input type="text" name="new_creditor_name" placeholder="New Creditor Name" value="{{ invoice.creditor or '' }}">
+                        </div>
+                        
+                        <label>Amount:</label>
+                        <input type="number" name="amount" step="0.01" value="{{ invoice.amount or '' }}" required>
+                        
+                        <label>Due Date:</label>
+                        <input type="date" name="due_date" value="{{ invoice.due_date.strftime('%Y-%m-%d') if invoice.due_date else '' }}">
+                        
+                        <label>Structured Communication:</label>
+                        <input type="text" name="structured_communication" placeholder="Belgian payment reference" value="{{ invoice.structured_communication or '' }}" maxlength="20">
+                        
+                        <label>Description/Notes:</label>
+                        <input type="text" name="description" placeholder="Optional description" value="Invoice #{{ invoice.invoice_number }}" if invoice.invoice_number else "">
+                        
+                        <div style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-success">Create Debt</button>
+                            <button type="submit" formaction="{{ url_for('skip_invoice') }}" formnovalidate class="btn btn-danger">Skip</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+    
+    <script>
+    function toggleNewCreditor{{ loop.index }}() {
+        var select = document.getElementById('creditor_select_{{ loop.index }}');
+        var newFields = document.getElementById('new_creditor_fields_{{ loop.index }}');
+        var nameField = newFields.querySelector('input[name="new_creditor_name"]');
+        
+        if (select.value === 'new') {
+            newFields.classList.remove('hidden');
+            nameField.required = true;
+        } else {
+            newFields.classList.add('hidden');
+            nameField.required = false;
+        }
+    }
+    </script>
+    {% endfor %}
+</div>
+
+<div class="card" style="margin-top: 30px;">
+    <h3>How to Use</h3>
+    <ol>
+        <li>Drop PDF invoices into the <strong>IN</strong> folder</li>
+        <li>Come to this page to review and process them</li>
+        <li>The system will try to extract creditor, amount, and due date automatically</li>
+        <li>Review and correct the information if needed</li>
+        <li>Click "Create Debt" to add it to your debt tracker</li>
+        <li>Processed invoices are moved to <strong>IN/processed</strong></li>
+        <li>Skipped invoices are moved to <strong>IN/skipped</strong></li>
+    </ol>
+</div>
+{% endblock %}

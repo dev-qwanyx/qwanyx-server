@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Monthly Payment Report - {{ year }}</h2>
+    
+    <div class="stats">
+        {% for month in monthly_data %}
+        <div class="stat-box {% if month.total > 0 %}success{% endif %}">
+            <h3>{{ month.month }}</h3>
+            <p>${{ "%.2f"|format(month.total) }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <h3>Monthly Details</h3>
+    {% for month in monthly_data %}
+        {% if month.payments %}
+        <h4>{{ month.month }}</h4>
+        <table style="margin-bottom: 30px;">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Creditor</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Reference</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in month.payments %}
+                <tr>
+                    <td>{{ payment.payment_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ payment.debt.creditor_name or payment.debt.creditor_obj.name }}</td>
+                    <td>${{ "%.2f"|format(payment.amount) }}</td>
+                    <td><span class="payment-method">{{ payment.payment_method or 'cash' }}</span></td>
+                    <td>{{ payment.reference_number or '-' }}</td>
+                    <td>{{ payment.note or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="{{ url_for('index') }}" class="btn">Back to Dashboard</a>
+</div>
+{% endblock %}

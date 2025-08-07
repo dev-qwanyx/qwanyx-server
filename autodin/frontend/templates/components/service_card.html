@@ -1,0 +1,22 @@
+<!-- Service Card Component -->
+<div class="column is-4">
+    {% if service.link %}
+    <a href="{{ service.link }}" 
+       {% if service.auth_required %}
+       onclick="return checkAuthBeforeNavigate(event, '{{ service.link }}')"
+       {% endif %}
+       style="text-decoration: none; color: inherit;">
+    {% endif %}
+    <div class="card card-autodin hvr-float">
+        <div class="card-content has-text-centered">
+            <div class="service-icon">
+                <i class="fas {{ service.icon }}"></i>
+            </div>
+            <h3 class="title is-4">{{ service.title }}</h3>
+            <p>{{ service.description }}</p>
+        </div>
+    </div>
+    {% if service.link %}
+    </a>
+    {% endif %}
+</div>

@@ -1,0 +1,134 @@
+{% extends 'mon-autodin/base.html' %}
+
+{% block title %}Rechercher - Mon Autodin{% endblock %}
+
+{% block content %}
+<div class="box">
+    <h1 class="title is-3">
+        <span class="icon">
+            <i class="fas fa-search"></i>
+        </span>
+        <span>Rechercher dans le stock</span>
+    </h1>
+    
+    <p class="subtitle">Trouvez rapidement la pièce qu'il vous faut parmi des milliers de références</p>
+    
+    <!-- Search Form -->
+    <form id="searchForm">
+        <div class="field has-addons has-addons-centered">
+            <div class="control is-expanded">
+                <input class="input is-large" type="text" placeholder="Rechercher une pièce, une marque, un modèle..." id="searchQuery">
+            </div>
+            <div class="control">
+                <button class="button is-large button-autodin-dark" type="submit">
+                    <span class="icon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <span>Rechercher</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Advanced filters -->
+        <div class="mt-4">
+            <a class="has-text-link" onclick="toggleFilters()">
+                <span class="icon">
+                    <i class="fas fa-filter"></i>
+                </span>
+                <span>Filtres avancés</span>
+            </a>
+        </div>
+        
+        <div id="advancedFilters" style="display: none;" class="mt-4">
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Marque</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select>
+                                    <option>Toutes les marques</option>
+                                    <option>BMW</option>
+                                    <option>Mercedes</option>
+                                    <option>Audi</option>
+                                    <option>Volkswagen</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Catégorie</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select>
+                                    <option>Toutes les catégories</option>
+                                    <option>Moteur</option>
+                                    <option>Carrosserie</option>
+                                    <option>Intérieur</option>
+                                    <option>Électronique</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Prix max</label>
+                        <div class="control">
+                            <input class="input" type="number" placeholder="€">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Search Results -->
+<div class="mt-5">
+    <h2 class="title is-4">Résultats de recherche</h2>
+    
+    <div class="columns is-multiline" id="searchResults">
+        <!-- Sample result -->
+        <div class="column is-4">
+            <div class="card">
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="https://via.placeholder.com/300x225" alt="Pièce">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <p class="title is-5">Moteur BMW 320d</p>
+                    <p class="subtitle is-6">2015 - 150 000 km</p>
+                    <p class="has-text-weight-bold has-text-primary">€ 2,500</p>
+                </div>
+                <footer class="card-footer">
+                    <a href="#" class="card-footer-item">Voir détails</a>
+                    <a href="#" class="card-footer-item">Contacter</a>
+                </footer>
+            </div>
+        </div>
+        
+        <!-- Add more results here -->
+    </div>
+    
+    <div class="has-text-centered mt-5">
+        <p class="has-text-grey">Commencez votre recherche pour voir les résultats</p>
+    </div>
+</div>
+
+<script>
+function toggleFilters() {
+    const filters = document.getElementById('advancedFilters');
+    filters.style.display = filters.style.display === 'none' ? 'block' : 'none';
+}
+
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // TODO: Implement search functionality
+    alert('Recherche en cours de développement...');
+});
+</script>
+{% endblock %}

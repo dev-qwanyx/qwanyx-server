@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Creditors Management</h2>
+    <a href="{{ url_for('add_creditor') }}" class="btn btn-success">Add New Creditor</a>
+    
+    <table style="margin-top: 20px;">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Bank</th>
+                <th>Account Number</th>
+                <th>Total Debts</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for creditor in creditors %}
+            <tr>
+                <td>{{ creditor.name }}</td>
+                <td>{{ creditor.bank_name or '-' }}</td>
+                <td>{{ creditor.account_number or '-' }}</td>
+                <td>{{ creditor.debts|length }}</td>
+                <td>
+                    <a href="{{ url_for('creditor_detail', creditor_id=creditor.id) }}" class="btn">View</a>
+                    <a href="{{ url_for('edit_creditor', creditor_id=creditor.id) }}" class="btn">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

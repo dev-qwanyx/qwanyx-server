@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>{{ creditor.name }}</h2>
+    <p><strong>Bank:</strong> {{ creditor.bank_name or 'N/A' }}</p>
+    <p><strong>Account Number:</strong> {{ creditor.account_number or 'N/A' }}</p>
+    <p><strong>Routing Number:</strong> {{ creditor.routing_number or 'N/A' }}</p>
+    <p><strong>Notes:</strong> {{ creditor.notes or 'N/A' }}</p>
+    
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('edit_creditor', creditor_id=creditor.id) }}" class="btn">Edit</a>
+        <a href="{{ url_for('creditors') }}" class="btn">Back to Creditors</a>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Debts with this Creditor</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Remaining</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for debt in creditor.debts %}
+            <tr>
+                <td>${{ "%.2f"|format(debt.amount) }}</td>
+                <td>${{ "%.2f"|format(debt.remaining_amount) }}</td>
+                <td>
+                    {% if debt.status == 'paid' %}
+                        <span class="status-paid">PAID</span>
+                    {% else %}
+                        <span class="status-pending">PENDING</span>
+                    {% endif %}
+                </td>
+                <td>{{ debt.created_date.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <a href="{{ url_for('debt_detail', debt_id=debt.id) }}" class="btn">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

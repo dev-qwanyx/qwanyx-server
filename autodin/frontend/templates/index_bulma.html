@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Autodin - Marketplace de pièces détachées automobiles</title>
+    <meta name="description" content="La plateforme de référence pour l'achat et la vente de pièces détachées automobiles">
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    
+    <!-- Google Fonts - Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Hover.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/img/favicon.ico') }}">
+    
+    <!-- Custom CSS -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        :root {
+            /* Couleurs Autodin */
+            --autodin-orange: #E67E22;
+            --autodin-dark: #2C3E50;
+            
+            /* Couleurs du thème */
+            --primary-color: #3273dc;  /* Bleu Bulma par défaut */
+            --dark-color: #363636;
+            --light-bg: #f5f5f5;
+            --white: #ffffff;
+            
+            /* Ombres */
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 5px 15px rgba(0,0,0,0.2);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        /* Override Bulma checkbox and radio colors */
+        input[type="checkbox"]:checked + label::before,
+        .checkbox input[type="checkbox"]:checked + label::before {
+            background-color: var(--autodin-orange) !important;
+            border-color: var(--autodin-orange) !important;
+        }
+        
+        input[type="radio"]:checked + label::before,
+        .radio input[type="radio"]:checked + label::before {
+            border-color: var(--autodin-orange) !important;
+        }
+        
+        input[type="radio"]:checked + label::after,
+        .radio input[type="radio"]:checked + label::after {
+            background-color: var(--autodin-orange) !important;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            padding-top: 52px; /* Height of navbar to compensate fixed position */
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        .navbar, .title, .subtitle, .button {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .hero.hero-autodin {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('{{ url_for('static', filename='assets/img/autodinpictures/elena-mozhvilo-lVGr-HFxAfE-unsplash.jpg') }}');
+            background-size: cover;
+            background-position: center center;
+            position: relative;
+            overflow: hidden;
+            margin-top: -52px; /* Pull hero up to remove gap */
+            padding-top: 52px; /* Add padding to compensate */
+        }
+        
+        .photo-credit {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            opacity: 0.7;
+            font-size: 0.8rem;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            right: 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+            transition-delay: 2s;
+        }
+        
+        .navbar-item img {
+            max-height: 2.5rem;
+        }
+        
+        .card {
+            height: 100%;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .button {
+            transition: all 0.3s ease;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .navbar-item {
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-item:hover:not(.navbar-brand .navbar-item) {
+            transform: translateX(5px);
+            color: var(--primary-color);
+        }
+        
+        .navbar-brand .navbar-item:hover {
+            background-color: transparent !important;
+            transform: scale(1.05);
+        }
+        
+        .navbar.is-fixed-top {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95) !important;
+        }
+        
+        
+        .footer {
+            background-color: var(--autodin-dark);
+        }
+        
+        /* Remove extra padding-top from sections when used as anchors */
+        section[id]:not(#hero) {
+            padding-top: 0 !important; /* Remove padding-top completely */
+            margin-top: 0 !important; /* Remove any margin-top */
+        }
+        
+        /* But keep some space with a margin on the container inside */
+        section[id]:not(#hero) > .container {
+            padding-top: 2rem;
+        }
+        
+        .footer .sitename {
+            color: var(--autodin-orange);
+        }
+        
+        .footer p, .footer strong {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        
+        .footer .icon {
+            color: var(--autodin-orange);
+        }
+        
+        .footer a:hover .icon {
+            color: #D35400;
+            transform: translateY(-2px);
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links li::before {
+            content: ">";
+            color: var(--autodin-orange);
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--autodin-orange);
+        }
+        
+        /* Contact section background */
+        .contact-bg {
+            --bg-position: center center;
+            overflow: hidden;
+        }
+        
+        .contact-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('{{ url_for('static', filename='assets/img/autodinpictures/elena-mozhvilo-lVGr-HFxAfE-unsplash.jpg') }}');
+            background-size: 110%;
+            background-position: var(--bg-position);
+            filter: grayscale(100%);
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        /* Contact form frost effect */
+        #contact .box {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        
+        .service-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        /* Service Card Autodin Style */
+        .card-autodin {
+            background-color: var(--autodin-dark);
+            cursor: pointer;
+        }
+        
+        .card-autodin .service-icon {
+            color: var(--autodin-orange);
+        }
+        
+        .card-autodin .title {
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        .card-autodin p {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        
+        /* Button Autodin Dark Style */
+        .button-autodin-dark {
+            background-color: var(--autodin-dark);
+            border-color: var(--autodin-dark);
+            color: white;  /* Blanc pur */
+        }
+        
+        .button-autodin-dark .icon {
+            color: var(--autodin-orange);
+        }
+        
+        .button-autodin-dark:hover {
+            background-color: #1a252f;
+            border-color: #1a252f;
+            color: white;  /* Blanc pur au hover */
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Button Autodin Light Style */
+        .button-autodin-light {
+            background-color: rgba(230, 126, 34, 0.1);
+            border-color: var(--autodin-orange);
+            color: var(--autodin-orange);
+        }
+        
+        .button-autodin-light:hover {
+            background-color: var(--autodin-orange);
+            border-color: var(--autodin-orange);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Button Orange Style */
+        .button-orange {
+            background-color: var(--autodin-orange) !important;
+            border-color: var(--autodin-orange) !important;
+            color: white !important;
+        }
+        
+        .button-orange:hover {
+            background-color: #D35400 !important;
+            border-color: #D35400 !important;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Override Bulma is-light to use gray */
+        .button.is-light {
+            background-color: #f5f5f5;
+            border-color: #dbdbdb;
+            color: #363636;
+        }
+        
+        .button.is-light:hover {
+            background-color: #eeeeee;
+            border-color: #b5b5b5;
+            color: #363636;
+        }
+        
+        /* Remove floating labels - use standard Bulma styling */
+        #contact .field label {
+            color: var(--autodin-dark);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Fix input styling for contact form */
+        #contact .input,
+        #contact .textarea {
+            background: rgba(255, 255, 255, 0.7);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: var(--autodin-dark);
+        }
+        
+        #contact .input:focus,
+        #contact .textarea:focus {
+            border-color: var(--autodin-orange);
+            box-shadow: 0 0 0 0.125em rgba(230, 126, 34, 0.25);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        #contact .input::placeholder,
+        #contact .textarea::placeholder {
+            color: rgba(44, 62, 80, 0.5);
+        }
+        
+        /* Hero CTA button with frost effect */
+        .hero-cta-button {
+            background: rgba(255, 255, 255, 0.5) !important;
+            backdrop-filter: blur(10px);
+            border: none;
+            color: white !important;
+            font-weight: 600;
+            padding: 1.5rem 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .hero-cta-button:hover {
+            background: rgba(255, 255, 255, 0.6) !important;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            color: white !important;
+        }
+        
+        .hero-cta-button .icon {
+            color: white;
+        }
+        
+        /* Custom notification styles */
+        .notification-autodin-success {
+            background-color: var(--autodin-orange);
+            color: white;
+        }
+        
+        .notification-autodin-success .delete {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .notification-autodin-success .delete:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .notification-autodin-error {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .notification-autodin-error .delete {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .notification-autodin-error .delete:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar is-white is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="/">
+                    <img src="{{ url_for('static', filename='assets/img/AutoDinLogo2.png') }}" alt="Autodin">
+                    <strong class="ml-2">Autodin</strong>
+                </a>
+                
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+            
+            <div id="navbarMenu" class="navbar-menu">
+                <div class="navbar-end">
+                    <a class="navbar-item" href="#hero">Accueil</a>
+                    <a class="navbar-item" href="#services">Services</a>
+                    <a class="navbar-item" href="#contact">Contact</a>
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            <a class="button button-autodin-dark" href="/register" id="registerBtn">
+                                <span class="icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </span>
+                                <span>Inscription</span>
+                            </a>
+                            <a class="button button-autodin-dark" href="#" onclick="openLoginModal()" id="loginBtn">
+                                <span class="icon">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span>Connexion</span>
+                            </a>
+                            <div class="dropdown" id="userDropdown" style="display: none;">
+                                <div class="dropdown-trigger">
+                                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                                        <span class="icon">
+                                            <i class="fas fa-user-circle"></i>
+                                        </span>
+                                        <span id="userEmail"></span>
+                                        <span class="icon is-small">
+                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                    <div class="dropdown-content">
+                                        <a href="/mon-autodin" class="dropdown-item">
+                                            <span class="icon">
+                                                <i class="fas fa-tachometer-alt"></i>
+                                            </span>
+                                            <span>Mon Autodin</span>
+                                        </a>
+                                        <a href="/mon-autodin/annonces" class="dropdown-item">
+                                            <span class="icon">
+                                                <i class="fas fa-list"></i>
+                                            </span>
+                                            <span>Mes annonces</span>
+                                        </a>
+                                        <a href="/mon-autodin/messages" class="dropdown-item">
+                                            <span class="icon">
+                                                <i class="fas fa-envelope"></i>
+                                            </span>
+                                            <span>Messages</span>
+                                        </a>
+                                        <a href="/mon-autodin/profil" class="dropdown-item">
+                                            <span class="icon">
+                                                <i class="fas fa-user-edit"></i>
+                                            </span>
+                                            <span>Mon profil</span>
+                                        </a>
+                                        <hr class="dropdown-divider">
+                                        <a href="#" class="dropdown-item" onclick="logout()">
+                                            <span class="icon">
+                                                <i class="fas fa-sign-out-alt"></i>
+                                            </span>
+                                            <span>Déconnexion</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section id="hero" class="hero hero-autodin is-medium">
+        <div class="hero-body">
+            <div class="container">
+                <div class="columns is-vcentered">
+                    <div class="column is-6">
+                        <h1 class="title is-1 has-text-white animate__animated animate__fadeInUp animate__faster">
+                            Bienvenue sur Autodin
+                        </h1>
+                        <h2 class="subtitle is-3 has-text-white animate__animated animate__fadeInUp animate__faster" style="animation-delay: 0.5s;">
+                            La marketplace de référence pour l'achat et la vente de pièces détachées automobiles
+                        </h2>
+                        <p class="has-text-white mb-4 animate__animated animate__fadeInUp animate__faster" style="animation-delay: 1s;">
+                            Trouvez rapidement la pièce qu'il vous faut ou vendez vos pièces à des milliers d'acheteurs.
+                        </p>
+                        <a href="#services" class="button is-medium is-rounded animate__animated animate__fadeInUp animate__faster hero-cta-button" style="animation-delay: 1.5s;">
+                            <span class="icon">
+                                <i class="fas fa-arrow-down"></i>
+                            </span>
+                            <span>Découvrir nos services</span>
+                        </a>
+                    </div>
+                    <div class="column is-6">
+                        <!-- Espace pour une image ou illustration -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Photo credit with tooltip -->
+        <div class="photo-credit has-text-white">
+            <span class="tooltip">
+                <i class="fas fa-camera"></i> Photo
+                <span class="tooltiptext">
+                    Photo par <a href="https://unsplash.com/@miracleday" target="_blank" style="color: #fff; text-decoration: underline;">@miracleday</a> sur Unsplash
+                </span>
+            </span>
+        </div>
+    </section>
+    
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <div class="has-text-centered mb-6">
+                <h2 class="title is-2">Nos Services</h2>
+                <p class="subtitle">Découvrez comment Autodin facilite votre recherche et vos transactions</p>
+            </div>
+            
+            <div class="columns is-multiline">
+                {% for service in services %}
+                    {% include 'components/service_card.html' %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="section contact-bg" style="position: relative;">
+        <div class="container">
+            <div class="has-text-centered mb-6">
+                <h2 class="title is-2">Contactez-nous</h2>
+                <p class="subtitle">N'hésitez pas à nous contacter pour toute question</p>
+            </div>
+            
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="box">
+                        <form id="contactForm" onsubmit="sendContact(event)">
+                            <div class="field">
+                                <label class="label">Nom</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" id="contactName" placeholder="Votre nom" required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="email" id="contactEmail" placeholder="votre@email.com" required>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-envelope"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="field">
+                                <label class="label">Sujet</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="contactSubject" placeholder="Objet de votre message" required>
+                                </div>
+                            </div>
+                            
+                            <div class="field">
+                                <label class="label">Message</label>
+                                <div class="control">
+                                    <textarea class="textarea" id="contactMessage" placeholder="Votre message..." rows="5" required></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="field">
+                                <div class="control">
+                                    <button type="submit" class="button button-autodin-dark is-fullwidth" id="contactBtn">
+                                        <span class="icon">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </span>
+                                        <span>Envoyer</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="contactSuccess" class="notification notification-autodin-success" style="display: none; margin-top: 1rem;">
+                                <button class="delete" onclick="this.parentElement.style.display='none'"></button>
+                                Message envoyé avec succès! Nous vous répondrons rapidement.
+                            </div>
+                            
+                            <div id="contactError" class="notification notification-autodin-error" style="display: none; margin-top: 1rem;">
+                                <button class="delete" onclick="this.parentElement.style.display='none'"></button>
+                                Erreur lors de l'envoi. Veuillez réessayer.
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8">
+                    <div class="columns">
+                        <div class="column is-6">
+                            <h3 class="title is-5 sitename mb-4">Autodin</h3>
+                            <p class="mb-3">La marketplace de référence pour les pièces détachées automobiles</p>
+                            <p class="mb-2" style="color: rgba(255, 255, 255, 0.7);">
+                                <i class="fas fa-map-marker-alt mr-2" style="color: var(--autodin-orange);"></i>
+                                Rue de Hollogne 200, 4101 Seraing
+                            </p>
+                            <p class="mb-2" style="color: rgba(255, 255, 255, 0.7);">
+                                <i class="fas fa-phone mr-2" style="color: var(--autodin-orange);"></i>
+                                +32 4 xxx xx xx
+                            </p>
+                            <p class="mb-2" style="color: rgba(255, 255, 255, 0.7);">
+                                <i class="fas fa-envelope mr-2" style="color: var(--autodin-orange);"></i>
+                                info@autodin.be
+                            </p>
+                        </div>
+                        <div class="column is-6">
+                            <ul class="footer-links mt-5">
+                                <li><a href="#">Conditions générales d'utilisation</a></li>
+                                <li><a href="#">Politique de confidentialité (RGPD)</a></li>
+                                <li><a href="#">Mentions légales</a></li>
+                                <li><a href="#">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-4 has-text-right">
+                    <div class="social-links">
+                        <a href="#" class="mx-2">
+                            <span class="icon">
+                                <i class="fab fa-facebook"></i>
+                            </span>
+                        </a>
+                        <a href="#" class="mx-2">
+                            <span class="icon">
+                                <i class="fab fa-twitter"></i>
+                            </span>
+                        </a>
+                        <a href="#" class="mx-2">
+                            <span class="icon">
+                                <i class="fab fa-linkedin"></i>
+                            </span>
+                        </a>
+                        <a href="#" class="mx-2">
+                            <span class="icon">
+                                <i class="fab fa-instagram"></i>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="has-text-centered mt-5 pt-4" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">© 2024 Autodin. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript pour le menu mobile -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+            
+            if ($navbarBurgers.length > 0) {
+                $navbarBurgers.forEach( el => {
+                    el.addEventListener('click', () => {
+                        const target = el.dataset.target;
+                        const $target = document.getElementById(target);
+                        el.classList.toggle('is-active');
+                        $target.classList.toggle('is-active');
+                    });
+                });
+            }
+            
+            // Smooth Parallax Effect
+            let ticking = false;
+            function updateParallax() {
+                const scrolled = window.pageYOffset;
+                
+                // Hero parallax
+                const hero = document.querySelector('.hero.hero-autodin');
+                if (hero && isInViewport(hero)) {
+                    const heroOffset = hero.offsetTop;
+                    const heroSpeed = 0.5;
+                    const yPos = -(scrolled - heroOffset) * heroSpeed;
+                    hero.style.backgroundPosition = `center ${yPos}px`;
+                }
+                
+                // Contact section parallax
+                const contact = document.querySelector('.contact-bg');
+                if (contact) {
+                    const contactRect = contact.getBoundingClientRect();
+                    const contactOffset = contact.offsetTop;
+                    const contactSpeed = 0.3;
+                    const yPos = (scrolled - contactOffset + window.innerHeight) * contactSpeed;
+                    contact.style.setProperty('--bg-position', `center calc(50% + ${yPos}px)`);
+                }
+                
+                ticking = false;
+            }
+            
+            function isInViewport(element) {
+                const rect = element.getBoundingClientRect();
+                return rect.bottom >= 0 && rect.top <= window.innerHeight;
+            }
+            
+            function requestTick() {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            }
+            
+            window.addEventListener('scroll', requestTick);
+            
+            // Initialize parallax on load
+            updateParallax();
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    
+                    // Close mobile menu if open
+                    const navbarBurger = document.querySelector('.navbar-burger');
+                    const navbarMenu = document.querySelector('#navbarMenu');
+                    if (navbarBurger && navbarMenu && navbarBurger.classList.contains('is-active')) {
+                        navbarBurger.classList.remove('is-active');
+                        navbarMenu.classList.remove('is-active');
+                    }
+                    
+                    // For home/accueil, scroll to top
+                    if (href === '#hero' || href === '#') {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                        return;
+                    }
+                    
+                    // For other sections
+                    const target = document.querySelector(href);
+                    if (target) {
+                        // Get position and add offset
+                        const yOffset = -50; // 50px offset
+                        const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        
+                        window.scrollTo({
+                            top: y,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+        
+        // Check auth status
+        // Persistent auth management
+        function updateLastActivity() {
+            if (localStorage.getItem('autodin_token')) {
+                localStorage.setItem('autodin_last_activity', Date.now().toString());
+            }
+        }
+        
+        function isAuthValid() {
+            const token = localStorage.getItem('autodin_token');
+            const lastActivity = localStorage.getItem('autodin_last_activity');
+            
+            if (!token || !lastActivity) return false;
+            
+            const now = Date.now();
+            const fiveDaysInMs = 5 * 24 * 60 * 60 * 1000; // 5 days in milliseconds
+            const timeSinceLastActivity = now - parseInt(lastActivity);
+            
+            if (timeSinceLastActivity > fiveDaysInMs) {
+                // Expired, clear auth data
+                clearAuthData();
+                return false;
+            }
+            
+            // Update last activity since user is using the site
+            updateLastActivity();
+            return true;
+        }
+        
+        function clearAuthData() {
+            localStorage.removeItem('autodin_token');
+            localStorage.removeItem('autodin_user');
+            localStorage.removeItem('autodin_last_activity');
+        }
+        
+        function checkAuth() {
+            if (isAuthValid()) {
+                const user = localStorage.getItem('autodin_user');
+                const userData = JSON.parse(user);
+                document.getElementById('registerBtn').style.display = 'none';
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('userDropdown').style.display = 'inline-flex';
+                document.getElementById('userEmail').textContent = userData.email;
+            } else {
+                document.getElementById('registerBtn').style.display = 'inline-flex';
+                document.getElementById('loginBtn').style.display = 'inline-flex';
+                document.getElementById('userDropdown').style.display = 'none';
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            clearAuthData();
+            window.location.href = '/';
+        }
+        
+        // Check auth on page load
+        checkAuth();
+        
+        // Update activity every minute while user is active
+        setInterval(() => {
+            if (document.visibilityState === 'visible' && localStorage.getItem('autodin_token')) {
+                updateLastActivity();
+            }
+        }, 60000); // Every minute
+        
+        
+        // Check auth before navigating to protected pages
+        function checkAuthBeforeNavigate(event, targetUrl) {
+            if (!isAuthValid()) {
+                event.preventDefault();
+                // Store the intended destination
+                localStorage.setItem('autodin_redirect_after_auth', targetUrl);
+                // Redirect to registration
+                window.location.href = '/register';
+                return false;
+            }
+            
+            // User is authenticated, allow navigation
+            return true;
+        }
+        
+        // Handle dropdown
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropdown = document.querySelector('.dropdown');
+            if (dropdown) {
+                dropdown.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    this.classList.toggle('is-active');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    const dropdowns = document.querySelectorAll('.dropdown');
+                    dropdowns.forEach(function(dropdown) {
+                        dropdown.classList.remove('is-active');
+                    });
+                });
+            }
+        });
+        
+        // Send contact form
+        async function sendContact(event) {
+            event.preventDefault();
+            
+            const btn = document.getElementById('contactBtn');
+            const successMsg = document.getElementById('contactSuccess');
+            const errorMsg = document.getElementById('contactError');
+            
+            // Hide previous messages
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            // Disable button
+            btn.disabled = true;
+            btn.innerHTML = '<span class="icon"><i class="fas fa-spinner fa-spin"></i></span><span>Envoi...</span>';
+            
+            const data = {
+                name: document.getElementById('contactName').value,
+                email: document.getElementById('contactEmail').value,
+                subject: document.getElementById('contactSubject').value,
+                message: document.getElementById('contactMessage').value
+            };
+            
+            try {
+                const response = await fetch('/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Show success
+                    successMsg.style.display = 'block';
+                    // Reset form
+                    document.getElementById('contactForm').reset();
+                } else {
+                    // Show error
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Contact error:', error);
+                errorMsg.style.display = 'block';
+            } finally {
+                // Re-enable button
+                btn.disabled = false;
+                btn.innerHTML = '<span class="icon"><i class="fas fa-paper-plane"></i></span><span>Envoyer</span>';
+            }
+        }
+    </script>
+    
+    <!-- Include Login Modal -->
+    {% include 'components/login_modal.html' %}
+</body>
+</html>

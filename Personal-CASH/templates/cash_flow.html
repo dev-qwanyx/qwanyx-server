@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Cash Flow Analysis</h2>
+    
+    <div style="margin: 20px 0;">
+        <canvas id="cashFlowChart" style="max-height: 400px;"></canvas>
+    </div>
+    
+    <table style="margin-top: 30px;">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Income</th>
+                <th>Payments</th>
+                <th>Net</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for month in months_data %}
+            <tr>
+                <td>{{ month.month }}</td>
+                <td class="status-paid">${{ "%.2f"|format(month.income) }}</td>
+                <td class="status-pending">${{ "%.2f"|format(month.payments) }}</td>
+                <td class="{% if month.income - month.payments >= 0 %}status-paid{% else %}status-pending{% endif %}">
+                    ${{ "%.2f"|format(month.income - month.payments) }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('cashFlowChart').getContext('2d');
+const labels = [{% for month in months_data %}'{{ month.month }}'{% if not loop.last %},{% endif %}{% endfor %}];
+const incomeData = [{% for month in months_data %}{{ month.income }}{% if not loop.last %},{% endif %}{% endfor %}];
+const paymentData = [{% for month in months_data %}{{ month.payments }}{% if not loop.last %},{% endif %}{% endfor %}];
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Income',
+            data: incomeData,
+            backgroundColor: '#27ae60',
+            borderColor: '#229954',
+            borderWidth: 1
+        }, {
+            label: 'Payments',
+            data: paymentData,
+            backgroundColor: '#e74c3c',
+            borderColor: '#c0392b',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '$' + value.toFixed(0);
+                    }
+                }
+            }
+        },
+        plugins: {
+            title: {
+                display: true,
+                text: 'Monthly Cash Flow'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.dataset.label + ': $' + context.parsed.y.toFixed(2);
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

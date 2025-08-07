@@ -1,0 +1,7 @@
+{
+  "watch": ["*.py", "templates/*.html", "static/**/*"],
+  "ext": "py,html,css,js",
+  "ignore": ["*.pyc", "__pycache__/*"],
+  "exec": "python app_nodemon.py",
+  "verbose": true
+}

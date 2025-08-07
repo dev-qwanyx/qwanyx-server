@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ human_name }} - Digital Human Dashboard</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .metric {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .nav {
+            background-color: #34495e;
+            padding: 0;
+            margin: 0;
+        }
+        .nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .nav li {
+            margin: 0;
+        }
+        .nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+        }
+        .nav a:hover {
+            background-color: #2c3e50;
+        }
+        .transactions {
+            margin-top: 2rem;
+        }
+        .transaction-list {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .transaction-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        .income { color: #27ae60; }
+        .expense { color: #e74c3c; }
+        .chat-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .chat-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ human_name }} - Digital Human Assistant</h1>
+        <p>Integrated Financial Management System</p>
+    </div>
+    
+    <nav class="nav">
+        <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/cash/accounts">Accounts</a></li>
+            <li><a href="/cash/transactions">Transactions</a></li>
+            <li><a href="/cash/budget">Budget</a></li>
+            <li><a href="/chat">Chat</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        {% if data.error %}
+            <div class="card">
+                <h3>Error</h3>
+                <p>{{ data.error }}</p>
+                <p>Make sure the database API is running on port 5010.</p>
+            </div>
+        {% else %}
+            <div class="grid">
+                <!-- Accounts Summary -->
+                <div class="card">
+                    <h3>Accounts</h3>
+                    {% for account in data.accounts %}
+                        <div>
+                            <strong>{{ account.name }}</strong>: 
+                            <span class="metric">€{{ "%.2f"|format(account.balance) }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Cash Flow -->
+                <div class="card">
+                    <h3>This Month's Cash Flow</h3>
+                    <div>
+                        Income: <span class="income">€{{ "%.2f"|format(data.cash_flow.income) }}</span>
+                    </div>
+                    <div>
+                        Expenses: <span class="expense">€{{ "%.2f"|format(data.cash_flow.expenses) }}</span>
+                    </div>
+                    <div>
+                        Net: <span class="metric">€{{ "%.2f"|format(data.cash_flow.net_flow) }}</span>
+                    </div>
+                </div>
+                
+                <!-- Pending Transactions -->
+                <div class="card">
+                    <h3>Pending Transactions</h3>
+                    <div class="metric">{{ data.pending_count }}</div>
+                    <p>Total: €{{ "%.2f"|format(data.pending_total) }}</p>
+                </div>
+            </div>
+            
+            <!-- Recent Transactions -->
+            <div class="transactions">
+                <h2>Recent Transactions</h2>
+                <div class="transaction-list">
+                    {% for trans in data.recent_transactions[:10] %}
+                        <div class="transaction-item">
+                            <div>
+                                <strong>{{ trans.get('counterparty_name', trans.get('description', 'Transaction')) }}</strong>
+                                <br>
+                                <small>{{ trans.dates.created[:10] }}</small>
+                            </div>
+                            <div class="{{ trans.type }}">
+                                {{ '+' if trans.type == 'income' else '-' }}€{{ "%.2f"|format(trans.amount) }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <button class="chat-btn" onclick="window.location.href='/chat'">💬</button>
+</body>
+</html>

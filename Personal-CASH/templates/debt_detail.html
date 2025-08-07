@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>{{ debt.creditor_name or debt.creditor_obj.name }}</h2>
+    <p><strong>Bank:</strong> {{ debt.creditor_obj.bank_name or 'N/A' }}</p>
+    <p><strong>Account:</strong> {{ debt.creditor_obj.account_number or 'N/A' }}</p>
+    <p><strong>Total Amount:</strong> ${{ "%.2f"|format(debt.amount) }}</p>
+    <p><strong>Remaining:</strong> ${{ "%.2f"|format(debt.remaining_amount) }}</p>
+    <p><strong>Description:</strong> {{ debt.description or 'N/A' }}</p>
+    {% if debt.structured_communication %}
+    <p><strong>Structured Communication:</strong> <code style="background-color: #ecf0f1; padding: 5px; border-radius: 3px;">+++{{ debt.structured_communication }}+++</code></p>
+    {% endif %}
+    <p><strong>Created:</strong> {{ debt.created_date.strftime('%Y-%m-%d') }}</p>
+    <p><strong>Due Date:</strong> {{ debt.due_date.strftime('%Y-%m-%d') if debt.due_date else 'N/A' }}</p>
+    <p><strong>Status:</strong> 
+        {% if debt.status == 'paid' %}
+            <span class="status-paid">PAID OFF</span>
+        {% else %}
+            <span class="status-pending">PENDING</span>
+        {% endif %}
+    </p>
+    
+    <div class="progress-bar" style="margin: 20px 0;">
+        <div class="progress" style="width: {{ ((debt.amount - debt.remaining_amount) / debt.amount * 100) if debt.amount > 0 else 0 }}%">
+            {{ "%.0f"|format(((debt.amount - debt.remaining_amount) / debt.amount * 100) if debt.amount > 0 else 0) }}% Paid
+        </div>
+    </div>
+</div>
+
+{% if debt.status != 'paid' %}
+<div class="card">
+    <h3>Add Payment</h3>
+    <form method="POST" action="{{ url_for('add_payment', debt_id=debt.id) }}">
+        <input type="number" name="amount" placeholder="Payment Amount" step="0.01" max="{{ debt.remaining_amount }}" required>
+        <select name="payment_method" required>
+            <option value="cash">Cash</option>
+            <option value="bank_transfer">Bank Transfer</option>
+            <option value="check">Check</option>
+            <option value="credit_card">Credit Card</option>
+            <option value="debit_card">Debit Card</option>
+            <option value="online">Online Payment</option>
+            <option value="other">Other</option>
+        </select>
+        <input type="text" name="reference_number" placeholder="Reference/Check Number (optional)">
+        <textarea name="note" placeholder="Note (optional)" rows="2"></textarea>
+        <button type="submit" class="btn btn-success">Add Payment</button>
+    </form>
+</div>
+{% endif %}
+
+<div class="card">
+    <h3>Payment History</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Reference</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in debt.payments %}
+            <tr>
+                <td>{{ payment.payment_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>${{ "%.2f"|format(payment.amount) }}</td>
+                <td><span class="payment-method">{{ payment.payment_method or 'cash' }}</span></td>
+                <td>{{ payment.reference_number or '-' }}</td>
+                <td>{{ payment.note or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="{{ url_for('index') }}" class="btn">Back to Dashboard</a>
+    <form method="POST" action="{{ url_for('delete_debt', debt_id=debt.id) }}" style="display: inline;">
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this debt?')">Delete Debt</button>
+    </form>
+</div>
+{% endblock %}

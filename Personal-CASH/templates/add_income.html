@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Add Income</h2>
+    <form method="POST" action="{{ url_for('add_income') }}">
+        <input type="text" name="source" placeholder="Income Source (e.g., Salary, Freelance)" required>
+        <input type="number" name="amount" placeholder="Amount" step="0.01" required>
+        <input type="date" name="date_received" required>
+        
+        <label style="display: block; margin: 15px 0;">
+            <input type="checkbox" name="recurring" onchange="toggleFrequency()" style="width: auto; margin-right: 10px;">
+            This is recurring income
+        </label>
+        
+        <select name="frequency" id="frequency_select" class="hidden">
+            <option value="">Select Frequency</option>
+            <option value="weekly">Weekly</option>
+            <option value="bi-weekly">Bi-weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+        
+        <textarea name="description" placeholder="Description (optional)" rows="3"></textarea>
+        
+        <button type="submit" class="btn btn-success">Add Income</button>
+        <a href="{{ url_for('income_list') }}" class="btn btn-danger">Cancel</a>
+    </form>
+</div>
+
+<script>
+function toggleFrequency() {
+    var checkbox = document.querySelector('input[name="recurring"]');
+    var frequencySelect = document.getElementById('frequency_select');
+    
+    if (checkbox.checked) {
+        frequencySelect.classList.remove('hidden');
+    } else {
+        frequencySelect.classList.add('hidden');
+        frequencySelect.value = '';
+    }
+}
+</script>
+{% endblock %}

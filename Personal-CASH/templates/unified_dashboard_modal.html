@@ -1,0 +1,1044 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Add Bootstrap CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+    .transaction-row { cursor: pointer; }
+    .transaction-row:hover { background-color: #f8f9fa; }
+    .type-payable { color: #e74c3c; }
+    .type-receivable { color: #27ae60; }
+    .editable { 
+        cursor: pointer; 
+        padding: 2px 5px; 
+        border-radius: 3px; 
+        position: relative;
+    }
+    .editable:hover { 
+        background-color: #ecf0f1; 
+        text-decoration: underline dotted;
+    }
+    .editable.editing {
+        background-color: #fff3cd;
+    }
+    .drag-handle {
+        cursor: move;
+        color: #95a5a6;
+        padding: 0 10px;
+        font-size: 20px;
+    }
+    .drag-handle:hover {
+        color: #3498db;
+    }
+    .sortable-ghost {
+        opacity: 0.4;
+        background-color: #ecf0f1;
+    }
+    .sortable-drag {
+        background-color: #fff;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    /* Override base.html button styles for Bootstrap compatibility */
+    .modal .btn {
+        all: revert;
+    }
+</style>
+
+<!-- Summary Stats -->
+<div class="stats">
+    <div class="stat-box danger">
+        <h2>${{ "%.2f"|format(remaining_payables) }}</h2>
+        <p>Total to Pay</p>
+        <small>{{ pending_payables_count }} pending</small>
+    </div>
+    <div class="stat-box success">
+        <h2>${{ "%.2f"|format(remaining_receivables) }}</h2>
+        <p>Total to Receive</p>
+        <small>{{ pending_receivables_count }} pending</small>
+    </div>
+    <div class="stat-box {% if net_position >= 0 %}success{% else %}danger{% endif %}">
+        <h2>${{ "%.2f"|format(net_position) }}</h2>
+        <p>Net Position</p>
+        <small>{% if completed_balance != 0 %}Balance: €{{ "%.2f"|format(completed_balance) }}{% endif %}</small>
+    </div>
+    <div class="stat-box" style="background-color: #9b59b6;">
+        <h2>${{ "%.2f"|format(current_balance) }}</h2>
+        <p>Current Balance</p>
+        <small>After completed transactions</small>
+    </div>
+</div>
+
+<!-- Cash Flow Projection Graph -->
+<div class="card" style="background: #f8f9fa; margin-bottom: 20px;">
+    <h3>Cash Flow Projection</h3>
+    <div style="height: 300px;">
+        <canvas id="cashFlowChart"></canvas>
+    </div>
+</div>
+
+<!-- Transactions Table -->
+<div class="card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">All Transactions</h2>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#transactionModal" onclick="resetTransactionForm()">
+            + Add Transaction
+        </button>
+    </div>
+    
+    <!-- Filters -->
+    <div style="margin-bottom: 15px;">
+        <select id="filterType" onchange="filterTransactions()">
+            <option value="all">All Types</option>
+            <option value="payable">Payables Only</option>
+            <option value="receivable">Receivables Only</option>
+        </select>
+        <select id="filterStatus" onchange="filterTransactions()">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+        </select>
+    </div>
+    
+    <table id="transactionsTable">
+        <thead>
+            <tr>
+                <th style="width: 30px;"></th>
+                <th>Type</th>
+                <th>Counterparty</th>
+                <th>Amount</th>
+                <th>Remaining</th>
+                <th>Due Date</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="sortableTransactions">
+            {% for trans in transactions %}
+            <tr class="transaction-row" 
+                data-id="{{ trans.id }}" 
+                data-type="{{ trans.type }}" 
+                data-status="{{ trans.status }}">
+                <td class="drag-handle">≡</td>
+                <td>
+                    <span class="type-{{ trans.type }}">
+                        {{ trans.type|upper }}
+                    </span>
+                </td>
+                <td class="editable" data-field="counterparty_name" data-trans-id="{{ trans.id }}">
+                    {{ trans.counterparty_name }}
+                    {% if trans.is_recurring %}
+                        <span style="background: #3498db; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 5px;">RECURRING</span>
+                    {% elif trans.recurring_parent_id %}
+                        <span style="background: #95a5a6; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-left: 5px;">AUTO</span>
+                    {% endif %}
+                    {% if trans.vat_percentage > 0 %}
+                        <small style="color: #7f8c8d;">(VAT {{ trans.vat_percentage }}%)</small>
+                    {% endif %}
+                    {% if trans.structured_communication %}
+                        <br><small style="color: #3498db;">{{ trans.structured_communication }}</small>
+                    {% elif trans.free_communication %}
+                        <br><small style="color: #27ae60;">{{ trans.free_communication }}</small>
+                    {% endif %}
+                    {% if trans.bank_account %}
+                        <br><small style="color: #95a5a6;">{{ trans.bank_account }}</small>
+                    {% endif %}
+                </td>
+                <td class="editable" data-field="amount" data-trans-id="{{ trans.id }}" data-vat="{{ trans.vat_percentage }}">
+                    ${{ "%.2f"|format(trans.amount) }}
+                </td>
+                <td>${{ "%.2f"|format(trans.remaining_amount) }}</td>
+                <td class="editable" data-field="due_date" data-trans-id="{{ trans.id }}">
+                    {% if trans.due_date %}
+                        {% set days = (trans.due_date - datetime.now()).days %}
+                        <span style="color: {% if days < 0 %}red{% elif days < 7 %}orange{% else %}green{% endif %}">
+                            {{ trans.due_date.strftime('%Y-%m-%d') }}
+                        </span>
+                    {% else %}
+                        <span style="color: #999;">No date</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if trans.type == 'payable' %}
+                        <input type="checkbox" 
+                               {% if trans.priority_payment %}checked{% endif %}
+                               onchange="updatePriority({{ trans.id }}, this.checked)"
+                               title="Pay immediately when funds arrive">
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if trans.is_completed %}
+                        <span class="status-paid">COMPLETED</span>
+                    {% else %}
+                        <span class="status-pending">PENDING</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <button onclick="editTransaction({{ trans.id }})" 
+                            class="btn btn-sm btn-primary">
+                        Edit
+                    </button>
+                    {% if not trans.is_completed %}
+                        {% if trans.type == 'payable' %}
+                            <button onclick="recordPayment({{ trans.id }}, {{ trans.remaining_amount }})" 
+                                    class="btn btn-sm btn-success">
+                                Pay
+                            </button>
+                            {% if trans.bank_account %}
+                            <button onclick="showQRCode({{ trans.id }})" 
+                                    class="btn btn-sm" style="background: #8b5cf6; color: white;"
+                                    title="Generate QR code for payment">
+                                QR
+                            </button>
+                            {% endif %}
+                        {% else %}
+                            <button onclick="recordReceipt({{ trans.id }}, {{ trans.remaining_amount }})" 
+                                    class="btn btn-sm btn-success">
+                                Receive
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                    <button onclick="deleteTransaction({{ trans.id }})" 
+                            class="btn btn-sm btn-danger">
+                        Del
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Transaction Modal -->
+<div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transactionModalLabel">Add Transaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="transactionForm" onsubmit="saveTransaction(event)">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Type:</label>
+                            <select name="type" class="form-select" onchange="updateFormLabels()" required>
+                                <option value="payable">Payable (Money Out)</option>
+                                <option value="receivable">Receivable (Money In)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" id="counterpartyLabel">Pay To:</label>
+                            <select name="counterparty_id" class="form-select" required>
+                                <option value="">Select...</option>
+                                {% for creditor in creditors %}
+                                <option value="{{ creditor.id }}">{{ creditor.name }}</option>
+                                {% endfor %}
+                                <option value="new">+ Add New</option>
+                            </select>
+                            <input type="text" name="new_counterparty_name" class="form-control mt-2" 
+                                   placeholder="New name" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Amount (excl. VAT):</label>
+                            <input type="number" name="amount" class="form-control" step="0.01" required onchange="updateTotalWithVAT()">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Due Date:</label>
+                            <div class="input-group">
+                                <input type="date" name="due_date" class="form-control">
+                                <button type="button" onclick="setToday()" class="btn btn-outline-secondary">Today</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">VAT %:</label>
+                            <select name="vat_percentage" class="form-select" onchange="updateTotalWithVAT()">
+                                <option value="0" selected>No VAT</option>
+                                <option value="21">21% (Standard rate)</option>
+                                <option value="6">6% (Reduced rate)</option>
+                                <option value="12">12% (Intermediate rate)</option>
+                            </select>
+                            <div class="mt-2 fw-bold text-primary" id="totalWithVAT"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Bank Account:</label>
+                            <div class="input-group">
+                                <input type="text" name="bank_account" class="form-control" 
+                                       placeholder="BE12 3456 7890 1234" oninput="formatBankAccount(this)" maxlength="19">
+                                <button type="button" id="accountDropdownBtn" class="btn btn-outline-secondary dropdown-toggle" 
+                                        data-bs-toggle="dropdown" style="display: none;">
+                                </button>
+                                <ul class="dropdown-menu" id="accountDropdownMenu"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" name="is_recurring" class="form-check-input" onchange="toggleRecurring(this.checked)">
+                            <label class="form-check-label">Recurring Transaction</label>
+                        </div>
+                    </div>
+                    
+                    <div id="recurringFields" style="display: none;" class="bg-light p-3 rounded mb-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label">Frequency:</label>
+                                <select name="recurring_frequency" class="form-select">
+                                    <option value="monthly">Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Day of Month:</label>
+                                <input type="number" name="recurring_day" class="form-control" min="1" max="31" value="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Number of Times:</label>
+                                <input type="number" name="recurring_count" class="form-control" min="1" max="60" value="12">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Communication Type:</label>
+                            <select name="communication_type" class="form-select" onchange="toggleCommunicationType(this.value)">
+                                <option value="structured">Structured Communication</option>
+                                <option value="free">Free Communication</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3" id="structuredCommunicationField">
+                            <label class="form-label">Structured Communication:</label>
+                            <input type="text" name="structured_communication" class="form-control" 
+                                   placeholder="+++123/4567/89012+++" oninput="formatStructuredComm(this)" maxlength="20">
+                        </div>
+                        <div class="col-md-6 mb-3" id="freeCommunicationField" style="display: none;">
+                            <label class="form-label">Free Communication:</label>
+                            <input type="text" name="free_communication" class="form-control" 
+                                   placeholder="Invoice 2024-001, Order ref: ABC123">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Description:</label>
+                        <input type="text" name="description" class="form-control" placeholder="Optional description">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Payment QR Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="qrContent">
+                    <!-- QR code will be inserted here -->
+                </div>
+                <div id="qrDetails" class="mt-3 p-3 bg-light rounded">
+                    <!-- Payment details will be shown here -->
+                </div>
+                <p class="mt-3 text-muted small">
+                    Scan this QR code with your banking app to make the payment
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+<script>
+// Global variables
+let transactionModal;
+let qrModal;
+let editingTransactionId = null;
+
+// Initialize Bootstrap modals
+document.addEventListener('DOMContentLoaded', function() {
+    transactionModal = new bootstrap.Modal(document.getElementById('transactionModal'));
+    qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+});
+
+// Form functions
+function resetTransactionForm() {
+    editingTransactionId = null;
+    document.getElementById('transactionModalLabel').textContent = 'Add Transaction';
+    document.getElementById('transactionForm').reset();
+    updateFormLabels();
+    document.querySelector('input[name="new_counterparty_name"]').style.display = 'none';
+    document.getElementById('recurringFields').style.display = 'none';
+    document.querySelector('button[type="submit"]').textContent = 'Save Transaction';
+}
+
+function updateFormLabels() {
+    const type = document.querySelector('select[name="type"]').value;
+    const label = document.getElementById('counterpartyLabel');
+    label.textContent = type === 'payable' ? 'Pay To:' : 'Receive From:';
+}
+
+function toggleRecurring(isChecked) {
+    document.getElementById('recurringFields').style.display = isChecked ? 'block' : 'none';
+}
+
+function updateTotalWithVAT() {
+    const amount = parseFloat(document.querySelector('input[name="amount"]').value) || 0;
+    const vatPercentage = parseFloat(document.querySelector('select[name="vat_percentage"]').value) || 0;
+    const vatAmount = amount * (vatPercentage / 100);
+    const total = amount + vatAmount;
+    
+    const display = document.getElementById('totalWithVAT');
+    if (vatPercentage > 0 && amount > 0) {
+        display.innerHTML = `Total with VAT: €${total.toFixed(2)} (€${amount.toFixed(2)} + €${vatAmount.toFixed(2)} VAT)`;
+    } else {
+        display.innerHTML = '';
+    }
+}
+
+function toggleCommunicationType(type) {
+    const freeField = document.getElementById('freeCommunicationField');
+    const structuredField = document.getElementById('structuredCommunicationField');
+    
+    if (type === 'structured') {
+        freeField.style.display = 'none';
+        structuredField.style.display = 'block';
+        document.querySelector('input[name="free_communication"]').value = '';
+    } else {
+        freeField.style.display = 'block';
+        structuredField.style.display = 'none';
+        document.querySelector('input[name="structured_communication"]').value = '';
+    }
+}
+
+function formatStructuredComm(input) {
+    let value = input.value.replace(/\D/g, '');
+    value = value.substring(0, 12);
+    
+    let formatted = '';
+    if (value.length > 0) {
+        formatted = value.substring(0, 3);
+        if (value.length > 3) {
+            formatted += '/' + value.substring(3, 7);
+        }
+        if (value.length > 7) {
+            formatted += '/' + value.substring(7, 12);
+        }
+    }
+    
+    if (formatted) {
+        formatted = '+++' + formatted + '+++';
+    }
+    
+    if (value.length === 12) {
+        const checkDigits = value.substring(10, 12);
+        const baseNumber = value.substring(0, 10);
+        const expectedCheck = (parseInt(baseNumber) % 97).toString().padStart(2, '0');
+        
+        if (checkDigits !== expectedCheck) {
+            input.classList.add('is-invalid');
+        } else {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        }
+    } else {
+        input.classList.remove('is-invalid', 'is-valid');
+    }
+    
+    input.value = formatted;
+}
+
+function formatBankAccount(input) {
+    let value = input.value.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+    
+    if (value.startsWith('BE') && value.length > 2) {
+        let formatted = value.substring(0, 4);
+        for (let i = 4; i < value.length && i < 16; i += 4) {
+            formatted += ' ' + value.substring(i, i + 4);
+        }
+        input.value = formatted.trim();
+    } else {
+        input.value = value;
+    }
+}
+
+function setToday() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    document.querySelector('input[name="due_date"]').value = `${yyyy}-${mm}-${dd}`;
+}
+
+function saveTransaction(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    
+    const counterpartySelect = document.querySelector('select[name="counterparty_id"]');
+    if (counterpartySelect.value === 'new') {
+        const newNameInput = document.querySelector('input[name="new_counterparty_name"]');
+        if (!newNameInput.value) {
+            alert('Please enter a name for the new counterparty');
+            return;
+        }
+    }
+    
+    const url = editingTransactionId ? '/update_transaction' : '/add_transaction';
+    if (editingTransactionId) {
+        data.transaction_id = editingTransactionId;
+    }
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            transactionModal.hide();
+            location.reload();
+        } else {
+            alert('Error: ' + result.error);
+        }
+    })
+    .catch(error => {
+        alert('Error saving transaction: ' + error.message);
+    });
+}
+
+// Counterparty dropdown
+document.querySelector('select[name="counterparty_id"]').addEventListener('change', function() {
+    const newNameInput = document.querySelector('input[name="new_counterparty_name"]');
+    newNameInput.style.display = this.value === 'new' ? 'block' : 'none';
+    newNameInput.required = this.value === 'new';
+    if (this.value !== 'new') {
+        newNameInput.value = '';
+    }
+    
+    if (this.value && this.value !== 'new') {
+        loadBankAccountsForCounterparty(this.value);
+    } else {
+        document.getElementById('accountDropdownBtn').style.display = 'none';
+    }
+});
+
+function loadBankAccountsForCounterparty(counterpartyId) {
+    fetch(`/get_bank_accounts_for_counterparty/${counterpartyId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.bank_accounts.length > 0) {
+                const menu = document.getElementById('accountDropdownMenu');
+                const btn = document.getElementById('accountDropdownBtn');
+                
+                menu.innerHTML = data.bank_accounts.map(account => 
+                    `<li><a class="dropdown-item" href="#" onclick="selectBankAccount('${account}')">${account}</a></li>`
+                ).join('');
+                
+                btn.style.display = 'block';
+            } else {
+                document.getElementById('accountDropdownBtn').style.display = 'none';
+            }
+        });
+}
+
+function selectBankAccount(account) {
+    document.querySelector('input[name="bank_account"]').value = account;
+}
+
+// Transaction operations
+function editTransaction(transId) {
+    editingTransactionId = transId;
+    
+    fetch('/get_transaction/' + transId)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const trans = data.transaction;
+            
+            document.getElementById('transactionModalLabel').textContent = 'Edit Transaction';
+            
+            // Populate form
+            document.querySelector('select[name="type"]').value = trans.type;
+            updateFormLabels();
+            
+            // Handle counterparty
+            const counterpartySelect = document.querySelector('select[name="counterparty_id"]');
+            let optionExists = false;
+            for (let option of counterpartySelect.options) {
+                if (option.text === trans.counterparty_name && option.value !== 'new') {
+                    counterpartySelect.value = option.value;
+                    optionExists = true;
+                    break;
+                }
+            }
+            if (!optionExists && trans.counterparty_name) {
+                const newOption = new Option(trans.counterparty_name, trans.counterparty_id || 'temp_' + trans.counterparty_name);
+                counterpartySelect.add(newOption);
+                counterpartySelect.value = newOption.value;
+            }
+            
+            // Set amount
+            const amountInput = document.querySelector('input[name="amount"]');
+            if (trans.vat_percentage > 0) {
+                const netAmount = trans.amount / (1 + trans.vat_percentage / 100);
+                amountInput.value = netAmount.toFixed(2);
+            } else {
+                amountInput.value = trans.amount;
+            }
+            
+            // Set other fields
+            if (trans.due_date) {
+                document.querySelector('input[name="due_date"]').value = trans.due_date;
+            }
+            document.querySelector('select[name="vat_percentage"]').value = trans.vat_percentage || 0;
+            document.querySelector('input[name="is_recurring"]').checked = trans.is_recurring;
+            toggleRecurring(trans.is_recurring);
+            
+            if (trans.is_recurring) {
+                document.querySelector('select[name="recurring_frequency"]').value = trans.recurring_frequency || 'monthly';
+                document.querySelector('input[name="recurring_day"]').value = trans.recurring_day || 1;
+            }
+            
+            document.querySelector('input[name="description"]').value = trans.description || '';
+            document.querySelector('input[name="bank_account"]').value = trans.bank_account || '';
+            
+            // Handle communication
+            if (trans.structured_communication) {
+                document.querySelector('select[name="communication_type"]').value = 'structured';
+                toggleCommunicationType('structured');
+                document.querySelector('input[name="structured_communication"]').value = trans.structured_communication;
+            } else {
+                document.querySelector('select[name="communication_type"]').value = 'free';
+                toggleCommunicationType('free');
+                document.querySelector('input[name="free_communication"]').value = trans.free_communication || '';
+            }
+            
+            updateTotalWithVAT();
+            
+            if (trans.counterparty_id) {
+                loadBankAccountsForCounterparty(trans.counterparty_id);
+            }
+            
+            document.querySelector('button[type="submit"]').textContent = 'Update Transaction';
+            
+            transactionModal.show();
+        } else {
+            alert('Error loading transaction: ' + data.error);
+        }
+    });
+}
+
+function recordPayment(transId, amount) {
+    if (confirm(`Mark as paid: $${amount}?`)) {
+        fetch('/mark_transaction_complete/' + transId, {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+}
+
+function recordReceipt(transId, amount) {
+    if (confirm(`Mark as received: $${amount}?`)) {
+        fetch('/mark_transaction_complete/' + transId, {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+}
+
+function deleteTransaction(transId) {
+    if (confirm('Delete this transaction?')) {
+        fetch('/delete_transaction/' + transId, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        });
+    }
+}
+
+function updatePriority(transId, priority) {
+    fetch('/update_transaction_field', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            transaction_id: transId,
+            field: 'priority_payment',
+            value: priority
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (!result.success) {
+            alert('Error updating priority: ' + result.error);
+        }
+    });
+}
+
+function showQRCode(transId) {
+    const content = document.getElementById('qrContent');
+    const details = document.getElementById('qrDetails');
+    
+    content.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+    details.innerHTML = '';
+    
+    qrModal.show();
+    
+    fetch(`/generate_qr_code/${transId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                content.innerHTML = `<img src="${data.qr_image}" alt="Payment QR Code" style="max-width: 300px;">`;
+                
+                details.innerHTML = `
+                    <h6 class="mb-2">Payment Details</h6>
+                    <p class="mb-1"><strong>To:</strong> ${data.transaction.counterparty}</p>
+                    <p class="mb-1"><strong>Amount:</strong> €${data.transaction.amount.toFixed(2)}</p>
+                    <p class="mb-1"><strong>Account:</strong> ${data.transaction.bank_account}</p>
+                    <p class="mb-0"><strong>Communication:</strong> ${data.transaction.communication || 'None'}</p>
+                `;
+            } else {
+                content.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+            }
+        })
+        .catch(error => {
+            content.innerHTML = `<div class="alert alert-danger">Error generating QR code: ${error.message}</div>`;
+        });
+}
+
+function filterTransactions() {
+    const typeFilter = document.getElementById('filterType').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    
+    const rows = document.querySelectorAll('.transaction-row');
+    rows.forEach(row => {
+        const type = row.getAttribute('data-type');
+        const status = row.getAttribute('data-status');
+        
+        let show = true;
+        if (typeFilter !== 'all' && type !== typeFilter) show = false;
+        if (statusFilter !== 'all' && status !== statusFilter) show = false;
+        
+        row.style.display = show ? '' : 'none';
+    });
+}
+
+// Inline editing
+document.querySelectorAll('.editable').forEach(cell => {
+    cell.addEventListener('click', function() {
+        makeEditable(this);
+    });
+});
+
+function makeEditable(element) {
+    if (element.classList.contains('editing')) return;
+    
+    element.classList.add('editing');
+    const field = element.getAttribute('data-field');
+    const transId = element.getAttribute('data-trans-id');
+    const currentValue = element.textContent.replace('$', '').trim();
+    
+    let input;
+    if (field === 'amount') {
+        input = document.createElement('input');
+        input.type = 'number';
+        input.step = '0.01';
+        input.className = 'form-control form-control-sm';
+        const vatPercentage = parseFloat(element.getAttribute('data-vat')) || 0;
+        if (vatPercentage > 0) {
+            const grossAmount = parseFloat(currentValue);
+            const netAmount = grossAmount / (1 + vatPercentage / 100);
+            input.value = netAmount.toFixed(2);
+            const note = document.createElement('div');
+            note.style.fontSize = '11px';
+            note.style.color = '#666';
+            note.innerHTML = `Net amount (VAT ${vatPercentage}% will be added)`;
+            element.innerHTML = '';
+            element.appendChild(input);
+            element.appendChild(note);
+            input.focus();
+            input.select();
+        } else {
+            input.value = currentValue;
+        }
+    } else if (field === 'due_date') {
+        input = document.createElement('input');
+        input.type = 'date';
+        input.className = 'form-control form-control-sm';
+        const dateMatch = currentValue.match(/\d{4}-\d{2}-\d{2}/);
+        input.value = dateMatch ? dateMatch[0] : '';
+    } else {
+        input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control form-control-sm';
+        input.value = currentValue;
+    }
+    
+    input.style.width = '100%';
+    const originalHTML = element.innerHTML;
+    
+    if (field !== 'amount' || !element.querySelector('input')) {
+        element.innerHTML = '';
+        element.appendChild(input);
+        input.focus();
+        input.select();
+    }
+    
+    const saveEdit = () => {
+        let newValue = input.value;
+        
+        if (field === 'amount') {
+            const vatPercentage = parseFloat(element.getAttribute('data-vat')) || 0;
+            if (vatPercentage > 0) {
+                const netAmount = parseFloat(newValue);
+                const vatAmount = netAmount * (vatPercentage / 100);
+                newValue = (netAmount + vatAmount).toFixed(2);
+            }
+        }
+        
+        fetch('/update_transaction_field', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                transaction_id: transId,
+                field: field,
+                value: newValue
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                location.reload();
+            } else {
+                alert('Error: ' + result.error);
+                element.innerHTML = originalHTML;
+            }
+            element.classList.remove('editing');
+        });
+    };
+    
+    input.addEventListener('blur', saveEdit);
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveEdit();
+        }
+    });
+}
+
+// Initialize drag and drop
+const sortable = Sortable.create(document.getElementById('sortableTransactions'), {
+    handle: '.drag-handle',
+    animation: 150,
+    ghostClass: 'sortable-ghost',
+    dragClass: 'sortable-drag',
+    onEnd: function(evt) {
+        const rows = document.querySelectorAll('#sortableTransactions tr');
+        const newOrder = [];
+        rows.forEach((row, index) => {
+            const transId = row.getAttribute('data-id');
+            if (transId) {
+                newOrder.push({
+                    id: parseInt(transId),
+                    order: index
+                });
+            }
+        });
+        
+        fetch('/update_transaction_order', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({order: newOrder})
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                setTimeout(() => location.reload(), 100);
+            } else {
+                console.error('Error saving order:', result.error);
+            }
+        });
+    }
+});
+
+// Cash flow chart (same as before)
+let currentBalance = {{ current_balance }};
+const transactionData = [
+    {% for trans in transactions %}
+    {
+        id: {{ trans.id }},
+        type: '{{ trans.type }}',
+        status: '{{ trans.status }}',
+        due_date: {% if trans.due_date %}'{{ trans.due_date.isoformat() }}'{% else %}null{% endif %},
+        amount: {{ trans.amount }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+// Calculate cash flow
+const cashFlowPoints = [];
+let runningBalance = currentBalance;
+const today = new Date();
+cashFlowPoints.push({date: today, balance: currentBalance});
+
+let lastDate = today;
+transactionData.forEach((trans, index) => {
+    if (trans.type === 'payable') {
+        runningBalance -= trans.amount;
+    } else if (trans.type === 'receivable') {
+        runningBalance += trans.amount;
+    }
+    
+    let transDate = trans.due_date ? new Date(trans.due_date) : new Date(lastDate);
+    if (transDate <= lastDate) {
+        transDate = new Date(lastDate);
+        transDate.setDate(transDate.getDate() + 1);
+    }
+    
+    cashFlowPoints.push({
+        date: transDate,
+        balance: runningBalance
+    });
+    
+    lastDate = transDate;
+});
+
+// Create monthly snapshots
+const monthlyBalance = [];
+const monthlyLabels = [];
+
+for (let i = 0; i <= 12; i++) {
+    const monthDate = new Date(today);
+    monthDate.setMonth(today.getMonth() + i);
+    monthDate.setDate(15);
+    
+    let balanceAtDate = currentBalance;
+    for (let point of cashFlowPoints) {
+        if (point.date <= monthDate) {
+            balanceAtDate = point.balance;
+        } else {
+            break;
+        }
+    }
+    
+    const label = i === 0 ? 'Now' : monthDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    monthlyLabels.push(label);
+    monthlyBalance.push(Math.round(balanceAtDate));
+}
+
+// Create chart
+Chart.register(ChartDataLabels);
+const ctx = document.getElementById('cashFlowChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: monthlyLabels,
+        datasets: [{
+            label: 'Cash Balance',
+            data: monthlyBalance,
+            backgroundColor: monthlyBalance.map(value => value >= 0 ? 'rgba(39, 174, 96, 0.8)' : 'rgba(231, 76, 60, 0.8)'),
+            borderColor: monthlyBalance.map(value => value >= 0 ? '#27ae60' : '#e74c3c'),
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return '€' + context.parsed.y.toLocaleString();
+                    }
+                }
+            },
+            datalabels: {
+                display: true,
+                color: function(context) {
+                    return context.dataset.data[context.dataIndex] >= 0 ? '#27ae60' : '#e74c3c';
+                },
+                font: {
+                    weight: 'bold',
+                    size: 12
+                },
+                formatter: function(value) {
+                    return '€' + value.toLocaleString();
+                },
+                anchor: 'end',
+                align: 'top',
+                offset: 5
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: false,
+                grid: {
+                    color: function(context) {
+                        if (context.tick.value === 0) {
+                            return '#333';
+                        }
+                        return 'rgba(0, 0, 0, 0.05)';
+                    },
+                    lineWidth: function(context) {
+                        if (context.tick.value === 0) {
+                            return 3;
+                        }
+                        return 1;
+                    }
+                },
+                ticks: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

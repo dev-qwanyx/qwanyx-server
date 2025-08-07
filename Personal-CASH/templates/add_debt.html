@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Add New Debt</h2>
+    <form method="POST" action="{{ url_for('add_debt') }}">
+        <select name="creditor_id" id="creditor_select" required onchange="toggleNewCreditor()">
+            <option value="">Select a Creditor</option>
+            {% for creditor in creditors %}
+            <option value="{{ creditor.id }}">{{ creditor.name }}</option>
+            {% endfor %}
+            <option value="new">+ Add New Creditor</option>
+        </select>
+        
+        <div id="new_creditor_fields" class="hidden">
+            <input type="text" name="new_creditor_name" placeholder="New Creditor Name">
+            <input type="text" name="bank_name" placeholder="Bank Name">
+            <input type="text" name="account_number" placeholder="Account Number">
+            <input type="text" name="routing_number" placeholder="Routing Number">
+        </div>
+        
+        <input type="number" name="amount" placeholder="Amount" step="0.01" required>
+        <textarea name="description" placeholder="Description (optional)" rows="3"></textarea>
+        <input type="date" name="due_date" placeholder="Due Date (optional)">
+        <button type="submit" class="btn btn-success">Add Debt</button>
+        <a href="{{ url_for('index') }}" class="btn btn-danger">Cancel</a>
+    </form>
+</div>
+
+<script>
+function toggleNewCreditor() {
+    var select = document.getElementById('creditor_select');
+    var newFields = document.getElementById('new_creditor_fields');
+    var nameField = document.querySelector('input[name="new_creditor_name"]');
+    
+    if (select.value === 'new') {
+        newFields.classList.remove('hidden');
+        nameField.required = true;
+    } else {
+        newFields.classList.add('hidden');
+        nameField.required = false;
+    }
+}
+</script>
+{% endblock %}

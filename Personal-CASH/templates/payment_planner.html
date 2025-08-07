@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stats">
+    <div class="stat-box success">
+        <h2>${{ "%.2f"|format(total_income) }}</h2>
+        <p>Income This Month</p>
+    </div>
+    <div class="stat-box danger">
+        <h2>${{ "%.2f"|format(total_planned) }}</h2>
+        <p>Planned Payments</p>
+    </div>
+    <div class="stat-box {% if available >= 0 %}success{% else %}danger{% endif %}">
+        <h2>${{ "%.2f"|format(available) }}</h2>
+        <p>Available</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Payment Planning - {{ month }}</h2>
+    
+    <h3>Plan New Payment</h3>
+    <form method="POST" action="{{ url_for('add_planned_payment') }}" style="margin-bottom: 30px;">
+        <select name="debt_id" required>
+            <option value="">Select Debt</option>
+            {% for debt in debts %}
+            <option value="{{ debt.id }}">
+                {{ debt.creditor_name or debt.creditor_obj.name }} - 
+                Remaining: ${{ "%.2f"|format(debt.remaining_amount) }}
+            </option>
+            {% endfor %}
+        </select>
+        
+        <input type="number" name="amount" placeholder="Amount to Pay" step="0.01" required>
+        <input type="date" name="planned_date" required>
+        
+        <select name="priority">
+            <option value="1">Priority 1 (Highest)</option>
+            <option value="2">Priority 2</option>
+            <option value="3">Priority 3</option>
+            <option value="4">Priority 4</option>
+            <option value="5" selected>Priority 5 (Normal)</option>
+            <option value="6">Priority 6</option>
+            <option value="7">Priority 7</option>
+            <option value="8">Priority 8</option>
+            <option value="9">Priority 9</option>
+            <option value="10">Priority 10 (Lowest)</option>
+        </select>
+        
+        <button type="submit" class="btn btn-success">Add to Plan</button>
+    </form>
+    
+    <h3>Planned Payments</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Priority</th>
+                <th>Creditor</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for planned in planned_payments %}
+            <tr>
+                <td>{{ planned.priority }}</td>
+                <td>{{ planned.debt.creditor_name or planned.debt.creditor_obj.name }}</td>
+                <td>${{ "%.2f"|format(planned.amount) }}</td>
+                <td>{{ planned.planned_date.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    {% if planned.status == 'paid' %}
+                        <span class="status-paid">PAID</span>
+                    {% elif planned.status == 'cancelled' %}
+                        <span class="status-pending">CANCELLED</span>
+                    {% else %}
+                        <span class="payment-method">PLANNED</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if planned.status == 'planned' %}
+                        <form method="POST" action="{{ url_for('execute_planned_payment', planned_id=planned.id) }}" style="display: inline;">
+                            <select name="payment_method" style="width: 120px; display: inline-block;">
+                                <option value="cash">Cash</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="check">Check</option>
+                                <option value="online">Online</option>
+                            </select>
+                            <input type="text" name="reference_number" placeholder="Ref#" style="width: 100px; display: inline-block;">
+                            <button type="submit" class="btn btn-success">Execute</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('cancel_planned_payment', planned_id=planned.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-danger">Cancel</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h3>Tips for Payment Planning</h3>
+    <ul>
+        <li>Set priority 1-3 for essential payments (rent, utilities, food)</li>
+        <li>Consider due dates when planning payments</li>
+        <li>Leave some buffer for unexpected expenses</li>
+        <li>Execute payments when you have the cash available</li>
+    </ul>
+</div>
+{% endblock %}

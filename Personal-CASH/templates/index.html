@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stats">
+    <div class="stat-box danger">
+        <h2>${{ "%.2f"|format(total_debt) }}</h2>
+        <p>Total Debt</p>
+    </div>
+    <div class="stat-box success">
+        <h2>${{ "%.2f"|format(total_paid) }}</h2>
+        <p>Total Paid</p>
+    </div>
+    <div class="stat-box">
+        <h2>${{ "%.2f"|format(remaining) }}</h2>
+        <p>Remaining</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Active Debts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Creditor</th>
+                <th>Total Amount</th>
+                <th>Paid</th>
+                <th>Remaining</th>
+                <th>Due Date</th>
+                <th>Plan to Pay</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for debt in debts %}
+            <tr>
+                <td>{{ debt.creditor_name or debt.creditor_obj.name }}</td>
+                <td>${{ "%.2f"|format(debt.amount) }}</td>
+                <td>${{ "%.2f"|format(debt.amount - debt.remaining_amount) }}</td>
+                <td>${{ "%.2f"|format(debt.remaining_amount) }}</td>
+                <td>
+                    {% if debt.due_date %}
+                        {% set days_until_due = (debt.due_date - datetime.now()).days %}
+                        <span style="color: {% if days_until_due < 0 %}#e74c3c{% elif days_until_due < 7 %}#f39c12{% else %}#27ae60{% endif %};">
+                            {{ debt.due_date.strftime('%Y-%m-%d') }}
+                            {% if days_until_due < 0 %}
+                                <small>({{ -days_until_due }} days overdue)</small>
+                            {% elif days_until_due == 0 %}
+                                <small>(Due today!)</small>
+                            {% elif days_until_due < 7 %}
+                                <small>({{ days_until_due }} days)</small>
+                            {% endif %}
+                        </span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    <input type="date" 
+                           id="planned_date_{{ debt.id }}" 
+                           value="{{ debt.planned_pay_date.strftime('%Y-%m-%d') if debt.planned_pay_date else '' }}"
+                           onchange="updatePlannedPayDate({{ debt.id }})"
+                           style="border: 1px solid #ddd; padding: 5px; border-radius: 3px;"
+                           {% if debt.status == 'paid' %}disabled{% endif %}>
+                </td>
+                <td>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: {{ ((debt.amount - debt.remaining_amount) / debt.amount * 100) if debt.amount > 0 else 0 }}%">
+                            {{ "%.0f"|format(((debt.amount - debt.remaining_amount) / debt.amount * 100) if debt.amount > 0 else 0) }}%
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    {% if debt.status == 'paid' %}
+                        <span class="status-paid">PAID</span>
+                    {% else %}
+                        <span class="status-pending">PENDING</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('debt_detail', debt_id=debt.id) }}" class="btn" style="font-size: 12px; padding: 5px 10px;">View</a>
+                    {% if debt.status != 'paid' %}
+                        <button onclick="quickPayment({{ debt.id }}, {{ debt.remaining_amount }}, 'full')" class="btn btn-success" style="font-size: 12px; padding: 5px 10px;">Pay Full</button>
+                        <button onclick="showQuickPaymentForm({{ debt.id }})" class="btn" style="font-size: 12px; padding: 5px 10px;">Pay Partial</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Quick Payment Modal -->
+<div id="quickPaymentModal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;">
+    <h3>Quick Payment</h3>
+    <form id="quickPaymentForm" onsubmit="submitQuickPayment(event)">
+        <input type="hidden" id="quick_debt_id" name="debt_id">
+        <label>Amount:</label>
+        <input type="number" id="quick_amount" name="amount" step="0.01" required>
+        <label>Payment Method:</label>
+        <select name="payment_method" required>
+            <option value="cash">Cash</option>
+            <option value="bank_transfer">Bank Transfer</option>
+            <option value="check">Check</option>
+            <option value="online">Online Payment</option>
+        </select>
+        <label>Reference (optional):</label>
+        <input type="text" name="reference_number" placeholder="Transaction/Check #">
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn btn-success">Confirm Payment</button>
+            <button type="button" onclick="closeQuickPayment()" class="btn btn-danger">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;" onclick="closeQuickPayment()"></div>
+
+<script>
+function showQuickPaymentForm(debtId) {
+    document.getElementById('quick_debt_id').value = debtId;
+    document.getElementById('quickPaymentModal').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+
+function closeQuickPayment() {
+    document.getElementById('quickPaymentModal').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('quickPaymentForm').reset();
+}
+
+function quickPayment(debtId, amount, type) {
+    if (type === 'full') {
+        if (confirm(`Confirm full payment of $${amount.toFixed(2)}?`)) {
+            // Submit payment directly
+            fetch('/quick_payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    debt_id: debtId,
+                    amount: amount,
+                    payment_method: 'bank_transfer',
+                    note: 'Full payment via quick action'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Payment recorded successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            });
+        }
+    }
+}
+
+function submitQuickPayment(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    
+    fetch('/quick_payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Payment recorded successfully!');
+            window.location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    });
+}
+
+function updatePlannedPayDate(debtId) {
+    const dateInput = document.getElementById(`planned_date_${debtId}`);
+    const plannedDate = dateInput.value;
+    
+    fetch('/update_planned_pay_date', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            debt_id: debtId,
+            planned_date: plannedDate
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Visual feedback - briefly highlight the input
+            dateInput.style.backgroundColor = '#27ae60';
+            setTimeout(() => {
+                dateInput.style.backgroundColor = '';
+            }, 1000);
+        } else {
+            alert('Error updating planned pay date: ' + data.error);
+        }
+    });
+}
+</script>
+{% endblock %}

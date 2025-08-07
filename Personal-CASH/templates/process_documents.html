@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .document-card {
+        background: #f8f9fa;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #dee2e6;
+    }
+    .document-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .file-type-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .file-type-pdf { background: #e74c3c; color: white; }
+    .file-type-image { background: #3498db; color: white; }
+    .file-type-text { background: #95a5a6; color: white; }
+    .preview-section {
+        background: white;
+        padding: 15px;
+        border-radius: 3px;
+        margin-bottom: 15px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .claude-badge {
+        background: #8b5cf6;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 11px;
+        margin-left: 10px;
+    }
+</style>
+
+<div class="card">
+    <h2>Process Documents from IN Folder</h2>
+    <p>Place invoices, receipts, or any financial documents in the <strong>IN</strong> folder. Claude will analyze them and pre-fill transaction details.</p>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="padding: 10px; margin: 10px 0; background-color: {% if category == 'success' %}#27ae60{% else %}#3498db{% endif %}; color: white; border-radius: 5px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    {% if not documents %}
+        <p style="margin-top: 20px; color: #7f8c8d;">No documents found in the IN folder. Drop PDF, images (PNG/JPG), or text files there!</p>
+    {% endif %}
+    
+    {% for doc in documents %}
+    <div class="document-card">
+        <div class="document-header">
+            <div>
+                <h3 style="margin: 0;">{{ doc.filename }}</h3>
+                {% if doc.filename.endswith('.pdf') %}
+                    <span class="file-type-badge file-type-pdf">PDF</span>
+                {% elif doc.filename.endswith(('.png', '.jpg', '.jpeg')) %}
+                    <span class="file-type-badge file-type-image">IMAGE</span>
+                {% else %}
+                    <span class="file-type-badge file-type-text">TEXT</span>
+                {% endif %}
+                {% if not doc.error %}
+                    <span class="claude-badge">Analyzed by Claude</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if doc.error %}
+            <p style="color: #e74c3c;">Error reading file: {{ doc.error }}</p>
+            <form method="POST" action="{{ url_for('skip_invoice') }}" style="display: inline;">
+                <input type="hidden" name="filepath" value="{{ doc.filepath }}">
+                <button type="submit" class="btn btn-danger">Skip</button>
+            </form>
+        {% else %}
+            {% if doc.is_image %}
+                <div class="preview-section">
+                    <p style="color: #7f8c8d;"><em>Image file - Please fill in the transaction details manually</em></p>
+                </div>
+            {% elif doc.full_text %}
+                <details>
+                    <summary style="cursor: pointer; color: #3498db; margin-bottom: 10px;">Show document preview</summary>
+                    <div class="preview-section">
+                        <pre style="white-space: pre-wrap; font-size: 12px;">{{ doc.full_text }}</pre>
+                    </div>
+                </details>
+            {% endif %}
+            
+            <form method="POST" action="{{ url_for('process_document_to_transaction') }}">
+                <input type="hidden" name="filepath" value="{{ doc.filepath }}">
+                
+                <h4>Transaction Details</h4>
+                <div class="form-grid">
+                    <div>
+                        <label>Type:</label>
+                        <select name="type" required>
+                            <option value="payable" {% if doc.type == 'payable' %}selected{% endif %}>Payable (Money Out)</option>
+                            <option value="receivable" {% if doc.type == 'receivable' %}selected{% endif %}>Receivable (Money In)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label>Counterparty:</label>
+                        <select name="counterparty_id" required>
+                            <option value="">Select...</option>
+                            {% for cp in counterparties %}
+                                <option value="{{ cp.id }}" {% if doc.counterparty and cp.name.lower() in doc.counterparty.lower() %}selected{% endif %}>
+                                    {{ cp.name }}
+                                </option>
+                            {% endfor %}
+                            <option value="new">+ Add New</option>
+                        </select>
+                        <input type="text" name="new_counterparty_name" placeholder="New counterparty name" 
+                               value="{{ doc.counterparty or '' }}" style="display: none; margin-top: 5px;">
+                    </div>
+                    
+                    <div>
+                        <label>Amount (excl. VAT):</label>
+                        <input type="number" name="amount" step="0.01" value="{{ doc.amount or '' }}" required>
+                    </div>
+                    
+                    <div>
+                        <label>VAT %:</label>
+                        <select name="vat_percentage">
+                            <option value="0" {% if doc.vat_percentage == 0 %}selected{% endif %}>No VAT</option>
+                            <option value="21" {% if doc.vat_percentage == 21 %}selected{% endif %}>21% (Standard)</option>
+                            <option value="6" {% if doc.vat_percentage == 6 %}selected{% endif %}>6% (Reduced)</option>
+                            <option value="12" {% if doc.vat_percentage == 12 %}selected{% endif %}>12% (Intermediate)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label>Due Date:</label>
+                        <input type="date" name="due_date" value="{{ doc.due_date.strftime('%Y-%m-%d') if doc.due_date else '' }}">
+                    </div>
+                    
+                    <div>
+                        <label>Description:</label>
+                        <input type="text" name="description" value="{{ doc.description or '' }}" placeholder="Optional description">
+                    </div>
+                    
+                    {% if doc.structured_communication %}
+                    <div style="grid-column: 1 / -1;">
+                        <label>Structured Communication:</label>
+                        <input type="text" name="structured_communication" value="{{ doc.structured_communication }}" readonly style="background: #f0f0f0;">
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-success">Create Transaction</button>
+                    <button type="submit" formaction="{{ url_for('skip_invoice') }}" formnovalidate class="btn btn-danger">Skip</button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card" style="margin-top: 30px;">
+    <h3>How to Use</h3>
+    <ol>
+        <li>Drop any financial documents into the <strong>IN</strong> folder (PDF, PNG, JPG, TXT)</li>
+        <li>Click "Process IN" in the header to come to this page</li>
+        <li>Claude will analyze documents and pre-fill transaction details where possible</li>
+        <li>Review and correct the information if needed</li>
+        <li>Click "Create Transaction" to add it to your cash management system</li>
+        <li>Processed documents are moved to <strong>IN/processed</strong></li>
+        <li>Skipped documents are moved to <strong>IN/skipped</strong></li>
+    </ol>
+    
+    <p style="margin-top: 15px;"><strong>Supported file types:</strong> PDF invoices, images (PNG/JPG) of receipts, text files with financial information</p>
+</div>
+
+<script>
+// Show/hide new counterparty field
+document.querySelectorAll('select[name="counterparty_id"]').forEach(function(select, index) {
+    select.addEventListener('change', function() {
+        const newNameInput = this.parentElement.querySelector('input[name="new_counterparty_name"]');
+        if (this.value === 'new') {
+            newNameInput.style.display = 'block';
+            newNameInput.required = true;
+        } else {
+            newNameInput.style.display = 'none';
+            newNameInput.required = false;
+            newNameInput.value = '';
+        }
+    });
+});
+</script>
+{% endblock %}

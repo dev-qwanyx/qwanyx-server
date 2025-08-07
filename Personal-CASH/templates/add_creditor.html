@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Add New Creditor</h2>
+    <form method="POST" action="{{ url_for('add_creditor') }}">
+        <input type="text" name="name" placeholder="Creditor Name" required>
+        <input type="text" name="bank_name" placeholder="Bank Name">
+        <input type="text" name="account_number" placeholder="Account Number">
+        <input type="text" name="routing_number" placeholder="Routing Number">
+        <textarea name="notes" placeholder="Notes (optional)" rows="3"></textarea>
+        <button type="submit" class="btn btn-success">Add Creditor</button>
+        <a href="{{ url_for('creditors') }}" class="btn btn-danger">Cancel</a>
+    </form>
+</div>
+{% endblock %}
