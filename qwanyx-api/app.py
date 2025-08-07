@@ -154,8 +154,10 @@ def create_site():
         return jsonify({'error': str(e)}), 500
 
 # Authentication by code (passwordless)
-@app.route('/auth/request-code', methods=['POST'])
+@app.route('/auth/request-code', methods=['POST', 'OPTIONS'])
 def request_code():
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         data = request.get_json()
         email = data.get('email')
@@ -198,8 +200,10 @@ def request_code():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/auth/verify-code', methods=['POST'])
+@app.route('/auth/verify-code', methods=['POST', 'OPTIONS'])
 def verify_code():
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         data = request.get_json()
         email = data.get('email')
@@ -272,6 +276,10 @@ def verify_code():
 # Authentication endpoints
 @app.route('/auth/register', methods=['POST', 'OPTIONS'])
 def register():
+    # Handle preflight OPTIONS
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     try:
         data = request.get_json()
         email = data.get('email')
@@ -316,8 +324,10 @@ def register():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/auth/login', methods=['POST'])
+@app.route('/auth/login', methods=['POST', 'OPTIONS'])
 def login():
+    if request.method == 'OPTIONS':
+        return '', 200
     try:
         data = request.get_json()
         email = data.get('email')
