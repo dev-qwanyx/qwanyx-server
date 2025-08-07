@@ -426,10 +426,11 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify({...formData, _debug: true})
                 });
                 
                 const data = await response.json();
+                console.log('Response:', response.status, data);
                 
                 if (response.ok) {
                     showNotification('Compte créé avec succès! Un code de connexion vous a été envoyé.', 'success');
