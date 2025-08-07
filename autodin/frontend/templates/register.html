@@ -395,7 +395,8 @@
                 email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value,
                 accountType: accountType,
-                workspace: 'autodin-be'
+                workspace: 'autodin-be',
+                site: 'autodin-be'
             };
             
             // Add professional fields if needed
@@ -421,7 +422,7 @@
             button.disabled = true;
             
             try {
-                const response = await fetch(`${API_URL}/auth/register`, {
+                const response = await fetch(`${API_URL}/auth/request-code`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
