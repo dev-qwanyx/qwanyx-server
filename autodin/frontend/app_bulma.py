@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = 'autodin-secret-key-change-in-production'
 
 # Configuration
-API_URL = 'http://localhost:5002'
+API_URL = 'http://135.181.72.183:5002'
 
 @app.route('/')
 def index():
