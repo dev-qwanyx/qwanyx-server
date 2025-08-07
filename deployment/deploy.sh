@@ -65,35 +65,42 @@ check_status "Systemd service installation"
 echo -e "${YELLOW}🌐 Configuring Nginx...${NC}"
 cp ${DEPLOYMENT_DIR}/nginx-qwanyx.conf /etc/nginx/sites-available/qwanyx
 ln -sf /etc/nginx/sites-available/qwanyx /etc/nginx/sites-enabled/
+# Remove default site if exists
+rm -f /etc/nginx/sites-enabled/default
 nginx -t
 check_status "Nginx configuration test"
 
-# 7. Install SSL certificate with Let's Encrypt (if not exists)
+# 7. Reload Nginx to apply HTTP config
+systemctl reload nginx
+check_status "Nginx reload"
+
+# 8. Install SSL certificate with Let's Encrypt (if not exists)
 if [ ! -d "/etc/letsencrypt/live/qwanyx.com" ]; then
     echo -e "${YELLOW}🔒 Installing SSL certificate...${NC}"
     apt-get install -y certbot python3-certbot-nginx
-    certbot --nginx -d qwanyx.com -d api.qwanyx.com --non-interactive --agree-tos -m phil@qwanyx.com
+    # Certbot will automatically update Nginx config for HTTPS
+    certbot --nginx -d qwanyx.com -d api.qwanyx.com --non-interactive --agree-tos -m phil@qwanyx.com --redirect
     check_status "SSL certificate installation"
 fi
 
-# 8. Set proper permissions
+# 9. Set proper permissions
 echo -e "${YELLOW}🔐 Setting permissions...${NC}"
 chown -R www-data:www-data $API_DIR
 chmod -R 755 $API_DIR
 check_status "Permissions setup"
 
-# 9. Start services
+# 10. Start services
 echo -e "${YELLOW}🚀 Starting services...${NC}"
 systemctl restart qwanyx-api
 systemctl enable qwanyx-api
 systemctl reload nginx
 check_status "Services start"
 
-# 10. Check service status
+# 11. Check service status
 echo -e "${YELLOW}📊 Service Status:${NC}"
 systemctl status qwanyx-api --no-pager | head -n 10
 
-# 11. Test API endpoint
+# 12. Test API endpoint
 echo -e "${YELLOW}🧪 Testing API...${NC}"
 sleep 3
 curl -s http://localhost:5000/api/health > /dev/null
