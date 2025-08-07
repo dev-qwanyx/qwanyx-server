@@ -25,7 +25,7 @@ app.config['SMTP_PASS'] = os.getenv('SMTP_PASS')
 app.config['SMTP_FROM'] = os.getenv('SMTP_FROM', 'QWANYX <noreply@qwanyx.com>')
 
 # Extensions
-CORS(app, origins=["http://localhost:*", "http://127.0.0.1:*", "http://135.181.72.183:*", "http://*:8090", "http://*:8091"])
+CORS(app, origins="*", supports_credentials=True)
 jwt = JWTManager(app)
 
 # MongoDB
