@@ -2,6 +2,9 @@
 # COMMANDES À EXÉCUTER SUR LE SERVEUR
 # Claude écrit ici, le serveur exécute automatiquement après pull
 
+echo "🔧 Installation des dépendances manquantes..."
+pip3 install flask-cors pymongo
+
 echo "🚀 Vérification et redémarrage des services QWANYX..."
 
 # Tuer tous les anciens processus Python
