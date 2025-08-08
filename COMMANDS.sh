@@ -2,32 +2,49 @@
 # COMMANDES À EXÉCUTER SUR LE SERVEUR
 # Claude écrit ici, le serveur exécute automatiquement après pull
 
-echo "🚀 FIX URGENT - Redémarrage de l'API QWANYX..."
+echo "🚀 Redémarrage COMPLET après synchronisation..."
 
 # S'assurer d'avoir la dernière version
 cd /opt/qwanyx/apps/qwanyx-server
 git pull origin main
 
-# Tuer TOUT sur le port 5002
-echo "→ Kill forcé du port 5002..."
-fuser -k 5002/tcp 2>/dev/null || true
-pkill -f "python3.*app.py" || true
+# Tuer TOUS les processus Python
+echo "→ Arrêt de tous les services..."
+pkill -f "python3" || true
 sleep 2
 
-# Vérifier que le port est libre
-netstat -tulpn | grep 5002 && echo "⚠️ Port encore occupé!" || echo "✅ Port libre"
+# 1. Redémarrer Autodin
+echo "→ Démarrage d'Autodin..."
+cd /opt/qwanyx/apps/qwanyx-server/autodin/frontend
+nohup python3 app_bulma.py > /tmp/autodin.log 2>&1 &
+echo "✅ Autodin lancé sur 8090"
 
-# Démarrer l'API
-echo "→ Démarrage de l'API..."
+# 2. Redémarrer Belgicomics
+echo "→ Démarrage de Belgicomics..."
+cd /opt/qwanyx/apps/qwanyx-server/belgicomics/frontend
+nohup python3 app_bulma.py > /tmp/belgicomics.log 2>&1 &
+echo "✅ Belgicomics lancé sur 8091"
+
+# 3. Redémarrer l'API QWANYX
+echo "→ Démarrage de l'API QWANYX..."
 cd /opt/qwanyx/apps/qwanyx-server/qwanyx-api
-python3 app.py > /tmp/api.log 2>&1 &
-echo "✅ API lancée, PID: $!"
+nohup python3 app.py > /tmp/api.log 2>&1 &
+echo "✅ API lancée sur 5002"
 
-# Vérifier après 3 secondes
-sleep 3
-echo "→ Test de l'API:"
-curl -s http://localhost:5002 && echo " - API répond!" || echo " - API ne répond pas!"
+# 4. Relancer le webhook
+echo "→ Relance du webhook server..."
+cd /opt/qwanyx/apps/qwanyx-server
+nohup python3 webhook-server.py > /tmp/webhook.log 2>&1 &
+echo "✅ Webhook lancé sur 9999"
 
-# Afficher les logs en cas d'erreur
-echo "→ Dernières lignes de log:"
-tail -n 20 /tmp/api.log
+# Vérifier après 5 secondes
+sleep 5
+echo ""
+echo "📊 Vérification des services:"
+curl -s -o /dev/null -w "Autodin: %{http_code}\n" http://localhost:8090
+curl -s -o /dev/null -w "Belgicomics: %{http_code}\n" http://localhost:8091
+curl -s -o /dev/null -w "API: %{http_code}\n" http://localhost:5002
+curl -s -o /dev/null -w "Webhook: %{http_code}\n" http://localhost:9999/health
+
+echo ""
+echo "✅ Tous les services redémarrés avec le nouveau code!"
