@@ -13,7 +13,7 @@ import os
 app = Flask(__name__)
 
 # Secret pour sécuriser le webhook (à configurer dans GitHub)
-WEBHOOK_SECRET = "ghp_IKOdJCQJWQBLAPbHGY6vBFpZhtxVxO3ucZ2K"
+WEBHOOK_SECRET = "coman-sasvati-yodpoil-etoilamatla"
 
 def verify_signature(payload, signature):
     """Vérifie que le webhook vient bien de GitHub"""
