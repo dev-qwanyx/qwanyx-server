@@ -1,0 +1,25 @@
+CORRECTION SPF REQUISE
+======================
+
+Problème identifié :
+- SPF actuel : v=spf1 mx a:mail.qwanyx.com ip4:51.38.230.64 -all
+- Le "-all" rejette tous les emails qui ne viennent pas de l'IP autorisée
+- L'API sur 135.181.72.183 ne peut pas envoyer d'emails
+
+Solutions possibles :
+
+1. OPTION RECOMMANDÉE - Ajouter l'IP du serveur API au SPF :
+   v=spf1 mx a:mail.qwanyx.com ip4:51.38.230.64 ip4:135.181.72.183 ~all
+
+2. OPTION ALTERNATIVE - Utiliser un soft fail (~all) au lieu de hard fail (-all) :
+   v=spf1 mx a:mail.qwanyx.com ip4:51.38.230.64 ~all
+
+3. OPTION TEMPORAIRE - Permettre tout pendant les tests :
+   v=spf1 mx a:mail.qwanyx.com ip4:51.38.230.64 ip4:135.181.72.183 +all
+
+À faire dans OVH :
+1. Aller dans la zone DNS
+2. Modifier l'enregistrement TXT SPF
+3. Remplacer par l'option 1 (recommandée)
+
+Note : Le "~all" (soft fail) est plus permissif que "-all" (hard fail)

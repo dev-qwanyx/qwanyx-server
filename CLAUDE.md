@@ -129,6 +129,82 @@ python app_bulma.py
 # Le site est accessible sur http://localhost:8090
 ```
 
+## PROCÉDURE DE DÉPLOIEMENT AUTOMATIQUE
+
+### 🚀 Comment déployer sur le serveur (135.181.72.183)
+
+**IMPORTANT : Tout se fait automatiquement via GitHub !**
+
+1. **Modifier le code localement**
+2. **Mettre à jour COMMANDS.sh** avec les commandes à exécuter sur le serveur
+3. **Faire un git push** → Le webhook déclenche automatiquement le déploiement
+
+### Étapes détaillées pour Claude :
+
+#### 1. Vérifier les modifications
+```bash
+git status
+git diff
+```
+
+#### 2. Mettre à jour COMMANDS.sh
+Le fichier `COMMANDS.sh` contient les commandes qui seront exécutées automatiquement sur le serveur après le pull. Structure type :
+```bash
+# Arrêter les services
+pkill -f "python3" || true
+
+# Redémarrer chaque service
+cd /opt/qwanyx/apps/qwanyx-server/[projet]/frontend
+nohup python3 app_bulma.py > /tmp/[projet].log 2>&1 &
+
+# Vérifier que tout fonctionne
+curl -s -o /dev/null -w "[Projet]: %{http_code}\n" http://localhost:[port]
+```
+
+**Ports utilisés :**
+- Autodin : 8090
+- Belgicomics : 8091  
+- API QWANYX : 5002
+- Webhook : 9999
+
+#### 3. Faire le commit et push
+```bash
+git add .
+git commit -m "Description des changements"
+git push origin main
+```
+
+#### 4. Le serveur fait automatiquement :
+- Git pull pour récupérer le nouveau code
+- Exécute COMMANDS.sh
+- Redémarre les services nécessaires
+
+### Webhooks et auto-deploy
+
+Le serveur a un webhook Flask (`webhook-server.py`) qui :
+- Écoute sur le port 9999
+- Reçoit les notifications de GitHub
+- Vérifie la signature pour la sécurité
+- Execute automatiquement COMMANDS.sh après un push sur main
+
+**Pour vérifier que le déploiement a fonctionné :**
+- Les commandes curl dans COMMANDS.sh affichent les codes HTTP
+- Logs disponibles dans `/tmp/[projet].log`
+
+## Belgicomics
+
+**Stack technique :**
+- **Backend** : Flask (Python)
+- **Frontend** : Bulma CSS
+- **Port** : 8091
+- **Fichier principal** : `belgicomics/frontend/app_bulma.py`
+
+**Fonctionnalités :**
+- Site de vente de BD belges
+- Système de login/register avec modals
+- Espace membre avec gestion d'annonces
+- Design thème gris moderne
+
 ## Architecture future
 
 L'idée est d'avoir :
@@ -138,6 +214,7 @@ L'idée est d'avoir :
    
 2. **Applications frontend** séparées
    - Autodin.be (marketplace pièces auto)
+   - Belgicomics.be (marketplace BD belges)
    - Personal-CASH (gestion finances)
    - Digital Humans apps
    - Etc.

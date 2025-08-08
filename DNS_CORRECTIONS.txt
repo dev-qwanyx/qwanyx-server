@@ -1,0 +1,36 @@
+CORRECTIONS DNS À FAIRE DANS OVH
+=================================
+
+PROBLÈMES IDENTIFIÉS :
+---------------------
+1. Ligne 8 : SPF sur qwanyx.com manque l'IP 135.181.72.183 et a "-all" trop strict
+2. Ligne 10 : _dmarc contient un SPF au lieu du DMARC (erreur)
+
+CORRECTIONS À FAIRE :
+--------------------
+
+1. MODIFIER Ligne 8 (@ IN TXT) :
+   ANCIEN : "v=spf1 mx a:mail.qwanyx.com ip4:51.38.230.64 -all"
+   NOUVEAU : "v=spf1 mx a:mail.qwanyx.com ip4:51.38.230.64 ip4:135.181.72.183 ~all"
+
+2. MODIFIER Ligne 10 (_dmarc IN TXT) :
+   ANCIEN : "v=spf1 mx a:mail.qwanyx.com ip4:51.38.230.64 ip4:135.181.72.183 ~all"
+   NOUVEAU : "v=DMARC1; p=none; rua=mailto:postmaster@qwanyx.com; fo=1"
+
+RÉSULTAT FINAL ATTENDU :
+------------------------
+Ligne 8 :  @ IN TXT "v=spf1 mx a:mail.qwanyx.com ip4:51.38.230.64 ip4:135.181.72.183 ~all"
+Ligne 10 : _dmarc IN TXT "v=DMARC1; p=none; rua=mailto:postmaster@qwanyx.com; fo=1"
+
+NOTES IMPORTANTES :
+------------------
+- Le SPF doit être sur @ (ou qwanyx.com), PAS sur _dmarc
+- Le DMARC doit être sur _dmarc, PAS ailleurs
+- Le "~all" (soft fail) est moins strict que "-all" (hard fail)
+- L'IP 135.181.72.183 est nécessaire car c'est le serveur API qui envoie les emails
+
+APRÈS LES MODIFICATIONS :
+------------------------
+1. Attendre 5-15 minutes pour la propagation DNS
+2. Tester l'envoi d'email
+3. Les emails devraient maintenant passer sans erreur "MailPolicy violation"

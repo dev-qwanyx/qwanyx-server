@@ -2,8 +2,8 @@
 # COMMANDES À EXÉCUTER SUR LE SERVEUR
 # Claude écrit ici, le serveur exécute automatiquement après pull
 
-echo "🚀 MISE À JOUR COMPLÈTE - Autodin + API"
-echo "========================================="
+echo "🚀 MISE À JOUR - Belgicomics + Documentation"
+echo "============================================="
 
 # S'assurer d'avoir la dernière version
 cd /opt/qwanyx/apps/qwanyx-server

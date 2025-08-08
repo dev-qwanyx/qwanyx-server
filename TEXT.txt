@@ -1,21 +1,45 @@
-sudo systemctl status qwanyx-api
-● qwanyx-api.service - QWANYX API Service
-     Loaded: loaded (/etc/systemd/system/qwanyx-api.service; enabled; preset: enabled)      
-     Active: active (running) since Thu 2025-08-07 13:15:22 CEST; 7s ago
-   Main PID: 9050 (gunicorn)
-      Tasks: 13 (limit: 76995)
-     Memory: 91.5M
-        CPU: 384ms
-     CGroup: /system.slice/qwanyx-api.service
-             ├─9050 /opt/qwanyx/apps/qwanyx-server/qwanyx-api/venv/bin/python3 /opt/qwanyx/>
-             ├─9051 /opt/qwanyx/apps/qwanyx-server/qwanyx-api/venv/bin/python3 /opt/qwanyx/>
-             ├─9052 /opt/qwanyx/apps/qwanyx-server/qwanyx-api/venv/bin/python3 /opt/qwanyx/>
-             └─9061 /opt/qwanyx/apps/qwanyx-server/qwanyx-api/venv/bin/python3 /opt/qwanyx/>
+Dear Mr Philippe Coenen
 
-Aug 07 13:15:22 qwanyx-server systemd[1]: Started qwanyx-api.service - QWANYX API Service.  
-Aug 07 13:15:22 qwanyx-server gunicorn[9050]: [2025-08-07 13:15:22 +0200] [9050] [INFO] Sta>
-Aug 07 13:15:22 qwanyx-server gunicorn[9050]: [2025-08-07 13:15:22 +0200] [9050] [INFO] Lis>
-Aug 07 13:15:22 qwanyx-server gunicorn[9050]: [2025-08-07 13:15:22 +0200] [9050] [INFO] Usi>
-Aug 07 13:15:22 qwanyx-server gunicorn[9051]: [2025-08-07 13:15:22 +0200] [9051] [INFO] Boo>
-Aug 07 13:15:22 qwanyx-server gunicorn[9052]: [2025-08-07 13:15:22 +0200] [9052] [INFO] Boo>
-Aug 07 13:15:22 qwanyx-server gunicorn[9061]: [2025-08-07 13:15:22 +0200] [9061] [INFO] Boo
+Thank you for your order B20250807-3215801-2788650 from 07/08/2025 09:26 CEST.
+
+Login Details
+Your server AX41-NVMe #2730472 (135.181.72.183, 2a01:4f9:4b:108a::/64) has been activated and is now ready for use. Currently it is booted in the Rescue System. You can access the server via SSH2 using the following details:
+
+IPv4 Address:	135.181.72.183
+IPv6 Address:	2a01:4f9:4b:108a::2
+Username:	root
+Public key:	animator@DESKTOP-ESBH8NI 35:fd:42:4a:5c:16:7f:67:ea:8f:53:68:61:03:01:e4 (ED25519 256)
+Host key:	csK2i19Aq4aVXVfa0nWH0f+3IxI0FKZrtp+/Y+RWMfM (ECDSA 256)
+a2jLRoRlbnbnwAIcTlj2iuUBcgbCmnBSH1Dyu6ZrwwA (ED25519 256)
+AAG4U82DZLMkXwQk7+aLfNs/KuDcqt6kzEydlvDa9zI (RSA 3072)
+Please note that we block outgoing traffic on ports 25 and 465 on all servers by default. You can create a support request to unblock these ports for a valid use case. Please visit Hetzner Docs for further information.
+
+Downloads
+We have collected a number of packages, tools and OS images and offer them as downloads via our mirror. These files can be found at https://download.hetzner.com, using the following login credentials:
+
+Username:	hetzner
+Password:	download
+Guides
+A Quick Start Guide for Dedicated Root Servers with helpful information can be found here:
+https://docs.hetzner.com/robot/dedicated-server/getting-started/root-server-guide.
+
+Support
+In order to process your support enquiries as quickly and efficiently as possible, please send your requests directly via the Robot administration interface. Click on the user icon in the upper right hand corner and then on "Support".
+
+Our support team is also available to answer your queries via the telephone:
+
+Main Office:	Monday - Friday:	8:00 am - 6:00 pm
++49 9831 505-0
+Our data centre technicians are available during the following business hours:
+Monday - Sunday:	24 hours
+Data center park Nuremberg (NBG1):		+49 911 234226-100
+Data center park Falkenstein (FSN1):		+49 374 574447-100
+Data center park Helsinki (HEL1):		+358 753259-100
+When contacting our technicians in the DC directly a phone password is required to authenticate you as the owner of the server, allowing our technicians to perform some tasks on the server. A phone password can be set in the Robot, under the "Phone Password" tab of the server.
+
+Fault reports and announcements can be found on the Hetzner Status Web Page:
+https://status.hetzner.com.
+
+Kind regards
+
+Your Hetzner Online Team
