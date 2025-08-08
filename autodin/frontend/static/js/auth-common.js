@@ -4,7 +4,9 @@
  */
 
 // API URL configuration
-const API_URL = 'http://135.181.72.183:5002'; // Toujours utiliser l'API distante
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5002'  // Local development
+    : 'http://135.181.72.183:5002'; // Production server
 
 // Site configuration
 const SITE_CODE = 'autodin-be';
