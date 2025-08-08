@@ -205,6 +205,13 @@ Le serveur a un webhook Flask (`webhook-server.py`) qui :
 - Espace membre avec gestion d'annonces
 - Design thème gris moderne
 
+**⚠️ SYSTÈME D'AUTHENTIFICATION (NE JAMAIS CHANGER !) :**
+- **PAS DE MOT DE PASSE** - Utilise un système de code par email
+- Inscription : Email seulement (pas de password)
+- Connexion : Email + Code reçu par email
+- L'API QWANYX est configurée pour accepter les inscriptions sans password
+- **NE JAMAIS REVENIR À UN SYSTÈME AVEC MOT DE PASSE**
+
 ## Architecture future
 
 L'idée est d'avoir :
