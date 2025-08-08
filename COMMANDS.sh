@@ -15,9 +15,12 @@ if [ "$1" != "no-pull" ]; then
     git pull origin main
 fi
 
-# Tuer TOUS les processus Python existants
-echo "→ Arrêt de tous les services..."
-pkill -f "python" || true
+# Arrêter les services SAUF le webhook
+echo "→ Arrêt des services (sauf webhook)..."
+# Tuer spécifiquement chaque service mais PAS le webhook
+pkill -f "app_bulma.py" || true
+pkill -f "app.py" || true
+# Ne PAS tuer webhook-simple.py pour qu'il puisse continuer
 sleep 3
 
 # 1. Redémarrer Autodin
@@ -38,11 +41,16 @@ cd /opt/qwanyx/apps/qwanyx-server/qwanyx-api
 nohup python3 app.py > /tmp/api.log 2>&1 &
 echo "✅ API lancée sur 5002"
 
-# 4. Relancer le webhook (IMPORTANT pour l'auto-deploy)
-echo "→ Démarrage du webhook server..."
-cd /opt/qwanyx/apps/qwanyx-server
-nohup python3 webhook-simple.py > /tmp/webhook.log 2>&1 &
-echo "✅ Webhook lancé sur 9999"
+# 4. Relancer le webhook SEULEMENT s'il n'est pas déjà actif
+echo "→ Vérification du webhook..."
+if ! pgrep -f "webhook-simple.py" > /dev/null; then
+    echo "  → Démarrage du webhook server..."
+    cd /opt/qwanyx/apps/qwanyx-server
+    nohup python3 webhook-simple.py > /tmp/webhook.log 2>&1 &
+    echo "✅ Webhook lancé sur 9999"
+else
+    echo "✅ Webhook déjà actif"
+fi
 
 # Vérifier après 5 secondes
 sleep 5
