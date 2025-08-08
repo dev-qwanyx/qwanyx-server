@@ -1,0 +1,243 @@
+{% extends 'mon-autodin/base.html' %}
+
+{% block title %}Nouvelle annonce - Mon Autodin{% endblock %}
+
+{% block content %}
+<div class="box">
+    <h1 class="title is-3">
+        <span class="icon">
+            <i class="fas fa-plus-circle"></i>
+        </span>
+        <span>Créer une annonce</span>
+    </h1>
+    
+    <form id="annonceForm">
+        <!-- Type Selection -->
+        <div class="field">
+            <label class="label">Type d'annonce</label>
+            <div class="control">
+                <label class="radio">
+                    <input type="radio" name="type" value="piece" checked onchange="toggleVehicleFields()">
+                    <span>Pièce détachée</span>
+                </label>
+                <label class="radio ml-4">
+                    <input type="radio" name="type" value="vehicule" onchange="toggleVehicleFields()">
+                    <span>Véhicule complet</span>
+                </label>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <!-- Title -->
+        <div class="field">
+            <label class="label">Titre de l'annonce</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Ex: Moteur BMW 320d E90" required>
+            </div>
+        </div>
+        
+        <div class="columns">
+            <div class="column">
+                <!-- Category -->
+                <div class="field">
+                    <label class="label">Catégorie</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select required>
+                                <option value="">Sélectionnez une catégorie</option>
+                                <option>Moteur</option>
+                                <option>Carrosserie</option>
+                                <option>Intérieur</option>
+                                <option>Électronique</option>
+                                <option>Roues et pneus</option>
+                                <option>Éclairage</option>
+                                <option>Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="column">
+                <!-- Brand -->
+                <div class="field">
+                    <label class="label">Marque</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Ex: BMW" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="column">
+                <!-- Model -->
+                <div class="field">
+                    <label class="label">Modèle</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Ex: Série 3">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vehicle specific fields -->
+        <div id="vehicleFields" style="display: none;">
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Année</label>
+                        <div class="control">
+                            <input class="input" type="number" placeholder="2015">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Kilométrage</label>
+                        <div class="control">
+                            <input class="input" type="number" placeholder="150000">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Carburant</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select>
+                                    <option>Diesel</option>
+                                    <option>Essence</option>
+                                    <option>Hybride</option>
+                                    <option>Électrique</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Description -->
+        <div class="field">
+            <label class="label">Description</label>
+            <div class="control">
+                <textarea class="textarea" rows="5" placeholder="Décrivez votre article en détail..." required></textarea>
+            </div>
+        </div>
+        
+        <div class="columns">
+            <div class="column">
+                <!-- Price -->
+                <div class="field">
+                    <label class="label">Prix (€)</label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="number" placeholder="0" required>
+                        <span class="icon is-left">
+                            <i class="fas fa-euro-sign"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="column">
+                <!-- Condition -->
+                <div class="field">
+                    <label class="label">État</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select required>
+                                <option>Neuf</option>
+                                <option>Comme neuf</option>
+                                <option>Bon état</option>
+                                <option>État moyen</option>
+                                <option>Pour pièces</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Photos -->
+        <div class="field">
+            <label class="label">Photos</label>
+            <div class="file is-boxed has-name">
+                <label class="file-label">
+                    <input class="file-input" type="file" name="photos" multiple accept="image/*">
+                    <span class="file-cta">
+                        <span class="file-icon">
+                            <i class="fas fa-upload"></i>
+                        </span>
+                        <span class="file-label">
+                            Choisir des photos...
+                        </span>
+                    </span>
+                    <span class="file-name">
+                        Aucun fichier sélectionné
+                    </span>
+                </label>
+            </div>
+            <p class="help">Vous pouvez ajouter jusqu'à 10 photos. La première sera la photo principale.</p>
+        </div>
+        
+        <!-- Location -->
+        <div class="field">
+            <label class="label">Localisation</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Code postal ou ville" required>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <!-- Submit -->
+        <div class="field is-grouped is-grouped-right">
+            <div class="control">
+                <button type="button" class="button is-light" onclick="window.history.back()">
+                    Annuler
+                </button>
+            </div>
+            <div class="control">
+                <button type="submit" class="button button-autodin-dark">
+                    <span class="icon">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span>Publier l'annonce</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleVehicleFields() {
+    const type = document.querySelector('input[name="type"]:checked').value;
+    const vehicleFields = document.getElementById('vehicleFields');
+    vehicleFields.style.display = type === 'vehicule' ? 'block' : 'none';
+}
+
+// Handle file input
+const fileInput = document.querySelector('.file-input');
+fileInput.addEventListener('change', function() {
+    const fileName = document.querySelector('.file-name');
+    if (this.files.length > 0) {
+        fileName.textContent = `${this.files.length} fichier(s) sélectionné(s)`;
+    }
+});
+
+// Handle form submission
+document.getElementById('annonceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Fonctionnalité en cours de développement...');
+});
+
+// Check if coming from vehicle service
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('type') === 'vehicule') {
+    document.querySelector('input[value="vehicule"]').checked = true;
+    toggleVehicleFields();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inscription - Belgicomics</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    
+    <!-- Google Fonts - Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/img/favicon.ico') }}">
+    
+    <style>
+        :root {
+            --belgicomics-primary: #6c757d;
+            --belgicomics-dark: #343a40;
+            --belgicomics-light: #f8f9fa;
+            --belgicomics-accent: #868e96;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .register-container {
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        .register-box {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.2);
+            padding: 50px;
+            backdrop-filter: blur(15px);
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-container img {
+            max-width: 180px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+        }
+        
+        .logo-container h2 {
+            color: var(--belgicomics-dark);
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .logo-container p {
+            color: var(--belgicomics-accent);
+            font-size: 0.95rem;
+        }
+        
+        .button-belgicomics {
+            background-color: var(--belgicomics-primary);
+            border-color: var(--belgicomics-primary);
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .button-belgicomics:hover {
+            background-color: var(--belgicomics-dark);
+            border-color: var(--belgicomics-dark);
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .input:focus {
+            border-color: var(--belgicomics-primary);
+            box-shadow: 0 0 0 0.125em rgba(108, 117, 125, 0.25);
+        }
+        
+        .notification {
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .back-link a {
+            color: #343a40;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .back-link a:hover {
+            opacity: 0.6;
+        }
+        
+        .checkbox span, .radio span {
+            margin-left: 5px;
+        }
+        
+        .label {
+            color: var(--belgicomics-dark);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-box">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='assets/img/belgicomixlogo.png') }}" alt="Belgicomics">
+                <h2>INSCRIPTION</h2>
+                <p>Créez votre compte</p>
+            </div>
+            
+            <!-- Notifications -->
+            <div id="notifications"></div>
+            
+            <!-- Registration Form -->
+            <form id="registerForm">
+                <div class="columns">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Prénom</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" id="firstName" placeholder="Votre prénom" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Nom</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" id="lastName" placeholder="Votre nom" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label">Email</label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="email" id="email" placeholder="votre@email.com" required>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label">Téléphone (optionnel)</label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="tel" id="phone" placeholder="+32 4xx xx xx xx">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-phone"></i>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label">Type de compte</label>
+                    <div class="control">
+                        <label class="radio">
+                            <input type="radio" name="accountType" value="lecteur" checked>
+                            <span>Lecteur</span>
+                        </label>
+                        <label class="radio ml-4">
+                            <input type="radio" name="accountType" value="collectionneur">
+                            <span>Collectionneur</span>
+                        </label>
+                        <label class="radio ml-4">
+                            <input type="radio" name="accountType" value="libraire">
+                            <span>Libraire</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label">Genres préférés</label>
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" name="genres" value="aventure">
+                            <span>Aventure</span>
+                        </label>
+                    </div>
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" name="genres" value="fantasy">
+                            <span>Fantasy</span>
+                        </label>
+                    </div>
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" name="genres" value="humour">
+                            <span>Humour</span>
+                        </label>
+                    </div>
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" name="genres" value="manga">
+                            <span>Manga</span>
+                        </label>
+                    </div>
+                    <p class="help">Sélectionnez vos genres préférés (optionnel)</p>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <label class="checkbox">
+                            <input type="checkbox" id="terms" required>
+                            <span>J'accepte les <a href="#" style="color: var(--belgicomics-primary);">conditions d'utilisation</a></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <button type="submit" class="button button-belgicomics is-fullwidth is-medium">
+                        <span class="icon">
+                            <i class="fas fa-user-plus"></i>
+                        </span>
+                        <span>Créer mon compte</span>
+                    </button>
+                </div>
+                
+                <div class="field">
+                    <p class="has-text-centered">
+                        Déjà inscrit? 
+                        <a href="/login" style="color: var(--belgicomics-primary); font-weight: 600;">Connectez-vous</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+        
+        <div class="back-link">
+            <a href="/">
+                <span class="icon">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span>Retour à l'accueil</span>
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // Use local API if on localhost, otherwise use production
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:5002'  // Local development
+            : 'http://135.181.72.183:5002'; // Production server
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notifications = document.getElementById('notifications');
+            const notif = document.createElement('div');
+            notif.className = `notification is-${type}`;
+            notif.innerHTML = `
+                <button class="delete" onclick="this.parentElement.remove()"></button>
+                ${message}
+            `;
+            notifications.appendChild(notif);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => notif.remove(), 5000);
+        }
+        
+        // Handle registration
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Check terms
+            if (!document.getElementById('terms').checked) {
+                showNotification('Veuillez accepter les conditions d\'utilisation', 'warning');
+                return;
+            }
+            
+            // Get form data
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const accountType = document.querySelector('input[name="accountType"]:checked').value;
+            
+            // Get selected genres
+            const genres = [];
+            document.querySelectorAll('input[name="genres"]:checked').forEach(cb => {
+                genres.push(cb.value);
+            });
+            
+            const button = e.target.querySelector('button[type="submit"]');
+            button.disabled = true;
+            button.classList.add('is-loading');
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        firstName: firstName,
+                        lastName: lastName,
+                        phone: phone,
+                        workspace: 'belgicomics',
+                        accountType: accountType,
+                        genres: genres
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification('Inscription réussie! Redirection vers la connexion...', 'success');
+                    
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/login?email=' + encodeURIComponent(email);
+                    }, 2000);
+                } else {
+                    showNotification(data.error || 'Erreur lors de l\'inscription', 'danger');
+                }
+            } catch (error) {
+                showNotification('Erreur de connexion au serveur', 'danger');
+            } finally {
+                button.disabled = false;
+                button.classList.remove('is-loading');
+            }
+        });
+    </script>
+</body>
+</html>

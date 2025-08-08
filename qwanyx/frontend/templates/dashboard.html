@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - QWANYX Platform</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --qwanyx-primary: #6c5ce7;
+            --qwanyx-secondary: #00b894;
+            --qwanyx-dark: #2d3436;
+            --qwanyx-light: #dfe6e9;
+            --ios-blue: #007AFF;
+            --ios-red: #FF3B30;
+            --ios-green: #34C759;
+            --ios-orange: #FF9500;
+            --ios-purple: #AF52DE;
+            --ios-pink: #FF2D55;
+            --ios-yellow: #FFCC00;
+            --ios-teal: #5AC8FA;
+        }
+        
+        body {
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+            /* Subtle gradient background */
+            background: linear-gradient(135deg, #4169E1 0%, #5A7FDB 50%, #3A5FCD 100%);  /* Royal blue with subtle variations */
+        }
+        
+        .dashboard-container {
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+            gap: 20px;
+            padding: 20px 10px;
+            margin-top: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            .app-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 30px;
+            }
+        }
+        
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .app-item:active {
+            transform: scale(0.95);
+        }
+        
+        .app-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            margin-bottom: 8px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        @media (min-width: 768px) {
+            .app-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 36px;
+            }
+        }
+        
+        .app-icon.gradient-blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .app-icon.gradient-green {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .app-icon.gradient-orange {
+            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+        }
+        
+        .app-icon.gradient-purple {
+            background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%);
+        }
+        
+        .app-icon.gradient-pink {
+            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+        }
+        
+        .app-icon.gradient-cyan {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+        }
+        
+        .app-icon.gradient-red {
+            background: linear-gradient(135deg, #ED213A 0%, #93291E 100%);
+        }
+        
+        .app-icon.gradient-yellow {
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+        }
+        
+        .app-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #FF3B30;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            border: 2px solid #000;
+        }
+        
+        .app-title {
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.2;
+        }
+        
+        .dock {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .dock-item {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .dock-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .header-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-active {
+            background: #00b89420;
+            color: #00b894;
+        }
+        
+        .status-beta {
+            background: #fdcb6e20;
+            color: #f39c12;
+        }
+        
+        .status-coming {
+            background: #636e7220;
+            color: #636e72;
+        }
+        
+        .header-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--qwanyx-primary), var(--qwanyx-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--qwanyx-primary);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #636e72;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <span id="currentTime">00:00</span>
+        </div>
+        <div class="status-center">
+            <span id="currentDate">1 janvier</span>
+        </div>
+        <div class="status-right">
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+
+        <!-- Apps Grid -->
+        <div class="app-grid">
+            <!-- IN (GTD Inbox) - First icon top left -->
+            <div class="app-item" onclick="openApp('inbox-gtd')">
+                <div class="app-icon" style="background: linear-gradient(135deg, #FF6B6B, #FF8E53); font-size: 35px;">
+                    📥
+                </div>
+                <div class="app-title">IN</div>
+            </div>
+
+            <!-- Digital Human App -->
+            <div class="app-item" onclick="openApp('digital-human')">
+                <div class="app-icon gradient-blue" style="font-size: 40px;">
+                    🤖
+                    <span class="app-badge">3</span>
+                </div>
+                <div class="app-title">Digital Human</div>
+            </div>
+
+            <!-- Voice Studio -->
+            <div class="app-item" onclick="openApp('voice-studio')">
+                <div class="app-icon gradient-purple">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <div class="app-title">Voice Studio</div>
+            </div>
+
+            <!-- Chat Manager -->
+            <div class="app-item" onclick="openApp('chat-manager')">
+                <div class="app-icon gradient-green">
+                    <i class="fas fa-comments"></i>
+                    <span class="app-badge">12</span>
+                </div>
+                <div class="app-title">Chats</div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="app-item" onclick="openApp('analytics')">
+                <div class="app-icon gradient-orange">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="app-title">Analytics</div>
+            </div>
+
+            <!-- API Keys -->
+            <div class="app-item" onclick="openApp('api-keys')">
+                <div class="app-icon gradient-cyan">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="app-title">API Keys</div>
+            </div>
+
+            <!-- Billing -->
+            <div class="app-item" onclick="openApp('billing')">
+                <div class="app-icon gradient-pink">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="app-title">Billing</div>
+            </div>
+
+            <!-- Training Data -->
+            <div class="app-item" onclick="openApp('training')">
+                <div class="app-icon gradient-yellow">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="app-title">Training</div>
+            </div>
+
+            <!-- Marketplace -->
+            <div class="app-item" onclick="openApp('marketplace')">
+                <div class="app-icon gradient-red">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="app-title">Store</div>
+            </div>
+
+            <!-- Settings -->
+            <div class="app-item" onclick="openApp('settings')">
+                <div class="app-icon" style="background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="app-title">Settings</div>
+            </div>
+
+            <!-- Support -->
+            <div class="app-item" onclick="openApp('support')">
+                <div class="app-icon gradient-blue">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div class="app-title">Support</div>
+            </div>
+
+            <!-- Docs -->
+            <div class="app-item" onclick="openApp('docs')">
+                <div class="app-icon gradient-purple">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="app-title">Docs</div>
+            </div>
+
+            <!-- Templates -->
+            <div class="app-item" onclick="openApp('templates')">
+                <div class="app-icon gradient-green">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="app-title">Templates</div>
+            </div>
+        </div>
+        
+        <!-- Dock at bottom -->
+        <div class="dock">
+            <div class="dock-item gradient-blue" onclick="openApp('digital-human')">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="dock-item gradient-green" onclick="openApp('chat-manager')">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="dock-item gradient-orange" onclick="openApp('analytics')">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="dock-item" style="background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);" onclick="openApp('settings')">
+                <i class="fas fa-cog"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get workspace ID from config
+        const WORKSPACE_ID = 'qwanyx';
+        
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem(`${WORKSPACE_ID}_token`);
+            const user = localStorage.getItem(`${WORKSPACE_ID}_user`);
+            
+            if (!token || !user) {
+                window.location.href = '/';
+                return;
+            }
+            
+            // User data is available but we don't display it in the header anymore
+            const userData = JSON.parse(user);
+        }
+        
+        // Open app
+        function openApp(appId) {
+            // Special handling for inbox-gtd
+            if (appId === 'inbox-gtd') {
+                window.location.href = '/apps/inbox-gtd';
+                return;
+            }
+            
+            // For now, just show an alert for other apps
+            const appNames = {
+                'digital-human': 'Digital Human Studio',
+                'voice-studio': 'Voice Studio',
+                'chat-manager': 'Chat Manager',
+                'analytics': 'Analytics',
+                'api-keys': 'API & Intégrations',
+                'billing': 'Facturation',
+                'training': 'Training Center',
+                'marketplace': 'Marketplace'
+            };
+            
+            if (appId === 'marketplace') {
+                alert('Le Marketplace sera bientôt disponible !');
+                return;
+            }
+            
+            // Navigate to app page (to be implemented)
+            alert(`${appNames[appId] || appId} sera bientôt disponible !`);
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem(`${WORKSPACE_ID}_token`);
+            localStorage.removeItem(`${WORKSPACE_ID}_user`);
+            localStorage.removeItem(`${WORKSPACE_ID}_last_activity`);
+            window.location.href = '/';
+        }
+        
+        // Update time and date
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Time
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('currentTime').textContent = `${hours}:${minutes}`;
+            
+            // Date in French
+            const options = { day: 'numeric', month: 'long' };
+            const dateStr = now.toLocaleDateString('fr-FR', options);
+            document.getElementById('currentDate').textContent = dateStr;
+        }
+        
+        // Add a big clock widget
+        function addClockWidget() {
+            const clockHtml = `
+                <div class="app-item" onclick="openApp('clock')">
+                    <div class="app-icon" style="background: #000; border: 2px solid #333;">
+                        <div style="text-align: center;">
+                            <div id="bigTime" style="font-size: 16px; font-weight: 600; line-height: 1;">00:00</div>
+                            <div id="bigDate" style="font-size: 8px; opacity: 0.7; margin-top: 2px;">Date</div>
+                        </div>
+                    </div>
+                    <div class="app-title">Clock</div>
+                </div>
+            `;
+            
+            // Insert clock as first app
+            const grid = document.querySelector('.app-grid');
+            if (grid) {
+                grid.insertAdjacentHTML('afterbegin', clockHtml);
+            }
+        }
+        
+        function updateBigClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const bigTime = document.getElementById('bigTime');
+            const bigDate = document.getElementById('bigDate');
+            
+            if (bigTime) bigTime.textContent = `${hours}:${minutes}`;
+            if (bigDate) {
+                const options = { weekday: 'short', day: 'numeric', month: 'short' };
+                bigDate.textContent = now.toLocaleDateString('fr-FR', options);
+            }
+        }
+        
+        // Removed canvas animation - using CSS animation instead
+        /* class GradientAnimation {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                if (!this.ctx) {
+                    console.error('Failed to get canvas context!');
+                    return;
+                }
+                console.log('Canvas context obtained successfully');
+                this.time = 0;
+                this.currentPaletteIndex = 0;
+                this.nextPaletteIndex = 1;
+                this.paletteTransition = 0;
+                
+                // Beautiful color palettes (7 colors each)
+                this.palettes = [
+                    // Sunset
+                    ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#FFD93D', '#6BCB77'],
+                    // Ocean depths
+                    ['#1A535C', '#4ECDC4', '#F7FFF7', '#FF6B6B', '#5BC0EB', '#FDE74C', '#9BC53D'],
+                    // Northern lights
+                    ['#00B4D8', '#0077B6', '#03045E', '#90E0EF', '#00F5FF', '#CAF0F8', '#48CAE4'],
+                    // Cosmic purple
+                    ['#7209B7', '#560BAD', '#480CA8', '#3A0CA3', '#3F37C9', '#4361EE', '#4CC9F0'],
+                    // Forest mist
+                    ['#2D6A4F', '#40916C', '#52B788', '#74C69D', '#95D5B2', '#B7E4C7', '#D8F3DC'],
+                    // Warm desert
+                    ['#F72585', '#B5179E', '#7209B7', '#560BAD', '#480CA8', '#3A0CA3', '#3F37C9'],
+                    // Electric neon
+                    ['#FF006E', '#FB5607', '#FFBE0B', '#8338EC', '#3A86FF', '#06FFB4', '#FF4365'],
+                    // Deep space
+                    ['#03071E', '#370617', '#6A040F', '#9D0208', '#D00000', '#DC2F02', '#E85D04'],
+                    // Pastel dreams
+                    ['#FFB5E8', '#FF9CEE', '#FFCCF9', '#FCC2FF', '#F6A6FF', '#B28DFF', '#C5A3FF'],
+                    // Tropical paradise
+                    ['#007F5F', '#2B9348', '#55A630', '#80B918', '#AACC00', '#BFD200', '#D4D700'],
+                    // Ice crystal
+                    ['#03045E', '#023E8A', '#0077B6', '#0096C7', '#00B4D8', '#48CAE4', '#90E0EF'],
+                    // Golden hour
+                    ['#FF9A00', '#FF6D00', '#FF5400', '#FF4800', '#FF3C00', '#FF2400', '#FF0000'],
+                    // Mystical fog
+                    ['#8E9AAF', '#CBC0D3', '#EFD3D7', '#FEEAFA', '#DEE2FF', '#C8B6FF', '#BBB5ED'],
+                    // Volcanic
+                    ['#0D0221', '#0F084B', '#190E4F', '#241734', '#3E1F47', '#4D194D', '#6B2737'],
+                    // Spring bloom
+                    ['#F94144', '#F3722C', '#F8961E', '#F9844A', '#F9C74F', '#90BE6D', '#43AA8B'],
+                    // Deep ocean
+                    ['#03045E', '#0077B6', '#00B4D8', '#90E0EF', '#CAF0F8', '#ADE8F4', '#48CAE4'],
+                    // Cyberpunk
+                    ['#F72585', '#7209B7', '#3A0CA3', '#4361EE', '#4CC9F0', '#00D9FF', '#00F5FF'],
+                    // Autumn leaves
+                    ['#582F0E', '#7F4F24', '#936639', '#A68A64', '#B99C6B', '#C8B88A', '#E0C9A6'],
+                    // Galaxy swirl
+                    ['#000814', '#001D3D', '#003566', '#004080', '#005099', '#0066B3', '#0080CC'],
+                    // Coral reef
+                    ['#FF6B9D', '#FFC75F', '#F9F871', '#C7F66D', '#59D084', '#4ECDC4', '#3FB8AF']
+                ];
+                
+                // Initialize gradient points (7 points)
+                this.points = [];
+                for (let i = 0; i < 7; i++) {
+                    this.points.push({
+                        x: Math.random(),
+                        y: Math.random(),
+                        radius: 0.3 + Math.random() * 0.4,
+                        vx: (Math.random() - 0.5) * 0.0003,
+                        vy: (Math.random() - 0.5) * 0.0003,
+                        vRadius: (Math.random() - 0.5) * 0.0001
+                    });
+                }
+                
+                this.resize();
+                this.animate();
+                
+                // Schedule first palette change
+                this.scheduleNextPaletteChange();
+            }
+            
+            scheduleNextPaletteChange() {
+                // Random interval between 20 seconds and 2 minutes (120 seconds)
+                const randomDelay = 20000 + Math.random() * 100000; // 20s to 120s in milliseconds
+                
+                setTimeout(() => {
+                    // Pick a random palette (but not the current one)
+                    let newIndex;
+                    do {
+                        newIndex = Math.floor(Math.random() * this.palettes.length);
+                    } while (newIndex === this.currentPaletteIndex);
+                    
+                    this.nextPaletteIndex = newIndex;
+                    this.paletteTransition = 0;
+                    
+                    // Schedule next change
+                    this.scheduleNextPaletteChange();
+                }, randomDelay);
+            }
+            
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                console.log('Canvas resized to:', this.canvas.width, 'x', this.canvas.height);
+                
+                // If canvas has no size, try to set it
+                if (this.canvas.width === 0 || this.canvas.height === 0) {
+                    this.canvas.width = 1920;  // Default width
+                    this.canvas.height = 1080; // Default height
+                    console.warn('Canvas had no size, set to default 1920x1080');
+                }
+            }
+            
+            lerp(a, b, t) {
+                return a + (b - a) * t;
+            }
+            
+            // Ease-in-out function for smooth transitions
+            easeInOutCubic(t) {
+                return t < 0.5 
+                    ? 4 * t * t * t 
+                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            }
+            
+            lerpColor(color1, color2, t) {
+                const c1 = parseInt(color1.slice(1), 16);
+                const c2 = parseInt(color2.slice(1), 16);
+                
+                const r1 = (c1 >> 16) & 255;
+                const g1 = (c1 >> 8) & 255;
+                const b1 = c1 & 255;
+                
+                const r2 = (c2 >> 16) & 255;
+                const g2 = (c2 >> 8) & 255;
+                const b2 = c2 & 255;
+                
+                const r = Math.round(this.lerp(r1, r2, t));
+                const g = Math.round(this.lerp(g1, g2, t));
+                const b = Math.round(this.lerp(b1, b2, t));
+                
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+            
+            animate() {
+                // Debug: Log first frame
+                if (!this.animationStarted) {
+                    console.log('Animation started!', 'Canvas size:', this.canvas.width, 'x', this.canvas.height);
+                    console.log('Number of points:', this.points.length);
+                    this.animationStarted = true;
+                }
+                
+                this.time += 0.001;
+                
+                // Smooth palette transition with ease-in-out
+                if (this.paletteTransition < 1) {
+                    this.paletteTransition += 0.001; // Slower transition for smoother effect
+                    if (this.paletteTransition >= 1) {
+                        this.currentPaletteIndex = this.nextPaletteIndex;
+                        this.paletteTransition = 1;
+                    }
+                }
+                
+                // Clear canvas
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // TEST: Draw a simple colored rectangle to verify canvas works
+                if (this.time < 0.01) {
+                    this.ctx.fillStyle = '#FF0000';
+                    this.ctx.fillRect(100, 100, 200, 200);
+                    console.log('Drew test rectangle');
+                }
+                
+                // Update and draw each point
+                this.points.forEach((point, i) => {
+                    // Update position with smooth movement
+                    point.x += point.vx;
+                    point.y += point.vy;
+                    point.radius += point.vRadius;
+                    
+                    // Bounce off edges softly
+                    if (point.x < 0 || point.x > 1) {
+                        point.vx *= -0.8;
+                        point.x = Math.max(0, Math.min(1, point.x));
+                    }
+                    if (point.y < 0 || point.y > 1) {
+                        point.vy *= -0.8;
+                        point.y = Math.max(0, Math.min(1, point.y));
+                    }
+                    
+                    // Keep radius in bounds
+                    if (point.radius < 0.2 || point.radius > 0.8) {
+                        point.vRadius *= -1;
+                        point.radius = Math.max(0.2, Math.min(0.8, point.radius));
+                    }
+                    
+                    // Add slight random drift
+                    point.vx += (Math.random() - 0.5) * 0.00001;
+                    point.vy += (Math.random() - 0.5) * 0.00001;
+                    
+                    // Get color from current/next palette with ease-in-out transition
+                    const currentColor = this.palettes[this.currentPaletteIndex][i];
+                    const nextColor = this.palettes[this.nextPaletteIndex][i];
+                    const easedTransition = this.easeInOutCubic(this.paletteTransition);
+                    const color = this.lerpColor(currentColor, nextColor, easedTransition);
+                    
+                    // Create radial gradient for this point
+                    const gradient = this.ctx.createRadialGradient(
+                        point.x * this.canvas.width,
+                        point.y * this.canvas.height,
+                        0,
+                        point.x * this.canvas.width,
+                        point.y * this.canvas.height,
+                        point.radius * Math.min(this.canvas.width, this.canvas.height)
+                    );
+                    
+                    gradient.addColorStop(0, color + 'FF'); // Full opacity at center
+                    gradient.addColorStop(0.3, color + '80'); // 50% opacity 
+                    gradient.addColorStop(0.6, color + '40'); // 25% opacity
+                    gradient.addColorStop(1, 'transparent'); // Transparent at edge
+                    
+                    // Draw the gradient
+                    this.ctx.globalCompositeOperation = 'screen'; // Use screen blending for better visibility
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    this.ctx.globalCompositeOperation = 'source-over'; // Reset to default
+                });
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        } */
+        
+        // Function to set random animation duration
+        function setRandomGradientDuration() {
+            // Fixed 2 seconds duration - TEST
+            const duration = 2;  // 2 seconds - should be very visible
+            const randomDuration = duration;
+            
+            // Apply the new duration to the body animation
+            document.body.style.animationDuration = `${randomDuration}s`;
+            
+            console.log(`Gradient animation duration set to ${(randomDuration/60).toFixed(1)} minutes`);
+            
+            // Schedule next duration change when current animation completes
+            setTimeout(() => {
+                setRandomGradientDuration();
+            }, randomDuration * 1000);
+        }
+        
+        // Check auth on load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            addClockWidget();
+            updateDateTime();
+            updateBigClock();
+            
+            // DISABLED for testing
+            // setRandomGradientDuration();
+            
+            // Update every second
+            setInterval(() => {
+                updateDateTime();
+                updateBigClock();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

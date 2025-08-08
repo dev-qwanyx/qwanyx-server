@@ -1,0 +1,288 @@
+{% extends 'mon-autodin/base.html' %}
+
+{% block title %}Véhicules d'occasion - Mon Autodin{% endblock %}
+
+{% block content %}
+<div class="box">
+    <h1 class="title is-3">
+        <span class="icon">
+            <i class="fas fa-car"></i>
+        </span>
+        <span>Véhicules d'occasion</span>
+    </h1>
+    
+    <p class="subtitle">Gérez vos annonces de véhicules complets</p>
+    
+    <!-- Quick Actions -->
+    <div class="buttons">
+        <a href="/mon-autodin/nouvelle-annonce?type=vehicule" class="button button-autodin-dark">
+            <span class="icon">
+                <i class="fas fa-plus"></i>
+            </span>
+            <span>Ajouter un véhicule</span>
+        </a>
+        <button class="button is-light">
+            <span class="icon">
+                <i class="fas fa-filter"></i>
+            </span>
+            <span>Filtrer</span>
+        </button>
+    </div>
+    
+    <!-- Stats Summary -->
+    <nav class="level">
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Total véhicules</p>
+                <p class="title">3</p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">En ligne</p>
+                <p class="title has-text-success">2</p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Vues totales</p>
+                <p class="title">847</p>
+            </div>
+        </div>
+        <div class="level-item has-text-centered">
+            <div>
+                <p class="heading">Messages reçus</p>
+                <p class="title">12</p>
+            </div>
+        </div>
+    </nav>
+    
+    <hr>
+    
+    <!-- Vehicle Listings -->
+    <div class="columns is-multiline">
+        <!-- Vehicle 1 -->
+        <div class="column is-12">
+            <div class="box">
+                <article class="media">
+                    <figure class="media-left">
+                        <p class="image is-128x128">
+                            <img src="https://via.placeholder.com/256x256" alt="BMW X3">
+                        </p>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <div class="level">
+                                <div class="level-left">
+                                    <div>
+                                        <p class="title is-5">BMW X3 2.0d xDrive</p>
+                                        <p class="subtitle is-6">
+                                            <span class="tag is-success">En ligne</span>
+                                            <span class="has-text-grey ml-2">Publié il y a 3 jours</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="level-right">
+                                    <p class="title is-4 has-text-primary">24 500 €</p>
+                                </div>
+                            </div>
+                            <div class="columns is-mobile">
+                                <div class="column">
+                                    <p><strong>Année:</strong> 2018</p>
+                                    <p><strong>Kilométrage:</strong> 85 000 km</p>
+                                </div>
+                                <div class="column">
+                                    <p><strong>Carburant:</strong> Diesel</p>
+                                    <p><strong>Boîte:</strong> Automatique</p>
+                                </div>
+                                <div class="column">
+                                    <p><strong>Vues:</strong> 342</p>
+                                    <p><strong>Favoris:</strong> 18</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-right">
+                        <div class="buttons are-small">
+                            <button class="button is-info">
+                                <span class="icon">
+                                    <i class="fas fa-edit"></i>
+                                </span>
+                            </button>
+                            <button class="button is-warning">
+                                <span class="icon">
+                                    <i class="fas fa-pause"></i>
+                                </span>
+                            </button>
+                            <button class="button is-danger">
+                                <span class="icon">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+        
+        <!-- Vehicle 2 -->
+        <div class="column is-12">
+            <div class="box">
+                <article class="media">
+                    <figure class="media-left">
+                        <p class="image is-128x128">
+                            <img src="https://via.placeholder.com/256x256" alt="Mercedes C220">
+                        </p>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <div class="level">
+                                <div class="level-left">
+                                    <div>
+                                        <p class="title is-5">Mercedes-Benz C220 CDI</p>
+                                        <p class="subtitle is-6">
+                                            <span class="tag is-success">En ligne</span>
+                                            <span class="has-text-grey ml-2">Publié il y a 1 semaine</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="level-right">
+                                    <p class="title is-4 has-text-primary">19 900 €</p>
+                                </div>
+                            </div>
+                            <div class="columns is-mobile">
+                                <div class="column">
+                                    <p><strong>Année:</strong> 2017</p>
+                                    <p><strong>Kilométrage:</strong> 112 000 km</p>
+                                </div>
+                                <div class="column">
+                                    <p><strong>Carburant:</strong> Diesel</p>
+                                    <p><strong>Boîte:</strong> Manuelle</p>
+                                </div>
+                                <div class="column">
+                                    <p><strong>Vues:</strong> 456</p>
+                                    <p><strong>Favoris:</strong> 23</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-right">
+                        <div class="buttons are-small">
+                            <button class="button is-info">
+                                <span class="icon">
+                                    <i class="fas fa-edit"></i>
+                                </span>
+                            </button>
+                            <button class="button is-warning">
+                                <span class="icon">
+                                    <i class="fas fa-pause"></i>
+                                </span>
+                            </button>
+                            <button class="button is-danger">
+                                <span class="icon">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+        
+        <!-- Vehicle 3 (Paused) -->
+        <div class="column is-12">
+            <div class="box has-background-light">
+                <article class="media">
+                    <figure class="media-left">
+                        <p class="image is-128x128" style="opacity: 0.6;">
+                            <img src="https://via.placeholder.com/256x256" alt="Audi A4">
+                        </p>
+                    </figure>
+                    <div class="media-content">
+                        <div class="content">
+                            <div class="level">
+                                <div class="level-left">
+                                    <div>
+                                        <p class="title is-5 has-text-grey">Audi A4 2.0 TDI</p>
+                                        <p class="subtitle is-6">
+                                            <span class="tag is-warning">En pause</span>
+                                            <span class="has-text-grey ml-2">Publié il y a 2 semaines</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="level-right">
+                                    <p class="title is-4 has-text-grey">15 500 €</p>
+                                </div>
+                            </div>
+                            <div class="columns is-mobile has-text-grey">
+                                <div class="column">
+                                    <p><strong>Année:</strong> 2016</p>
+                                    <p><strong>Kilométrage:</strong> 145 000 km</p>
+                                </div>
+                                <div class="column">
+                                    <p><strong>Carburant:</strong> Diesel</p>
+                                    <p><strong>Boîte:</strong> Automatique</p>
+                                </div>
+                                <div class="column">
+                                    <p><strong>Vues:</strong> 49</p>
+                                    <p><strong>Favoris:</strong> 2</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="media-right">
+                        <div class="buttons are-small">
+                            <button class="button is-success">
+                                <span class="icon">
+                                    <i class="fas fa-play"></i>
+                                </span>
+                            </button>
+                            <button class="button is-info">
+                                <span class="icon">
+                                    <i class="fas fa-edit"></i>
+                                </span>
+                            </button>
+                            <button class="button is-danger">
+                                <span class="icon">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Empty State (when no vehicles) -->
+    <div class="has-text-centered py-6" style="display: none;">
+        <span class="icon is-large has-text-grey-light">
+            <i class="fas fa-car fa-3x"></i>
+        </span>
+        <p class="title is-5 has-text-grey mt-4">Aucun véhicule en vente</p>
+        <p class="subtitle has-text-grey">Commencez par ajouter votre premier véhicule</p>
+        <a href="/mon-autodin/nouvelle-annonce?type=vehicule" class="button button-autodin-dark mt-4">
+            <span class="icon">
+                <i class="fas fa-plus"></i>
+            </span>
+            <span>Ajouter un véhicule</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// Handle action buttons
+document.querySelectorAll('.button').forEach(button => {
+    if (button.querySelector('.fa-edit, .fa-pause, .fa-play, .fa-trash')) {
+        button.addEventListener('click', function() {
+            alert('Fonctionnalité en cours de développement...');
+        });
+    }
+});
+
+// Filter button
+document.querySelector('.fa-filter').closest('.button').addEventListener('click', function() {
+    alert('Les filtres seront bientôt disponibles');
+});
+</script>
+{% endblock %}
