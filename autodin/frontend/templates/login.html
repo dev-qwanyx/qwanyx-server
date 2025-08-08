@@ -40,7 +40,7 @@
         
         .login-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             padding: 20px;
         }
         
@@ -115,7 +115,7 @@
             opacity: 0.6;
         }
         
-        .loader {
+        .loading-spinner {
             display: none;
             text-align: center;
             margin: 20px 0;
@@ -193,7 +193,7 @@
                     </button>
                 </div>
                 
-                <div class="loader">
+                <div class="loading-spinner">
                     <span class="icon">
                         <i class="fas fa-spinner fa-spin"></i>
                     </span>
@@ -211,10 +211,15 @@
                 
                 <div class="field">
                     <label class="label">Code de vérification</label>
-                    <div class="control">
-                        <input class="input code-input" type="text" id="code" 
-                               placeholder="000000" maxlength="6" pattern="[0-9]{6}" required>
+                    <div class="code-inputs" style="display: flex; justify-content: center; gap: 12px; margin: 25px 0;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 55px; height: 55px; text-align: center; font-size: 26px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 55px; height: 55px; text-align: center; font-size: 26px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 55px; height: 55px; text-align: center; font-size: 26px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 55px; height: 55px; text-align: center; font-size: 26px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 55px; height: 55px; text-align: center; font-size: 26px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 55px; height: 55px; text-align: center; font-size: 26px; font-weight: bold;">
                     </div>
+                    <input type="hidden" id="code" required>
                     <p class="help">Entrez le code à 6 chiffres reçu par email</p>
                 </div>
                 
@@ -225,12 +230,24 @@
                 </div>
                 
                 <div class="field">
-                    <button type="button" class="button is-text is-fullwidth" onclick="resetForm()">
-                        Utiliser un autre email
+                    <button type="button" class="button is-text is-fullwidth" onclick="resendCode()">
+                        <span class="icon">
+                            <i class="fas fa-redo"></i>
+                        </span>
+                        <span>Renvoyer le code</span>
                     </button>
                 </div>
                 
-                <div class="loader">
+                <div class="field">
+                    <button type="button" class="button is-text is-fullwidth" onclick="resetForm()">
+                        <span class="icon">
+                            <i class="fas fa-arrow-left"></i>
+                        </span>
+                        <span>Utiliser un autre email</span>
+                    </button>
+                </div>
+                
+                <div class="loading-spinner">
                     <span class="icon">
                         <i class="fas fa-spinner fa-spin"></i>
                     </span>
@@ -250,7 +267,8 @@
     </div>
     
     <script>
-        const API_URL = 'http://135.181.72.183';
+        // Use local API if on localhost, otherwise use production
+        const API_URL = 'http://135.181.72.183:5002'; // Toujours utiliser l'API distante
         let userEmail = '';
         
         // Show notification
@@ -274,7 +292,50 @@
             document.getElementById('codeForm').style.display = 'none';
             document.getElementById('email').value = '';
             document.getElementById('code').value = '';
-            document.querySelectorAll('.loader').forEach(l => l.style.display = 'none');
+            // Clear all code digit inputs
+            document.querySelectorAll('.code-digit').forEach(input => input.value = '');
+            document.querySelectorAll('.loading-spinner').forEach(l => l.style.display = 'none');
+        }
+        
+        // Resend verification code
+        async function resendCode() {
+            if (!userEmail) {
+                showNotification('Email non trouvé. Veuillez recommencer.', 'warning');
+                resetForm();
+                return;
+            }
+            
+            // Clear existing code inputs
+            document.querySelectorAll('.code-digit').forEach(input => input.value = '');
+            document.getElementById('code').value = '';
+            
+            showNotification('Renvoi du code...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/request-code`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        workspace: 'autodin-be',
+                        site: 'autodin-be'  // Both for API compatibility
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification('Nouveau code envoyé! Vérifiez votre email.', 'success');
+                    // Focus on first code input
+                    document.querySelector('.code-digit').focus();
+                } else {
+                    showNotification(data.error || 'Erreur lors du renvoi', 'danger');
+                }
+            } catch (error) {
+                showNotification('Erreur de connexion au serveur', 'danger');
+            }
         }
         
         // Handle email submission
@@ -282,7 +343,7 @@
             e.preventDefault();
             
             const email = document.getElementById('email').value;
-            const loader = e.target.querySelector('.loader');
+            const loader = e.target.querySelector('.loading-spinner');
             const button = e.target.querySelector('button[type="submit"]');
             
             // Show loader
@@ -297,7 +358,8 @@
                     },
                     body: JSON.stringify({
                         email: email,
-                        workspace: 'autodin-be'  // Updated to workspace
+                        workspace: 'autodin-be',
+                        site: 'autodin-be'  // Both for API compatibility
                     })
                 });
                 
@@ -313,8 +375,8 @@
                     
                     showNotification('Code envoyé! Vérifiez votre email.', 'success');
                     
-                    // Focus on code input
-                    document.getElementById('code').focus();
+                    // Focus on first code input box
+                    document.querySelector('.code-digit').focus();
                 } else {
                     // Check if it's a "user not found" error
                     if (response.status === 404 && data.error.includes('Aucun compte')) {
@@ -339,7 +401,7 @@
             e.preventDefault();
             
             const code = document.getElementById('code').value;
-            const loader = e.target.querySelector('.loader');
+            const loader = e.target.querySelector('.loading-spinner');
             const button = e.target.querySelector('button[type="submit"]');
             
             // Show loader
@@ -355,16 +417,18 @@
                     body: JSON.stringify({
                         email: userEmail,
                         code: code,
-                        workspace: 'autodin-be'  // Updated to workspace
+                        workspace: 'autodin-be',
+                        site: 'autodin-be'  // Both for API compatibility
                     })
                 });
                 
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Store token
+                    // Store token and user data
                     localStorage.setItem('autodin_token', data.access_token);
                     localStorage.setItem('autodin_user', JSON.stringify(data.user));
+                    localStorage.setItem('autodin_last_activity', Date.now().toString());
                     
                     showNotification('Connexion réussie!', 'success');
                     
@@ -393,10 +457,68 @@
             }
         });
         
-        // Format code input (numbers only)
-        document.getElementById('code').addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        });
+        // Handle code input boxes
+        function setupCodeInputs() {
+            const codeInputs = document.querySelectorAll('.code-digit');
+            const hiddenInput = document.getElementById('code');
+            
+            codeInputs.forEach((input, index) => {
+                // Handle input
+                input.addEventListener('input', (e) => {
+                    // Only allow digits
+                    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                    
+                    // Move to next input if value entered
+                    if (e.target.value && index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+                    
+                    // Update hidden input with full code
+                    let fullCode = '';
+                    codeInputs.forEach(inp => fullCode += inp.value);
+                    hiddenInput.value = fullCode;
+                    
+                    // Auto-submit if all 6 digits entered
+                    if (fullCode.length === 6) {
+                        document.getElementById('codeForm').dispatchEvent(new Event('submit'));
+                    }
+                });
+                
+                // Handle backspace
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+                
+                // Handle paste
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+                    
+                    for (let i = 0; i < pastedData.length && i < codeInputs.length; i++) {
+                        codeInputs[i].value = pastedData[i];
+                    }
+                    
+                    // Update hidden input
+                    let fullCode = '';
+                    codeInputs.forEach(inp => fullCode += inp.value);
+                    hiddenInput.value = fullCode;
+                    
+                    // Focus last filled input or next empty
+                    const lastFilledIndex = Math.min(pastedData.length - 1, codeInputs.length - 1);
+                    codeInputs[lastFilledIndex].focus();
+                    
+                    // Auto-submit if all 6 digits pasted
+                    if (fullCode.length === 6) {
+                        document.getElementById('codeForm').dispatchEvent(new Event('submit'));
+                    }
+                });
+            });
+        }
+        
+        // Initialize code inputs when DOM is ready
+        document.addEventListener('DOMContentLoaded', setupCodeInputs);
     </script>
 </body>
 </html>

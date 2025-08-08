@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Double Image Flip - Belgicomics</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .demo-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .title-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .title-box h1 {
+            color: #E74C3C;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .title-box p {
+            color: #2C3E50;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.9);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .info-box code {
+            background: #2C3E50;
+            color: #F39C12;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="title-box">
+            <h1>
+                <i class="fas fa-images"></i> Double Image Flip
+            </h1>
+            <p>Affichage aléatoire style BD avec effet de retournement</p>
+        </div>
+        
+        <!-- The double image component will be inserted here -->
+        <div id="double-image-flip" data-images="/static/temporary-images.txt"></div>
+        
+        <div class="controls">
+            <h2 class="subtitle is-4">Contrôles</h2>
+            <div class="buttons">
+                <button class="button is-success" onclick="startFlip()">
+                    <span class="icon"><i class="fas fa-play"></i></span>
+                    <span>Démarrer</span>
+                </button>
+                <button class="button is-danger" onclick="stopFlip()">
+                    <span class="icon"><i class="fas fa-stop"></i></span>
+                    <span>Arrêter</span>
+                </button>
+                <button class="button is-info" onclick="resetFlip()">
+                    <span class="icon"><i class="fas fa-redo"></i></span>
+                    <span>Réinitialiser</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3 class="subtitle is-5">Comment ça marche ?</h3>
+            <ul>
+                <li>✓ Les images changent aléatoirement toutes les <code>1-5 secondes</code></li>
+                <li>✓ Le côté (gauche ou droite) est choisi aléatoirement</li>
+                <li>✓ Chaque image n'apparaît qu'une fois par cycle</li>
+                <li>✓ Effet de retournement de carte style BD</li>
+                <li>✓ Format carré 1:1 avec <code>object-fit: contain</code></li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Load image URLs from file
+        let flipComponent = null;
+        
+        fetch('/static/temporary-images.txt')
+            .then(response => response.text())
+            .then(text => {
+                const imageUrls = text.trim().split('\n').filter(url => url.trim());
+                console.log(`Loaded ${imageUrls.length} images`);
+                
+                // Initialize the component
+                flipComponent = new DoubleImageFlip('double-image-flip', imageUrls);
+            })
+            .catch(error => {
+                console.error('Error loading images:', error);
+                // Fallback to embedded list
+                const imageUrls = `https://qwanyx-storage-images.s3.eu-central-1.amazonaws.com/LAUDY/LAUDY/LAUDY-M1.jpg
+https://qwanyx-storage-images.s3.eu-central-1.amazonaws.com/IMAGES/upload/null/node_67ebe8db6cb97f494e4aa33a/Abdel-A.jpg
+https://qwanyx-storage-images.s3.eu-central-1.amazonaws.com/IMAGES/upload/null/node_67cdb07a0ad953656e0079ec/Mystère A.jpg
+https://qwanyx-storage-images.s3.eu-central-1.amazonaws.com/IMAGES/upload/null/node_679b50ec6cb67f03b497c7d3/B.jpeg
+https://qwanyx-storage-images.s3.eu-central-1.amazonaws.com/IMAGES/upload/null/node_670e3cdbe77b2a08c3080a21/FranquinA.jpg`.split('\n');
+                flipComponent = new DoubleImageFlip('double-image-flip', imageUrls);
+            });
+        
+        function startFlip() {
+            if (flipComponent) flipComponent.start();
+        }
+        
+        function stopFlip() {
+            if (flipComponent) flipComponent.stop();
+        }
+        
+        function resetFlip() {
+            if (flipComponent) {
+                flipComponent.destroy();
+                fetch('/static/temporary-images.txt')
+                    .then(response => response.text())
+                    .then(text => {
+                        const imageUrls = text.trim().split('\n').filter(url => url.trim());
+                        flipComponent = new DoubleImageFlip('double-image-flip', imageUrls);
+                    });
+            }
+        }
+    </script>
+    
+    <!-- Load the component script -->
+    <script src="{{ url_for('static', filename='js/double-image-flip.js') }}"></script>
+</body>
+</html>

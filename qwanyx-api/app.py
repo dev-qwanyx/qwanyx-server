@@ -161,14 +161,14 @@ def request_code():
     try:
         data = request.get_json()
         email = data.get('email')
-        site_code = data.get('site')  # Which site is requesting
+        site_code = data.get('site') or data.get('workspace')  # Accept both site and workspace
         
         if not email:
             return jsonify({'error': 'Email required'}), 400
         
         # Get site collections
         if not site_code:
-            return jsonify({'error': 'Site code required'}), 400
+            return jsonify({'error': 'Site or workspace required'}), 400
             
         collections = get_site_collections(site_code)
         
@@ -285,10 +285,15 @@ def register():
         email = data.get('email')
         password = data.get('password')
         name = data.get('name')
+        workspace = data.get('workspace', 'default')
         
         # Validate
         if not email or not password:
             return jsonify({'error': 'Email and password required'}), 400
+        
+        # Get workspace collections
+        collections = get_site_collections(workspace)
+        users = collections['users']
         
         # Check if user exists
         if users.find_one({'email': email}):
@@ -332,6 +337,12 @@ def login():
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
+        workspace = data.get('workspace', 'default')
+        
+        # Get workspace collections
+        collections = get_site_collections(workspace)
+        users = collections['users']
+        sessions = collections['sessions']
         
         # Find user
         user = users.find_one({'email': email})

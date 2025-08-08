@@ -97,7 +97,7 @@
             margin-bottom: 20px;
         }
         
-        .loader {
+        .loading-text {
             display: none;
             text-align: center;
             margin: 20px 0;
@@ -325,11 +325,54 @@
                     </p>
                 </div>
                 
-                <div class="loader">
-                    <span class="icon">
-                        <i class="fas fa-spinner fa-spin"></i>
-                    </span>
-                    <span>Création en cours...</span>
+                <div class="loading-text" style="color: var(--autodin-orange); font-weight: bold;">
+                    Chargement...
+                </div>
+            </form>
+            
+            <!-- Step 2: Code Verification Form -->
+            <form id="codeForm" style="display: none;">
+                <div class="field">
+                    <h3 class="title is-4 has-text-centered mb-4">Vérification du code</h3>
+                    <p class="has-text-centered mb-4">
+                        Un code a été envoyé à <strong id="emailDisplay"></strong>
+                    </p>
+                </div>
+                
+                <div class="field">
+                    <label class="label">Code de vérification</label>
+                    <div class="code-inputs" style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;">
+                        <input type="text" class="input code-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;">
+                    </div>
+                    <input type="hidden" id="verificationCode" required>
+                    <p class="help has-text-centered">Entrez le code à 6 chiffres reçu par email</p>
+                </div>
+                
+                <div class="field">
+                    <button type="submit" class="button button-autodin-dark is-fullwidth">
+                        <span class="icon">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span>Vérifier et créer le compte</span>
+                    </button>
+                </div>
+                
+                <div class="field has-text-centered">
+                    <button type="button" class="button is-text" onclick="backToRegister()">
+                        <span class="icon">
+                            <i class="fas fa-arrow-left"></i>
+                        </span>
+                        <span>Modifier les informations</span>
+                    </button>
+                </div>
+                
+                <div class="loading-text" style="color: var(--autodin-orange); font-weight: bold;">
+                    Chargement...
                 </div>
             </form>
         </div>
@@ -345,7 +388,8 @@
     </div>
     
     <script>
-        const API_URL = 'http://135.181.72.183';
+        // Use local API if on localhost, otherwise use production
+        const API_URL = 'http://135.181.72.183:5002'; // Toujours utiliser l'API distante
         
         // Show notification
         function showNotification(message, type = 'info') {
@@ -384,7 +428,7 @@
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const loader = e.target.querySelector('.loader');
+            const loader = e.target.querySelector('.loading-text');
             const button = e.target.querySelector('button[type="submit"]');
             
             // Collect form data
@@ -396,8 +440,9 @@
                 phone: document.getElementById('phone').value,
                 accountType: accountType,
                 workspace: 'autodin-be',
-                site: 'autodin-be'
+                site: 'autodin-be'  // Some versions of API expect 'site' instead of 'workspace'
             };
+            
             
             // Add professional fields if needed
             if (accountType === 'professionnel') {
@@ -422,6 +467,7 @@
             button.disabled = true;
             
             try {
+                // Always use request-code endpoint for proper flow
                 const response = await fetch(`${API_URL}/auth/request-code`, {
                     method: 'POST',
                     headers: {
@@ -434,15 +480,18 @@
                 console.log('Response:', response.status, data);
                 
                 if (response.ok) {
-                    showNotification('Compte créé avec succès! Un code de connexion vous a été envoyé.', 'success');
+                    showNotification('Code envoyé! Vérifiez votre email.', 'success');
                     
-                    // Check if there's a redirect URL stored
-                    const redirectUrl = localStorage.getItem('autodin_redirect_after_auth');
+                    // Store registration data for later
+                    sessionStorage.setItem('pendingRegistration', JSON.stringify(formData));
                     
-                    // Redirect to login page after 2 seconds
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 2000);
+                    // Show code verification form
+                    document.getElementById('registerForm').style.display = 'none';
+                    document.getElementById('codeForm').style.display = 'block';
+                    document.getElementById('emailDisplay').textContent = formData.email;
+                    
+                    // Focus on first code input box
+                    document.querySelector('.code-digit').focus();
                 } else {
                     showNotification(data.error || 'Erreur lors de l\'inscription', 'danger');
                 }
@@ -454,9 +503,139 @@
             }
         });
         
+        // Handle code verification
+        document.getElementById('codeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const loader = e.target.querySelector('.loading-text');
+            const button = e.target.querySelector('button[type="submit"]');
+            const code = document.getElementById('verificationCode').value;
+            
+            // Get stored registration data
+            const registrationData = JSON.parse(sessionStorage.getItem('pendingRegistration'));
+            if (!registrationData) {
+                showNotification('Session expirée. Veuillez recommencer.', 'warning');
+                backToRegister();
+                return;
+            }
+            
+            loader.style.display = 'block';
+            button.disabled = true;
+            
+            try {
+                // First verify the code
+                const verifyResponse = await fetch(`${API_URL}/auth/verify-code`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: registrationData.email,
+                        code: code,
+                        workspace: registrationData.workspace,
+                        site: registrationData.site || registrationData.workspace  // Include site for API compatibility
+                    })
+                });
+                
+                const verifyData = await verifyResponse.json();
+                
+                if (verifyResponse.ok) {
+                    showNotification('Compte créé avec succès! Vous êtes maintenant connecté.', 'success');
+                    
+                    // Store token if provided
+                    if (verifyData.access_token) {
+                        localStorage.setItem('autodin_token', verifyData.access_token);
+                        localStorage.setItem('autodin_user', JSON.stringify(verifyData.user || {email: registrationData.email}));
+                    }
+                    
+                    // Clear pending registration
+                    sessionStorage.removeItem('pendingRegistration');
+                    
+                    // Redirect to home page (user is already logged in!)
+                    setTimeout(() => {
+                        window.location.href = '/';  // Go to home page as logged-in user
+                    }, 1500);
+                } else {
+                    showNotification(verifyData.error || 'Code invalide', 'danger');
+                }
+            } catch (error) {
+                showNotification('Erreur de connexion au serveur', 'danger');
+            } finally {
+                loader.style.display = 'none';
+                button.disabled = false;
+            }
+        });
+        
+        // Back to registration form
+        function backToRegister() {
+            document.getElementById('codeForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+        
+        // Handle code input boxes
+        function setupCodeInputs() {
+            const codeInputs = document.querySelectorAll('.code-digit');
+            const hiddenInput = document.getElementById('verificationCode');
+            
+            codeInputs.forEach((input, index) => {
+                // Handle input
+                input.addEventListener('input', (e) => {
+                    // Only allow digits
+                    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                    
+                    // Move to next input if value entered
+                    if (e.target.value && index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+                    
+                    // Update hidden input with full code
+                    let fullCode = '';
+                    codeInputs.forEach(inp => fullCode += inp.value);
+                    hiddenInput.value = fullCode;
+                    
+                    // Auto-submit if all 6 digits entered
+                    if (fullCode.length === 6) {
+                        document.getElementById('codeForm').dispatchEvent(new Event('submit'));
+                    }
+                });
+                
+                // Handle backspace
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+                
+                // Handle paste
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+                    
+                    for (let i = 0; i < pastedData.length && i < codeInputs.length; i++) {
+                        codeInputs[i].value = pastedData[i];
+                    }
+                    
+                    // Update hidden input
+                    let fullCode = '';
+                    codeInputs.forEach(inp => fullCode += inp.value);
+                    hiddenInput.value = fullCode;
+                    
+                    // Focus last filled input or next empty
+                    const lastFilledIndex = Math.min(pastedData.length - 1, codeInputs.length - 1);
+                    codeInputs[lastFilledIndex].focus();
+                    
+                    // Auto-submit if all 6 digits pasted
+                    if (fullCode.length === 6) {
+                        document.getElementById('codeForm').dispatchEvent(new Event('submit'));
+                    }
+                });
+            });
+        }
+        
         // Initialize on load
         window.addEventListener('DOMContentLoaded', () => {
             toggleProFields(); // Professional is checked by default
+            setupCodeInputs(); // Setup code input handlers
         });
     </script>
 </body>
