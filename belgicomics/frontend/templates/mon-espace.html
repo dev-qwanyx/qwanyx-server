@@ -359,8 +359,8 @@
     <script>
         // Check if user is logged in
         function checkAuth() {
-            const token = localStorage.getItem('autodin_token');
-            const user = localStorage.getItem('autodin_user');
+            const token = localStorage.getItem('belgicomics_token');
+            const user = localStorage.getItem('belgicomics_user');
             
             if (!token || !user) {
                 window.location.href = '/login';
@@ -373,9 +373,9 @@
         
         // Logout function
         function logout() {
-            localStorage.removeItem('autodin_token');
-            localStorage.removeItem('autodin_user');
-            localStorage.removeItem('autodin_last_activity');
+            localStorage.removeItem('belgicomics_token');
+            localStorage.removeItem('belgicomics_user');
+            localStorage.removeItem('belgicomics_last_activity');
             window.location.href = '/';
         }
         

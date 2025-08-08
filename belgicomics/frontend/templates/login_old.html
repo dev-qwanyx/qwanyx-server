@@ -363,18 +363,18 @@
                 
                 if (response.ok) {
                     // Store token
-                    localStorage.setItem('autodin_token', data.access_token);
-                    localStorage.setItem('autodin_user', JSON.stringify(data.user));
+                    localStorage.setItem('belgicomics_token', data.access_token);
+                    localStorage.setItem('belgicomics_user', JSON.stringify(data.user));
                     
                     showNotification('Connexion réussie!', 'success');
                     
                     // Check for redirect URL
-                    const redirectUrl = localStorage.getItem('autodin_redirect_after_auth');
+                    const redirectUrl = localStorage.getItem('belgicomics_redirect_after_auth');
                     
                     // Redirect after 1 second
                     setTimeout(() => {
                         if (redirectUrl) {
-                            localStorage.removeItem('autodin_redirect_after_auth');
+                            localStorage.removeItem('belgicomics_redirect_after_auth');
                             window.location.href = redirectUrl;
                         } else {
                             window.location.href = '/';

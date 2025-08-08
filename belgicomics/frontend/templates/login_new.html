@@ -415,8 +415,8 @@
                 
                 if (response.ok) {
                     // Store the token
-                    localStorage.setItem('token', data.access_token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('belgicomics_token', data.access_token);
+                    localStorage.setItem('belgicomics_user', JSON.stringify(data.user));
                     
                     showNotification('Connexion réussie! Redirection...', 'success');
                     
