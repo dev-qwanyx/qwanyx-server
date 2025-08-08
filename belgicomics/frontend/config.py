@@ -10,16 +10,17 @@ API_BASE_URL = os.environ.get('API_BASE_URL', 'http://localhost:5002')
 
 # Site Configuration
 SITE_NAME = 'Belgicomics'
-SITE_TAGLINE = 'La plus grande librairie de BD en ligne de Belgique'
-SITE_DESCRIPTION = 'Découvrez notre collection de plus de 50.000 bandes dessinées, mangas et comics'
+SITE_TAGLINE = 'Plateforme collaborative patrimoniale de la bande dessinée belge'
+SITE_DESCRIPTION = 'Explorez l\'histoire et les trésors du 9ème art belge à travers nos collections et images mystère'
 
-# Colors and Branding
+# Colors and Branding - Belgicomics Gray Theme
 BRAND_COLORS = {
-    'primary': '#E74C3C',     # Rouge BD
-    'secondary': '#2C3E50',   # Bleu foncé
-    'accent': '#F39C12',      # Jaune/Orange
-    'dark': '#2C3E50',
-    'light': '#ECF0F1'
+    'primary': '#7a7a7a',     # Gris moyen doux
+    'secondary': '#2C3E50',   # Gris foncé
+    'accent': '#9a9a9a',      # Gris clair
+    'dark': '#4a4a4a',       # Gris foncé
+    'light': '#f8f8f8',      # Gris très clair
+    'hero_overlay': 'rgba(0,0,0,0.3)'  # Overlay plus léger pour le hero
 }
 
 # Contact Information
@@ -43,39 +44,39 @@ FEATURES = {
 # Services for homepage
 SERVICES = [
     {
-        'icon': 'fa-book',
-        'title': 'Catalogue Complet',
-        'description': 'Plus de 50.000 BD, mangas et comics disponibles',
-        'link': 'catalogue'
+        'icon': 'fa-user-pen',
+        'title': 'Biographies',
+        'description': 'Découvrez les auteurs en détail',
+        'link': 'biographies'
     },
     {
-        'icon': 'fa-gem',
-        'title': 'Éditions Rares',
-        'description': 'Premières éditions et tirages limités',
-        'link': 'rare-editions'
+        'icon': 'fa-magnifying-glass',
+        'title': 'Recherches',
+        'description': 'Recherches approfondies dans notre base de données',
+        'link': 'recherches'
     },
     {
-        'icon': 'fa-star',
-        'title': 'Nouveautés',
-        'description': 'Les dernières sorties chaque semaine',
-        'link': 'nouveautes'
+        'icon': 'fa-user-graduate',
+        'title': 'Chercheurs',
+        'description': 'Inscrivez-vous comme chercheur',
+        'link': 'chercheurs'
     },
     {
-        'icon': 'fa-box',
-        'title': 'Abonnements',
-        'description': 'Recevez vos séries préférées automatiquement',
-        'link': 'abonnements'
+        'icon': 'fa-hands-helping',
+        'title': 'Bénévolat',
+        'description': 'Vous avez une expertise en relation avec la bande dessinée',
+        'link': 'benevolat'
     },
     {
-        'icon': 'fa-calendar',
-        'title': 'Précommandes',
-        'description': 'Réservez les prochaines sorties',
-        'link': 'precommandes'
+        'icon': 'fa-handshake',
+        'title': 'Sponsoring',
+        'description': 'Devenez sponsor officiel de Belgicomics',
+        'link': 'sponsoring'
     },
     {
-        'icon': 'fa-users',
-        'title': 'Club Lecteurs',
-        'description': 'Rejoignez notre communauté de passionnés',
-        'link': 'club'
+        'icon': 'fa-palette',
+        'title': 'Auteurs',
+        'description': 'Vous êtes scénariste, dessinateur, coloriste ? Parlez-nous de vous',
+        'link': 'auteurs'
     }
 ]

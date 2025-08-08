@@ -6,19 +6,28 @@ from config import *
 
 app = Flask(__name__)
 app.secret_key = 'belgicomics-secret-key-change-in-production'
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # Configuration
 API_URL = API_BASE_URL
 
 @app.route('/')
 def index():
+    print(f"Loading template from: {app.template_folder}")
+    import os
+    template_path = os.path.join(app.template_folder, 'index_bulma.html')
+    print(f"Template exists: {os.path.exists(template_path)}")
+    print(f"Template path: {template_path}")
     # Add delay to services for animation
     services_with_delay = []
+    print(f"Loading SERVICES from config: {SERVICES}")
     for i, service in enumerate(SERVICES):
         service_copy = service.copy()
         service_copy['delay'] = str((i + 1) * 100)
         service_copy['auth_required'] = service.get('auth_required', False)
         services_with_delay.append(service_copy)
+        print(f"Service {i}: {service_copy['title']} - {service_copy['description']}")
     
     return render_template('index_bulma.html', 
                          services=services_with_delay,
@@ -113,5 +122,6 @@ if __name__ == '__main__':
     app.run(
         host='0.0.0.0',
         port=8091,
-        debug=True  # Pour le développement avec auto-reload
+        debug=True,  # Pour le développement
+        use_reloader=False  # Disable auto-reload to prevent crashes
     )
