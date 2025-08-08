@@ -3,7 +3,8 @@
 # Claude écrit ici, le serveur exécute automatiquement après pull
 
 echo "🔧 Installation des dépendances manquantes..."
-pip3 install flask-cors pymongo
+apt-get update > /dev/null 2>&1
+apt-get install -y python3-flask-cors python3-pymongo > /dev/null 2>&1 || pip3 install --break-system-packages flask-cors pymongo
 
 echo "🚀 Vérification et redémarrage des services QWANYX..."
 
