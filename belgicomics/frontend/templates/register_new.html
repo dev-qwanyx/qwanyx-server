@@ -315,7 +315,7 @@
             button.classList.add('is-loading');
             
             try {
-                const response = await fetch(`${API_URL}/auth/register`, {
+                const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

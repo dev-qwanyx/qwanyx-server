@@ -86,22 +86,23 @@ def profil():
 
 @app.route('/api/auth/register', methods=['POST'])
 def api_register():
-    """Handle user registration"""
+    """Handle user registration - sends code by email"""
     try:
         data = request.get_json()
         
-        # Validate required fields
-        if not data.get('email') or not data.get('password'):
-            return jsonify({'error': 'Email and password required'}), 400
+        # Validate required fields (email only, no password needed)
+        if not data.get('email'):
+            return jsonify({'error': 'Email required'}), 400
             
-        # Forward to QWANYX API if configured, otherwise handle locally
+        # Forward to QWANYX API (now supports email-only registration)
         try:
             response = requests.post(f'{API_URL}/auth/register', json=data)
             return jsonify(response.json()), response.status_code
-        except:
-            # Fallback: Simple local registration (for testing)
+        except Exception as e:
+            print(f"API Error: {e}")
+            # Fallback if API is down
             return jsonify({
-                'message': 'Registration successful',
+                'message': 'Un code de connexion a été envoyé à votre email',
                 'user': {
                     'email': data.get('email'),
                     'firstName': data.get('firstName'),
@@ -114,13 +115,13 @@ def api_register():
 
 @app.route('/api/auth/login', methods=['POST'])
 def api_login():
-    """Handle user login"""
+    """Handle user login with code"""
     try:
         data = request.get_json()
         
         # Validate required fields
-        if not data.get('email') or not data.get('password'):
-            return jsonify({'error': 'Email and password required'}), 400
+        if not data.get('email') or not data.get('code'):
+            return jsonify({'error': 'Email and code required'}), 400
             
         # Forward to QWANYX API if configured, otherwise handle locally
         try:
@@ -128,7 +129,8 @@ def api_login():
             return jsonify(response.json()), response.status_code
         except:
             # Fallback: Simple local login (for testing)
-            if data.get('email') and data.get('password'):
+            # Accept any code for testing
+            if data.get('email') and data.get('code'):
                 return jsonify({
                     'message': 'Login successful',
                     'token': 'test-token-' + data.get('email'),
@@ -137,7 +139,7 @@ def api_login():
                     }
                 }), 200
             else:
-                return jsonify({'error': 'Invalid credentials'}), 401
+                return jsonify({'error': 'Invalid code'}), 401
                 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

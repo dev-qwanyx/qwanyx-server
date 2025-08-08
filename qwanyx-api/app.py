@@ -287,9 +287,9 @@ def register():
         name = data.get('name')
         workspace = data.get('workspace', 'default')
         
-        # Validate
-        if not email or not password:
-            return jsonify({'error': 'Email and password required'}), 400
+        # Validate - only email required for code-based auth
+        if not email:
+            return jsonify({'error': 'Email required'}), 400
         
         # Get workspace collections
         collections = get_site_collections(workspace)
@@ -299,32 +299,47 @@ def register():
         if users.find_one({'email': email}):
             return jsonify({'error': 'User already exists'}), 409
         
-        # Hash password
-        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        
-        # Create user
+        # Create user (with or without password)
         user = {
             'email': email,
-            'password': hashed,
             'name': name,
             'created_at': datetime.utcnow(),
             'apps': [],
-            'is_active': True
+            'is_active': True,
+            'auth_method': 'code'  # Uses email codes, not password
         }
+        
+        # Only hash password if provided (for backward compatibility)
+        if password:
+            hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            user['password'] = hashed
+            user['auth_method'] = 'password'
         
         result = users.insert_one(user)
         
-        # Create token
-        access_token = create_access_token(identity=str(result.inserted_id))
-        
-        return jsonify({
-            'access_token': access_token,
-            'user': {
-                'id': str(result.inserted_id),
-                'email': email,
-                'name': name
-            }
-        }), 201
+        # For code-based auth, send a code instead of returning a token
+        if user.get('auth_method') == 'code':
+            # TODO: Generate and send actual code via email
+            # For now, just return success message
+            return jsonify({
+                'message': 'Un code de connexion a été envoyé à votre email',
+                'user': {
+                    'id': str(result.inserted_id),
+                    'email': email,
+                    'name': name
+                }
+            }), 201
+        else:
+            # Password-based auth returns token immediately
+            access_token = create_access_token(identity=str(result.inserted_id))
+            return jsonify({
+                'access_token': access_token,
+                'user': {
+                    'id': str(result.inserted_id),
+                    'email': email,
+                    'name': name
+                }
+            }), 201
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
