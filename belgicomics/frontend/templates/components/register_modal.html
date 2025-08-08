@@ -51,6 +51,17 @@
                 </div>
                 
                 <div class="field">
+                    <label class="label">Mot de passe</label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="password" id="registerPassword" placeholder="Votre mot de passe" required minlength="6">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                    </div>
+                    <p class="help">Minimum 6 caractères</p>
+                </div>
+                
+                <div class="field">
                     <label class="label">Type de compte</label>
                     <div class="control">
                         <label class="radio">
@@ -333,8 +344,9 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         firstName: document.getElementById('registerFirstName').value,
         lastName: document.getElementById('registerLastName').value,
         email: document.getElementById('registerEmail').value,
+        password: document.getElementById('registerPassword').value,
         accountType: accountType,
-        workspace: 'autodin-be'
+        workspace: 'belgicomics'
     };
     
     // Add professional fields if needed

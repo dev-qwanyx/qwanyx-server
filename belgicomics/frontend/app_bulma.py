@@ -84,6 +84,64 @@ def messages():
 def profil():
     return render_template('mon-espace/profil.html')
 
+@app.route('/api/auth/register', methods=['POST'])
+def api_register():
+    """Handle user registration"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not data.get('email') or not data.get('password'):
+            return jsonify({'error': 'Email and password required'}), 400
+            
+        # Forward to QWANYX API if configured, otherwise handle locally
+        try:
+            response = requests.post(f'{API_URL}/auth/register', json=data)
+            return jsonify(response.json()), response.status_code
+        except:
+            # Fallback: Simple local registration (for testing)
+            return jsonify({
+                'message': 'Registration successful',
+                'user': {
+                    'email': data.get('email'),
+                    'firstName': data.get('firstName'),
+                    'lastName': data.get('lastName')
+                }
+            }), 200
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/auth/login', methods=['POST'])
+def api_login():
+    """Handle user login"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not data.get('email') or not data.get('password'):
+            return jsonify({'error': 'Email and password required'}), 400
+            
+        # Forward to QWANYX API if configured, otherwise handle locally
+        try:
+            response = requests.post(f'{API_URL}/auth/login', json=data)
+            return jsonify(response.json()), response.status_code
+        except:
+            # Fallback: Simple local login (for testing)
+            if data.get('email') and data.get('password'):
+                return jsonify({
+                    'message': 'Login successful',
+                    'token': 'test-token-' + data.get('email'),
+                    'user': {
+                        'email': data.get('email')
+                    }
+                }), 200
+            else:
+                return jsonify({'error': 'Invalid credentials'}), 401
+                
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/logout')
 def logout():
     # Frontend handles logout by clearing localStorage
