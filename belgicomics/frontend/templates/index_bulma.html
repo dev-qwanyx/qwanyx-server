@@ -755,6 +755,9 @@
         // Check auth status
         // Persistent auth management
         const WORKSPACE_ID = 'belgicomics';
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:5002'
+            : 'http://135.181.72.183:5002';
         
         function updateLastActivity() {
             if (localStorage.getItem(`${WORKSPACE_ID}_token`)) {
