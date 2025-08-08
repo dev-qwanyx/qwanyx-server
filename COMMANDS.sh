@@ -2,26 +2,8 @@
 # COMMANDES À EXÉCUTER SUR LE SERVEUR
 # Claude écrit ici, le serveur exécute automatiquement après pull
 
-echo "🔧 Configuration de l'envoi d'emails..."
-
-# Créer un fichier .env pour l'API avec les credentials email
-cat > /opt/qwanyx/apps/qwanyx-server/qwanyx-api/.env << 'EOF'
-# Configuration SMTP pour l'envoi d'emails
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=votre-email@gmail.com
-SMTP_PASS=votre-mot-de-passe-app
-SMTP_FROM=QWANYX <noreply@qwanyx.com>
-
-# MongoDB
-MONGO_URI=mongodb://localhost:27017/
-
-# JWT Secret
-JWT_SECRET_KEY=your-secret-key-change-this-in-production
-EOF
-
-echo "⚠️ IMPORTANT: Modifiez /opt/qwanyx/apps/qwanyx-server/qwanyx-api/.env"
-echo "   avec vos vrais credentials Gmail!"
+echo "🚀 MISE À JOUR COMPLÈTE - Autodin + API"
+echo "========================================="
 
 # S'assurer d'avoir la dernière version
 cd /opt/qwanyx/apps/qwanyx-server
