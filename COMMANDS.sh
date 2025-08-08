@@ -1,16 +1,19 @@
 #!/bin/bash
-# COMMANDES À EXÉCUTER MANUELLEMENT SUR LE SERVEUR VIA SSH
-# Se connecter au serveur et exécuter ces commandes
+# COMMANDES POUR REDÉMARRAGE COMPLET (webhook + services)
+# Exécuté automatiquement par le webhook OU manuellement via SSH
 
 echo "🚀 REDÉMARRAGE COMPLET DES SERVICES"
 echo "===================================="
+echo "Date: $(date)"
 
 # Aller dans le bon répertoire
 cd /opt/qwanyx/apps/qwanyx-server
 
-# Faire le pull manuellement
-echo "→ Récupération du dernier code..."
-git pull origin main
+# Si exécuté manuellement, faire le pull
+if [ "$1" != "no-pull" ]; then
+    echo "→ Récupération du dernier code..."
+    git pull origin main
+fi
 
 # Tuer TOUS les processus Python existants
 echo "→ Arrêt de tous les services..."
@@ -35,7 +38,11 @@ cd /opt/qwanyx/apps/qwanyx-server/qwanyx-api
 nohup python3 app.py > /tmp/api.log 2>&1 &
 echo "✅ API lancée sur 5002"
 
-# Note: Le webhook doit être lancé séparément si nécessaire
+# 4. Relancer le webhook (IMPORTANT pour l'auto-deploy)
+echo "→ Démarrage du webhook server..."
+cd /opt/qwanyx/apps/qwanyx-server
+nohup python3 webhook-simple.py > /tmp/webhook.log 2>&1 &
+echo "✅ Webhook lancé sur 9999"
 
 # Vérifier après 5 secondes
 sleep 5
@@ -53,8 +60,17 @@ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8091 || echo "ERREUR"
 echo -n "API QWANYX (5002): "
 curl -s -o /dev/null -w "%{http_code}\n" http://localhost:5002 || echo "ERREUR"
 
+echo -n "Webhook (9999): "
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:9999/health || echo "ERREUR"
+
 echo ""
 echo "✅ Script de redémarrage terminé!"
+echo ""
+echo "🔗 URLs publiques:"
+echo "  - Autodin: http://135.181.72.183:8090"
+echo "  - Belgicomics: http://135.181.72.183:8091"
+echo "  - API: http://135.181.72.183:5002"
+echo "  - Webhook: http://135.181.72.183:9999"
 echo ""
 echo "Pour vérifier les logs:"
 echo "  tail -f /tmp/autodin.log"
