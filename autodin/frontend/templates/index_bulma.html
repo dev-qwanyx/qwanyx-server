@@ -857,8 +857,10 @@
             window.location.href = '/';
         }
         
-        // Check auth on page load
-        checkAuth();
+        // Check auth on page load - wait for DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
         
         // Update activity every minute while user is active
         setInterval(() => {

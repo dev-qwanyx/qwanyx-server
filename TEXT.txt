@@ -1,45 +1,17 @@
-Dear Mr Philippe Coenen
-
-Thank you for your order B20250807-3215801-2788650 from 07/08/2025 09:26 CEST.
-
-Login Details
-Your server AX41-NVMe #2730472 (135.181.72.183, 2a01:4f9:4b:108a::/64) has been activated and is now ready for use. Currently it is booted in the Rescue System. You can access the server via SSH2 using the following details:
-
-IPv4 Address:	135.181.72.183
-IPv6 Address:	2a01:4f9:4b:108a::2
-Username:	root
-Public key:	animator@DESKTOP-ESBH8NI 35:fd:42:4a:5c:16:7f:67:ea:8f:53:68:61:03:01:e4 (ED25519 256)
-Host key:	csK2i19Aq4aVXVfa0nWH0f+3IxI0FKZrtp+/Y+RWMfM (ECDSA 256)
-a2jLRoRlbnbnwAIcTlj2iuUBcgbCmnBSH1Dyu6ZrwwA (ED25519 256)
-AAG4U82DZLMkXwQk7+aLfNs/KuDcqt6kzEydlvDa9zI (RSA 3072)
-Please note that we block outgoing traffic on ports 25 and 465 on all servers by default. You can create a support request to unblock these ports for a valid use case. Please visit Hetzner Docs for further information.
-
-Downloads
-We have collected a number of packages, tools and OS images and offer them as downloads via our mirror. These files can be found at https://download.hetzner.com, using the following login credentials:
-
-Username:	hetzner
-Password:	download
-Guides
-A Quick Start Guide for Dedicated Root Servers with helpful information can be found here:
-https://docs.hetzner.com/robot/dedicated-server/getting-started/root-server-guide.
-
-Support
-In order to process your support enquiries as quickly and efficiently as possible, please send your requests directly via the Robot administration interface. Click on the user icon in the upper right hand corner and then on "Support".
-
-Our support team is also available to answer your queries via the telephone:
-
-Main Office:	Monday - Friday:	8:00 am - 6:00 pm
-+49 9831 505-0
-Our data centre technicians are available during the following business hours:
-Monday - Sunday:	24 hours
-Data center park Nuremberg (NBG1):		+49 911 234226-100
-Data center park Falkenstein (FSN1):		+49 374 574447-100
-Data center park Helsinki (HEL1):		+358 753259-100
-When contacting our technicians in the DC directly a phone password is required to authenticate you as the owner of the server, allowing our technicians to perform some tasks on the server. A phone password can be set in the Robot, under the "Phone Password" tab of the server.
-
-Fault reports and announcements can be found on the Hetzner Status Web Page:
-https://status.hetzner.com.
-
-Kind regards
-
-Your Hetzner Online Team
+in:1619 ServiceWorker registration failed: AbortError: Failed to register a ServiceWorker for scope ('http://localhost:8083/static/') with script ('http://localhost:8083/static/service-worker.js'): Operation has been aborted
+in:1 <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">
+static/icons/icon-144x144.png:1  Failed to load resource: the server responded with a status of 404 (NOT FOUND)
+in:1 Error while trying to use the following icon from the Manifest: http://localhost:8083/static/icons/icon-144x144.png (Download error or resource isn't a valid image)
+in:1 Access to fetch at 'http://localhost:5001/api/identity' from origin 'http://localhost:8083' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+:5001/api/identity:1  Failed to load resource: net::ERR_FAILED
+in:530 API Call Failed: TypeError: Failed to fetch
+    at apiCall (in:520:40)
+    at initializeDashboard (in:538:33)
+    at in:808:13
+apiCall @ in:530
+in:551 Failed to initialize user
+initializeDashboard @ in:551
+in:734 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'textContent')
+    at saveColumn (in:734:64)
+    at addColumn (in:1534:19)
+    at initializeDashboard (in:553:17)

@@ -3,17 +3,32 @@ import os
 import requests
 from functools import wraps
 from config import *
+# from api_memories import memories_bp  # Not needed - API is in backend
 
 app = Flask(__name__)
 app.secret_key = 'belgicomics-secret-key-change-in-production'
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
+# Register blueprints
+# app.register_blueprint(memories_bp)  # Not needed - API is in backend
+
 # Configuration
 API_URL = API_BASE_URL
 
 @app.route('/')
 def index():
+    """QWANYX Dashboard - Universal IN System"""
+    return render_template('qwanyx-dashboard.html')
+
+@app.route('/dashboard')
+def dashboard():
+    """QWANYX Dashboard - Universal IN System"""
+    return render_template('qwanyx-dashboard.html')
+
+@app.route('/demo')
+def demo():
+    """Original demo page"""
     print(f"Loading template from: {app.template_folder}")
     import os
     template_path = os.path.join(app.template_folder, 'index_bulma.html')
@@ -44,6 +59,16 @@ def favicon():
     except:
         return '', 204
 
+@app.route('/static/manifest.json')
+def manifest():
+    """Serve PWA manifest"""
+    return send_from_directory('static', 'manifest.json')
+
+@app.route('/static/service-worker.js')
+def service_worker():
+    """Serve service worker for PWA"""
+    return send_from_directory('static', 'service-worker.js')
+
 @app.route('/login')
 def login():
     return render_template('login_new.html')
@@ -56,13 +81,23 @@ def register():
 def mon_espace():
     return render_template('dashboard.html')
 
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
+@app.route('/dashboard-old')
+def dashboard_old():
+    return render_template('qwanyx-dashboard.html')  # QWANYX IN - Universal Input System
+
+@app.route('/in')
+def qwanyx_in():
+    """QWANYX IN - Universal Input System"""
+    return render_template('qwanyx-dashboard.html')
+
+@app.route('/clean')
+def qwanyx_clean():
+    """QWANYX Clean Version - Fresh Start"""
+    return render_template('qwanyx-clean.html')
 
 @app.route('/apps/inbox-gtd')
 def inbox_gtd():
-    return render_template('inbox-gtd.html')
+    return render_template('qwanyx-dashboard.html')  # Keep for backward compatibility
 
 @app.route('/mon-espace/catalogue')
 def catalogue():
