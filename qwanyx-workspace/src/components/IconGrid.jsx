@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
-export const ICON_TYPES = ['pen', 'microphone', 'camera', 'comment', 'envelope', 'graduation-cap', 'address-book', 'users', 'project-diagram', 'robot', 'search'];
-export const ICONS = ['fa-pen', 'fa-microphone', 'fa-camera', 'fa-comment', 'fa-envelope', 'fa-graduation-cap', 'fa-address-book', 'fa-users', 'fa-project-diagram', 'fa-robot', 'fa-search'];
+export const ICON_TYPES = ['pen', 'microphone', 'camera', 'comment', 'envelope', 'graduation-cap', 'address-book', 'users', 'project-diagram', 'robot', 'search', 'th'];
+export const ICONS = ['fa-pen', 'fa-microphone', 'fa-camera', 'fa-comment', 'fa-envelope', 'fa-graduation-cap', 'fa-address-book', 'fa-users', 'fa-project-diagram', 'fa-robot', 'fa-search', 'fa-th'];
 
 function IconGrid({ onSelectIcon, containerRef, onAddColumn }) {
   useEffect(() => {

@@ -11,7 +11,8 @@ const CARD_TYPES = [
   { type: 'users', icon: 'fa-users', label: 'Group' },
   { type: 'project-diagram', icon: 'fa-project-diagram', label: 'Project' },
   { type: 'robot', icon: 'fa-robot', label: 'DH' },
-  { type: 'search', icon: 'fa-search', label: 'Search' }
+  { type: 'search', icon: 'fa-search', label: 'Search' },
+  { type: 'th', icon: 'fa-th', label: 'Workspace' }
 ];
 
 function TypeDropdown({ value, icon, onChange }) {

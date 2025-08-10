@@ -7,11 +7,16 @@ import IconGrid from './IconGrid';
 import CardFront from './CardFront';
 import CardSettings from './CardSettings';
 import CardEditor from './CardEditor';
+import WorkspaceHeader from './WorkspaceHeader';
+import Drawer from './Drawer';
 
-function Workspace() {
+function Workspace({ isNested = false, parentWorkspace = null, onBack = null }) {
   const [columns, setColumns] = useState([]);
   const [columnCount, setColumnCount] = useState(0);
   const [cards, setCards] = useState({}); // Cards organized by column ID
+  const [activeWorkspace, setActiveWorkspace] = useState(null); // Track which workspace card is active
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [workspacePath, setWorkspacePath] = useState([]);
   const containerRef = useRef(null);
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -29,6 +34,24 @@ function Workspace() {
       addColumn(); // Just one empty column
     }
   }, []); // Empty dependency array ensures this runs only once per mount
+
+  // Listen for workspace open events
+  useEffect(() => {
+    const handleOpenWorkspace = (e) => {
+      setActiveWorkspace(e.detail);
+    };
+
+    const workspaceEl = document.querySelector('.workspace-body');
+    if (workspaceEl) {
+      workspaceEl.addEventListener('openWorkspace', handleOpenWorkspace);
+    }
+
+    return () => {
+      if (workspaceEl) {
+        workspaceEl.removeEventListener('openWorkspace', handleOpenWorkspace);
+      }
+    };
+  }, []);
 
   // Add a new column with debouncing
   const addColumn = (titleOrType = null) => {
@@ -250,8 +273,54 @@ function Workspace() {
     }
   };
 
+  // If a workspace card is active, show it fullscreen
+  if (activeWorkspace) {
+    return (
+      <div className="workspace-fullscreen" style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: '#1a1a2e',
+        zIndex: 2000,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        {/* Recursive Workspace - show a new workspace instance */}
+        <Workspace 
+          isNested={true}
+          parentWorkspace={activeWorkspace}
+          onBack={() => setActiveWorkspace(null)}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="workspace-body">
+    <div className="workspace-body" style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <WorkspaceHeader 
+        title={parentWorkspace ? parentWorkspace.card.text : 'QWANYX'}
+        icon={parentWorkspace ? parentWorkspace.card.icon : 'fa-home'}
+        onMenuClick={() => setDrawerOpen(!drawerOpen)}
+        isNested={isNested}
+        onBack={onBack}
+      />
+      
+      <Drawer 
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        workspacePath={workspacePath}
+        onNavigate={(workspace) => {
+          if (workspace) {
+            setActiveWorkspace(workspace);
+          } else {
+            // Navigate to root
+            if (onBack) onBack();
+          }
+          setDrawerOpen(false);
+        }}
+      />
       <div 
         className="columns-container"
         ref={containerRef}
@@ -285,8 +354,10 @@ function Workspace() {
 // Column Component - handles its own drag logic
 function Column({ column, cards, onRemove, onAddCard, onRemoveCard, onDuplicateCard, onMoveCard, onToggleExpanded, onToggleShowBrief, onUpdateCardType, containerRef, onAddColumn }) {
   const [showIconGrid, setShowIconGrid] = useState(false);
+  const [iconGridPosition, setIconGridPosition] = useState({ top: 0, left: 0 });
   const columnRef = useRef(null);
   const contentRef = useRef(null);
+  const burgerRef = useRef(null);
 
   // Close icon grid when clicking outside
   useEffect(() => {
@@ -499,8 +570,18 @@ function Column({ column, cards, onRemove, onAddCard, onRemoveCard, onDuplicateC
       
       <div className="column-header">
         <button 
+          ref={burgerRef}
           className="header-burger" 
-          onClick={() => setShowIconGrid(!showIconGrid)}
+          onClick={(e) => {
+            if (!showIconGrid) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              setIconGridPosition({
+                top: rect.bottom + 5,
+                left: rect.left
+              });
+            }
+            setShowIconGrid(!showIconGrid);
+          }}
         >
           <i className="fas fa-bars"></i>
         </button>
@@ -512,14 +593,21 @@ function Column({ column, cards, onRemove, onAddCard, onRemoveCard, onDuplicateC
       
       <div className="column-content" ref={contentRef}>
         {showIconGrid && (
-          <IconGrid 
-            onSelectIcon={(type, icon) => {
-              onAddCard(type, icon);
-              setShowIconGrid(false);
-            }}
-            containerRef={containerRef}
-            onAddColumn={onAddColumn}
-          />
+          <div style={{
+            position: 'fixed',
+            top: `${iconGridPosition.top}px`,
+            left: `${iconGridPosition.left}px`,
+            zIndex: 1000
+          }}>
+            <IconGrid 
+              onSelectIcon={(type, icon) => {
+                onAddCard(type, icon);
+                setShowIconGrid(false);
+              }}
+              containerRef={containerRef}
+              onAddColumn={onAddColumn}
+            />
+          </div>
         )}
         
         {cards.map((card) => (
@@ -756,7 +844,20 @@ function Card({ card, columnId, onRemove, onDuplicate, onMoveCard, onToggleExpan
   const handleCardClick = (e) => {
     // Only open editor if clicking on the card content area (not buttons)
     if (!e.target.closest('button') && !e.target.closest('i') && viewState === 'front') {
-      setViewState('editor');
+      // If it's a workspace card, open it fullscreen
+      if (card.type === 'th') {
+        // Get the parent Workspace component's setActiveWorkspace function
+        const workspaceElement = document.querySelector('.workspace-body');
+        if (workspaceElement) {
+          // Dispatch a custom event to notify the workspace
+          const event = new CustomEvent('openWorkspace', { 
+            detail: { card, columnId } 
+          });
+          workspaceElement.dispatchEvent(event);
+        }
+      } else {
+        setViewState('editor');
+      }
     }
   };
 

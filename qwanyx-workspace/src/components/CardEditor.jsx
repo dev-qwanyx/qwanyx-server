@@ -254,6 +254,55 @@ function CardEditor({ card, editor, onClose }) {
           </div>
         );
         
+      case 'th':
+        return (
+          <div style={{ padding: '10px' }}>
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px', fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>Workspace Name</label>
+              <input 
+                type="text" 
+                defaultValue={card.text}
+                placeholder="My Workspace" 
+                style={{ 
+                  width: '100%', 
+                  background: 'rgba(255, 255, 255, 0.1)', 
+                  border: '1px solid rgba(255, 255, 255, 0.2)', 
+                  color: 'white', 
+                  padding: '8px', 
+                  borderRadius: '4px' 
+                }} 
+              />
+            </div>
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px', fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>Description</label>
+              <textarea 
+                placeholder="Workspace description..." 
+                rows="3"
+                style={{ 
+                  width: '100%', 
+                  background: 'rgba(255, 255, 255, 0.1)', 
+                  border: '1px solid rgba(255, 255, 255, 0.2)', 
+                  color: 'white', 
+                  padding: '8px', 
+                  borderRadius: '4px',
+                  resize: 'vertical'
+                }} 
+              />
+            </div>
+            <div style={{ 
+              padding: '20px',
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '8px',
+              textAlign: 'center'
+            }}>
+              <i className="fas fa-th" style={{ fontSize: '32px', color: 'rgba(255, 255, 255, 0.3)', marginBottom: '10px' }}></i>
+              <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px' }}>
+                Click on this card to enter the workspace
+              </p>
+            </div>
+          </div>
+        );
+        
       default:
         return (
           <div style={{ padding: '10px' }}>
