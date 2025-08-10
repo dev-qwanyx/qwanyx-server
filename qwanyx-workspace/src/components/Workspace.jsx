@@ -3,6 +3,10 @@ import { BlockNoteView } from '@blocknote/mantine';
 import { BlockNoteEditor } from '@blocknote/core';
 import '@blocknote/mantine/style.css';
 import './Workspace.css';
+import IconGrid from './IconGrid';
+import CardFront from './CardFront';
+import CardSettings from './CardSettings';
+import CardEditor from './CardEditor';
 
 function Workspace() {
   const [columns, setColumns] = useState([]);
@@ -27,7 +31,7 @@ function Workspace() {
   }, []); // Empty dependency array ensures this runs only once per mount
 
   // Add a new column with debouncing
-  const addColumn = (type = null) => {
+  const addColumn = (titleOrType = null) => {
     // Clear any pending column additions
     if (addColumnTimeoutRef.current) {
       clearTimeout(addColumnTimeoutRef.current);
@@ -38,9 +42,14 @@ function Workspace() {
       const newCount = columnCount + 1;
       setColumnCount(newCount);
       
+      // If titleOrType looks like a card text (contains time), use it directly
+      // Otherwise treat it as a type
+      const isCardTitle = titleOrType && (titleOrType.includes(':') || titleOrType.includes(' - '));
+      
       const newColumn = {
         id: `col-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        title: type ? `${type.charAt(0).toUpperCase() + type.slice(1)} Column` : `Column ${newCount}`,
+        title: isCardTitle ? titleOrType : (titleOrType ? `${titleOrType.charAt(0).toUpperCase() + titleOrType.slice(1)} Column` : `Column ${newCount}`),
+        cardData: null // Will store the card data when a card becomes a column
       };
       
       setColumns(prevColumns => [...prevColumns, newColumn]);
@@ -91,7 +100,11 @@ function Workspace() {
       type: type,
       icon: icon,
       text: `${cardText[type] || 'Note'} - ${timeString}`,
-      content: ''
+      content: '',
+      isStack: false,
+      isExpanded: false,
+      showBrief: false,
+      children: []
     };
     
     setCards(prevCards => ({
@@ -121,7 +134,11 @@ function Workspace() {
       type: card.type,
       icon: card.icon,
       text: card.text.replace(/ - \d{2}:\d{2}/, '') + ` - ${timeString} (copy)`,
-      content: card.content || ''
+      content: card.content || '',
+      isStack: false,
+      isExpanded: false,
+      showBrief: false,
+      children: []
     };
     
     setCards(prevCards => ({
@@ -151,6 +168,36 @@ function Workspace() {
       
       return newCards;
     });
+  };
+
+  // Toggle expand/collapse for stack cards
+  const toggleCardExpanded = (columnId, cardId) => {
+    setCards(prevCards => ({
+      ...prevCards,
+      [columnId]: prevCards[columnId].map(card => 
+        card.id === cardId ? { ...card, isExpanded: !card.isExpanded } : card
+      )
+    }));
+  };
+
+  // Toggle show brief in card view
+  const toggleShowBrief = (columnId, cardId) => {
+    setCards(prevCards => ({
+      ...prevCards,
+      [columnId]: prevCards[columnId].map(card => 
+        card.id === cardId ? { ...card, showBrief: !card.showBrief } : card
+      )
+    }));
+  };
+
+  // Update card type and icon
+  const updateCardType = (columnId, cardId, newType, newIcon) => {
+    setCards(prevCards => ({
+      ...prevCards,
+      [columnId]: prevCards[columnId].map(card => 
+        card.id === cardId ? { ...card, type: newType, icon: newIcon } : card
+      )
+    }));
   };
 
   // Horizontal scroll with drag and inertia
@@ -223,6 +270,9 @@ function Workspace() {
             onRemoveCard={(cardId) => removeCard(column.id, cardId)}
             onDuplicateCard={(card, targetColumnId) => duplicateCard(targetColumnId || column.id, card)}
             onMoveCard={moveCard}
+            onToggleExpanded={(cardId) => toggleCardExpanded(column.id, cardId)}
+            onToggleShowBrief={(cardId) => toggleShowBrief(column.id, cardId)}
+            onUpdateCardType={(cardId, type, icon) => updateCardType(column.id, cardId, type, icon)}
             containerRef={containerRef}
             onAddColumn={addColumn}
           />
@@ -233,7 +283,7 @@ function Workspace() {
 }
 
 // Column Component - handles its own drag logic
-function Column({ column, cards, onRemove, onAddCard, onRemoveCard, onDuplicateCard, onMoveCard, containerRef, onAddColumn }) {
+function Column({ column, cards, onRemove, onAddCard, onRemoveCard, onDuplicateCard, onMoveCard, onToggleExpanded, onToggleShowBrief, onUpdateCardType, containerRef, onAddColumn }) {
   const [showIconGrid, setShowIconGrid] = useState(false);
   const columnRef = useRef(null);
   const contentRef = useRef(null);
@@ -442,9 +492,6 @@ function Column({ column, cards, onRemove, onAddCard, onRemoveCard, onDuplicateC
     };
   }, []);
 
-  const iconTypes = ['pen', 'microphone', 'camera', 'comment', 'envelope', 'graduation-cap', 'address-book', 'users', 'project-diagram', 'robot', 'search'];
-  const icons = ['fa-pen', 'fa-microphone', 'fa-camera', 'fa-comment', 'fa-envelope', 'fa-graduation-cap', 'fa-address-book', 'fa-users', 'fa-project-diagram', 'fa-robot', 'fa-search'];
-
   return (
     <div className="qwanyx-column" ref={columnRef} data-column-id={column.id}>
       <div className="drop-zone left"></div>
@@ -466,8 +513,6 @@ function Column({ column, cards, onRemove, onAddCard, onRemoveCard, onDuplicateC
       <div className="column-content" ref={contentRef}>
         {showIconGrid && (
           <IconGrid 
-            iconTypes={iconTypes}
-            icons={icons}
             onSelectIcon={(type, icon) => {
               onAddCard(type, icon);
               setShowIconGrid(false);
@@ -488,6 +533,9 @@ function Column({ column, cards, onRemove, onAddCard, onRemoveCard, onDuplicateC
               onDuplicateCard(card, currentColId);
             }}
             onMoveCard={onMoveCard}
+            onToggleExpanded={() => onToggleExpanded(card.id)}
+            onToggleShowBrief={() => onToggleShowBrief(card.id)}
+            onUpdateCardType={(type, icon) => onUpdateCardType(card.id, type, icon)}
             contentRef={contentRef}
             containerRef={containerRef}
             onAddColumn={onAddColumn}
@@ -498,127 +546,6 @@ function Column({ column, cards, onRemove, onAddCard, onRemoveCard, onDuplicateC
   );
 }
 
-// Icon Grid with drag to create columns
-function IconGrid({ iconTypes, icons, onSelectIcon, containerRef, onAddColumn }) {
-  useEffect(() => {
-    const buttons = document.querySelectorAll('.icon-grid-wrapper .control-btn');
-    const handlers = [];
-    
-    buttons.forEach((btn, index) => {
-      let isDragging = false;
-      let dragGhost = null;
-      
-      const handleMouseDown = (e) => {
-        const startX = e.clientX;
-        const startY = e.clientY;
-        
-        let dragTimeout = setTimeout(() => {
-          isDragging = true;
-          window.iconDragging = true;
-          
-          dragGhost = document.createElement('div');
-          dragGhost.className = 'drag-ghost';
-          dragGhost.innerHTML = `<i class="fas ${icons[index]}"></i>`;
-          dragGhost.style.cssText = `
-            position: fixed;
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-            z-index: 10000;
-            color: white;
-            font-size: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-          `;
-          dragGhost.style.left = (e.clientX - 30) + 'px';
-          dragGhost.style.top = (e.clientY - 30) + 'px';
-          document.body.appendChild(dragGhost);
-          
-          btn.style.opacity = '0.3';
-        }, 200);
-        
-        const onMouseMove = (e) => {
-          if (isDragging && dragGhost) {
-            dragGhost.style.left = (e.clientX - 30) + 'px';
-            dragGhost.style.top = (e.clientY - 30) + 'px';
-          } else if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) {
-            clearTimeout(dragTimeout);
-          }
-        };
-        
-        const onMouseUp = (e) => {
-          clearTimeout(dragTimeout);
-          
-          if (isDragging && dragGhost) {
-            const columns = document.querySelectorAll('.qwanyx-column');
-            let droppedOnColumn = false;
-            
-            columns.forEach(col => {
-              const rect = col.getBoundingClientRect();
-              if (e.clientX >= rect.left && e.clientX <= rect.right &&
-                  e.clientY >= rect.top && e.clientY <= rect.bottom) {
-                droppedOnColumn = true;
-              }
-            });
-            
-            if (!droppedOnColumn) {
-              onAddColumn(iconTypes[index]);
-            }
-            
-            dragGhost.remove();
-            dragGhost = null;
-            btn.style.opacity = '1';
-          } else if (!isDragging) {
-            // It was a click
-            onSelectIcon(iconTypes[index], icons[index]);
-          }
-          
-          isDragging = false;
-          window.iconDragging = false;
-          
-          document.removeEventListener('mousemove', onMouseMove);
-          document.removeEventListener('mouseup', onMouseUp);
-        };
-        
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-        
-        e.preventDefault();
-      };
-      
-      btn.addEventListener('mousedown', handleMouseDown);
-      handlers.push({ btn, handler: handleMouseDown });
-    });
-    
-    // Cleanup function to remove event listeners
-    return () => {
-      handlers.forEach(({ btn, handler }) => {
-        btn.removeEventListener('mousedown', handler);
-      });
-    };
-  }, [onSelectIcon, onAddColumn]);
-
-  return (
-    <div className="icon-grid-wrapper">
-      <div className="icon-grid">
-        {iconTypes.map((type, index) => (
-          <button
-            key={type}
-            className="control-btn"
-            data-type={type}
-            onClick={(e) => e.preventDefault()} // Prevent any default click behavior
-          >
-            <i className={`fas ${icons[index]}`}></i>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // Helper function to make a column draggable
 function makeColumnDraggable(columnElement) {
@@ -810,10 +737,11 @@ function makeColumnDraggable(columnElement) {
 }
 
 // Card Component - handles its own drag logic
-function Card({ card, columnId, onRemove, onDuplicate, onMoveCard, contentRef, containerRef, onAddColumn }) {
+function Card({ card, columnId, onRemove, onDuplicate, onMoveCard, onToggleExpanded, onToggleShowBrief, onUpdateCardType, contentRef, containerRef, onAddColumn }) {
   const cardRef = useRef(null);
   const [editor, setEditor] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewState, setViewState] = useState('front'); // 'front', 'settings', 'editor'
 
   // Initialize BlockNote editor
   useEffect(() => {
@@ -824,6 +752,21 @@ function Card({ card, columnId, onRemove, onDuplicate, onMoveCard, contentRef, c
     // Small delay to ensure proper rendering
     setTimeout(() => setIsLoading(false), 50);
   }, []);
+
+  const handleCardClick = (e) => {
+    // Only open editor if clicking on the card content area (not buttons)
+    if (!e.target.closest('button') && !e.target.closest('i') && viewState === 'front') {
+      setViewState('editor');
+    }
+  };
+
+  const handleCloseEditor = () => {
+    setViewState('front');
+  };
+
+  const handleFlip = () => {
+    setViewState(viewState === 'settings' ? 'front' : 'settings');
+  };
 
   // Card drag logic - EXACTLY like original
   useEffect(() => {
@@ -929,14 +872,25 @@ function Card({ card, columnId, onRemove, onDuplicate, onMoveCard, contentRef, c
           card.style.transform = '';
           card.style.boxShadow = '';
           
-          // Check if we should merge cards into a nested column
+          // Check if we should merge cards into a stack
           if (hoveredCard && hoveredCard.style.background) {
+            // Get the hovered card's data
+            const hoveredCardId = hoveredCard.dataset.cardId;
+            const hoveredColumnId = hoveredCard.dataset.columnId;
+            const draggedCardId = card.dataset.cardId;
+            const draggedColumnId = card.dataset.columnId;
+            
+            // Update the React state to make the hovered card a stack
+            // This would need to be done through a callback to the parent
+            // For now, we'll just update the DOM to show it's a stack
+            
             // Create nested column INSIDE the parent column
             const parentColumnContent = hoveredCard.parentElement;
             
             // Create nested column element
             const nestedColumn = document.createElement('div');
             const nestedColumnId = `nested-col-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const hoveredCardText = hoveredCard.querySelector('.card-text')?.textContent || 'Nested Group';
             nestedColumn.className = 'qwanyx-column nested-column';
             nestedColumn.dataset.columnId = nestedColumnId;
             nestedColumn.innerHTML = `
@@ -944,7 +898,7 @@ function Card({ card, columnId, onRemove, onDuplicate, onMoveCard, contentRef, c
               <div class="drop-zone right"></div>
               <div class="column-header">
                 <button class="header-burger"><i class="fas fa-bars"></i></button>
-                <span class="header-title">Nested Group</span>
+                <span class="header-title">${hoveredCardText}</span>
                 <button class="header-close"><i class="fas fa-times"></i></button>
               </div>
               <div class="column-content"></div>
@@ -1000,15 +954,16 @@ function Card({ card, columnId, onRemove, onDuplicate, onMoveCard, contentRef, c
             });
             
             if (!targetColumn) {
-              // Dropped outside - create new column
+              // Dropped outside - create new column  
+              const cardText = card.querySelector('.card-text')?.textContent || 'New Column';
               const cardType = card.dataset.type || 'pen';
               
               // Get the source column ID from the card's current parent
               const sourceColumnEl = card.closest('.qwanyx-column');
               const sourceColumnId = sourceColumnEl?.dataset.columnId;
               
-              // Create new column and move card via state
-              onAddColumn(cardType);
+              // Create new column with card's text as title
+              onAddColumn(cardText);
               
               // Wait for column to be created then move card via state
               setTimeout(() => {
@@ -1073,38 +1028,63 @@ function Card({ card, columnId, onRemove, onDuplicate, onMoveCard, contentRef, c
 
   return (
     <div 
-      className="card" 
+      className={`card ${viewState === 'settings' ? 'flipped' : ''} ${viewState === 'editor' ? 'editing' : ''}`}
       ref={cardRef} 
       data-type={card.type}
       data-card-id={card.id}
       data-column-id={columnId}
       style={{ opacity: isLoading ? 0 : 1, transition: 'opacity 0.2s' }}
     >
-      <div className="card-content">
-        <div className="card-header-content">
-          <i 
-            className={`fas ${card.icon} card-icon`}
-            onClick={() => {
-              // Get the current column ID from the DOM
-              const currentColumn = cardRef.current?.closest('.qwanyx-column');
-              const currentColumnId = currentColumn?.dataset.columnId || columnId;
-              // Call onDuplicate with the current column ID
-              onDuplicate(currentColumnId);
-            }}
-            style={{ cursor: 'pointer' }}
-          ></i>
-          <span className="card-text">{card.text}</span>
-          <button className="card-delete" onClick={onRemove}>
-            <i className="fas fa-times"></i>
-          </button>
-        </div>
-        <div className="card-brief-editor">
-          {editor && (
-            <BlockNoteView 
+      <div className="card-flipper">
+        <div className="card-front" onClick={viewState === 'editor' ? null : handleCardClick}>
+          {viewState === 'editor' ? (
+            <CardEditor 
+              card={card}
               editor={editor}
-              theme="dark"
+              onClose={handleCloseEditor}
+            />
+          ) : (
+            <CardFront
+              card={card}
+              onDuplicate={() => {
+                const currentColumn = cardRef.current?.closest('.qwanyx-column');
+                const currentColumnId = currentColumn?.dataset.columnId || columnId;
+                onDuplicate(currentColumnId);
+              }}
+              onToggleExpanded={onToggleExpanded}
+              onRemove={onRemove}
+              onFlip={handleFlip}
             />
           )}
+          {card.isStack && card.isExpanded && card.children && card.children.length > 0 && (
+            <div className="card-children" style={{ marginTop: '10px', paddingLeft: '10px' }}>
+              {card.children.map(childCard => (
+                <Card
+                  key={childCard.id}
+                  card={childCard}
+                  columnId={columnId}
+                  onRemove={() => {/* Handle child removal */}}
+                  onDuplicate={() => {/* Handle child duplication */}}
+                  onMoveCard={onMoveCard}
+                  onToggleExpanded={() => {/* Handle child toggle */}}
+                  onToggleShowBrief={() => {/* Handle child show brief */}}
+                  onUpdateCardType={() => {/* Handle child type update */}}
+                  contentRef={contentRef}
+                  containerRef={containerRef}
+                  onAddColumn={onAddColumn}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="card-back">
+          <CardSettings
+            card={card}
+            editor={editor}
+            onToggleShowBrief={onToggleShowBrief}
+            onUpdateCardType={onUpdateCardType}
+            onFlip={handleFlip}
+          />
         </div>
       </div>
     </div>

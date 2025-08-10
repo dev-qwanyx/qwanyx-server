@@ -152,7 +152,7 @@
 }
 
 .column-content .card {
-  background: rgba(255, 255, 255, 0.08);
+  background: transparent;
   color: white;
   cursor: move;
   transition: all 0.2s;
@@ -161,16 +161,59 @@
   border-radius: 8px;
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
   min-height: 60px;
   max-height: fit-content;
+  perspective: 1000px;
+}
+
+.card-flipper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-flipper {
+  transform: rotateY(180deg);
+}
+
+.card.editing .card-flipper {
+  transform: none;
+}
+
+.card.editing .card-front {
+  min-height: 300px;
+}
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-front {
+  transform: rotateY(0deg);
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+.column-content .card:hover .card-front,
+.column-content .card:hover .card-back {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .column-content .card:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateX(10px);
+  transform: translateX(2px);
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .column-content .card-content {
@@ -207,6 +250,76 @@
 
 .card-delete:hover {
   color: rgba(255, 255, 255, 0.6);
+}
+
+.card-flip {
+  background: none;
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px;
+  transition: all 0.2s;
+}
+
+.card-flip:focus {
+  outline: none;
+}
+
+.card-flip:hover {
+  color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+}
+
+/* Dark theme for select dropdowns */
+select {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  padding: 5px 5px 5px 35px;
+  border-radius: 4px;
+}
+
+select option {
+  background: #1a1a2e !important;
+  color: white !important;
+  padding: 5px;
+}
+
+select:focus {
+  outline: none;
+  border-color: rgba(74, 158, 255, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+}
+
+select:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Custom dropdown styling */
+.custom-dropdown {
+  /* Removed to allow inline styles to work */
+}
+
+/* Custom scrollbar for dropdown */
+.custom-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-dropdown::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.custom-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.custom-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* BlockNote Editor styling */
@@ -250,45 +363,43 @@
 
 /* Icon grid */
 .icon-grid-wrapper {
-  position: absolute;
-  top: 40px;
-  left: 0;
-  right: 0;
+  position: fixed;
+  top: 35px;
+  left: 35px;
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 10px;
   z-index: 100;
 }
 
 .icon-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
-  padding: 20px;
+  gap: 2px;
+  padding: 8px;
   justify-items: center;
 }
 
 .icon-grid .control-btn {
-  background: rgba(255, 255, 255, 0.1);
+  background: none;
   border: none;
-  color: white;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.7);
+  width: 32px;
+  height: 32px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s;
-  font-size: 18px;
+  transition: all 0.2s;
+  font-size: 16px;
+  border-radius: 4px;
 }
 
 .icon-grid .control-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: scale(1.05);
 }
 
 /* Drag & Drop styles */
