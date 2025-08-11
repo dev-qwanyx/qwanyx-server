@@ -317,12 +317,32 @@ def register():
         
         result = users.insert_one(user)
         
-        # For code-based auth, send a code instead of returning a token
+        # For code-based auth, send a code for immediate verification
         if user.get('auth_method') == 'code':
-            # TODO: Generate and send actual code via email
-            # For now, just return success message
+            # Generate and save auth code (same as login)
+            code = ''.join(random.choices(string.digits, k=6))
+            
+            collections['auth_codes'].insert_one({
+                'email': email,
+                'code': code,
+                'created_at': datetime.utcnow(),
+                'expires_at': datetime.utcnow() + timedelta(minutes=10),
+                'used': False,
+                'purpose': 'register'  # Track that this is for registration
+            })
+            
+            # Send email with code
+            if app.config['SMTP_USER'] and app.config['SMTP_PASS']:
+                try:
+                    send_auth_code_email(email, code, workspace)
+                except Exception as email_error:
+                    print(f"Email error: {email_error}")
+            
+            # Always print for testing/dev
+            print(f"REGISTER CODE for {email}: {code}")
+            
             return jsonify({
-                'message': 'Un code de connexion a été envoyé à votre email',
+                'message': 'Code sent',
                 'user': {
                     'id': str(result.inserted_id),
                     'email': email,
