@@ -1,0 +1,1 @@
+export { default as Tag, Tags } from './Tag';

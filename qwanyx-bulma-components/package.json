@@ -1,0 +1,59 @@
+{
+  "name": "@qwanyx/bulma-components",
+  "version": "0.1.0",
+  "description": "React component library based on Bulma CSS framework for QWANYX applications",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:lib": "rollup -c",
+    "storybook": "storybook dev -p 6006",
+    "test": "vitest"
+  },
+  "peerDependencies": {
+    "bulma": "^0.9.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "bulma": "^1.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rollup": "^3.29.4",
+    "vite": "^5.0.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qwanyx/bulma-components"
+  },
+  "keywords": [
+    "react",
+    "bulma",
+    "components",
+    "ui",
+    "qwanyx"
+  ],
+  "author": "QWANYX",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@types/aos": "^3.0.7",
+    "animate.css": "^4.1.1",
+    "aos": "^2.3.4",
+    "framer-motion": "^12.23.12"
+  }
+}

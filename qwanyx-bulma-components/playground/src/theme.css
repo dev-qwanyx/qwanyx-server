@@ -1,0 +1,173 @@
+/* Bulma 1.0+ CSS Variables for Theme Support */
+
+/* Light theme (default) */
+:root,
+:root.theme-light {
+  --bulma-scheme-h: 0;
+  --bulma-scheme-s: 0%;
+  --bulma-scheme-main-l: 100%;
+  --bulma-scheme-main-bis-l: 98%;
+  --bulma-scheme-main-ter-l: 96%;
+  --bulma-background-l: 96%;
+  --bulma-border-l: 86%;
+  --bulma-text-l: 29%;
+  --bulma-text-strong-l: 21%;
+  --bulma-text-light-l: 48%;
+  
+  --bulma-scheme-invert-l: 4%;
+  --bulma-scheme-invert-bis-l: 7%;
+  --bulma-scheme-invert-ter-l: 14%;
+  
+  --bulma-primary: #00d1b2;
+  --bulma-link: #485fc7;
+  --bulma-info: #3e8ed0;
+  --bulma-success: #48c78e;
+  --bulma-warning: #ffe08a;
+  --bulma-danger: #f14668;
+  --bulma-dark: #363636;
+  --bulma-light: #f5f5f5;
+}
+
+/* Dark theme */
+:root[data-theme="dark"],
+:root.theme-dark {
+  --bulma-scheme-h: 0;
+  --bulma-scheme-s: 0%;
+  --bulma-scheme-main-l: 11%;
+  --bulma-scheme-main-bis-l: 14%;
+  --bulma-scheme-main-ter-l: 18%;
+  --bulma-background-l: 14%;
+  --bulma-border-l: 24%;
+  --bulma-text-l: 71%;
+  --bulma-text-strong-l: 93%;
+  --bulma-text-light-l: 60%;
+  
+  --bulma-scheme-invert-l: 96%;
+  --bulma-scheme-invert-bis-l: 93%;
+  --bulma-scheme-invert-ter-l: 86%;
+  
+  /* Adjusted colors for dark mode visibility */
+  --bulma-primary: #00f4d4;
+  --bulma-link: #5e71e3;
+  --bulma-info: #4fa3e0;
+  --bulma-success: #5ada9e;
+  --bulma-warning: #ffb86c;
+  --bulma-danger: #ff5370;
+  --bulma-dark: #f5f5f5;
+  --bulma-light: #363636;
+}
+
+/* System preference detection */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bulma-scheme-h: 0;
+    --bulma-scheme-s: 0%;
+    --bulma-scheme-main-l: 11%;
+    --bulma-scheme-main-bis-l: 14%;
+    --bulma-scheme-main-ter-l: 18%;
+    --bulma-background-l: 14%;
+    --bulma-border-l: 24%;
+    --bulma-text-l: 71%;
+    --bulma-text-strong-l: 93%;
+    --bulma-text-light-l: 60%;
+    
+    --bulma-scheme-invert-l: 96%;
+    --bulma-scheme-invert-bis-l: 93%;
+    --bulma-scheme-invert-ter-l: 86%;
+    
+    --bulma-primary: #00f4d4;
+    --bulma-link: #5e71e3;
+    --bulma-info: #4fa3e0;
+    --bulma-success: #5ada9e;
+    --bulma-warning: #ffb86c;
+    --bulma-danger: #ff5370;
+    --bulma-dark: #f5f5f5;
+    --bulma-light: #363636;
+  }
+}
+
+/* Additional theme helpers */
+.theme-dark {
+  color-scheme: dark;
+}
+
+.theme-light {
+  color-scheme: light;
+}
+
+/* Ensure smooth transitions when switching themes */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Notification adjustments for dark theme */
+:root[data-theme="dark"] .notification,
+:root.theme-dark .notification {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main-ter-l));
+}
+
+/* Box and Card adjustments for dark theme */
+:root[data-theme="dark"] .box,
+:root[data-theme="dark"] .card,
+:root.theme-dark .box,
+:root.theme-dark .card {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main-bis-l));
+  box-shadow: 0 0.5em 1em -0.125em rgba(0, 0, 0, 0.3);
+}
+
+/* Table adjustments for dark theme */
+:root[data-theme="dark"] .table,
+:root.theme-dark .table {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main-bis-l));
+  color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-text-l));
+}
+
+:root[data-theme="dark"] .table.is-striped tbody tr:nth-child(even),
+:root.theme-dark .table.is-striped tbody tr:nth-child(even) {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main-ter-l));
+}
+
+/* Modal adjustments for dark theme */
+:root[data-theme="dark"] .modal-card-head,
+:root[data-theme="dark"] .modal-card-foot,
+:root.theme-dark .modal-card-head,
+:root.theme-dark .modal-card-foot {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main-ter-l));
+}
+
+:root[data-theme="dark"] .modal-card-body,
+:root.theme-dark .modal-card-body {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main-bis-l));
+}
+
+/* Dropdown adjustments for dark theme */
+:root[data-theme="dark"] .dropdown-content,
+:root.theme-dark .dropdown-content {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main-bis-l));
+  box-shadow: 0 0.5em 1em -0.125em rgba(0, 0, 0, 0.3);
+}
+
+/* Menu adjustments for dark theme */
+:root[data-theme="dark"] .menu-list a:hover,
+:root.theme-dark .menu-list a:hover {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main-ter-l));
+}
+
+/* Input adjustments for dark theme */
+:root[data-theme="dark"] .input,
+:root[data-theme="dark"] .textarea,
+:root[data-theme="dark"] .select select,
+:root.theme-dark .input,
+:root.theme-dark .textarea,
+:root.theme-dark .select select {
+  background-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-scheme-main-l));
+  border-color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-border-l));
+  color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-text-l));
+}
+
+:root[data-theme="dark"] .input::placeholder,
+:root[data-theme="dark"] .textarea::placeholder,
+:root.theme-dark .input::placeholder,
+:root.theme-dark .textarea::placeholder {
+  color: hsl(var(--bulma-scheme-h), var(--bulma-scheme-s), var(--bulma-text-light-l));
+}
