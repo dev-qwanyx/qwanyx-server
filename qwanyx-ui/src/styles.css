@@ -1,0 +1,5 @@
+/* Import the new QWANYX UI CSS system */
+@import './styles/qwanyx-ui.css';
+
+/* Keep Tailwind for now during transition */
+@import "tailwindcss";

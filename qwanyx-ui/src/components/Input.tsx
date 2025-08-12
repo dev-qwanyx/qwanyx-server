@@ -1,4 +1,5 @@
 import React from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: 'default' | 'filled' | 'ghost';
@@ -8,6 +9,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   fullWidth?: boolean;
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
+  name?: string;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
@@ -19,55 +21,54 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   icon,
   iconPosition = 'left',
   className = '',
+  name,
   ...props
 }, ref) => {
-  const baseClasses = 'transition-all duration-base focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
-  
-  const sizeClasses = {
-    xs: 'text-xs px-2 py-1 rounded',
-    sm: 'text-sm px-3 py-1.5 rounded',
-    md: 'text-base px-4 py-2 rounded-md',
-    lg: 'text-lg px-5 py-2.5 rounded-md',
-    xl: 'text-xl px-6 py-3 rounded-lg'
-  };
-  
-  const variantClasses = {
-    default: 'border border-border bg-input text-foreground focus:border-ring focus:ring-2 focus:ring-ring/20',
-    filled: 'bg-input/50 text-foreground border-b-2 border-border focus:border-ring focus:bg-input',
-    ghost: 'bg-transparent text-foreground border-b border-border focus:border-ring'
-  };
-  
-  const stateClasses = error 
-    ? 'border-error focus:border-error focus:ring-error/20' 
-    : success 
-      ? 'border-success focus:border-success focus:ring-success/20'
-      : '';
-  
-  const widthClass = fullWidth ? 'w-full' : '';
+  // Try to get form context if available
+  let formContext: any;
+  try {
+    formContext = useFormContext();
+  } catch {
+    // Not in a form context, that's okay
+  }
+
+  // If we have a name and are in a form context, register the input
+  const registration = name && formContext ? formContext.register(name) : {};
   
   const inputClasses = [
-    baseClasses,
-    sizeClasses[inputSize],
-    variantClasses[variant],
-    stateClasses,
-    widthClass,
-    icon ? (iconPosition === 'left' ? 'pl-10' : 'pr-10') : '',
+    'qwanyx-input',
+    `qwanyx-input--${inputSize}`,
+    `qwanyx-input--${variant}`,
+    error && 'qwanyx-input--error',
+    success && 'qwanyx-input--success',
+    fullWidth && 'qwanyx-input--fullwidth',
+    icon && iconPosition === 'left' && 'qwanyx-input--icon-left',
+    icon && iconPosition === 'right' && 'qwanyx-input--icon-right',
     className
   ].filter(Boolean).join(' ');
   
   if (icon) {
+    const wrapperClasses = [
+      'qwanyx-input-wrapper',
+      fullWidth && 'qwanyx-input-wrapper--fullwidth'
+    ].filter(Boolean).join(' ');
+    
+    const iconClasses = [
+      'qwanyx-input-wrapper__icon',
+      `qwanyx-input-wrapper__icon--${iconPosition}`
+    ].join(' ');
+    
     return (
-      <div className={`relative ${fullWidth ? 'w-full' : 'inline-block'}`}>
+      <div className={wrapperClasses}>
         {icon && (
-          <div className={`absolute top-1/2 -translate-y-1/2 text-text-muted ${
-            iconPosition === 'left' ? 'left-3' : 'right-3'
-          }`}>
+          <div className={iconClasses}>
             {icon}
           </div>
         )}
         <input
           ref={ref}
           className={inputClasses}
+          {...registration}
           {...props}
         />
       </div>
@@ -78,6 +79,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
     <input
       ref={ref}
       className={inputClasses}
+      {...registration}
       {...props}
     />
   );
@@ -92,6 +94,7 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   success?: boolean;
   fullWidth?: boolean;
   resize?: 'none' | 'vertical' | 'horizontal' | 'both';
+  name?: string;
 }
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({
@@ -102,46 +105,29 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({
   fullWidth = false,
   resize = 'vertical',
   className = '',
+  name,
   ...props
 }, ref) => {
-  const baseClasses = 'transition-all duration-base focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed';
-  
-  const sizeClasses = {
-    xs: 'text-xs px-2 py-1 rounded',
-    sm: 'text-sm px-3 py-1.5 rounded',
-    md: 'text-base px-4 py-2 rounded-md',
-    lg: 'text-lg px-5 py-2.5 rounded-md',
-    xl: 'text-xl px-6 py-3 rounded-lg'
-  };
-  
-  const variantClasses = {
-    default: 'border border-border bg-input text-foreground focus:border-ring focus:ring-2 focus:ring-ring/20',
-    filled: 'bg-input/50 text-foreground border-b-2 border-border focus:border-ring focus:bg-input',
-    ghost: 'bg-transparent text-foreground border-b border-border focus:border-ring'
-  };
-  
-  const stateClasses = error 
-    ? 'border-error focus:border-error focus:ring-error/20' 
-    : success 
-      ? 'border-success focus:border-success focus:ring-success/20'
-      : '';
-  
-  const resizeClasses = {
-    none: 'resize-none',
-    vertical: 'resize-y',
-    horizontal: 'resize-x',
-    both: 'resize'
-  };
-  
-  const widthClass = fullWidth ? 'w-full' : '';
+  // Try to get form context if available
+  let formContext: any;
+  try {
+    formContext = useFormContext();
+  } catch {
+    // Not in a form context, that's okay
+  }
+
+  // If we have a name and are in a form context, register the textarea
+  const registration = name && formContext ? formContext.register(name) : {};
   
   const textareaClasses = [
-    baseClasses,
-    sizeClasses[textareaSize],
-    variantClasses[variant],
-    stateClasses,
-    resizeClasses[resize],
-    widthClass,
+    'qwanyx-input',
+    'qwanyx-textarea',
+    `qwanyx-input--${textareaSize}`,
+    `qwanyx-input--${variant}`,
+    error && 'qwanyx-input--error',
+    success && 'qwanyx-input--success',
+    fullWidth && 'qwanyx-input--fullwidth',
+    `qwanyx-textarea--resize-${resize}`,
     className
   ].filter(Boolean).join(' ');
   
@@ -149,6 +135,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({
     <textarea
       ref={ref}
       className={textareaClasses}
+      {...registration}
       {...props}
     />
   );

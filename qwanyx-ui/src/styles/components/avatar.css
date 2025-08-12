@@ -1,0 +1,224 @@
+/* QWANYX UI - Avatar Component */
+
+.qwanyx-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: rgb(var(--qwanyx-muted));
+  flex-shrink: 0;
+}
+
+/* Size variations */
+.qwanyx-avatar--xs {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: var(--qwanyx-text-xs);
+}
+
+.qwanyx-avatar--sm {
+  width: 2rem;
+  height: 2rem;
+  font-size: var(--qwanyx-text-sm);
+}
+
+.qwanyx-avatar--md {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: var(--qwanyx-text-base);
+}
+
+.qwanyx-avatar--lg {
+  width: 3rem;
+  height: 3rem;
+  font-size: var(--qwanyx-text-lg);
+}
+
+.qwanyx-avatar--xl {
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: var(--qwanyx-text-xl);
+}
+
+.qwanyx-avatar--2xl {
+  width: 4rem;
+  height: 4rem;
+  font-size: var(--qwanyx-text-2xl);
+}
+
+/* Shape variations */
+.qwanyx-avatar--circle {
+  border-radius: 9999px;
+}
+
+.qwanyx-avatar--square {
+  border-radius: var(--qwanyx-radius-lg);
+}
+
+/* Avatar image */
+.qwanyx-avatar__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Avatar fallback */
+.qwanyx-avatar__fallback {
+  font-weight: var(--qwanyx-font-medium);
+  color: rgb(var(--qwanyx-text-secondary));
+}
+
+/* Status indicator */
+.qwanyx-avatar__status {
+  position: absolute;
+  border: 2px solid white;
+  border-radius: 9999px;
+}
+
+/* Status sizes */
+.qwanyx-avatar--xs .qwanyx-avatar__status {
+  width: 0.375rem;
+  height: 0.375rem;
+}
+
+.qwanyx-avatar--sm .qwanyx-avatar__status {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.qwanyx-avatar--md .qwanyx-avatar__status {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.qwanyx-avatar--lg .qwanyx-avatar__status {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.qwanyx-avatar--xl .qwanyx-avatar__status {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.qwanyx-avatar--2xl .qwanyx-avatar__status {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Status colors */
+.qwanyx-avatar__status--online {
+  background-color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-avatar__status--offline {
+  background-color: rgb(var(--qwanyx-muted));
+}
+
+.qwanyx-avatar__status--away {
+  background-color: rgb(var(--qwanyx-warning));
+}
+
+.qwanyx-avatar__status--busy {
+  background-color: rgb(var(--qwanyx-error));
+}
+
+/* Status positions */
+.qwanyx-avatar__status--top-right {
+  top: 0;
+  right: 0;
+}
+
+.qwanyx-avatar__status--top-left {
+  top: 0;
+  left: 0;
+}
+
+.qwanyx-avatar__status--bottom-right {
+  bottom: 0;
+  right: 0;
+}
+
+.qwanyx-avatar__status--bottom-left {
+  bottom: 0;
+  left: 0;
+}
+
+/* Avatar Group */
+.qwanyx-avatar-group {
+  display: flex;
+  align-items: center;
+}
+
+.qwanyx-avatar-group--tight {
+  margin-left: -0.5rem;
+}
+
+.qwanyx-avatar-group--normal {
+  margin-left: -0.75rem;
+}
+
+.qwanyx-avatar-group--loose {
+  margin-left: -1rem;
+}
+
+.qwanyx-avatar-group .qwanyx-avatar {
+  position: relative;
+  box-shadow: 0 0 0 2px white;
+}
+
+.qwanyx-avatar-group .qwanyx-avatar:first-child {
+  margin-left: 0;
+}
+
+/* Avatar with count */
+.qwanyx-avatar--count {
+  background-color: rgb(var(--qwanyx-muted));
+  color: rgb(var(--qwanyx-text-primary));
+}
+
+/* Initials Avatar colors */
+.qwanyx-avatar--initials {
+  color: white;
+  font-weight: var(--qwanyx-font-medium);
+}
+
+.qwanyx-avatar--primary {
+  background-color: rgb(var(--qwanyx-primary));
+}
+
+.qwanyx-avatar--secondary {
+  background-color: rgb(var(--qwanyx-secondary));
+}
+
+.qwanyx-avatar--accent {
+  background-color: rgb(var(--qwanyx-accent));
+}
+
+.qwanyx-avatar--success {
+  background-color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-avatar--warning {
+  background-color: rgb(var(--qwanyx-warning));
+}
+
+.qwanyx-avatar--error {
+  background-color: rgb(var(--qwanyx-error));
+}
+
+.qwanyx-avatar--info {
+  background-color: rgb(var(--qwanyx-info));
+}
+
+/* Auto-generated colors for initials */
+.qwanyx-avatar--color-0 { background-color: #ef4444; }
+.qwanyx-avatar--color-1 { background-color: #f97316; }
+.qwanyx-avatar--color-2 { background-color: #eab308; }
+.qwanyx-avatar--color-3 { background-color: #22c55e; }
+.qwanyx-avatar--color-4 { background-color: #14b8a6; }
+.qwanyx-avatar--color-5 { background-color: #3b82f6; }
+.qwanyx-avatar--color-6 { background-color: #6366f1; }
+.qwanyx-avatar--color-7 { background-color: #a855f7; }
+.qwanyx-avatar--color-8 { background-color: #ec4899; }

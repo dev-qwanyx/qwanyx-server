@@ -1,10 +1,17 @@
 {
-  "name": "qwanyx-ui",
+  "name": "@qwanyx/ui",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:lib": "tsc -p tsconfig.build.json && vite build --config vite.lib.config.ts",
     "preview": "vite preview"
   },
   "keywords": [],
@@ -22,8 +29,11 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "@tailwindcss/postcss": "^4.1.11",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "react-hook-form": "^7.62.0",
+    "zod": "^4.0.17"
   }
 }

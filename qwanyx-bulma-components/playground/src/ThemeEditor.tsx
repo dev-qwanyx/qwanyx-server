@@ -229,11 +229,7 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({ onThemeChange, initial
   const applyTheme = (colors: ThemeColors) => {
     const root = document.documentElement;
     
-    // Clear all existing theme variables first
-    const allVars = Array.from(document.documentElement.style).filter(prop => prop.startsWith('--bulma-'));
-    allVars.forEach(prop => root.style.removeProperty(prop));
-    
-    // For main colors, set both hex and HSL values
+    // For main colors, set both hex and HSL values (required for Bulma 1.0)
     const mainColors = ['primary', 'link', 'info', 'success', 'warning', 'danger', 'dark', 'light'];
     
     mainColors.forEach(colorName => {
@@ -249,51 +245,9 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({ onThemeChange, initial
       }
     });
     
-    // Set scheme colors with HSL values for proper Bulma 1.0 dark mode
-    if (colors['scheme-main']) {
-      const schemeHsl = hexToHSL(colors['scheme-main']);
-      root.style.setProperty('--bulma-scheme-h', `${schemeHsl.h}deg`);
-      root.style.setProperty('--bulma-scheme-s', `${schemeHsl.s}%`);
-      root.style.setProperty('--bulma-scheme-main-l', `${schemeHsl.l}%`);
-      root.style.setProperty('--bulma-scheme-main', colors['scheme-main']);
-    }
-    
-    // Set background and text with HSL
-    if (colors.background) {
-      const bgHsl = hexToHSL(colors.background);
-      root.style.setProperty('--bulma-background-l', `${bgHsl.l}%`);
-      root.style.setProperty('--bulma-background', colors.background);
-    }
-    
-    if (colors.text) {
-      const textHsl = hexToHSL(colors.text);
-      root.style.setProperty('--bulma-text-l', `${textHsl.l}%`);
-      root.style.setProperty('--bulma-text', colors.text);
-    }
-    
-    // Set text variations
-    if (colors['text-strong']) {
-      const strongHsl = hexToHSL(colors['text-strong']);
-      root.style.setProperty('--bulma-text-strong-l', `${strongHsl.l}%`);
-      root.style.setProperty('--bulma-text-strong', colors['text-strong']);
-    }
-    
-    if (colors['text-light']) {
-      const lightHsl = hexToHSL(colors['text-light']);
-      root.style.setProperty('--bulma-text-weak-l', `${lightHsl.l}%`);
-      root.style.setProperty('--bulma-text-light', colors['text-light']);
-    }
-    
-    // Set border
-    if (colors.border) {
-      const borderHsl = hexToHSL(colors.border);
-      root.style.setProperty('--bulma-border-l', `${borderHsl.l}%`);
-      root.style.setProperty('--bulma-border', colors.border);
-    }
-    
     // Set all other colors as direct values
     Object.entries(colors).forEach(([key, value]) => {
-      if (!mainColors.includes(key) && !['scheme-main', 'background', 'text', 'text-strong', 'text-light', 'border'].includes(key)) {
+      if (!mainColors.includes(key)) {
         root.style.setProperty(`--bulma-${key}`, value);
       }
     });
@@ -301,14 +255,6 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({ onThemeChange, initial
     // Set body background using scheme-main
     if (colors['scheme-main']) {
       document.body.style.backgroundColor = colors['scheme-main'];
-      root.style.setProperty('--bulma-body-background-color', colors['scheme-main']);
-    }
-    
-    // Set dark mode brightness indicator for Bulma
-    if (isDark) {
-      root.style.setProperty('--bulma-scheme-brightness', 'dark');
-    } else {
-      root.style.setProperty('--bulma-scheme-brightness', 'light');
     }
   };
 
@@ -332,22 +278,7 @@ export const ThemeEditor: React.FC<ThemeEditorProps> = ({ onThemeChange, initial
   }, [useSystemTheme]);
 
   useEffect(() => {
-    // First update the mode classes
-    if (isDark) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      document.documentElement.classList.add('theme-dark');
-      document.documentElement.classList.remove('theme-light');
-      document.body.classList.add('has-background-dark');
-      document.body.classList.remove('has-background-white');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-      document.documentElement.classList.add('theme-light');
-      document.documentElement.classList.remove('theme-dark');
-      document.body.classList.add('has-background-white');
-      document.body.classList.remove('has-background-dark');
-    }
-    
-    // Then apply the theme colors
+    // Just apply the theme colors
     applyTheme(theme);
     
     // Save to localStorage

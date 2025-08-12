@@ -1,0 +1,17 @@
+# SSH Configuration for OVH Mail Server
+# Copy this to your ~/.ssh/config file (Windows: C:\Users\YourName\.ssh\config)
+
+Host ovh-mail
+    HostName 51.38.230.64
+    User root
+    Port 22
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    
+# To connect in VS Code:
+# 1. Press Ctrl+Shift+P
+# 2. Type: Remote-SSH: Connect to Host
+# 3. Choose "ovh-mail" from the list
+# OR directly type: root@51.38.230.64
+
+# IMPORTANT: Only 2 password attempts before IP block!

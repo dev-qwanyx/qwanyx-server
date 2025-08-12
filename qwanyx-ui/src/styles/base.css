@@ -1,0 +1,61 @@
+/* QWANYX UI - Base Styles */
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Base styles */
+.qwanyx-ui {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+  color: rgb(var(--qwanyx-text-primary));
+  background-color: rgb(var(--qwanyx-background));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility functions for colors with opacity */
+.qwanyx-color {
+  --opacity: 1;
+}
+
+/* Text utilities */
+.qwanyx-text-primary { color: rgb(var(--qwanyx-text-primary)); }
+.qwanyx-text-secondary { color: rgb(var(--qwanyx-text-secondary)); }
+.qwanyx-text-muted { color: rgb(var(--qwanyx-text-muted)); }
+
+/* Background utilities */
+.qwanyx-bg-primary { background-color: rgb(var(--qwanyx-primary)); }
+.qwanyx-bg-secondary { background-color: rgb(var(--qwanyx-secondary)); }
+.qwanyx-bg-accent { background-color: rgb(var(--qwanyx-accent)); }
+.qwanyx-bg-success { background-color: rgb(var(--qwanyx-success)); }
+.qwanyx-bg-warning { background-color: rgb(var(--qwanyx-warning)); }
+.qwanyx-bg-error { background-color: rgb(var(--qwanyx-error)); }
+.qwanyx-bg-info { background-color: rgb(var(--qwanyx-info)); }
+
+/* Spacing utilities */
+.qwanyx-p-xs { padding: var(--qwanyx-spacing-xs); }
+.qwanyx-p-sm { padding: var(--qwanyx-spacing-sm); }
+.qwanyx-p-md { padding: var(--qwanyx-spacing-md); }
+.qwanyx-p-lg { padding: var(--qwanyx-spacing-lg); }
+.qwanyx-p-xl { padding: var(--qwanyx-spacing-xl); }
+
+.qwanyx-m-xs { margin: var(--qwanyx-spacing-xs); }
+.qwanyx-m-sm { margin: var(--qwanyx-spacing-sm); }
+.qwanyx-m-md { margin: var(--qwanyx-spacing-md); }
+.qwanyx-m-lg { margin: var(--qwanyx-spacing-lg); }
+.qwanyx-m-xl { margin: var(--qwanyx-spacing-xl); }
+
+/* Border radius utilities */
+.qwanyx-rounded-sm { border-radius: var(--qwanyx-radius-sm); }
+.qwanyx-rounded-md { border-radius: var(--qwanyx-radius-md); }
+.qwanyx-rounded-lg { border-radius: var(--qwanyx-radius-lg); }
+.qwanyx-rounded-xl { border-radius: var(--qwanyx-radius-xl); }
+.qwanyx-rounded-full { border-radius: var(--qwanyx-radius-full); }
+
+/* Shadow utilities */
+.qwanyx-shadow-sm { box-shadow: var(--qwanyx-shadow-sm); }
+.qwanyx-shadow-md { box-shadow: var(--qwanyx-shadow-md); }
+.qwanyx-shadow-lg { box-shadow: var(--qwanyx-shadow-lg); }
+.qwanyx-shadow-xl { box-shadow: var(--qwanyx-shadow-xl); }

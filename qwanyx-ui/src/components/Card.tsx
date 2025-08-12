@@ -14,34 +14,16 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(({
   className = '',
   ...props
 }, ref) => {
-  const baseClasses = 'rounded-lg transition-all duration-base';
-  
-  const variantClasses = {
-    elevated: 'bg-card text-card-foreground shadow-md',
-    outlined: 'bg-card text-card-foreground border border-border',
-    filled: 'bg-card text-card-foreground'
-  };
-  
-  const paddingClasses = {
-    none: '',
-    sm: 'p-3',
-    md: 'p-6',
-    lg: 'p-8',
-    xl: 'p-10'
-  };
-  
-  const hoverClass = hoverable ? 'hover:shadow-lg hover:-translate-y-1 cursor-pointer' : '';
-  
-  const combinedClassName = [
-    baseClasses,
-    variantClasses[variant],
-    paddingClasses[padding],
-    hoverClass,
+  const classNames = [
+    'qwanyx-card',
+    `qwanyx-card--${variant}`,
+    `qwanyx-card--padding-${padding}`,
+    hoverable && 'qwanyx-card--hoverable',
     className
   ].filter(Boolean).join(' ');
   
   return (
-    <div ref={ref} className={combinedClassName} {...props}>
+    <div ref={ref} className={classNames} {...props}>
       {children}
     </div>
   );
@@ -59,7 +41,7 @@ export const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(({
   return (
     <div 
       ref={ref} 
-      className={`px-6 py-4 border-b border-border ${className}`} 
+      className={`qwanyx-card__header ${className}`} 
       {...props}
     >
       {children}
@@ -82,7 +64,7 @@ export const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(({
   return (
     <Component 
       ref={ref as any} 
-      className={`text-xl font-semibold text-text-primary ${className}`} 
+      className={`qwanyx-card__title ${className}`} 
       {...props}
     >
       {children}
@@ -102,7 +84,7 @@ export const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescri
   return (
     <p 
       ref={ref} 
-      className={`text-sm text-text-secondary mt-1 ${className}`} 
+      className={`qwanyx-card__description ${className}`} 
       {...props}
     >
       {children}
@@ -122,7 +104,7 @@ export const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(({
   return (
     <div 
       ref={ref} 
-      className={`p-6 ${className}`} 
+      className={`qwanyx-card__content ${className}`} 
       {...props}
     >
       {children}
@@ -142,7 +124,7 @@ export const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(({
   return (
     <div 
       ref={ref} 
-      className={`px-6 py-4 border-t border-border ${className}`} 
+      className={`qwanyx-card__footer ${className}`} 
       {...props}
     >
       {children}
@@ -163,17 +145,17 @@ export const CardImage = React.forwardRef<HTMLImageElement, CardImageProps>(({
   ...props
 }, ref) => {
   const aspectClasses = {
-    'square': 'aspect-square',
-    '16/9': 'aspect-video',
-    '4/3': 'aspect-[4/3]',
-    '21/9': 'aspect-[21/9]'
+    'square': 'qwanyx-card__image-container--square',
+    '16/9': 'qwanyx-card__image-container--video',
+    '4/3': 'qwanyx-card__image-container--4-3',
+    '21/9': 'qwanyx-card__image-container--21-9'
   };
   
   return (
-    <div className={`overflow-hidden rounded-t-lg ${aspectClasses[aspectRatio]}`}>
+    <div className={`qwanyx-card__image-container ${aspectClasses[aspectRatio]}`}>
       <img 
         ref={ref}
-        className={`w-full h-full object-cover ${className}`}
+        className={`qwanyx-card__image ${className}`}
         alt={alt}
         {...props}
       />

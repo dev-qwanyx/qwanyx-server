@@ -1,0 +1,283 @@
+/* QWANYX UI - Container Components */
+
+/* Container */
+.qwanyx-container {
+  width: 100%;
+}
+
+.qwanyx-container--sm {
+  max-width: 640px;
+}
+
+.qwanyx-container--md {
+  max-width: 768px;
+}
+
+.qwanyx-container--lg {
+  max-width: 1024px;
+}
+
+.qwanyx-container--xl {
+  max-width: 1280px;
+}
+
+.qwanyx-container--2xl {
+  max-width: 1536px;
+}
+
+.qwanyx-container--full {
+  max-width: 100%;
+}
+
+.qwanyx-container--center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Container Padding */
+.qwanyx-container--padding-sm {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.qwanyx-container--padding-md {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.qwanyx-container--padding-lg {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.qwanyx-container--padding-xl {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+/* Section */
+.qwanyx-section {
+  display: block;
+}
+
+.qwanyx-section--spacing-sm {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.qwanyx-section--spacing-md {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.qwanyx-section--spacing-lg {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.qwanyx-section--spacing-xl {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.qwanyx-section--spacing-2xl {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+.qwanyx-section--fullheight {
+  min-height: 100vh;
+}
+
+/* Grid */
+.qwanyx-grid {
+  display: grid;
+}
+
+.qwanyx-grid--cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.qwanyx-grid--cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.qwanyx-grid--cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.qwanyx-grid--cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.qwanyx-grid--cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.qwanyx-grid--cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.qwanyx-grid--cols-12 {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+/* Grid Gap */
+.qwanyx-grid--gap-sm {
+  gap: 0.5rem;
+}
+
+.qwanyx-grid--gap-md {
+  gap: 1rem;
+}
+
+.qwanyx-grid--gap-lg {
+  gap: 1.5rem;
+}
+
+.qwanyx-grid--gap-xl {
+  gap: 2rem;
+}
+
+/* Grid Responsive */
+@media (max-width: 768px) {
+  .qwanyx-grid--responsive.qwanyx-grid--cols-2,
+  .qwanyx-grid--responsive.qwanyx-grid--cols-3,
+  .qwanyx-grid--responsive.qwanyx-grid--cols-4,
+  .qwanyx-grid--responsive.qwanyx-grid--cols-5,
+  .qwanyx-grid--responsive.qwanyx-grid--cols-6 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .qwanyx-grid--responsive.qwanyx-grid--cols-12 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .qwanyx-grid--responsive.qwanyx-grid--cols-3,
+  .qwanyx-grid--responsive.qwanyx-grid--cols-4,
+  .qwanyx-grid--responsive.qwanyx-grid--cols-5 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .qwanyx-grid--responsive.qwanyx-grid--cols-6 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  
+  .qwanyx-grid--responsive.qwanyx-grid--cols-12 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .qwanyx-grid--responsive.qwanyx-grid--cols-12 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* Flex */
+.qwanyx-flex {
+  display: flex;
+}
+
+.qwanyx-flex--row {
+  flex-direction: row;
+}
+
+.qwanyx-flex--col {
+  flex-direction: column;
+}
+
+.qwanyx-flex--row-reverse {
+  flex-direction: row-reverse;
+}
+
+.qwanyx-flex--col-reverse {
+  flex-direction: column-reverse;
+}
+
+/* Flex Wrap */
+.qwanyx-flex--wrap {
+  flex-wrap: wrap;
+}
+
+.qwanyx-flex--nowrap {
+  flex-wrap: nowrap;
+}
+
+.qwanyx-flex--wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
+/* Flex Justify */
+.qwanyx-flex--justify-start {
+  justify-content: flex-start;
+}
+
+.qwanyx-flex--justify-end {
+  justify-content: flex-end;
+}
+
+.qwanyx-flex--justify-center {
+  justify-content: center;
+}
+
+.qwanyx-flex--justify-between {
+  justify-content: space-between;
+}
+
+.qwanyx-flex--justify-around {
+  justify-content: space-around;
+}
+
+.qwanyx-flex--justify-evenly {
+  justify-content: space-evenly;
+}
+
+/* Flex Align */
+.qwanyx-flex--align-start {
+  align-items: flex-start;
+}
+
+.qwanyx-flex--align-end {
+  align-items: flex-end;
+}
+
+.qwanyx-flex--align-center {
+  align-items: center;
+}
+
+.qwanyx-flex--align-baseline {
+  align-items: baseline;
+}
+
+.qwanyx-flex--align-stretch {
+  align-items: stretch;
+}
+
+/* Flex Gap */
+.qwanyx-flex--gap-sm {
+  gap: 0.5rem;
+}
+
+.qwanyx-flex--gap-md {
+  gap: 1rem;
+}
+
+.qwanyx-flex--gap-lg {
+  gap: 1.5rem;
+}
+
+.qwanyx-flex--gap-xl {
+  gap: 2rem;
+}
+
+/* Flex Size */
+.qwanyx-flex--fullwidth {
+  width: 100%;
+}
+
+.qwanyx-flex--fullheight {
+  height: 100%;
+}

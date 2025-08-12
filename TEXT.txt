@@ -1,17 +1,29 @@
-in:1619 ServiceWorker registration failed: AbortError: Failed to register a ServiceWorker for scope ('http://localhost:8083/static/') with script ('http://localhost:8083/static/service-worker.js'): Operation has been aborted
-in:1 <meta name="apple-mobile-web-app-capable" content="yes"> is deprecated. Please include <meta name="mobile-web-app-capable" content="yes">
-static/icons/icon-144x144.png:1  Failed to load resource: the server responded with a status of 404 (NOT FOUND)
-in:1 Error while trying to use the following icon from the Manifest: http://localhost:8083/static/icons/icon-144x144.png (Download error or resource isn't a valid image)
-in:1 Access to fetch at 'http://localhost:5001/api/identity' from origin 'http://localhost:8083' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-:5001/api/identity:1  Failed to load resource: net::ERR_FAILED
-in:530 API Call Failed: TypeError: Failed to fetch
-    at apiCall (in:520:40)
-    at initializeDashboard (in:538:33)
-    at in:808:13
-apiCall @ in:530
-in:551 Failed to initialize user
-initializeDashboard @ in:551
-in:734 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'textContent')
-    at saveColumn (in:734:64)
-    at addColumn (in:1534:19)
-    at initializeDashboard (in:553:17)
+PS E:\qwanyxDev\QWANYX-Architecture\qwanyx\frontend> npm run build      
+
+> frontend@1.0.0 build
+> webpack
+
+assets by status 2.1 MiB [cached] 18 assets
+orphan modules 4.68 MiB [orphan] 1187 modules
+runtime modules 8.28 KiB 12 modules
+cacheable modules 4.98 MiB
+  modules by path ./node_modules/style-loader/dist/runtime/*.js 5.84 KiB 6 modules
+  modules by path ./node_modules/property-information/ 33.9 KiB 6 modules
+  modules by path ./node_modules/mdast-util-to-markdown/lib/ 39.5 KiB 5 modules
+  modules by path ./node_modules/react/ 18 KiB 4 modules
+  modules by path ./node_modules/react-dom/ 512 KiB 4 modules
+  modules by path ./node_modules/css-loader/dist/runtime/*.js 2.31 KiB
+    ./node_modules/css-loader/dist/runtime/noSourceMaps.js 64 bytes [built] [code generated]
+    ./node_modules/css-loader/dist/runtime/api.js 2.25 KiB [built] [code generated]
+  modules by path ./node_modules/scheduler/ 10.1 KiB
+    ./node_modules/scheduler/index.js 194 bytes [built] [code generated]
+    ./node_modules/scheduler/cjs/scheduler.production.js 9.94 KiB [built] [code generated]
+  + 48 modules
+
+WARNING in ./static/js/blocknote-init.js 23:19-40
+export 'createBlockNoteEditor' (imported as 'createBlockNoteEditor') was not found in '@blocknote/core' (possible exports: AudioBlock, BlockNoteEditor, BlockNoteExtension, BlockNoteSchema, COLORS_DARK_MODE_DEFAULT, COLORS_DEFAULT, CodeBlock, DEFAULT_LINK_PROTOCOL, EMPTY_CELL_HEIGHT, EMPTY_CELL_WIDTH, EventEmitter, Exporter, FILE_AUDIO_ICON_SVG, FILE_ICON_SVG, FILE_IMAGE_ICON_SVG, FILE_VIDEO_ICON_SVG, FileBlock, FilePanelProsemirrorPlugin, FilePanelView, FormattingToolbarProsemirrorPlugin, FormattingToolbarView, HTMLToBlocks, ImageBlock, LinkToolbarProsemirrorPlugin, PageBreak, SideMenuProsemirrorPlugin, SideMenuView, SuggestionMenuProseMirrorPlugin, TableHandlesProsemirrorPlugin, TableHandlesView, UniqueID, UnreachableCaseError, VALID_LINK_PROTOCOLS, VideoBlock, addInlineContentAttributes, addInlineContentKeyboardShortcuts, addStyleAttributes, applyNonSelectableBlockFix, assertEmpty, audioBlockConfig, audioParse, audioPropSchema, audioRender, audioToExternalHTML, blockToNode, blocksToMarkdown, camelToDataKebab, checkBlockHasDefaultProp, checkBlockIsDefaultType, checkBlockIsFileBlock, checkBlockIsFileBlockWithPlaceholder, checkBlockIsFileBlockWithPreview, checkBlockTypeHasDefaultProp, checkBlockTypeInSchema, checkDefaultBlockTypeInSchema, checkDefaultInlineContentTypeInSchema, checkInlineContentTypeInSchema, checkPageBreakBlocksInSchema, cleanHTMLToMarkdown, combineByGroup, contentNodeToInlineContent, contentNodeToTableContent, createAddFileButton, createBlockSpec, createBlockSpecFromStronglyTypedTiptapNode, createDefaultBlockDOMOutputSpec, createExternalHTMLExporter, createFigureWithCaption, createFileBlockWrapper, createFileNameWithIcon, createInlineContentSpec, createInlineContentSpecFromTipTapNode, createInternalBlockSpec, createInternalHTMLSerializer, createInternalInlineContentSpec, createInternalStyleSpec, createLinkWithCaption, createResizableFileBlockWrapper, createStronglyTypedTiptapNode, createStyleSpec, createStyleSpecFromTipTapMark, createSuggestionMenu, createToggleWrapper, defaultBlockSchema, defaultBlockSpecs, defaultBlockToHTML, defaultCodeBlockPropSchema, defaultInlineContentSchema, defaultInlineContentSpecs, defaultProps, defaultStyleSchema, defaultStyleSpecs, defaultToggledState, docToBlocks, esmDependencies, fileBlockConfig, fileParse, filePropSchema, fileRender, fileToExternalHTML, filenameFromURL, filterSuggestionItems, formatKeyboardShortcut, formattingToolbarPluginKey, getBlock, getBlockCache, getBlockFromPos, getBlockInfo, getBlockInfoFromResolvedPos, getBlockInfoFromSelection, getBlockInfoFromTransaction, getBlockInfoWithManualOffset, getBlockNoteExtensions, getBlockNoteSchema, getBlockSchema, getBlockSchemaFromSpecs, getBlocksChangedByTransaction, getColspan, getDefaultEmojiPickerItems, getDefaultSlashMenuItems, getInlineContentParseRules, getInlineContentSchema, getInlineContentSchemaFromSpecs, getNearestBlockPos, getNextBlock, getNodeById, getPageBreakSlashMenuItems, getParentBlock, getParseRules, getPmSchema, getPrevBlock, getRowspan, getStyleParseRules, getStyleSchema, getStyleSchemaFromSpecs, imageBlockConfig, imageParse, imagePropSchema, imageRender, imageToExternalHTML, inheritedProps, initializeESMDependencies, inlineContentToNodes, insertBlocks, insertOrUpdateBlock, isAppleOS, isLinkInlineContent, isNodeBlock, isPartialLinkInlineContent, isPartialTableCell, isSafari, isStyledTextInlineContent, isTableCell, isTableCellSelection, linkToolbarPluginKey, mapTableCell, mappingFactory, markdownToBlocks, markdownToHTML, mergeCSSClasses, mergeParagraphs, nodeToBlock, nodeToCustomInlineContent, pageBreakConfig, pageBreakParse, pageBreakRender, pageBreakSchema, pageBreakToExternalHTML, parseEmbedElement, parseFigureElement, propsToAttributes, prosemirrorSliceToSlicedBlocks, removeAndInsertBlocks, selectedFragmentToHTML, shikiHighlighterPromiseSymbol, shikiParserSymbol, sideMenuPluginKey, stylePropsToAttributes, tableContentToNodes, tableHandlesPluginKey, trackPosition, updateBlock, updateBlockCommand, updateBlockTr, uploadToTmpFilesDotOrg_DEV_ONLY, videoBlockConfig, videoParse, videoPropSchema, videoRender, videoToExternalHTML, withPageBreak, wrapInBlockStructure)
+
+ERROR in ./static/js/blocknote-init.js 3:0-35
+Module not found: Error: Package path ./fonts.css is not exported from package E:\qwanyxDev\QWANYX-Architecture\qwanyx\frontend\node_modules\@blocknote\core (see exports field in E:\qwanyxDev\QWANYX-Architecture\qwanyx\frontend\node_modules\@blocknote\core\package.json)
+
+webpack 5.101.0 compiled with 1 error and 1 warning in 14011 ms

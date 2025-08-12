@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalTitle, ModalDescription, ModalBody, ModalFooter } from './Modal';
 import { Input } from './Input';
 import { Button } from './Button';
 import { Text } from './Text';
-import { Alert } from './Alert';
 import { OTPInput, OTPTimer } from './OTPInput';
-import { Logo } from './Logo';
 
 export interface AuthModalProps {
   isOpen: boolean;
@@ -32,7 +30,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      // Reset everything when modal closes
+      setStep('email');
+      setEmail('');
+      setCode('');
+      setError('');
+      setSuccess('');
+      setLoading(false);
+    } else {
+      // Reset to initial mode when opening
+      setMode(initialMode);
+    }
+  }, [isOpen, initialMode]);
+
   const handleSendCode = async () => {
+    // Validate email format
+    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    
     setLoading(true);
     setError('');
     
@@ -173,19 +194,40 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {step === 'email' ? (
             <>
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
-                className="w-full"
-              />
+              <div style={{ position: 'relative', marginBottom: '8px' }}>
+                <i className="fas fa-envelope" style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#999',
+                  fontSize: '14px',
+                  zIndex: 1
+                }}></i>
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                  fullWidth={true}
+                  style={{ paddingLeft: '2.5rem' }}
+                  error={!!error && step === 'email'}
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                  title="Please enter a valid email address"
+                  required
+                />
+              </div>
               <Button
                 fullWidth
                 onClick={handleSendCode}
                 loading={loading}
                 disabled={!email}
+                style={{ 
+                  backgroundColor: '#E67E22',
+                  color: 'white',
+                  opacity: !email ? 0.6 : 1
+                }}
               >
                 Send Code
               </Button>

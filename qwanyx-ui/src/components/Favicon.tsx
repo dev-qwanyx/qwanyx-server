@@ -117,7 +117,7 @@ export const Favicon: React.FC<FaviconProps> = ({
 };
 
 // Hook version for more control
-export const useFavicon = (href?: string, options?: { autoDetect?: boolean } = {}) => {
+export const useFavicon = (href?: string, options: { autoDetect?: boolean } = {}) => {
   const { autoDetect = true } = options;
   
   useEffect(() => {
@@ -165,7 +165,7 @@ export const useFavicon = (href?: string, options?: { autoDetect?: boolean } = {
 
       // Try each path until one works
       Promise.any(possiblePaths.map(tryFavicon))
-        .then(workingPath => {
+        .then((workingPath: string) => {
           const extension = workingPath.split('.').pop()?.toLowerCase();
           let type = 'image/x-icon';
           

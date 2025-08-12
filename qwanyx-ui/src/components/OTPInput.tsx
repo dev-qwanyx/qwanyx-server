@@ -116,7 +116,9 @@ export const OTPInput: React.FC<OTPInputProps> = ({
       {Array.from({ length }, (_, index) => (
         <div key={index} className="relative">
           <input
-            ref={(el) => (inputRefs.current[index] = el)}
+            ref={(el) => {
+              if (el) inputRefs.current[index] = el;
+            }}
             type="text"
             inputMode="numeric"
             maxLength={1}

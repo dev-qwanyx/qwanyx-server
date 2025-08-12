@@ -412,11 +412,15 @@ function App() {
               {/* Container */}
               <div className="mb-5">
                 <Title size={5}>Container</Title>
-                <Container style={{ background: '#f5f5f5', padding: '1rem', marginBottom: '1rem' }}>
-                  <p>Standard Container</p>
+                <Container className="has-background-light p-4 mb-4">
+                  <div className="content">
+                    <p>Standard Container</p>
+                  </div>
                 </Container>
-                <Container fluid style={{ background: '#f0f0f0', padding: '1rem' }}>
-                  <p>Fluid Container</p>
+                <Container fluid className="has-background-light p-4">
+                  <div className="content">
+                    <p>Fluid Container</p>
+                  </div>
                 </Container>
               </div>
 
@@ -425,13 +429,19 @@ function App() {
                 <Title size={5}>Columns Grid</Title>
                 <Columns>
                   <Column size="one-quarter">
-                    <Box style={{ background: '#ffebcd' }}>1/4</Box>
+                    <Box className="has-background-warning-light">
+                      <div className="content">1/4</div>
+                    </Box>
                   </Column>
                   <Column size="one-quarter">
-                    <Box style={{ background: '#ffe4b5' }}>1/4</Box>
+                    <Box className="has-background-warning-light">
+                      <div className="content">1/4</div>
+                    </Box>
                   </Column>
                   <Column size="half">
-                    <Box style={{ background: '#ffdead' }}>1/2</Box>
+                    <Box className="has-background-warning-light">
+                      <div className="content">1/2</div>
+                    </Box>
                   </Column>
                 </Columns>
               </div>

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ThemeProvider } from '../src/providers/ThemeProvider';
 import { WorkspaceProvider, useWorkspace } from '../src/providers/WorkspaceProvider';
 import { ComponentShowcase } from './ComponentShowcase';
 import { ThemeEditor } from './ThemeEditor';
-import { Container, Section, Heading, Text, Button, Flex } from '../src';
+import { Container, Section, Heading, Text, Button } from '../src';
 import { SimpleNavbar } from '../src/components/Navbar';
 import { AuthModal, AuthStatus } from '../src/components/Auth';
 import { Favicon } from '../src/components/Favicon';

@@ -85,7 +85,8 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
 
 Heading.displayName = 'Heading';
 
-export interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
+export interface TextProps {
+  children?: React.ReactNode;
   as?: 'p' | 'span' | 'div' | 'label';
   size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl';
   weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
@@ -94,6 +95,8 @@ export interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
   italic?: boolean;
   underline?: boolean;
   lineThrough?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(({
@@ -107,7 +110,7 @@ export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(({
   underline = false,
   lineThrough = false,
   className = '',
-  ...props
+  style
 }, ref) => {
   const sizeClasses = {
     'xs': 'text-xs',
@@ -159,8 +162,17 @@ export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(({
     className
   ].filter(Boolean).join(' ');
   
+  // Handle label element
+  if (Component === 'label') {
+    return (
+      <label ref={ref as any} className={combinedClassName} style={style}>
+        {children}
+      </label>
+    );
+  }
+  
   return (
-    <Component ref={ref as any} className={combinedClassName} {...props}>
+    <Component ref={ref as any} className={combinedClassName} style={style}>
       {children}
     </Component>
   );

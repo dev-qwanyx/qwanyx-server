@@ -120,7 +120,8 @@ export const ThemeEditor: React.FC = () => {
                   {themes.map((t) => (
                     <Flex key={t.name} justify="between" align="center" className="p-2 rounded hover:bg-foreground/5">
                       <Button
-                        variant={selectedPreset === t.name ? 'solid' : 'ghost'}
+                        variant={selectedPreset === t.name ? 'outline' : 'ghost'}
+                        color={selectedPreset === t.name ? 'primary' : undefined}
                         size="sm"
                         fullWidth
                         onClick={() => handleLoadTheme(t)}

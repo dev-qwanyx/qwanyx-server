@@ -90,10 +90,10 @@ def qwanyx_in():
     """QWANYX IN - Universal Input System"""
     return render_template('qwanyx-dashboard.html')
 
-@app.route('/clean')
-def qwanyx_clean():
-    """QWANYX Clean Version - Fresh Start"""
-    return render_template('qwanyx-clean.html')
+@app.route('/workspace')
+def qwanyx_workspace():
+    """QWANYX Workspace - Main Interface"""
+    return render_template('qwanyx-workspace.html')
 
 @app.route('/apps/inbox-gtd')
 def inbox_gtd():
