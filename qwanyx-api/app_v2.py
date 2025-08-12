@@ -251,6 +251,10 @@ def verify_code():
         code = data.get('code')
         workspace_code = data.get('workspace')
         
+        # Also check for 'site' for backward compatibility
+        if not workspace_code:
+            workspace_code = data.get('site')
+        
         if not email or not code or not workspace_code:
             return jsonify({'error': 'Email, code and workspace required'}), 400
             
