@@ -328,59 +328,59 @@ const BelgicomicsAuthModalNew: React.FC<BelgicomicsAuthModalProps> = ({
                         </label>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           <Checkbox
-                            label="Chercheur"
                             checked={proTypes.includes('chercheur')}
-                            onChange={(e) => {
-                              if (e.target.checked) {
+                            onChange={(checked) => {
+                              if (checked) {
                                 setProTypes([...proTypes, 'chercheur'])
                               } else {
                                 setProTypes(proTypes.filter(t => t !== 'chercheur'))
                               }
                             }}
+                            label="Chercheur"
                           />
                           <Checkbox
-                            label="Auteur (scénariste, dessinateur, coloriste)"
                             checked={proTypes.includes('auteur')}
-                            onChange={(e) => {
-                              if (e.target.checked) {
+                            onChange={(checked) => {
+                              if (checked) {
                                 setProTypes([...proTypes, 'auteur'])
                               } else {
                                 setProTypes(proTypes.filter(t => t !== 'auteur'))
                               }
                             }}
+                            label="Auteur (scénariste, dessinateur, coloriste)"
                           />
                           <Checkbox
-                            label="Éditeur"
                             checked={proTypes.includes('editeur')}
-                            onChange={(e) => {
-                              if (e.target.checked) {
+                            onChange={(checked) => {
+                              if (checked) {
                                 setProTypes([...proTypes, 'editeur'])
                               } else {
                                 setProTypes(proTypes.filter(t => t !== 'editeur'))
                               }
                             }}
+                            label="Éditeur"
                           />
                           <Checkbox
-                            label="Institution culturelle"
                             checked={proTypes.includes('institution')}
-                            onChange={(e) => {
-                              if (e.target.checked) {
+                            onChange={(checked) => {
+                              if (checked) {
                                 setProTypes([...proTypes, 'institution'])
                               } else {
                                 setProTypes(proTypes.filter(t => t !== 'institution'))
                               }
                             }}
+                            label="Institution culturelle"
                           />
                           <Checkbox
-                            label="Sponsor/Mécène"
                             checked={proTypes.includes('sponsor')}
-                            onChange={(e) => {
-                              if (e.target.checked) {
+                            onChange={(checked) => {
+                              if (checked) {
                                 setProTypes([...proTypes, 'sponsor'])
                               } else {
                                 setProTypes(proTypes.filter(t => t !== 'sponsor'))
                               }
                             }}
+                            label="Sponsor/Mécène"
                           />
                         </div>
                       </div>
