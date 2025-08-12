@@ -17,8 +17,13 @@ sleep 2
 echo ""
 echo "📦 Copie des nouveaux builds React..."
 echo "--------------------------------------------"
+# Nettoyer les anciens fichiers d'abord
+rm -rf /opt/qwanyx/apps/qwanyx-server/autodin/frontend/static/*
+rm -rf /opt/qwanyx/apps/qwanyx-server/belgicomics/frontend/static/*
+# Copier les nouveaux builds
 cp -r /opt/qwanyx/apps/qwanyx-server/autodin-ui/dist/* /opt/qwanyx/apps/qwanyx-server/autodin/frontend/static/ 2>/dev/null || echo "⚠️  Build autodin-ui non trouvé"
 cp -r /opt/qwanyx/apps/qwanyx-server/belgicomics-ui/dist/* /opt/qwanyx/apps/qwanyx-server/belgicomics/frontend/static/ 2>/dev/null || echo "⚠️  Build belgicomics-ui non trouvé"
+echo "✅ Builds copiés"
 
 # ========== REDÉMARRAGE DES SERVICES ==========
 echo ""
