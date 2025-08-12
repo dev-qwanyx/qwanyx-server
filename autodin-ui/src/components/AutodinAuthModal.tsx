@@ -28,7 +28,7 @@ const AutodinAuthModal: React.FC<AutodinAuthModalProps> = ({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email,
-        workspace: 'autodin',
+        workspace: 'autodin-be',
         accountType: isProfessional ? 'professionnel' : 'particulier',
         proTypes: isProfessional ? proTypes : [],
         companyName: isProfessional ? companyName : '',
@@ -193,7 +193,7 @@ const AutodinAuthModal: React.FC<AutodinAuthModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       mode={mode}
-      workspace="autodin"
+      workspace="autodin-be"
       apiUrl={import.meta.env.VITE_API_URL || 'http://localhost:5002'}
       onSuccess={onSuccess}
       customRegisterHandler={mode === 'register' ? handleRegister : undefined}

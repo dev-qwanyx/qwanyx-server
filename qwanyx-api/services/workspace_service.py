@@ -27,14 +27,22 @@ class WorkspaceService:
         return workspace
     
     def get_workspace(self, code: str) -> Optional[Dict]:
-        """Get workspace by code"""
-        return self.workspaces_collection.find_one({'code': code})
+        """Get workspace by code - SIMPLIFIÉ: le workspace existe toujours"""
+        # Plus besoin de chercher dans qwanyx_central
+        # Le workspace code EST le nom de la base
+        if code:
+            return {
+                'code': code,
+                'db_name': code,  # Le nom de la base = le code du workspace
+                'is_active': True
+            }
+        return None
     
     def get_workspace_db(self, workspace_code: str):
-        """Get MongoDB database for a workspace"""
-        workspace = self.get_workspace(workspace_code)
-        if workspace:
-            return self.client[workspace['db_name']]
+        """Get MongoDB database for a workspace - DIRECT"""
+        # Utilise directement le workspace_code comme nom de base
+        if workspace_code:
+            return self.client[workspace_code]
         return None
     
     def list_workspaces(self) -> List[Dict]:

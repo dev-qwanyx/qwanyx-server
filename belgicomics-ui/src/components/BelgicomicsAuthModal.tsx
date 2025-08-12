@@ -37,7 +37,7 @@ const BelgicomicsAuthModal: React.FC<BelgicomicsAuthModalProps> = ({
       const body = mode === 'register' 
         ? { 
             email, 
-            workspace: 'belgicomics',
+            workspace: 'belgicomics-be',
             firstName,
             lastName,
             phone,
