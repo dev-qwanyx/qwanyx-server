@@ -41,8 +41,6 @@ const AutodinAuthModal: React.FC<AutodinAuthModalProps> = ({
 
   // Render professional fields extension
   const renderExtension = () => {
-    if (mode !== 'register') return null
-
     return (
       <>
         <div style={{ marginBottom: '1rem' }}>
@@ -197,7 +195,7 @@ const AutodinAuthModal: React.FC<AutodinAuthModalProps> = ({
       workspace={import.meta.env.VITE_WORKSPACE || 'autodin-be'}
       apiUrl={import.meta.env.VITE_API_URL || 'http://localhost:5002'}
       onSuccess={onSuccess}
-      customRegisterHandler={mode === 'register' ? handleRegister : undefined}
+      customRegisterHandler={handleRegister}
       registerExtension={renderExtension()}
     />
   )

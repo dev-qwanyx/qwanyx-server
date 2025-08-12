@@ -257,13 +257,15 @@ export const Select: React.FC<SelectProps> = ({
 
 // Checkbox Component
 export interface CheckboxProps {
-  name: string;
+  name?: string;
   label?: string;
   value?: string | number;
   disabled?: boolean;
   rules?: RegisterOptions;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
+  checked?: boolean;
+  onChange?: (checked: boolean) => void;
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({
@@ -273,9 +275,19 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   disabled = false,
   rules,
   className = '',
-  size = 'md'
+  size = 'md',
+  checked,
+  onChange
 }) => {
-  const { register } = useFormContext();
+  // Try to get form context, but don't fail if it doesn't exist
+  let register = null;
+  try {
+    const formContext = useFormContext();
+    register = formContext?.register;
+  } catch (e) {
+    // No form context, will use standalone mode
+  }
+  
   const { size: formSize } = useContext(FormStyleContext);
   const actualSize = size || formSize || 'md';
 
@@ -291,26 +303,57 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     lg: 'text-lg'
   };
 
+  // Handle change for standalone mode
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(e.target.checked);
+    }
+  };
+
   return (
     <label className={`inline-flex items-center gap-2 cursor-pointer ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className}`}>
-      <input
-        type="checkbox"
-        {...register(name, rules)}
-        value={value}
-        disabled={disabled}
-        className={`
-          ${sizeClasses[actualSize]}
-          rounded 
-          border-gray-300 
-          text-blue-600 
-          focus:ring-2 
-          focus:ring-blue-500 
-          focus:ring-offset-0
-          disabled:opacity-50
-          disabled:cursor-not-allowed
-          cursor-pointer
-        `}
-      />
+      {register && name ? (
+        // Form mode: use register
+        <input
+          type="checkbox"
+          {...register(name, rules)}
+          value={value}
+          disabled={disabled}
+          className={`
+            ${sizeClasses[actualSize]}
+            rounded 
+            border-gray-300 
+            text-blue-600 
+            focus:ring-2 
+            focus:ring-blue-500 
+            focus:ring-offset-0
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+            cursor-pointer
+          `}
+        />
+      ) : (
+        // Standalone mode: use checked and onChange
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={handleChange}
+          value={value}
+          disabled={disabled}
+          className={`
+            ${sizeClasses[actualSize]}
+            rounded 
+            border-gray-300 
+            text-blue-600 
+            focus:ring-2 
+            focus:ring-blue-500 
+            focus:ring-offset-0
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+            cursor-pointer
+          `}
+        />
+      )}
       {label && (
         <span className={`${textSizeClasses[actualSize]} select-none`}>
           {label}

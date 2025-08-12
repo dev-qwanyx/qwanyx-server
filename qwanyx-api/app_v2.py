@@ -31,10 +31,10 @@ app.config['SMTP_FROM'] = os.getenv('SMTP_FROM', 'QWANYX <noreply@qwanyx.com>')
 # Extensions
 CORS(app, origins=[
     "http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
-    "http://localhost:4000", "http://localhost:4001", "http://localhost:4002", "http://localhost:4003",
+    "http://localhost:4000", "http://localhost:4001", "http://localhost:4002", "http://localhost:4003", "http://localhost:4004",
     "http://localhost:5173", "http://localhost:5174", "http://localhost:5175",
     "http://localhost:8090", "http://localhost:8091",
-    "http://127.0.0.1:3000", "http://127.0.0.1:4000", "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000", "http://127.0.0.1:4000", "http://127.0.0.1:4004", "http://127.0.0.1:5173",
     "http://135.181.72.183:8090", "http://135.181.72.183:8091"
 ])
 jwt = JWTManager(app)
@@ -178,13 +178,11 @@ def register():
     try:
         data = request.get_json()
         email = data.get('email')
-        first_name = data.get('firstName')
-        last_name = data.get('lastName')
-        account_type = data.get('accountType')
         workspace_code = data.get('workspace')
         
-        if not all([email, first_name, last_name, account_type, workspace_code]):
-            return jsonify({'error': 'All fields are required'}), 400
+        # Minimum required: email and workspace
+        if not email or not workspace_code:
+            return jsonify({'error': 'Email and workspace required'}), 400
             
         workspace_db = workspace_service.get_workspace_db(workspace_code)
         if workspace_db is None:
@@ -195,23 +193,38 @@ def register():
         if existing_user:
             return jsonify({'error': 'User already exists'}), 409
         
-        # Create user
+        # Create basic user with optional metadata
         user = {
             'email': email,
-            'first_name': first_name,
-            'last_name': last_name,
-            'phone': data.get('phone'),
-            'account_type': account_type,
             'created_at': datetime.utcnow(),
             'is_active': True,
             'auth_method': 'code'
         }
         
-        # Add professional fields if applicable
-        if account_type == 'professionnel':
-            user['pro_types'] = data.get('proTypes', [])  # Array of activity types
-            user['company_name'] = data.get('companyName')
-            user['vat_number'] = data.get('vatNumber')
+        # Add any additional fields from metadata
+        metadata = data.get('metadata', {})
+        if metadata:
+            # Store all metadata fields directly in user document
+            user.update(metadata)
+        
+        # Legacy support: handle old field names if present
+        if data.get('firstName'):
+            user['first_name'] = data.get('firstName')
+        if data.get('lastName'):
+            user['last_name'] = data.get('lastName')
+        if data.get('phone'):
+            user['phone'] = data.get('phone')
+        if data.get('accountType'):
+            user['account_type'] = data.get('accountType')
+        
+        # Legacy support for professional fields
+        if data.get('accountType') == 'professionnel' or metadata.get('account_type') == 'professionnel':
+            if data.get('proTypes'):
+                user['pro_types'] = data.get('proTypes')
+            if data.get('companyName'):
+                user['company_name'] = data.get('companyName')
+            if data.get('vatNumber'):
+                user['vat_number'] = data.get('vatNumber')
         
         result = workspace_db.users.insert_one(user)
         
@@ -318,6 +331,66 @@ def verify_code():
                 'email': email
             }
         })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# User profile update endpoint
+@app.route('/users/<user_id>/profile', methods=['PUT'])
+@jwt_required()
+def update_user_profile(user_id):
+    try:
+        # Get workspace from JWT
+        claims = get_jwt()
+        workspace_code = claims.get('workspace')
+        
+        if not workspace_code:
+            return jsonify({'error': 'Workspace not found in token'}), 400
+            
+        workspace_db = workspace_service.get_workspace_db(workspace_code)
+        if workspace_db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+        
+        # Verify user is updating their own profile
+        current_user_id = get_jwt_identity()
+        if current_user_id != user_id:
+            return jsonify({'error': 'Unauthorized'}), 403
+        
+        # Get update data
+        data = request.get_json()
+        
+        # Prepare update fields
+        update_fields = {}
+        
+        # Add allowed fields to update
+        allowed_fields = [
+            'account_type', 'pro_types', 'company_name', 'vat_number',
+            'first_name', 'last_name', 'phone', 'address', 'city', 
+            'postal_code', 'country'
+        ]
+        
+        for field in allowed_fields:
+            if field in data:
+                update_fields[field] = data[field]
+        
+        if not update_fields:
+            return jsonify({'error': 'No fields to update'}), 400
+        
+        # Update user
+        result = workspace_db.users.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {**update_fields, 'updated_at': datetime.utcnow()}}
+        )
+        
+        if result.modified_count == 0:
+            return jsonify({'error': 'User not found or no changes made'}), 404
+        
+        # Return updated user
+        updated_user = workspace_db.users.find_one({'_id': ObjectId(user_id)})
+        updated_user['id'] = str(updated_user['_id'])
+        del updated_user['_id']
+        
+        return jsonify(updated_user), 200
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500

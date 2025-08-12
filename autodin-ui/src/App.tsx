@@ -6,7 +6,7 @@ import Hero from './components/Hero'
 import Services from './components/Services'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
-import AutodinAuthModal from './components/AutodinAuthModal'
+import AutodinAuthModalNew from './components/AutodinAuthModalNew'
 import SearchToolsPage from './components/SearchToolsPage'
 import Dashboard from './components/Dashboard'
 
@@ -83,7 +83,7 @@ function AppContent() {
       <Footer />
       
       {/* Custom Autodin Auth Modal */}
-      <AutodinAuthModal
+      <AutodinAuthModalNew
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         mode={authMode}
