@@ -34,10 +34,11 @@ const BelgicomicsAuthModal: React.FC<BelgicomicsAuthModalProps> = ({
 
     try {
       const endpoint = mode === 'login' ? '/auth/request-code' : '/auth/register'
+      const workspace = import.meta.env.VITE_WORKSPACE || 'belgicomics-be'
       const body = mode === 'register' 
         ? { 
             email, 
-            workspace: 'belgicomics-be',
+            workspace,
             firstName,
             lastName,
             phone,
@@ -45,7 +46,7 @@ const BelgicomicsAuthModal: React.FC<BelgicomicsAuthModalProps> = ({
           }
         : { 
             email, 
-            workspace: 'belgicomics' 
+            workspace 
           }
 
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002';
@@ -79,13 +80,14 @@ const BelgicomicsAuthModal: React.FC<BelgicomicsAuthModalProps> = ({
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+      const workspace = import.meta.env.VITE_WORKSPACE || 'belgicomics-be';
       const response = await fetch(`${apiUrl}/auth/verify-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           email, 
           code,
-          workspace: 'belgicomics'
+          workspace
         })
       })
 
