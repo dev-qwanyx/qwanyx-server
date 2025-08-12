@@ -48,7 +48,8 @@ const BelgicomicsAuthModal: React.FC<BelgicomicsAuthModalProps> = ({
             workspace: 'belgicomics' 
           }
 
-      const response = await fetch(`http://localhost:5002${endpoint}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+      const response = await fetch(`${apiUrl}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
@@ -77,7 +78,8 @@ const BelgicomicsAuthModal: React.FC<BelgicomicsAuthModalProps> = ({
     setError('')
 
     try {
-      const response = await fetch('http://localhost:5002/auth/verify-code', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+      const response = await fetch(`${apiUrl}/auth/verify-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

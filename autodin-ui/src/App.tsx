@@ -98,8 +98,10 @@ function AppContent() {
 }
 
 function App() {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+  
   return (
-    <WorkspaceProvider defaultWorkspace="autodin" apiUrl="http://localhost:5002">
+    <WorkspaceProvider defaultWorkspace="autodin" apiUrl={apiUrl}>
       <AppContent />
     </WorkspaceProvider>
   )
