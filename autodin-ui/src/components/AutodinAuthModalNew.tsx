@@ -490,7 +490,8 @@ const AutodinAuthModalNew: React.FC<AutodinAuthModalProps> = ({
                 className="mt-4"
                 style={{ 
                   backgroundColor: '#E67E22',
-                  color: 'white'
+                  color: 'white',
+                  marginTop: '1rem'
                 }}
               >
                 Vérifier le code

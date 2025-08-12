@@ -480,7 +480,7 @@ const BelgicomicsAuthModalNew: React.FC<BelgicomicsAuthModalProps> = ({
                 />
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2" style={{ marginTop: '1rem' }}>
                 <Button
                   onClick={handleReset}
                   variant="outline"
