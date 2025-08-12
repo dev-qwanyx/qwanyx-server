@@ -5,14 +5,16 @@ import Hero from './components/Hero'
 import Services from './components/Services'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
-import BelgicomicsAuthModal from './components/BelgicomicsAuthModal'
+import BelgicomicsAuthModalNew from './components/BelgicomicsAuthModalNew'
 import SearchToolsPage from './components/SearchToolsPage'
 
 function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
   const [scrolled, setScrolled] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return !!localStorage.getItem('belgicomics-be_token')
+  })
   const [currentPage, setCurrentPage] = useState('home')
 
   useEffect(() => {
@@ -34,6 +36,12 @@ function App() {
         scrolled={scrolled}
         onLoginClick={() => handleAuthClick('login')}
         onRegisterClick={() => handleAuthClick('register')}
+        isLoggedIn={isLoggedIn}
+        onLogout={() => {
+          setIsLoggedIn(false)
+          localStorage.removeItem('belgicomics-be_token')
+          localStorage.removeItem('belgicomics-be_user')
+        }}
       />
       
       <main>
@@ -60,7 +68,7 @@ function App() {
       <Footer />
       
       {/* Custom Belgicomics Auth Modal */}
-      <BelgicomicsAuthModal
+      <BelgicomicsAuthModalNew
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         mode={authMode}

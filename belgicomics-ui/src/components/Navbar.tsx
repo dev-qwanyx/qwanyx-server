@@ -5,9 +5,11 @@ interface NavbarProps {
   scrolled: boolean
   onLoginClick: () => void
   onRegisterClick: () => void
+  isLoggedIn?: boolean
+  onLogout?: () => void
 }
 
-const Navbar: React.FC<NavbarProps> = ({ scrolled, onLoginClick, onRegisterClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ scrolled, onLoginClick, onRegisterClick, isLoggedIn = false, onLogout }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
   return (
@@ -48,15 +50,27 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, onLoginClick, onRegisterClick
             
             {/* Auth Button */}
             <div className="navbar-auth">
-              <Button 
-                variant="outline" 
-                size="md"
-                onClick={onLoginClick}
-                className="belgicomics-login-button"
-              >
-                <i className="fas fa-user"></i>
-                <span>Connexion</span>
-              </Button>
+              {isLoggedIn ? (
+                <Button 
+                  variant="outline" 
+                  size="md"
+                  onClick={onLogout}
+                  className="belgicomics-login-button"
+                >
+                  <i className="fas fa-sign-out-alt"></i>
+                  <span>Se déconnecter</span>
+                </Button>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  size="md"
+                  onClick={onLoginClick}
+                  className="belgicomics-login-button"
+                >
+                  <i className="fas fa-user"></i>
+                  <span>Connexion</span>
+                </Button>
+              )}
             </div>
           </div>
           
