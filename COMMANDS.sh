@@ -13,17 +13,13 @@ pkill -f "python3.*app_bulma.py" || true
 pkill -f "python3.*app_v2.py" || true
 sleep 2
 
-# ========== MISE À JOUR DES BUILDS REACT ==========
+# ========== BUILDS REACT ==========
 echo ""
-echo "📦 Copie des nouveaux builds React..."
+echo "📦 Les builds React sont déjà dans Git"
 echo "--------------------------------------------"
-# Nettoyer les anciens fichiers d'abord
-rm -rf /opt/qwanyx/apps/qwanyx-server/autodin/frontend/static/*
-rm -rf /opt/qwanyx/apps/qwanyx-server/belgicomics/frontend/static/*
-# Copier les nouveaux builds
-cp -r /opt/qwanyx/apps/qwanyx-server/autodin-ui/dist/* /opt/qwanyx/apps/qwanyx-server/autodin/frontend/static/ 2>/dev/null || echo "⚠️  Build autodin-ui non trouvé"
-cp -r /opt/qwanyx/apps/qwanyx-server/belgicomics-ui/dist/* /opt/qwanyx/apps/qwanyx-server/belgicomics/frontend/static/ 2>/dev/null || echo "⚠️  Build belgicomics-ui non trouvé"
-echo "✅ Builds copiés"
+# Les builds sont maintenant versionnés dans autodin/frontend/static et belgicomics/frontend/static
+# Pas besoin de copier, git pull les a déjà mis à jour
+echo "✅ Builds prêts (via Git)"
 
 # ========== REDÉMARRAGE DES SERVICES ==========
 echo ""
