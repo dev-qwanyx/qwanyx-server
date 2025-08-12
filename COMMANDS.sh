@@ -13,6 +13,13 @@ pkill -f "python3.*app_bulma.py" || true
 pkill -f "python3.*app_v2.py" || true
 sleep 2
 
+# ========== MISE À JOUR DES BUILDS REACT ==========
+echo ""
+echo "📦 Copie des nouveaux builds React..."
+echo "--------------------------------------------"
+cp -r /opt/qwanyx/apps/qwanyx-server/autodin-ui/dist/* /opt/qwanyx/apps/qwanyx-server/autodin/frontend/static/ 2>/dev/null || echo "⚠️  Build autodin-ui non trouvé"
+cp -r /opt/qwanyx/apps/qwanyx-server/belgicomics-ui/dist/* /opt/qwanyx/apps/qwanyx-server/belgicomics/frontend/static/ 2>/dev/null || echo "⚠️  Build belgicomics-ui non trouvé"
+
 # ========== REDÉMARRAGE DES SERVICES ==========
 echo ""
 echo "🔄 Redémarrage des services..."
@@ -25,13 +32,13 @@ nohup python3 app_v2.py > /tmp/qwanyx-api.log 2>&1 &
 sleep 3
 
 # Autodin (React build served by Flask)
-echo "▶️  Autodin..."
+echo "▶️  Autodin (avec URLs de production corrigées)..."
 cd /opt/qwanyx/apps/qwanyx-server/autodin/frontend
 nohup python3 app_bulma.py > /tmp/autodin.log 2>&1 &
 sleep 2
 
 # Belgicomics (React build served by Flask)
-echo "▶️  Belgicomics..."
+echo "▶️  Belgicomics (avec URLs de production corrigées)..."
 cd /opt/qwanyx/apps/qwanyx-server/belgicomics/frontend
 nohup python3 app_bulma.py > /tmp/belgicomics.log 2>&1 &
 sleep 2

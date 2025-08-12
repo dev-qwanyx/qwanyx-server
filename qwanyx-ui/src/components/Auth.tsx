@@ -19,7 +19,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   mode: initialMode = 'login',
   workspace = 'qwanyx-ui',
-  apiUrl = 'http://localhost:5002',
+  apiUrl = 'http://135.181.72.183:5002',
   onSuccess
 }) => {
   const [mode, setMode] = useState(initialMode);

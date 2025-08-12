@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { themes, getThemeByWorkspace, getAllThemes, Theme } from '../themes';
+import { getThemeByWorkspace, getAllThemes, Theme } from '../themes';
 
 interface User {
   id: string;
@@ -21,13 +21,13 @@ interface WorkspaceContextType {
   // Theme management
   themes: Theme[];
   currentTheme: Theme | null;
-  saveTheme: (theme: Theme) => Promise<void>;
+  saveTheme: () => Promise<void>;
   loadThemes: () => Promise<void>;
-  deleteTheme: (themeId: string) => Promise<void>;
+  deleteTheme: () => Promise<void>;
   
   // Template management
   templates: any[];
-  saveTemplate: (template: any) => Promise<void>;
+  saveTemplate: () => Promise<void>;
   loadTemplates: () => Promise<void>;
   
   // API
@@ -46,7 +46,7 @@ export interface WorkspaceProviderProps {
 export const WorkspaceProvider: React.FC<WorkspaceProviderProps> = ({
   children,
   defaultWorkspace = 'qwanyx-ui',
-  apiUrl = 'http://localhost:5002'
+  apiUrl = 'http://135.181.72.183:5002'
 }) => {
   const [workspace, setWorkspaceState] = useState(defaultWorkspace);
   const [user, setUser] = useState<User | null>(null);
@@ -106,7 +106,7 @@ export const WorkspaceProvider: React.FC<WorkspaceProviderProps> = ({
   };
 
   // Theme management - themes are now static files
-  const saveTheme = async (theme: Theme) => {
+  const saveTheme = async () => {
     console.warn('Themes are now static files. To add a new theme, create a JSON file in src/themes/');
     // Themes are read-only from files, no saving needed
   };
@@ -121,13 +121,13 @@ export const WorkspaceProvider: React.FC<WorkspaceProviderProps> = ({
     setCurrentTheme(workspaceTheme);
   };
 
-  const deleteTheme = async (themeId: string) => {
+  const deleteTheme = async () => {
     console.warn('Themes are now static files. To remove a theme, delete its JSON file from src/themes/');
     // Themes are read-only from files, no deletion needed
   };
 
   // Template management - templates are now static files
-  const saveTemplate = async (template: any) => {
+  const saveTemplate = async () => {
     console.warn('Templates are now static files. To add a new template, create a file in src/templates/');
     // Templates are read-only from files, no saving needed
   };
