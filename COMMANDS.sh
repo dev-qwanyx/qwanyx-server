@@ -7,29 +7,49 @@ echo "============================================"
 echo "Date: $(date)"
 echo ""
 
+# ========== CONFIGURATION NGINX (première fois seulement) ==========
+if [ ! -f /etc/nginx/sites-enabled/autodin.conf ] || [ ! -f /etc/nginx/sites-enabled/belgicomics.conf ]; then
+    echo "⚙️  Configuration initiale de nginx..."
+    
+    # Installation de nginx si nécessaire
+    if ! command -v nginx &> /dev/null; then
+        apt-get update
+        apt-get install -y nginx
+    fi
+    
+    # Arrêter les anciens serveurs Python
+    pkill -f "python3.*http.server.*8090" || true
+    pkill -f "python3.*http.server.*8091" || true
+    
+    # Copier les configurations
+    cp /opt/qwanyx/apps/qwanyx-server/nginx-configs/autodin.conf /etc/nginx/sites-available/
+    cp /opt/qwanyx/apps/qwanyx-server/nginx-configs/belgicomics.conf /etc/nginx/sites-available/
+    
+    # Activer les sites
+    ln -sf /etc/nginx/sites-available/autodin.conf /etc/nginx/sites-enabled/
+    ln -sf /etc/nginx/sites-available/belgicomics.conf /etc/nginx/sites-enabled/
+    
+    # Supprimer le site par défaut
+    rm -f /etc/nginx/sites-enabled/default
+    
+    # Tester et recharger
+    nginx -t && systemctl reload nginx
+    echo "✅ nginx configuré"
+fi
+
 # ========== DÉPLOIEMENT AUTODIN REACT ==========
 echo "📦 Déploiement Autodin React..."
 
 # Créer le répertoire si nécessaire
 mkdir -p /opt/qwanyx/apps/autodin-react
 
-# Copier les fichiers du nouveau site (ils sont dans autodin-ui/dist)
+# Copier les fichiers du build
 if [ -d "/opt/qwanyx/apps/qwanyx-server/autodin-ui/dist" ]; then
-    echo "→ Copie des fichiers du build Autodin React..."
+    echo "→ Copie des fichiers Autodin..."
     cp -r /opt/qwanyx/apps/qwanyx-server/autodin-ui/dist/* /opt/qwanyx/apps/autodin-react/
-    echo "✅ Autodin React mis à jour"
-    
-    # Vérifier si le serveur tourne, sinon le démarrer
-    if ! pgrep -f "python3.*http.server.*8090" > /dev/null; then
-        echo "→ Démarrage du serveur Autodin..."
-        cd /opt/qwanyx/apps/autodin-react
-        nohup python3 -m http.server 8090 --bind 0.0.0.0 > /tmp/autodin-react.log 2>&1 &
-        echo "✅ Serveur Autodin démarré sur 8090"
-    else
-        echo "✅ Serveur Autodin déjà actif"
-    fi
+    echo "✅ Autodin mis à jour"
 else
-    echo "⚠️  Build Autodin React non trouvé"
+    echo "⚠️  Build Autodin non trouvé"
 fi
 
 # ========== DÉPLOIEMENT BELGICOMICS REACT ==========
@@ -38,23 +58,24 @@ echo "📦 Déploiement Belgicomics React..."
 # Créer le répertoire si nécessaire
 mkdir -p /opt/qwanyx/apps/belgicomics-react
 
-# Copier les fichiers du nouveau site (ils sont dans belgicomics-ui/dist)
+# Copier les fichiers du build
 if [ -d "/opt/qwanyx/apps/qwanyx-server/belgicomics-ui/dist" ]; then
-    echo "→ Copie des fichiers du build Belgicomics React..."
+    echo "→ Copie des fichiers Belgicomics..."
     cp -r /opt/qwanyx/apps/qwanyx-server/belgicomics-ui/dist/* /opt/qwanyx/apps/belgicomics-react/
-    echo "✅ Belgicomics React mis à jour"
-    
-    # Vérifier si le serveur tourne, sinon le démarrer
-    if ! pgrep -f "python3.*http.server.*8091" > /dev/null; then
-        echo "→ Démarrage du serveur Belgicomics..."
-        cd /opt/qwanyx/apps/belgicomics-react
-        nohup python3 -m http.server 8091 --bind 0.0.0.0 > /tmp/belgicomics-react.log 2>&1 &
-        echo "✅ Serveur Belgicomics démarré sur 8091"
-    else
-        echo "✅ Serveur Belgicomics déjà actif"
-    fi
+    echo "✅ Belgicomics mis à jour"
 else
-    echo "⚠️  Build Belgicomics React non trouvé"
+    echo "⚠️  Build Belgicomics non trouvé"
+fi
+
+# ========== RECHARGEMENT NGINX SI NÉCESSAIRE ==========
+if systemctl is-active --quiet nginx; then
+    echo "🔄 Rechargement de nginx..."
+    nginx -s reload
+    echo "✅ nginx rechargé"
+else
+    echo "⚠️  nginx n'est pas actif, démarrage..."
+    systemctl start nginx
+    echo "✅ nginx démarré"
 fi
 
 # ========== VÉRIFICATION DE L'API QWANYX ==========
@@ -71,7 +92,7 @@ fi
 # ========== VÉRIFICATION DU WEBHOOK ==========
 echo "🔍 Vérification du webhook..."
 if ! pgrep -f "webhook-simple.py" > /dev/null; then
-    echo "→ Démarrage du webhook server..."
+    echo "→ Démarrage du webhook..."
     cd /opt/qwanyx/apps/qwanyx-server
     nohup python3 webhook-simple.py > /tmp/webhook.log 2>&1 &
     echo "✅ Webhook lancé sur 9999"
@@ -79,24 +100,24 @@ else
     echo "✅ Webhook déjà actif"
 fi
 
-# Vérification après 3 secondes
-sleep 3
+# Vérification après 2 secondes
+sleep 2
 echo ""
 echo "📊 Vérification des services:"
 echo "--------------------------------"
 
 # Vérifier chaque service
-echo -n "Autodin React (8090): "
+echo -n "Autodin (nginx:8090): "
 curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8090 || echo "ERREUR"
 
-echo -n "Belgicomics React (8091): "
+echo -n "Belgicomics (nginx:8091): "
 curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8091 || echo "ERREUR"
 
 echo -n "API QWANYX (5002): "
 curl -s -o /dev/null -w "%{http_code}\n" http://localhost:5002/health || echo "ERREUR"
 
-echo -n "Webhook (9999): "
-curl -s -o /dev/null -w "%{http_code}\n" http://localhost:9999/health || echo "ERREUR"
+echo -n "nginx status: "
+systemctl is-active nginx || echo "ERREUR"
 
 echo ""
 echo "✅ Déploiement terminé!"
@@ -106,8 +127,7 @@ echo "  - Autodin: http://135.181.72.183:8090"
 echo "  - Belgicomics: http://135.181.72.183:8091"
 echo "  - API QWANYX: http://135.181.72.183:5002"
 echo ""
-echo "📝 Pour vérifier les logs:"
-echo "  tail -f /tmp/autodin-react.log"
-echo "  tail -f /tmp/belgicomics-react.log"
-echo "  tail -f /tmp/api.log"
-echo "  tail -f /tmp/webhook.log"
+echo "📝 Logs disponibles:"
+echo "  - nginx access: /var/log/nginx/*.access.log"
+echo "  - nginx errors: /var/log/nginx/*.error.log"
+echo "  - API: /tmp/api.log"
