@@ -66,8 +66,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         },
         body: JSON.stringify({
           email,
-          site: workspace,
-          workspace  // For register, workspace is used instead of site
+          workspace
         }),
       });
 
@@ -101,7 +100,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         body: JSON.stringify({
           email,
           code,
-          site: workspace
+          workspace
         }),
       });
 
