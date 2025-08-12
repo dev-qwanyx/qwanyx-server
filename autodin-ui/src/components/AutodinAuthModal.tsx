@@ -22,7 +22,8 @@ const AutodinAuthModal: React.FC<AutodinAuthModalProps> = ({
 
   // Custom registration handler that includes professional fields
   const handleRegister = async (email: string) => {
-    const response = await fetch('http://localhost:5002/auth/register', {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5002';
+    const response = await fetch(`${apiUrl}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -193,7 +194,7 @@ const AutodinAuthModal: React.FC<AutodinAuthModalProps> = ({
       onClose={onClose}
       mode={mode}
       workspace="autodin"
-      apiUrl="http://localhost:5002"
+      apiUrl={import.meta.env.VITE_API_URL || 'http://localhost:5002'}
       onSuccess={onSuccess}
       customRegisterHandler={mode === 'register' ? handleRegister : undefined}
       registerExtension={renderExtension()}

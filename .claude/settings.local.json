@@ -21,7 +21,9 @@
       "Bash(npm link:*)",
       "Bash(npm run build:lib:*)",
       "Bash(npm run build:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "Bash(true)"
     ],
     "deny": []
   }

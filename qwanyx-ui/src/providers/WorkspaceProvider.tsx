@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Theme } from './ThemeProvider';
+import { themes, getThemeByWorkspace, getAllThemes, Theme } from '../themes';
 
 interface User {
   id: string;
@@ -52,7 +52,7 @@ export const WorkspaceProvider: React.FC<WorkspaceProviderProps> = ({
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [themes, setThemes] = useState<Theme[]>([]);
-  const [currentTheme] = useState<Theme | null>(null);
+  const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
   const [templates, setTemplates] = useState<any[]>([]);
 
   // Load auth from localStorage on mount
@@ -105,122 +105,36 @@ export const WorkspaceProvider: React.FC<WorkspaceProviderProps> = ({
     localStorage.removeItem(`${workspace}_user`);
   };
 
-  // Theme management with workspace persistence
+  // Theme management - themes are now static files
   const saveTheme = async (theme: Theme) => {
-    if (!user) {
-      // Save locally if not authenticated
-      const localThemes = JSON.parse(localStorage.getItem(`${workspace}_themes`) || '[]');
-      const existingIndex = localThemes.findIndex((t: Theme) => t.name === theme.name);
-      
-      if (existingIndex >= 0) {
-        localThemes[existingIndex] = theme;
-      } else {
-        localThemes.push(theme);
-      }
-      
-      localStorage.setItem(`${workspace}_themes`, JSON.stringify(localThemes));
-      setThemes(localThemes);
-      return;
-    }
-
-    // Save to server if authenticated
-    try {
-      await apiCall('/themes', {
-        method: 'POST',
-        body: JSON.stringify({
-          workspace,
-          theme
-        })
-      });
-      await loadThemes();
-    } catch (error) {
-      console.error('Failed to save theme:', error);
-      throw error;
-    }
+    console.warn('Themes are now static files. To add a new theme, create a JSON file in src/themes/');
+    // Themes are read-only from files, no saving needed
   };
 
   const loadThemes = async () => {
-    if (!user) {
-      // Load from localStorage if not authenticated
-      const localThemes = JSON.parse(localStorage.getItem(`${workspace}_themes`) || '[]');
-      setThemes(localThemes);
-      return;
-    }
-
-    // Load from server if authenticated
-    try {
-      const data = await apiCall(`/themes?workspace=${workspace}`);
-      setThemes(data.themes || []);
-    } catch (error) {
-      console.error('Failed to load themes:', error);
-    }
+    // Load themes from static files
+    const allThemes = getAllThemes();
+    setThemes(allThemes);
+    
+    // Set current theme based on workspace
+    const workspaceTheme = getThemeByWorkspace(workspace);
+    setCurrentTheme(workspaceTheme);
   };
 
   const deleteTheme = async (themeId: string) => {
-    if (!user) {
-      // Delete locally
-      const localThemes = JSON.parse(localStorage.getItem(`${workspace}_themes`) || '[]');
-      const filtered = localThemes.filter((t: Theme) => t.name !== themeId);
-      localStorage.setItem(`${workspace}_themes`, JSON.stringify(filtered));
-      setThemes(filtered);
-      return;
-    }
-
-    // Delete from server
-    try {
-      await apiCall(`/themes/${themeId}`, {
-        method: 'DELETE',
-        body: JSON.stringify({ workspace })
-      });
-      await loadThemes();
-    } catch (error) {
-      console.error('Failed to delete theme:', error);
-      throw error;
-    }
+    console.warn('Themes are now static files. To remove a theme, delete its JSON file from src/themes/');
+    // Themes are read-only from files, no deletion needed
   };
 
-  // Template management
+  // Template management - templates are now static files
   const saveTemplate = async (template: any) => {
-    if (!user) {
-      // Save locally
-      const localTemplates = JSON.parse(localStorage.getItem(`${workspace}_templates`) || '[]');
-      localTemplates.push(template);
-      localStorage.setItem(`${workspace}_templates`, JSON.stringify(localTemplates));
-      setTemplates(localTemplates);
-      return;
-    }
-
-    // Save to server
-    try {
-      await apiCall('/templates', {
-        method: 'POST',
-        body: JSON.stringify({
-          workspace,
-          template
-        })
-      });
-      await loadTemplates();
-    } catch (error) {
-      console.error('Failed to save template:', error);
-      throw error;
-    }
+    console.warn('Templates are now static files. To add a new template, create a file in src/templates/');
+    // Templates are read-only from files, no saving needed
   };
 
   const loadTemplates = async () => {
-    if (!user) {
-      // Load locally
-      const localTemplates = JSON.parse(localStorage.getItem(`${workspace}_templates`) || '[]');
-      setTemplates(localTemplates);
-      return;
-    }
-
-    // Load from server
-    try {
-      const data = await apiCall(`/templates?workspace=${workspace}`);
-      setTemplates(data.templates || []);
-    } catch (error) {
-      console.error('Failed to load templates:', error);
-    }
+    // Templates will be loaded from static files when implemented
+    setTemplates([]);
   };
 
   // Switch workspace
