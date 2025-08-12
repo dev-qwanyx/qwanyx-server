@@ -1,18 +1,15 @@
 #!/bin/bash
-# COMMANDES POUR REDÉMARRAGE COMPLET (webhook + services)
+# COMMANDES POUR DÉPLOIEMENT (webhook + services)
 # Exécuté automatiquement par le webhook OU manuellement via SSH
 
-echo "🚀 PUSH REÇU - DÉPLOIEMENT DES NOUVEAUX SITES REACT"
+echo "🚀 PUSH REÇU - DÉPLOIEMENT EN COURS"
 echo "============================================"
 echo "Date: $(date)"
 echo ""
 
 # ========== DÉPLOIEMENT AUTODIN REACT ==========
-echo "→ Arrêt de l'ancien Autodin Flask..."
-pkill -f "autodin.*app_bulma.py" || true
-sleep 2
+echo "📦 Déploiement Autodin React..."
 
-echo "→ Préparation du nouveau Autodin React..."
 # Créer le répertoire si nécessaire
 mkdir -p /opt/qwanyx/apps/autodin-react
 
@@ -20,23 +17,24 @@ mkdir -p /opt/qwanyx/apps/autodin-react
 if [ -d "/opt/qwanyx/apps/qwanyx-server/autodin-ui/dist" ]; then
     echo "→ Copie des fichiers du build Autodin React..."
     cp -r /opt/qwanyx/apps/qwanyx-server/autodin-ui/dist/* /opt/qwanyx/apps/autodin-react/
+    echo "✅ Autodin React mis à jour"
     
-    # Démarrer le serveur HTTP Python pour servir le site React
-    echo "→ Démarrage du nouveau Autodin React..."
-    cd /opt/qwanyx/apps/autodin-react
-    nohup python3 -m http.server 8090 --bind 0.0.0.0 > /tmp/autodin-react.log 2>&1 &
-    echo "✅ Nouveau Autodin React lancé sur 8090"
+    # Vérifier si le serveur tourne, sinon le démarrer
+    if ! pgrep -f "python3.*http.server.*8090" > /dev/null; then
+        echo "→ Démarrage du serveur Autodin..."
+        cd /opt/qwanyx/apps/autodin-react
+        nohup python3 -m http.server 8090 --bind 0.0.0.0 > /tmp/autodin-react.log 2>&1 &
+        echo "✅ Serveur Autodin démarré sur 8090"
+    else
+        echo "✅ Serveur Autodin déjà actif"
+    fi
 else
-    echo "⚠️  Build Autodin React non trouvé - Vérifiez que le build a été fait"
-    echo "   Pour créer le build: cd autodin-ui && npm install && npm run build"
+    echo "⚠️  Build Autodin React non trouvé"
 fi
 
 # ========== DÉPLOIEMENT BELGICOMICS REACT ==========
-echo "→ Arrêt de l'ancien Belgicomics Flask..."
-pkill -f "belgicomics.*app_bulma.py" || true
-sleep 2
+echo "📦 Déploiement Belgicomics React..."
 
-echo "→ Préparation du nouveau Belgicomics React..."
 # Créer le répertoire si nécessaire
 mkdir -p /opt/qwanyx/apps/belgicomics-react
 
@@ -44,29 +42,36 @@ mkdir -p /opt/qwanyx/apps/belgicomics-react
 if [ -d "/opt/qwanyx/apps/qwanyx-server/belgicomics-ui/dist" ]; then
     echo "→ Copie des fichiers du build Belgicomics React..."
     cp -r /opt/qwanyx/apps/qwanyx-server/belgicomics-ui/dist/* /opt/qwanyx/apps/belgicomics-react/
+    echo "✅ Belgicomics React mis à jour"
     
-    # Démarrer le serveur HTTP Python pour servir le site React
-    echo "→ Démarrage du nouveau Belgicomics React..."
-    cd /opt/qwanyx/apps/belgicomics-react
-    nohup python3 -m http.server 8091 --bind 0.0.0.0 > /tmp/belgicomics-react.log 2>&1 &
-    echo "✅ Nouveau Belgicomics React lancé sur 8091"
+    # Vérifier si le serveur tourne, sinon le démarrer
+    if ! pgrep -f "python3.*http.server.*8091" > /dev/null; then
+        echo "→ Démarrage du serveur Belgicomics..."
+        cd /opt/qwanyx/apps/belgicomics-react
+        nohup python3 -m http.server 8091 --bind 0.0.0.0 > /tmp/belgicomics-react.log 2>&1 &
+        echo "✅ Serveur Belgicomics démarré sur 8091"
+    else
+        echo "✅ Serveur Belgicomics déjà actif"
+    fi
 else
-    echo "⚠️  Build Belgicomics React non trouvé - Vérifiez que le build a été fait"
-    echo "   Pour créer le build: cd belgicomics-ui && npm install && npm run build"
+    echo "⚠️  Build Belgicomics React non trouvé"
 fi
 
-# ========== REDÉMARRAGE DE L'API QWANYX ==========
-echo "→ Redémarrage de l'API QWANYX..."
-pkill -f "qwanyx-api.*app.py" || true
-sleep 2
-cd /opt/qwanyx/apps/qwanyx-server/qwanyx-api
-nohup python3 app.py > /tmp/api.log 2>&1 &
-echo "✅ API QWANYX lancée sur 5002"
+# ========== VÉRIFICATION DE L'API QWANYX ==========
+echo "🔍 Vérification de l'API QWANYX..."
+if ! pgrep -f "qwanyx-api.*app.py" > /dev/null; then
+    echo "⚠️  API non détectée, démarrage..."
+    cd /opt/qwanyx/apps/qwanyx-server/qwanyx-api
+    nohup python3 app.py > /tmp/api.log 2>&1 &
+    echo "✅ API QWANYX lancée sur 5002"
+else
+    echo "✅ API QWANYX déjà active"
+fi
 
 # ========== VÉRIFICATION DU WEBHOOK ==========
-echo "→ Vérification du webhook..."
+echo "🔍 Vérification du webhook..."
 if ! pgrep -f "webhook-simple.py" > /dev/null; then
-    echo "  → Démarrage du webhook server..."
+    echo "→ Démarrage du webhook server..."
     cd /opt/qwanyx/apps/qwanyx-server
     nohup python3 webhook-simple.py > /tmp/webhook.log 2>&1 &
     echo "✅ Webhook lancé sur 9999"
@@ -74,8 +79,8 @@ else
     echo "✅ Webhook déjà actif"
 fi
 
-# Vérification après 5 secondes
-sleep 5
+# Vérification après 3 secondes
+sleep 3
 echo ""
 echo "📊 Vérification des services:"
 echo "--------------------------------"
@@ -94,15 +99,14 @@ echo -n "Webhook (9999): "
 curl -s -o /dev/null -w "%{http_code}\n" http://localhost:9999/health || echo "ERREUR"
 
 echo ""
-echo "✅ Script de déploiement terminé!"
+echo "✅ Déploiement terminé!"
 echo ""
 echo "🔗 URLs publiques:"
-echo "  - Autodin (NOUVEAU REACT): http://135.181.72.183:8090"
-echo "  - Belgicomics (NOUVEAU REACT): http://135.181.72.183:8091"
+echo "  - Autodin: http://135.181.72.183:8090"
+echo "  - Belgicomics: http://135.181.72.183:8091"
 echo "  - API QWANYX: http://135.181.72.183:5002"
-echo "  - Webhook: http://135.181.72.183:9999"
 echo ""
-echo "Pour vérifier les logs:"
+echo "📝 Pour vérifier les logs:"
 echo "  tail -f /tmp/autodin-react.log"
 echo "  tail -f /tmp/belgicomics-react.log"
 echo "  tail -f /tmp/api.log"
