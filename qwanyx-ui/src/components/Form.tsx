@@ -73,6 +73,7 @@ export interface FieldProps {
   children: ReactNode;
   className?: string;
   horizontal?: boolean;
+  labelAlign?: 'left' | 'center' | 'right';
 }
 
 export const Field: React.FC<FieldProps> = ({
@@ -82,7 +83,8 @@ export const Field: React.FC<FieldProps> = ({
   required,
   children,
   className = '',
-  horizontal = false
+  horizontal = false,
+  labelAlign = 'left'
 }) => {
   const methods = useFormContext();
   const error = methods?.formState?.errors?.[name];
@@ -90,12 +92,18 @@ export const Field: React.FC<FieldProps> = ({
   const fieldClass = horizontal ? 'field is-horizontal' : 'field';
   const labelClass = horizontal ? 'field-label' : '';
   const bodyClass = horizontal ? 'field-body' : '';
+  
+  // Create alignment class
+  const alignmentClass = `text-${labelAlign}`;
 
   return (
     <div className={`${fieldClass} ${className}`}>
       {label && (
         <div className={labelClass}>
-          <label className="label" htmlFor={name}>
+          <label 
+            className={`label block w-full ${alignmentClass}`} 
+            htmlFor={name}
+            style={{ textAlign: labelAlign, fontSize: '0.875rem' }}>
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
           </label>
@@ -201,13 +209,13 @@ export const Select: React.FC<SelectProps> = ({
   const { size: formSize, variant } = useContext(FormStyleContext);
 
   const sizeClasses = {
-    sm: 'text-sm py-1 px-2',
-    md: 'text-base py-2 px-3',
-    lg: 'text-lg py-3 px-4'
+    sm: 'text-sm py-1 pl-2 pr-7',
+    md: 'text-base py-2 pl-3 pr-8',
+    lg: 'text-lg py-3 pl-4 pr-9'
   };
 
   const variantClasses = {
-    default: 'border-gray-300 focus:border-blue-500',
+    default: 'border-0 border-b border-gray-400 focus:border-blue-500',
     bordered: 'border-2 border-gray-400 focus:border-blue-500',
     filled: 'bg-gray-100 border-transparent focus:bg-white focus:border-blue-500'
   };
@@ -216,12 +224,11 @@ export const Select: React.FC<SelectProps> = ({
     'select',
     sizeClasses[formSize || 'md'],
     variantClasses[variant || 'default'],
-    'rounded-md',
+    'rounded-none',
+    'bg-transparent',
     'transition-colors',
     'focus:outline-none',
-    'focus:ring-2',
-    'focus:ring-blue-500',
-    'focus:ring-opacity-50',
+    'focus:ring-0',
     fullWidth && 'w-full',
     disabled && 'opacity-50 cursor-not-allowed',
     className
@@ -324,9 +331,8 @@ export const Checkbox: React.FC<CheckboxProps> = ({
             rounded 
             border-gray-300 
             text-blue-600 
-            focus:ring-2 
-            focus:ring-blue-500 
-            focus:ring-offset-0
+            focus:ring-0 
+            focus:outline-none
             disabled:opacity-50
             disabled:cursor-not-allowed
             cursor-pointer
@@ -345,9 +351,8 @@ export const Checkbox: React.FC<CheckboxProps> = ({
             rounded 
             border-gray-300 
             text-blue-600 
-            focus:ring-2 
-            focus:ring-blue-500 
-            focus:ring-offset-0
+            focus:ring-0 
+            focus:outline-none
             disabled:opacity-50
             disabled:cursor-not-allowed
             cursor-pointer
@@ -410,9 +415,8 @@ export const Radio: React.FC<RadioProps> = ({
           ${sizeClasses[actualSize]}
           border-gray-300 
           text-blue-600 
-          focus:ring-2 
-          focus:ring-blue-500 
-          focus:ring-offset-0
+          focus:ring-0 
+          focus:outline-none
           disabled:opacity-50
           disabled:cursor-not-allowed
           cursor-pointer

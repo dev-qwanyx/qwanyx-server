@@ -9,9 +9,11 @@ interface NavbarProps {
   onRegisterClick: () => void
   onLogout?: () => void
   onDashboardClick?: () => void
+  onHomeClick?: () => void
+  currentPage?: string
 }
 
-const Navbar: React.FC<NavbarProps> = ({ scrolled, isLoggedIn = false, currentUser, onLoginClick, onRegisterClick, onLogout, onDashboardClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ scrolled, isLoggedIn = false, currentUser, onLoginClick, onRegisterClick, onLogout, onDashboardClick, onHomeClick, currentPage }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
   return (
@@ -37,15 +39,41 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isLoggedIn = false, currentUs
                 className="navbar-link"
                 onClick={(e) => {
                   e.preventDefault()
-                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                  if (currentPage === 'dashboard' || currentPage === 'demandes') {
+                    window.location.href = '/'
+                  } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }
                 }}
               >
                 Accueil
               </a>
-              <a href="#services" className="navbar-link">
+              <a 
+                href="#services" 
+                className="navbar-link"
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (currentPage === 'dashboard' || currentPage === 'demandes') {
+                    window.location.href = '/#services'
+                  } else {
+                    document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
+              >
                 Services
               </a>
-              <a href="#contact" className="navbar-link">
+              <a 
+                href="#contact" 
+                className="navbar-link"
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (currentPage === 'dashboard' || currentPage === 'demandes') {
+                    window.location.href = '/#contact'
+                  } else {
+                    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
+              >
                 Contact
               </a>
               {isLoggedIn && (
@@ -56,10 +84,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isLoggedIn = false, currentUs
                     e.preventDefault()
                     onDashboardClick?.()
                   }}
-                  style={{ 
-                    color: 'var(--autodin-primary)',
-                    fontWeight: '600'
-                  }}
+                  className="navbar-link-dashboard"
                 >
                   <i className="fas fa-tachometer-alt" style={{ marginRight: '0.5rem' }}></i>
                   Tableau de bord
@@ -141,15 +166,11 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isLoggedIn = false, currentUs
             {isLoggedIn && (
               <a 
                 href="#" 
-                className="navbar-mobile-link"
+                className="navbar-mobile-link navbar-link-dashboard"
                 onClick={(e) => {
                   e.preventDefault()
                   onDashboardClick?.()
                   setMobileMenuOpen(false)
-                }}
-                style={{ 
-                  color: 'var(--autodin-primary)',
-                  fontWeight: '600'
                 }}
               >
                 <i className="fas fa-tachometer-alt navbar-mobile-icon"></i>
@@ -166,11 +187,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isLoggedIn = false, currentUs
                     onLogout?.()
                     setMobileMenuOpen(false)
                   }}
-                  style={{ 
-                    width: '100%',
-                    color: 'var(--autodin-primary)',
-                    fontWeight: '600'
-                  }}
+                  className="navbar-mobile-button navbar-button-logout"
                 >
                   <i className="fas fa-sign-out-alt" style={{ marginRight: '0.5rem' }}></i>
                   <span>Déconnexion</span>
@@ -183,8 +200,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, isLoggedIn = false, currentUs
                     onLoginClick()
                     setMobileMenuOpen(false)
                   }}
-                  className="autodin-button-primary"
-                  style={{ width: '100%' }}
+                  className="autodin-button-primary navbar-mobile-button"
                 >
                   <i className="fas fa-user"></i>
                   <span>Connexion</span>

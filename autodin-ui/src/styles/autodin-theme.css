@@ -1,11 +1,56 @@
 /* Autodin Theme - Built on QWANYX UI */
 
+/* Global Layout Fix */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.autodin-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.autodin-app main {
+  flex: 1;
+}
+
+/* Remove any default margins from headings and paragraphs */
+h1, h2, h3, h4, h5, h6, p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 :root {
   /* Autodin Brand Colors */
   --autodin-primary: #E67E22;
   --autodin-secondary: #2C3E50;
   --autodin-accent: #D35400;
   --autodin-dark: #2C3E50;
+  --autodin-dark-light: #C0C3C7;  /* Gris clair pour les fonds de formulaires (10% plus foncé) */
+  --autodin-dark-lighter: #D6D9DD;  /* Version un peu plus claire */
   --autodin-light: #f8f8f8;
   
   /* Gray Palette */
@@ -115,6 +160,24 @@ html {
 
 .autodin-navbar.scrolled {
   box-shadow: var(--shadow-md);
+}
+
+/* Navbar Dashboard Link */
+.navbar-link-dashboard {
+  color: var(--autodin-primary) !important;
+  font-weight: 600;
+}
+
+/* Navbar Logout Button */
+.navbar-button-logout {
+  color: var(--autodin-primary) !important;
+  font-weight: 600;
+}
+
+/* Navbar Mobile Button */
+.navbar-mobile-button {
+  width: 100%;
+  justify-content: center;
 }
 
 /* Autodin Primary Button Styles */
@@ -365,20 +428,27 @@ html {
 
 /* Footer */
 .autodin-footer {
-  background: white;
-  color: var(--gray-800);
+  background: var(--autodin-dark);
+  color: white;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
   padding: 3rem 0 1rem;
-  border-top: 1px solid var(--gray-300);
+  margin-bottom: 0;
+  position: relative;
+}
+
+.autodin-footer-content {
+  width: 100%;
 }
 
 .autodin-footer a {
-  color: var(--gray-600);
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 .autodin-footer a:hover {
-  color: var(--gray-900);
+  color: var(--autodin-primary);
 }
 
 /* Animations */
@@ -498,6 +568,141 @@ html {
 .double-image-flip-panel.flipping .double-image-flip-mystery-hover {
   opacity: 0 !important;
   transition: opacity 0.1s ease;
+}
+
+/* Form on dark background */
+.form-dark-bg .label {
+  color: white !important;
+}
+
+.form-dark-bg input,
+.form-dark-bg select,
+.form-dark-bg textarea {
+  background-color: white;
+  color: var(--autodin-dark);
+}
+
+/* Hero Section Styles */
+.hero-button-explore {
+  border-radius: 50px !important;
+  padding: 0.75rem 2rem !important;
+}
+
+/* Services Section Styles */
+.services-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--gray-800);
+  font-weight: bold;
+}
+
+.services-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--gray-600);
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.services-card {
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.services-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+/* Contact Section Styles */
+.contact-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 5rem 0;
+}
+
+.contact-title {
+  font-size: 2.5rem;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 0.75rem;
+  color: white;
+}
+
+.contact-subtitle {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 3rem;
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+.contact-form-wrapper {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 0.75rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.contact-field {
+  margin-bottom: 1.5rem;
+}
+
+.contact-field-last {
+  margin-bottom: 2rem;
+}
+
+.contact-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-800);
+}
+
+.contact-input-wrapper {
+  position: relative;
+}
+
+.contact-input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  font-size: 0.875rem;
+  z-index: 1;
+}
+
+.contact-input-with-icon {
+  padding-left: 2.5rem !important;
+}
+
+.contact-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.contact-submit-wrapper {
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Utility Classes */
