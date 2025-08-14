@@ -17,7 +17,7 @@ export const Footer = React.forwardRef<HTMLElement, FooterProps>(({
     minimal: 'py-4'
   };
   
-  const baseClasses = 'border-t border-border';
+  const baseClasses = '';
   
   const combinedClassName = [
     baseClasses,
@@ -43,8 +43,15 @@ export const FooterSection = React.forwardRef<HTMLDivElement, FooterSectionProps
   className = '',
   ...props
 }, ref) => {
+  const baseClasses = 'text-left';
+  
+  const combinedClassName = [
+    baseClasses,
+    className
+  ].filter(Boolean).join(' ');
+  
   return (
-    <div ref={ref} className={className} {...props}>
+    <div ref={ref} className={combinedClassName} {...props}>
       {children}
     </div>
   );
@@ -59,7 +66,7 @@ export const FooterTitle = React.forwardRef<HTMLHeadingElement, FooterTitleProps
   className = '',
   ...props
 }, ref) => {
-  const baseClasses = 'font-semibold text-gray-900 mb-4';
+  const baseClasses = 'font-semibold text-gray-900 mb-4 text-left';
   
   const combinedClassName = [
     baseClasses,
@@ -116,13 +123,14 @@ export const FooterLinks = React.forwardRef<HTMLUListElement, FooterLinksProps>(
   
   const combinedClassName = [
     spacingClasses[spacing],
+    'text-left',
     className
   ].filter(Boolean).join(' ');
   
   return (
     <ul ref={ref} className={combinedClassName} {...props}>
       {React.Children.map(children, (child) => (
-        <li>{child}</li>
+        <li className="text-left">{child}</li>
       ))}
     </ul>
   );
@@ -182,7 +190,7 @@ export const FooterBottom = React.forwardRef<HTMLDivElement, FooterBottomProps>(
   className = '',
   ...props
 }, ref) => {
-  const baseClasses = 'mt-8 pt-8 border-t border-border text-sm text-gray-600';
+  const baseClasses = 'mt-8 pt-8 text-sm text-gray-600';
   
   const combinedClassName = [
     baseClasses,

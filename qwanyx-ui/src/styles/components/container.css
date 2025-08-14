@@ -58,6 +58,8 @@
 /* Section */
 .qwanyx-section {
   display: block;
+  background-color: rgb(var(--qwanyx-background));
+  color: rgb(var(--qwanyx-foreground));
 }
 
 .qwanyx-section--spacing-sm {

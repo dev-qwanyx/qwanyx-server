@@ -81,20 +81,20 @@ export const ThemeEditor: React.FC = () => {
     onChange: (value: string) => void;
   }> = ({ label, value, onChange }) => {
     return (
-      <div className="space-y-2">
+      <div className="qwanyx-space-y-2">
         <Text size="sm" weight="medium">{label}</Text>
         <Flex gap="sm" align="center">
           <input
             type="color"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-12 h-12 rounded border border-border cursor-pointer"
+            className="qwanyx-w-12 qwanyx-h-12 qwanyx-rounded qwanyx-border qwanyx-cursor-pointer"
           />
           <Input
             value={value}
             onChange={(e) => onChange(e.target.value)}
             inputSize="sm"
-            className="font-mono"
+            className="qwanyx-font-mono"
             placeholder="#000000"
           />
         </Flex>
@@ -105,7 +105,7 @@ export const ThemeEditor: React.FC = () => {
   return (
     <Container>
       <Section spacing="xl">
-        <Heading as="h2" className="mb-8">Theme Editor</Heading>
+        <Heading as="h2" className="qwanyx-mb-8">Theme Editor</Heading>
         
         <Grid cols={3} gap="lg">
           {/* Theme Presets */}
@@ -116,16 +116,16 @@ export const ThemeEditor: React.FC = () => {
                 <CardDescription>Select a preset or create your own</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="qwanyx-space-y-2">
                   {themes.map((t) => (
-                    <Flex key={t.name} justify="between" align="center" className="p-2 rounded hover:bg-foreground/5">
+                    <Flex key={t.name} justify="between" align="center" className="qwanyx-p-2 qwanyx-rounded qwanyx-hover-bg-foreground-5">
                       <Button
                         variant={selectedPreset === t.name ? 'outline' : 'ghost'}
                         color={selectedPreset === t.name ? 'primary' : undefined}
                         size="sm"
                         fullWidth
                         onClick={() => handleLoadTheme(t)}
-                        className="justify-start"
+                        className="qwanyx-justify-start"
                       >
                         {t.name}
                       </Button>
@@ -143,12 +143,12 @@ export const ThemeEditor: React.FC = () => {
                   ))}
                 </div>
                 
-                <div className="mt-6 pt-6 border-t border-border">
+                <div className="qwanyx-mt-6 qwanyx-pt-6 qwanyx-border-t">
                   <Input
                     placeholder="Theme name"
                     value={themeName}
                     onChange={(e) => setThemeName(e.target.value)}
-                    className="mb-3"
+                    className="qwanyx-mb-3"
                   />
                   <Button
                     fullWidth
@@ -163,17 +163,17 @@ export const ThemeEditor: React.FC = () => {
           </div>
           
           {/* Color Editor */}
-          <div className="lg:col-span-2">
+          <div className="qwanyx-lg-col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle>Color Palette</CardTitle>
                 <CardDescription>Customize your theme colors</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-8">
+                <div className="qwanyx-space-y-8">
                   {/* Brand Colors */}
                   <div>
-                    <Heading as="h4" size="lg" className="mb-4">Brand Colors</Heading>
+                    <Heading as="h4" size="lg" className="qwanyx-mb-4">Brand Colors</Heading>
                     <Grid cols={2} gap="md">
                       <ColorInput
                         label="Primary"
@@ -195,7 +195,7 @@ export const ThemeEditor: React.FC = () => {
                   
                   {/* Semantic Colors */}
                   <div>
-                    <Heading as="h4" size="lg" className="mb-4">Semantic Colors</Heading>
+                    <Heading as="h4" size="lg" className="qwanyx-mb-4">Semantic Colors</Heading>
                     <Grid cols={2} gap="md">
                       <ColorInput
                         label="Success"
@@ -222,7 +222,7 @@ export const ThemeEditor: React.FC = () => {
                   
                   {/* Neutral Colors */}
                   <div>
-                    <Heading as="h4" size="lg" className="mb-4">Neutral Colors</Heading>
+                    <Heading as="h4" size="lg" className="qwanyx-mb-4">Neutral Colors</Heading>
                     <Grid cols={2} gap="md">
                       <ColorInput
                         label="Background"
@@ -264,7 +264,7 @@ export const ThemeEditor: React.FC = () => {
                   
                   {/* Text Colors */}
                   <div>
-                    <Heading as="h4" size="lg" className="mb-4">Text Colors</Heading>
+                    <Heading as="h4" size="lg" className="qwanyx-mb-4">Text Colors</Heading>
                     <Grid cols={2} gap="md">
                       <ColorInput
                         label="Primary Text"
@@ -290,7 +290,7 @@ export const ThemeEditor: React.FC = () => {
         </Grid>
         
         {/* Live Preview */}
-        <div className="mt-12">
+        <div className="qwanyx-mt-12">
           <Card>
             <CardHeader>
               <CardTitle>Live Preview</CardTitle>
@@ -301,10 +301,10 @@ export const ThemeEditor: React.FC = () => {
                 <Card variant="outlined">
                   <CardContent>
                     <Heading as="h4">Sample Card</Heading>
-                    <Text color="secondary" className="mt-2">
+                    <Text color="secondary" className="qwanyx-mt-2">
                       This is how your cards will look with the current theme.
                     </Text>
-                    <Flex gap="sm" className="mt-4">
+                    <Flex gap="sm" className="qwanyx-mt-4">
                       <Button size="sm">Primary</Button>
                       <Button size="sm" variant="outline" color="secondary">Secondary</Button>
                     </Flex>
@@ -313,7 +313,7 @@ export const ThemeEditor: React.FC = () => {
                 
                 <Card variant="filled">
                   <CardContent>
-                    <div className="space-y-3">
+                    <div className="qwanyx-space-y-3">
                       <Input placeholder="Sample input field" inputSize="sm" />
                       <Flex gap="sm">
                         <Button size="sm" color="success">Success</Button>
@@ -324,20 +324,20 @@ export const ThemeEditor: React.FC = () => {
                   </CardContent>
                 </Card>
                 
-                <div className="space-y-2">
-                  <div className="p-3 rounded-md" style={{
+                <div className="qwanyx-space-y-2">
+                  <div className="qwanyx-p-3 qwanyx-rounded-md" style={{
                     backgroundColor: `${editingTheme.colors.success}20`,
                     color: editingTheme.colors.success
                   }}>Success message</div>
-                  <div className="p-3 rounded-md" style={{
+                  <div className="qwanyx-p-3 qwanyx-rounded-md" style={{
                     backgroundColor: `${editingTheme.colors.warning}20`,
                     color: editingTheme.colors.warning
                   }}>Warning message</div>
-                  <div className="p-3 rounded-md" style={{
+                  <div className="qwanyx-p-3 qwanyx-rounded-md" style={{
                     backgroundColor: `${editingTheme.colors.error}20`,
                     color: editingTheme.colors.error
                   }}>Error message</div>
-                  <div className="p-3 rounded-md" style={{
+                  <div className="qwanyx-p-3 qwanyx-rounded-md" style={{
                     backgroundColor: `${editingTheme.colors.info}20`,
                     color: editingTheme.colors.info
                   }}>Info message</div>

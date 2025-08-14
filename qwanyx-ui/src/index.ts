@@ -5,6 +5,14 @@ import './styles.css';
 export { ThemeProvider, useTheme } from './providers/ThemeProvider';
 export type { Theme } from './providers/ThemeProvider';
 
+// Theme Mode Hook
+export { useThemeMode, getStoredThemeMode, getResolvedTheme } from './hooks/useThemeMode';
+export type { ThemeMode } from './hooks/useThemeMode';
+
+// Theme Toggle Component
+export { ThemeToggle } from './components/ThemeToggle';
+export type { ThemeToggleProps } from './components/ThemeToggle';
+
 // Workspace Provider
 export { WorkspaceProvider, useWorkspace } from './providers/WorkspaceProvider';
 export type { WorkspaceProviderProps } from './providers/WorkspaceProvider';
@@ -12,6 +20,9 @@ export type { WorkspaceProviderProps } from './providers/WorkspaceProvider';
 // Components
 export { Button } from './components/Button';
 export type { ButtonProps } from './components/Button';
+
+export { Link, NavLink } from './components/Link';
+export type { LinkProps, NavLinkProps } from './components/Link';
 
 export { 
   Card, 
@@ -178,6 +189,26 @@ export type { OTPInputProps, OTPTimerProps } from './components/OTPInput';
 
 export { Favicon, useFavicon } from './components/Favicon';
 export type { FaviconProps } from './components/Favicon';
+
+export { Animated, AnimateOnScroll, AnimateOnHover, AnimateOnClick } from './components/Animated';
+export type { AnimatedProps } from './components/Animated';
+
+export { 
+  Parallax, 
+  ParallaxImage, 
+  ParallaxText, 
+  ParallaxLayer, 
+  ParallaxSection,
+  ParallaxReveal 
+} from './components/Parallax';
+export type { 
+  ParallaxProps, 
+  ParallaxImageProps, 
+  ParallaxTextProps, 
+  ParallaxLayerProps, 
+  ParallaxSectionProps,
+  ParallaxRevealProps 
+} from './components/Parallax';
 
 export { 
   Form, 

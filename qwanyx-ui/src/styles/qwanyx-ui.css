@@ -1,5 +1,11 @@
 /* QWANYX UI - Main CSS File */
 
+/* Import theme system - base theme defines all variables */
+@import './themes/base.css';
+@import './themes/light.css';
+@import './themes/dark.css';
+@import './themes/images.css';
+
 /* Import design tokens and base styles */
 @import './variables.css';
 @import './base.css';

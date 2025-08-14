@@ -3,20 +3,21 @@ import { ThemeProvider } from '../src/providers/ThemeProvider';
 import { WorkspaceProvider, useWorkspace } from '../src/providers/WorkspaceProvider';
 import { ComponentShowcase } from './ComponentShowcase';
 import { ThemeEditor } from './ThemeEditor';
+import { ParallaxShowcase } from './src/components/ParallaxShowcase';
 import { Container, Section, Heading, Text, Button } from '../src';
 import { SimpleNavbar } from '../src/components/Navbar';
 import { AuthModal, AuthStatus } from '../src/components/Auth';
 import { Favicon } from '../src/components/Favicon';
 
 function StudioApp() {
-  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates'>('showcase');
+  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates' | 'parallax'>('showcase');
   const [showAuth, setShowAuth] = useState(false);
   const { workspace, user, login, logout } = useWorkspace();
   
   return (
     <>
       <Favicon autoDetect={true} />
-      <div className="min-h-screen bg-background">
+      <div className="qwanyx-min-h-screen qwanyx-bg-background">
         {/* Using our new Navbar component */}
         <SimpleNavbar
           title="QWANYX UI"
@@ -37,6 +38,11 @@ function StudioApp() {
               label: 'Templates',
               active: currentView === 'templates',
               onClick: () => setCurrentView('templates')
+            },
+            {
+              label: 'Parallax',
+              active: currentView === 'parallax',
+              onClick: () => setCurrentView('parallax')
             }
           ]}
           actions={
@@ -49,15 +55,16 @@ function StudioApp() {
         />
         
         {/* Main Content - add padding-top for fixed navbar */}
-        <main className="pt-16">
+        <main className="qwanyx-pt-16">
           {currentView === 'showcase' && <ComponentShowcase />}
           {currentView === 'editor' && <ThemeEditor />}
+          {currentView === 'parallax' && <ParallaxShowcase />}
           {currentView === 'templates' && (
             <Container>
               <Section spacing="xl">
-                <div className="text-center py-12">
-                  <Heading as="h2" className="mb-4">Template Library</Heading>
-                  <Text color="secondary" className="mb-6">
+                <div className="qwanyx-text-center qwanyx-py-12">
+                  <Heading as="h2" className="qwanyx-mb-4">Template Library</Heading>
+                  <Text color="secondary" className="qwanyx-mb-6">
                     {user 
                       ? "Your templates will appear here" 
                       : "Sign in to save and manage templates"}
@@ -74,7 +81,7 @@ function StudioApp() {
         </main>
         
         {/* Footer */}
-        <footer className="bg-card border-t border-border mt-20">
+        <footer className="qwanyx-bg-card qwanyx-border-t qwanyx-mt-20">
           <Container>
             <Section spacing="md">
               <Text align="center" size="sm" color="muted">

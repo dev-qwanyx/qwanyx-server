@@ -27,6 +27,7 @@ export const OTPInput: React.FC<OTPInputProps> = ({
   });
   
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const hasCompletedRef = useRef(false);
 
   useEffect(() => {
     if (autoFocus && inputRefs.current[0]) {
@@ -38,8 +39,15 @@ export const OTPInput: React.FC<OTPInputProps> = ({
     const newValue = digits.join('');
     onChange(newValue);
     
-    if (newValue.length === length && onComplete) {
+    // Check if all digits are filled
+    const filledDigits = digits.filter(d => d !== '').length;
+    if (filledDigits === length && newValue.length === length && onComplete && !hasCompletedRef.current) {
+      // Mark as completed to prevent multiple calls
+      hasCompletedRef.current = true;
       onComplete(newValue);
+    } else if (filledDigits < length) {
+      // Reset the flag if user clears the input
+      hasCompletedRef.current = false;
     }
   }, [digits, length, onChange, onComplete]);
 

@@ -1,0 +1,246 @@
+/* QWANYX UI Studio Theme
+   ======================
+   This file imports qwanyx-ui styles to make the studio
+   compatible with the qwanyx-ui ecosystem
+*/
+
+/* Import the base qwanyx-ui styles */
+@import '../src/styles.css';
+
+/* Studio-specific layout classes using qwanyx theme variables */
+.qwanyx-min-h-screen {
+  min-height: 100vh;
+}
+
+.qwanyx-bg-background {
+  background-color: rgb(var(--qwanyx-background));
+}
+
+.qwanyx-bg-card {
+  background-color: rgb(var(--qwanyx-card));
+}
+
+.qwanyx-border-t {
+  border-top: 1px solid rgb(var(--qwanyx-border));
+}
+
+.qwanyx-border-b {
+  border-bottom: 1px solid rgb(var(--qwanyx-border));
+}
+
+.qwanyx-pt-16 {
+  padding-top: 4rem;
+}
+
+.qwanyx-mt-20 {
+  margin-top: 5rem;
+}
+
+.qwanyx-text-center {
+  text-align: center;
+}
+
+.qwanyx-py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.qwanyx-mb-4 {
+  margin-bottom: 1rem;
+}
+
+.qwanyx-mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.qwanyx-mb-8 {
+  margin-bottom: 2rem;
+}
+
+.qwanyx-space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.qwanyx-space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+.qwanyx-space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.qwanyx-space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.qwanyx-space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+.qwanyx-space-y-12 > * + * {
+  margin-top: 3rem;
+}
+
+.qwanyx-bg-gray-100 {
+  background-color: rgb(var(--qwanyx-muted) / 0.1);
+}
+
+.qwanyx-bg-gray-300 {
+  background-color: rgb(var(--qwanyx-muted) / 0.3);
+}
+
+.qwanyx-rounded {
+  border-radius: var(--qwanyx-radius-md);
+}
+
+.qwanyx-rounded-lg {
+  border-radius: var(--qwanyx-radius-lg);
+}
+
+.qwanyx-p-4 {
+  padding: 1rem;
+}
+
+.qwanyx-mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.qwanyx-mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.qwanyx-mt-2 {
+  margin-top: 0.5rem;
+}
+
+.qwanyx-mt-4 {
+  margin-top: 1rem;
+}
+
+.qwanyx-ml-4 {
+  margin-left: 1rem;
+}
+
+.qwanyx-list-disc {
+  list-style-type: disc;
+}
+
+.qwanyx-list-inside {
+  list-style-position: inside;
+}
+
+.qwanyx-text-gray-600 {
+  color: rgb(var(--qwanyx-text-secondary));
+}
+
+.qwanyx-border {
+  border: 1px solid rgb(var(--qwanyx-border));
+}
+
+.qwanyx-overflow-hidden {
+  overflow: hidden;
+}
+
+.qwanyx-gradient-blue-purple {
+  background: linear-gradient(to right, rgb(var(--qwanyx-primary)), rgb(var(--qwanyx-secondary)));
+}
+
+.qwanyx-text-white {
+  color: rgb(255 255 255);
+}
+
+.qwanyx-border-white {
+  border-color: rgb(255 255 255);
+}
+
+.qwanyx-hover-bg-white:hover {
+  background-color: rgb(255 255 255);
+}
+
+.qwanyx-hover-text-gray-900:hover {
+  color: rgb(var(--qwanyx-foreground));
+}
+
+.qwanyx-flex {
+  display: flex;
+}
+
+.qwanyx-items-center {
+  align-items: center;
+}
+
+.qwanyx-justify-center {
+  justify-content: center;
+}
+
+.qwanyx-w-64 {
+  width: 16rem;
+}
+
+.qwanyx-h-64 {
+  height: 16rem;
+}
+
+.qwanyx-w-8 {
+  width: 2rem;
+}
+
+.qwanyx-h-8 {
+  height: 2rem;
+}
+
+.qwanyx-w-12 {
+  width: 3rem;
+}
+
+.qwanyx-h-12 {
+  height: 3rem;
+}
+
+.qwanyx-font-mono {
+  font-family: var(--qwanyx-font-mono);
+}
+
+.qwanyx-p-2 {
+  padding: 0.5rem;
+}
+
+.qwanyx-p-3 {
+  padding: 0.75rem;
+}
+
+.qwanyx-rounded-md {
+  border-radius: var(--qwanyx-radius-md);
+}
+
+.qwanyx-hover-bg-foreground-5:hover {
+  background-color: rgb(var(--qwanyx-foreground) / 0.05);
+}
+
+.qwanyx-justify-start {
+  justify-content: flex-start;
+}
+
+.qwanyx-mt-6 {
+  margin-top: 1.5rem;
+}
+
+.qwanyx-pt-6 {
+  padding-top: 1.5rem;
+}
+
+.qwanyx-mt-12 {
+  margin-top: 3rem;
+}
+
+.qwanyx-lg-col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+.qwanyx-cursor-pointer {
+  cursor: pointer;
+}
+
+.qwanyx-relative {
+  position: relative;
+}

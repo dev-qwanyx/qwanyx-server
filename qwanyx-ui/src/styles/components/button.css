@@ -119,6 +119,26 @@
   box-shadow: var(--qwanyx-shadow-md);
 }
 
+.qwanyx-button--solid.qwanyx-button--accent {
+  background-color: rgb(var(--qwanyx-accent));
+}
+
+.qwanyx-button--solid.qwanyx-button--accent:hover {
+  background-color: rgb(var(--qwanyx-accent) / 0.9);
+  transform: translateY(-1px);
+  box-shadow: var(--qwanyx-shadow-sm);
+}
+
+.qwanyx-button--solid.qwanyx-button--info {
+  background-color: rgb(var(--qwanyx-info));
+}
+
+.qwanyx-button--solid.qwanyx-button--info:hover {
+  background-color: rgb(var(--qwanyx-info) / 0.9);
+  transform: translateY(-1px);
+  box-shadow: var(--qwanyx-shadow-sm);
+}
+
 /* Outline variant */
 .qwanyx-button--outline {
   background-color: transparent;
@@ -143,6 +163,51 @@
   background-color: rgb(var(--qwanyx-secondary) / 0.1);
 }
 
+.qwanyx-button--outline.qwanyx-button--accent {
+  color: rgb(var(--qwanyx-accent));
+  border-color: rgb(var(--qwanyx-accent));
+}
+
+.qwanyx-button--outline.qwanyx-button--accent:hover {
+  background-color: rgb(var(--qwanyx-accent) / 0.1);
+}
+
+.qwanyx-button--outline.qwanyx-button--success {
+  color: rgb(var(--qwanyx-success));
+  border-color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-button--outline.qwanyx-button--success:hover {
+  background-color: rgb(var(--qwanyx-success) / 0.1);
+}
+
+.qwanyx-button--outline.qwanyx-button--warning {
+  color: rgb(var(--qwanyx-warning));
+  border-color: rgb(var(--qwanyx-warning));
+}
+
+.qwanyx-button--outline.qwanyx-button--warning:hover {
+  background-color: rgb(var(--qwanyx-warning) / 0.1);
+}
+
+.qwanyx-button--outline.qwanyx-button--error {
+  color: rgb(var(--qwanyx-error));
+  border-color: rgb(var(--qwanyx-error));
+}
+
+.qwanyx-button--outline.qwanyx-button--error:hover {
+  background-color: rgb(var(--qwanyx-error) / 0.1);
+}
+
+.qwanyx-button--outline.qwanyx-button--info {
+  color: rgb(var(--qwanyx-info));
+  border-color: rgb(var(--qwanyx-info));
+}
+
+.qwanyx-button--outline.qwanyx-button--info:hover {
+  background-color: rgb(var(--qwanyx-info) / 0.1);
+}
+
 /* Ghost variant */
 .qwanyx-button--ghost {
   background-color: transparent;
@@ -161,6 +226,54 @@
   background-color: rgb(var(--qwanyx-primary) / 0.1);
 }
 
+.qwanyx-button--ghost.qwanyx-button--secondary {
+  color: rgb(var(--qwanyx-secondary));
+}
+
+.qwanyx-button--ghost.qwanyx-button--secondary:hover {
+  background-color: rgb(var(--qwanyx-secondary) / 0.1);
+}
+
+.qwanyx-button--ghost.qwanyx-button--accent {
+  color: rgb(var(--qwanyx-accent));
+}
+
+.qwanyx-button--ghost.qwanyx-button--accent:hover {
+  background-color: rgb(var(--qwanyx-accent) / 0.1);
+}
+
+.qwanyx-button--ghost.qwanyx-button--success {
+  color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-button--ghost.qwanyx-button--success:hover {
+  background-color: rgb(var(--qwanyx-success) / 0.1);
+}
+
+.qwanyx-button--ghost.qwanyx-button--warning {
+  color: rgb(var(--qwanyx-warning));
+}
+
+.qwanyx-button--ghost.qwanyx-button--warning:hover {
+  background-color: rgb(var(--qwanyx-warning) / 0.1);
+}
+
+.qwanyx-button--ghost.qwanyx-button--error {
+  color: rgb(var(--qwanyx-error));
+}
+
+.qwanyx-button--ghost.qwanyx-button--error:hover {
+  background-color: rgb(var(--qwanyx-error) / 0.1);
+}
+
+.qwanyx-button--ghost.qwanyx-button--info {
+  color: rgb(var(--qwanyx-info));
+}
+
+.qwanyx-button--ghost.qwanyx-button--info:hover {
+  background-color: rgb(var(--qwanyx-info) / 0.1);
+}
+
 /* Link variant */
 .qwanyx-button--link {
   background-color: transparent;
@@ -173,6 +286,83 @@
 
 .qwanyx-button--link:hover {
   text-decoration-thickness: 2px;
+}
+
+/* Validate variant - keeps same color on hover but with animation */
+.qwanyx-button--validate {
+  color: white;
+  font-weight: var(--qwanyx-font-semibold);
+}
+
+.qwanyx-button--validate.qwanyx-button--primary {
+  background-color: rgb(var(--qwanyx-primary));
+}
+
+.qwanyx-button--validate.qwanyx-button--primary:hover {
+  background-color: rgb(var(--qwanyx-primary)); /* Same color */
+  transform: translateY(-2px);
+  box-shadow: var(--qwanyx-shadow-md);
+}
+
+.qwanyx-button--validate.qwanyx-button--secondary {
+  background-color: rgb(var(--qwanyx-secondary));
+}
+
+.qwanyx-button--validate.qwanyx-button--secondary:hover {
+  background-color: rgb(var(--qwanyx-secondary)); /* Same color */
+  transform: translateY(-2px);
+  box-shadow: var(--qwanyx-shadow-md);
+}
+
+.qwanyx-button--validate.qwanyx-button--success {
+  background-color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-button--validate.qwanyx-button--success:hover {
+  background-color: rgb(var(--qwanyx-success)); /* Same color */
+  transform: translateY(-2px);
+  box-shadow: var(--qwanyx-shadow-md);
+}
+
+.qwanyx-button--validate.qwanyx-button--error {
+  background-color: rgb(var(--qwanyx-error));
+}
+
+.qwanyx-button--validate.qwanyx-button--error:hover {
+  background-color: rgb(var(--qwanyx-error)); /* Same color */
+  transform: translateY(-2px);
+  box-shadow: var(--qwanyx-shadow-md);
+}
+
+.qwanyx-button--validate.qwanyx-button--warning {
+  background-color: rgb(var(--qwanyx-warning));
+  color: rgb(var(--qwanyx-foreground));
+}
+
+.qwanyx-button--validate.qwanyx-button--warning:hover {
+  background-color: rgb(var(--qwanyx-warning)); /* Same color */
+  transform: translateY(-2px);
+  box-shadow: var(--qwanyx-shadow-md);
+}
+
+.qwanyx-button--validate.qwanyx-button--info {
+  background-color: rgb(var(--qwanyx-info));
+}
+
+.qwanyx-button--validate.qwanyx-button--info:hover {
+  background-color: rgb(var(--qwanyx-info)); /* Same color */
+  transform: translateY(-2px);
+  box-shadow: var(--qwanyx-shadow-md);
+}
+
+.qwanyx-button--validate.qwanyx-button--accent {
+  background-color: rgb(var(--qwanyx-accent));
+}
+
+.qwanyx-button--validate.qwanyx-button--accent:hover {
+  background-color: rgb(var(--qwanyx-accent)); /* Same color */
+  transform: translateY(-2px);
+  box-shadow: var(--qwanyx-shadow-md);
 }
 
 /* Full width */

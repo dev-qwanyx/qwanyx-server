@@ -1,13 +1,15 @@
 import React from 'react';
+import { motion, HTMLMotionProps } from 'framer-motion';
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'solid' | 'outline' | 'ghost' | 'link';
+export interface ButtonProps extends Omit<HTMLMotionProps<"button">, 'color'> {
+  variant?: 'solid' | 'outline' | 'ghost' | 'link' | 'validate' | 'primary' | 'secondary';
   color?: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error' | 'info';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   fullWidth?: boolean;
   loading?: boolean;
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
+  animationType?: 'default' | 'spring' | 'pop' | 'pulse' | 'shake' | 'none';
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
@@ -19,20 +21,81 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   loading = false,
   icon,
   iconPosition = 'left',
+  animationType = 'default',
   className = '',
   disabled,
   ...props
 }, ref) => {
+  // Handle legacy variant values
+  let actualVariant = variant;
+  let actualColor = color;
+  
+  if (variant === 'primary') {
+    actualVariant = 'solid';
+    actualColor = 'primary';
+  } else if (variant === 'secondary') {
+    actualVariant = 'solid';
+    actualColor = 'secondary';
+  }
+  
   // Build class names
   const classNames = [
     'qwanyx-button',
-    `qwanyx-button--${variant}`,
+    `qwanyx-button--${actualVariant}`,
     `qwanyx-button--${size}`,
-    `qwanyx-button--${color}`,
+    `qwanyx-button--${actualColor}`,
     fullWidth && 'qwanyx-button--fullwidth',
     loading && 'qwanyx-button--loading',
     className
   ].filter(Boolean).join(' ');
+  
+  // Animation variants
+  const animationVariants = {
+    default: {
+      whileHover: { scale: 1.02, transition: { duration: 0.2 } },
+      whileTap: { scale: 0.98 },
+      transition: { type: "spring", stiffness: 400, damping: 17 }
+    },
+    spring: {
+      whileHover: { 
+        scale: 1.05,
+        transition: { type: "spring", stiffness: 400, damping: 10 }
+      },
+      whileTap: { scale: 0.95 }
+    },
+    pop: {
+      whileHover: { 
+        scale: [1, 1.2, 1.1],
+        transition: { duration: 0.3 }
+      },
+      whileTap: { 
+        scale: 0.9,
+        rotate: [0, -5, 5, 0],
+        transition: { duration: 0.2 }
+      }
+    },
+    pulse: {
+      whileHover: {
+        scale: [1, 1.05, 1],
+        transition: {
+          duration: 0.8,
+          repeat: Infinity,
+          repeatType: "reverse" as const
+        }
+      },
+      whileTap: { scale: 0.95 }
+    },
+    shake: {
+      whileHover: {
+        rotate: [0, -2, 2, -2, 2, 0],
+        transition: { duration: 0.4 }
+      },
+      whileTap: { scale: 0.95 }
+    },
+    none: {}
+  };
+
+  const currentAnimation = animationVariants[animationType] || animationVariants.default;
   
   // Loading spinner
   const spinner = (
@@ -60,10 +123,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   );
   
   return (
-    <button
+    <motion.button
       ref={ref}
       className={classNames}
       disabled={disabled || loading}
+      {...currentAnimation}
       {...props}
     >
       {loading && iconPosition === 'left' && (
@@ -72,14 +136,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       {!loading && icon && iconPosition === 'left' && (
         <span className="qwanyx-button__icon qwanyx-button__icon--left">{icon}</span>
       )}
-      {children}
+      {children as React.ReactNode}
       {!loading && icon && iconPosition === 'right' && (
         <span className="qwanyx-button__icon qwanyx-button__icon--right">{icon}</span>
       )}
       {loading && iconPosition === 'right' && (
         <span className="qwanyx-button__icon qwanyx-button__icon--right">{spinner}</span>
       )}
-    </button>
+    </motion.button>
   );
 });
 

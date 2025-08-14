@@ -95,29 +95,37 @@ const applyTheme = (theme: Theme) => {
   
   // Apply colors
   Object.entries(theme.colors).forEach(([key, value]) => {
-    // Convert hex to RGB for Tailwind opacity support
+    // Convert hex to RGB for CSS variable support
     const rgbValue = value.startsWith('#') ? hexToRgb(value) : value;
-    root.style.setProperty(`--color-${key}`, rgbValue);
+    
+    // Set the qwanyx CSS variables
+    if (key.startsWith('text-')) {
+      root.style.setProperty(`--qwanyx-${key}`, rgbValue);
+    } else if (key === 'card-foreground') {
+      root.style.setProperty(`--qwanyx-card-foreground`, rgbValue);
+    } else {
+      root.style.setProperty(`--qwanyx-${key}`, rgbValue);
+    }
   });
   
   // Apply fonts
   if (theme.fonts) {
     Object.entries(theme.fonts).forEach(([key, value]) => {
-      root.style.setProperty(`--font-${key}`, value);
+      root.style.setProperty(`--qwanyx-font-${key}`, value);
     });
   }
   
   // Apply spacing
   if (theme.spacing) {
     Object.entries(theme.spacing).forEach(([key, value]) => {
-      root.style.setProperty(`--spacing-${key}`, value);
+      root.style.setProperty(`--qwanyx-spacing-${key}`, value);
     });
   }
   
   // Apply radius
   if (theme.radius) {
     Object.entries(theme.radius).forEach(([key, value]) => {
-      const varName = key === 'DEFAULT' ? '--radius' : `--radius-${key}`;
+      const varName = key === 'DEFAULT' ? '--qwanyx-radius' : `--qwanyx-radius-${key}`;
       root.style.setProperty(varName, value);
     });
   }
@@ -125,7 +133,7 @@ const applyTheme = (theme: Theme) => {
   // Apply shadows
   if (theme.shadows) {
     Object.entries(theme.shadows).forEach(([key, value]) => {
-      const varName = key === 'DEFAULT' ? '--shadow' : `--shadow-${key}`;
+      const varName = key === 'DEFAULT' ? '--qwanyx-shadow' : `--qwanyx-shadow-${key}`;
       root.style.setProperty(varName, value);
     });
   }
@@ -133,7 +141,7 @@ const applyTheme = (theme: Theme) => {
   // Apply transitions
   if (theme.transitions) {
     Object.entries(theme.transitions).forEach(([key, value]) => {
-      root.style.setProperty(`--transition-${key}`, value);
+      root.style.setProperty(`--qwanyx-transition-${key}`, value);
     });
   }
 };

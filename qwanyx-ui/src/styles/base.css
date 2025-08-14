@@ -5,6 +5,19 @@
   box-sizing: border-box;
 }
 
+/* Root and body styles to apply theme */
+:root {
+  background-color: rgb(var(--qwanyx-background));
+  color: rgb(var(--qwanyx-foreground));
+}
+
+body {
+  background-color: rgb(var(--qwanyx-background));
+  color: rgb(var(--qwanyx-foreground));
+  transition: background-color var(--qwanyx-transition-base),
+              color var(--qwanyx-transition-base);
+}
+
 /* Base styles */
 .qwanyx-ui {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
