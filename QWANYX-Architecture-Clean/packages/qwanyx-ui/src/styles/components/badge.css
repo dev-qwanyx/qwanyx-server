@@ -1,0 +1,249 @@
+/* QWANYX UI - Badge Component */
+
+.qwanyx-badge {
+  display: inline-flex;
+  align-items: center;
+  font-weight: var(--qwanyx-font-medium);
+}
+
+/* Size variations */
+.qwanyx-badge--xs {
+  font-size: var(--qwanyx-text-xs);
+  padding: 0.125rem 0.375rem;
+}
+
+.qwanyx-badge--sm {
+  font-size: var(--qwanyx-text-xs);
+  padding: 0.125rem 0.5rem;
+}
+
+.qwanyx-badge--md {
+  font-size: var(--qwanyx-text-sm);
+  padding: 0.125rem 0.625rem;
+}
+
+.qwanyx-badge--lg {
+  font-size: var(--qwanyx-text-base);
+  padding: 0.25rem 0.75rem;
+}
+
+/* Rounded variations */
+.qwanyx-badge--rounded-sm {
+  border-radius: var(--qwanyx-radius-sm);
+}
+
+.qwanyx-badge--rounded-md {
+  border-radius: var(--qwanyx-radius-md);
+}
+
+.qwanyx-badge--rounded-lg {
+  border-radius: var(--qwanyx-radius-lg);
+}
+
+.qwanyx-badge--rounded-full {
+  border-radius: 9999px;
+}
+
+/* Solid variant colors */
+.qwanyx-badge--solid.qwanyx-badge--primary {
+  background-color: rgb(var(--qwanyx-primary));
+  color: white;
+}
+
+.qwanyx-badge--solid.qwanyx-badge--secondary {
+  background-color: rgb(var(--qwanyx-secondary));
+  color: white;
+}
+
+.qwanyx-badge--solid.qwanyx-badge--accent {
+  background-color: rgb(var(--qwanyx-accent));
+  color: white;
+}
+
+.qwanyx-badge--solid.qwanyx-badge--success {
+  background-color: rgb(var(--qwanyx-success));
+  color: white;
+}
+
+.qwanyx-badge--solid.qwanyx-badge--warning {
+  background-color: rgb(var(--qwanyx-warning));
+  color: rgb(var(--qwanyx-foreground));
+}
+
+.qwanyx-badge--solid.qwanyx-badge--error {
+  background-color: rgb(var(--qwanyx-error));
+  color: white;
+}
+
+.qwanyx-badge--solid.qwanyx-badge--info {
+  background-color: rgb(var(--qwanyx-info));
+  color: white;
+}
+
+.qwanyx-badge--solid.qwanyx-badge--gray {
+  background-color: rgb(var(--qwanyx-muted));
+  color: rgb(var(--qwanyx-foreground));
+}
+
+/* Outline variant colors */
+.qwanyx-badge--outline {
+  background-color: transparent;
+  border: 1px solid;
+}
+
+.qwanyx-badge--outline.qwanyx-badge--primary {
+  border-color: rgb(var(--qwanyx-primary));
+  color: rgb(var(--qwanyx-primary));
+}
+
+.qwanyx-badge--outline.qwanyx-badge--secondary {
+  border-color: rgb(var(--qwanyx-secondary));
+  color: rgb(var(--qwanyx-secondary));
+}
+
+.qwanyx-badge--outline.qwanyx-badge--accent {
+  border-color: rgb(var(--qwanyx-accent));
+  color: rgb(var(--qwanyx-accent));
+}
+
+.qwanyx-badge--outline.qwanyx-badge--success {
+  border-color: rgb(var(--qwanyx-success));
+  color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-badge--outline.qwanyx-badge--warning {
+  border-color: rgb(var(--qwanyx-warning));
+  color: rgb(var(--qwanyx-warning));
+}
+
+.qwanyx-badge--outline.qwanyx-badge--error {
+  border-color: rgb(var(--qwanyx-error));
+  color: rgb(var(--qwanyx-error));
+}
+
+.qwanyx-badge--outline.qwanyx-badge--info {
+  border-color: rgb(var(--qwanyx-info));
+  color: rgb(var(--qwanyx-info));
+}
+
+.qwanyx-badge--outline.qwanyx-badge--gray {
+  border-color: rgb(var(--qwanyx-border));
+  color: rgb(var(--qwanyx-text-secondary));
+}
+
+/* Subtle variant colors */
+.qwanyx-badge--subtle.qwanyx-badge--primary {
+  background-color: rgb(var(--qwanyx-primary) / 0.1);
+  color: rgb(var(--qwanyx-primary));
+}
+
+.qwanyx-badge--subtle.qwanyx-badge--secondary {
+  background-color: rgb(var(--qwanyx-secondary) / 0.1);
+  color: rgb(var(--qwanyx-secondary));
+}
+
+.qwanyx-badge--subtle.qwanyx-badge--accent {
+  background-color: rgb(var(--qwanyx-accent) / 0.1);
+  color: rgb(var(--qwanyx-accent));
+}
+
+.qwanyx-badge--subtle.qwanyx-badge--success {
+  background-color: rgb(var(--qwanyx-success) / 0.1);
+  color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-badge--subtle.qwanyx-badge--warning {
+  background-color: rgb(var(--qwanyx-warning) / 0.1);
+  color: rgb(var(--qwanyx-warning));
+}
+
+.qwanyx-badge--subtle.qwanyx-badge--error {
+  background-color: rgb(var(--qwanyx-error) / 0.1);
+  color: rgb(var(--qwanyx-error));
+}
+
+.qwanyx-badge--subtle.qwanyx-badge--info {
+  background-color: rgb(var(--qwanyx-info) / 0.1);
+  color: rgb(var(--qwanyx-info));
+}
+
+.qwanyx-badge--subtle.qwanyx-badge--gray {
+  background-color: rgb(var(--qwanyx-muted));
+  color: rgb(var(--qwanyx-text-secondary));
+}
+
+/* Badge icon spacing */
+.qwanyx-badge__icon--left {
+  margin-right: 0.25rem;
+}
+
+.qwanyx-badge__icon--right {
+  margin-left: 0.25rem;
+}
+
+/* Badge close button */
+.qwanyx-badge__close {
+  margin-left: 0.375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+}
+
+.qwanyx-badge__close:hover {
+  opacity: 0.75;
+}
+
+.qwanyx-badge__close svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Badge dot indicator */
+.qwanyx-badge__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+
+.qwanyx-badge__dot--left {
+  margin-right: 0.375rem;
+}
+
+.qwanyx-badge__dot--right {
+  margin-left: 0.375rem;
+}
+
+.qwanyx-badge__dot--primary {
+  background-color: rgb(var(--qwanyx-primary));
+}
+
+.qwanyx-badge__dot--secondary {
+  background-color: rgb(var(--qwanyx-secondary));
+}
+
+.qwanyx-badge__dot--accent {
+  background-color: rgb(var(--qwanyx-accent));
+}
+
+.qwanyx-badge__dot--success {
+  background-color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-badge__dot--warning {
+  background-color: rgb(var(--qwanyx-warning));
+}
+
+.qwanyx-badge__dot--error {
+  background-color: rgb(var(--qwanyx-error));
+}
+
+.qwanyx-badge__dot--info {
+  background-color: rgb(var(--qwanyx-info));
+}

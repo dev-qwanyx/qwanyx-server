@@ -1,3 +1,8 @@
+# Next.js build output
+.next/
+*.next/
+**/.next/
+
 # Python
 __pycache__/
 *.py[cod]

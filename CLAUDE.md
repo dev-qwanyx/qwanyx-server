@@ -1,5 +1,33 @@
 # QWANYX Architecture - Documentation de Session
 
+## 🚨 PRINCIPES DE DÉVELOPPEMENT CRITIQUES
+
+### TypeScript - Ne JAMAIS contourner les erreurs
+**Règle absolue :** Quand TypeScript signale une erreur, NE JAMAIS :
+- Utiliser `as any` pour masquer le problème
+- Désactiver les vérifications TypeScript  
+- Compiler sans résoudre les erreurs
+- Utiliser `// @ts-ignore` ou `// @ts-nocheck`
+
+**Pourquoi :** TypeScript est notre garde-fou. Ses erreurs révèlent souvent des problèmes graves :
+- Fichiers de types obsolètes ou conflictuels
+- Code utilisant des propriétés inexistantes
+- Incohérences d'architecture
+- Double source de vérité dangereuse
+
+**Méthode obligatoire :** Utiliser les "5 Pourquoi" pour trouver la cause racine :
+1. Pourquoi l'erreur apparaît ?
+2. Pourquoi cette condition existe ?
+3. Pourquoi cette dépendance ?
+4. Pourquoi cette architecture ?
+5. Pourquoi cette décision initiale ?
+
+**Exemple vécu :** Un fichier `qwanyx-ui.d.ts` overridait les vrais types, causant des erreurs sur "validate". 
+- ❌ Mauvaise solution : Utiliser `as any` → Le code compile mais crash au runtime
+- ✅ Bonne solution : Investigation → Découverte du fichier conflictuel → Suppression → Système robuste
+
+**Directive pour Claude :** TOUJOURS investiguer les erreurs TypeScript jusqu'à la cause racine. Ne JAMAIS proposer `as any` ou désactiver les vérifications.
+
 ## Vue d'ensemble du projet QWANYX
 
 QWANYX est une architecture de microservices centralisée qui fournit des services communs à plusieurs applications frontend.

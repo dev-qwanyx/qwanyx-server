@@ -1,0 +1,311 @@
+/* QWANYX UI - Theme-aware Image Handling */
+
+/* ========================================
+   CSS-based theme-aware image system
+   Elegantly handles images across themes
+   ======================================== */
+
+/* Base theme-aware image classes */
+.theme-image {
+  filter: var(--qwanyx-image-filter);
+  opacity: var(--qwanyx-image-opacity);
+  transition: filter var(--qwanyx-transition-base), 
+              opacity var(--qwanyx-transition-base);
+}
+
+.theme-icon {
+  filter: var(--qwanyx-icon-filter);
+  transition: filter var(--qwanyx-transition-base);
+}
+
+.theme-logo {
+  filter: var(--qwanyx-logo-filter);
+  transition: filter var(--qwanyx-transition-base);
+}
+
+/* Invert images for dark mode */
+.theme-invert {
+  filter: invert(0);
+}
+
+[data-theme="dark"] .theme-invert {
+  filter: invert(1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-invert {
+    filter: invert(1);
+  }
+}
+
+/* Brightness adjustment for images */
+.theme-dim {
+  filter: brightness(1);
+}
+
+[data-theme="dark"] .theme-dim {
+  filter: brightness(0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-dim {
+    filter: brightness(0.8);
+  }
+}
+
+/* High contrast images for dark mode */
+.theme-contrast {
+  filter: contrast(1);
+}
+
+[data-theme="dark"] .theme-contrast {
+  filter: contrast(1.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-contrast {
+    filter: contrast(1.2);
+  }
+}
+
+/* Theme-aware image sources using CSS */
+/* Example: Different images for light/dark themes */
+.theme-image-swap {
+  content: var(--image-light);
+}
+
+[data-theme="dark"] .theme-image-swap {
+  content: var(--image-dark);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-image-swap {
+    content: var(--image-dark);
+  }
+}
+
+/* Background images that adapt to theme */
+.theme-bg-image {
+  background-image: var(--bg-image-light);
+  background-size: cover;
+  background-position: center;
+  transition: background-image var(--qwanyx-transition-slow);
+}
+
+[data-theme="dark"] .theme-bg-image {
+  background-image: var(--bg-image-dark);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-bg-image {
+    background-image: var(--bg-image-dark);
+  }
+}
+
+/* SVG icon color adaptation */
+.theme-svg {
+  fill: rgb(var(--qwanyx-foreground));
+  stroke: rgb(var(--qwanyx-foreground));
+}
+
+.theme-svg-primary {
+  fill: rgb(var(--qwanyx-primary));
+  stroke: rgb(var(--qwanyx-primary));
+}
+
+.theme-svg-secondary {
+  fill: rgb(var(--qwanyx-secondary));
+  stroke: rgb(var(--qwanyx-secondary));
+}
+
+/* Brand logos with theme variants */
+.brand-logo {
+  display: inline-block;
+  width: var(--logo-width, 150px);
+  height: var(--logo-height, 50px);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.brand-logo-light {
+  background-image: var(--logo-light);
+}
+
+.brand-logo-dark {
+  background-image: var(--logo-dark);
+  display: none;
+}
+
+[data-theme="dark"] .brand-logo-light {
+  display: none;
+}
+
+[data-theme="dark"] .brand-logo-dark {
+  display: inline-block;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-logo-light {
+    display: none;
+  }
+  
+  :root:not([data-theme="light"]) .brand-logo-dark {
+    display: inline-block;
+  }
+}
+
+/* Picture element helper for art direction */
+.theme-picture source {
+  transition: opacity var(--qwanyx-transition-base);
+}
+
+/* Avatar images with theme adjustments */
+.theme-avatar {
+  border: 2px solid rgb(var(--qwanyx-border));
+  filter: var(--qwanyx-image-filter);
+}
+
+[data-theme="dark"] .theme-avatar {
+  border-color: rgb(var(--qwanyx-border));
+  filter: brightness(0.95) contrast(1.05);
+}
+
+/* Hero and banner images */
+.theme-hero-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-hero-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgb(var(--qwanyx-background) / 0.1) 50%,
+    rgb(var(--qwanyx-background) / 0.3) 100%
+  );
+  pointer-events: none;
+}
+
+[data-theme="dark"] .theme-hero-image::after {
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--qwanyx-background) / 0.2) 0%,
+    rgb(var(--qwanyx-background) / 0.4) 50%,
+    rgb(var(--qwanyx-background) / 0.6) 100%
+  );
+}
+
+/* Product images with shadow adjustments */
+.theme-product-image {
+  box-shadow: var(--qwanyx-shadow-md);
+  transition: box-shadow var(--qwanyx-transition-base);
+}
+
+.theme-product-image:hover {
+  box-shadow: var(--qwanyx-shadow-lg);
+}
+
+[data-theme="dark"] .theme-product-image {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .theme-product-image:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+}
+
+/* Gallery images with overlay */
+.theme-gallery-item {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.theme-gallery-item img {
+  transition: transform var(--qwanyx-transition-base),
+              filter var(--qwanyx-transition-base);
+}
+
+.theme-gallery-item:hover img {
+  transform: scale(1.05);
+}
+
+[data-theme="dark"] .theme-gallery-item img {
+  filter: brightness(0.9);
+}
+
+[data-theme="dark"] .theme-gallery-item:hover img {
+  filter: brightness(1);
+}
+
+/* Decorative images opacity */
+.theme-decorative {
+  opacity: 0.8;
+}
+
+[data-theme="dark"] .theme-decorative {
+  opacity: 0.6;
+}
+
+/* Image placeholders and loading states */
+.theme-image-placeholder {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--qwanyx-skeleton-base)) 0%,
+    rgb(var(--qwanyx-skeleton-highlight)) 50%,
+    rgb(var(--qwanyx-skeleton-base)) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Utility classes for fine control */
+.theme-brightness-90 { filter: brightness(0.9); }
+.theme-brightness-95 { filter: brightness(0.95); }
+.theme-brightness-110 { filter: brightness(1.1); }
+
+.theme-contrast-90 { filter: contrast(0.9); }
+.theme-contrast-110 { filter: contrast(1.1); }
+.theme-contrast-120 { filter: contrast(1.2); }
+
+.theme-saturate-90 { filter: saturate(0.9); }
+.theme-saturate-110 { filter: saturate(1.1); }
+
+.theme-opacity-50 { opacity: 0.5; }
+.theme-opacity-75 { opacity: 0.75; }
+.theme-opacity-90 { opacity: 0.9; }
+
+/* Combine filters */
+.theme-image-subtle {
+  filter: brightness(var(--qwanyx-image-brightness)) 
+          contrast(var(--qwanyx-image-contrast));
+  opacity: var(--qwanyx-image-opacity);
+}
+
+/* Responsive image containers */
+.theme-image-container {
+  background-color: rgb(var(--qwanyx-muted));
+  border-radius: var(--qwanyx-radius-md);
+  overflow: hidden;
+}
+
+.theme-image-container img {
+  display: block;
+  width: 100%;
+  height: auto;
+}

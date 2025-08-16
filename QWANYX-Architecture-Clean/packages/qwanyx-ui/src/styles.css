@@ -1,0 +1,11 @@
+/* Import the new QWANYX UI CSS system */
+@import './styles/qwanyx-ui.css';
+
+/* Import dark theme */
+@import './styles/themes/dark.css';
+
+/* Import Animate.css for additional animations */
+@import 'animate.css';
+
+/* Import Tailwind - needed for components */
+@import "tailwindcss";
