@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 from pymongo import MongoClient
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 from dotenv import load_dotenv
 
@@ -117,7 +117,7 @@ def health():
     return jsonify({
         'status': 'ok',
         'service': 'QWANYX API v2',
-        'timestamp': datetime.utcnow().isoformat()
+        'timestamp': datetime.now(timezone.utc).isoformat()
     })
 
 # Authentication by code (updated for workspaces)
@@ -151,8 +151,8 @@ def request_code():
         workspace_db.auth_codes.insert_one({
             'email': email,
             'code': code,
-            'created_at': datetime.utcnow(),
-            'expires_at': datetime.utcnow() + timedelta(minutes=10),
+            'created_at': datetime.now(timezone.utc),
+            'expires_at': datetime.now(timezone.utc) + timedelta(minutes=10),
             'used': False
         })
         
@@ -194,7 +194,7 @@ def register():
         # Create basic user with optional metadata
         user = {
             'email': email,
-            'created_at': datetime.utcnow(),
+            'created_at': datetime.now(timezone.utc),
             'is_active': True,
             'auth_method': 'code'
         }
@@ -232,8 +232,8 @@ def register():
         workspace_db.auth_codes.insert_one({
             'email': email,
             'code': code,
-            'created_at': datetime.utcnow(),
-            'expires_at': datetime.utcnow() + timedelta(minutes=10),
+            'created_at': datetime.now(timezone.utc),
+            'expires_at': datetime.now(timezone.utc) + timedelta(minutes=10),
             'used': False
         })
         
@@ -284,7 +284,7 @@ def verify_code():
             'email': email,
             'code': code,
             'used': False,
-            'expires_at': {'$gt': datetime.utcnow()}
+            'expires_at': {'$gt': datetime.now(timezone.utc)}
         })
         
         if not auth_code:
@@ -293,7 +293,7 @@ def verify_code():
         # Mark as used
         workspace_db.auth_codes.update_one(
             {'_id': auth_code['_id']},
-            {'$set': {'used': True, 'used_at': datetime.utcnow()}}
+            {'$set': {'used': True, 'used_at': datetime.now(timezone.utc)}}
         )
         
         # Find or create user in workspace
@@ -302,7 +302,7 @@ def verify_code():
             # Create new user
             user = {
                 'email': email,
-                'created_at': datetime.utcnow(),
+                'created_at': datetime.now(timezone.utc),
                 'is_active': True,
                 'auth_method': 'code'
             }
@@ -323,7 +323,7 @@ def verify_code():
         # Log session
         workspace_db.sessions.insert_one({
             'user_id': ObjectId(user_id),
-            'login_at': datetime.utcnow(),
+            'login_at': datetime.now(timezone.utc),
             'auth_method': 'code',
             'ip': request.remote_addr
         })
@@ -383,7 +383,7 @@ def update_user_profile(user_id):
         # Update user
         result = workspace_db.users.update_one(
             {'_id': ObjectId(user_id)},
-            {'$set': {**update_fields, 'updated_at': datetime.utcnow()}}
+            {'$set': {**update_fields, 'updated_at': datetime.now(timezone.utc)}}
         )
         
         if result.modified_count == 0:
@@ -419,7 +419,7 @@ def create_contact():
             'email': data.get('email'),
             'subject': data.get('subject'),
             'message': data.get('message'),
-            'created_at': datetime.utcnow(),
+            'created_at': datetime.now(timezone.utc),
             'ip': request.remote_addr,
             'status': 'new'
         }
