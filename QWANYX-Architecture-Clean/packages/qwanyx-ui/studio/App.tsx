@@ -8,14 +8,15 @@ import { PageShowcase } from './pages/PageShowcase'
 import { SectionShowcase } from './sections/SectionShowcase'
 import { MiscShowcase } from './misc/MiscShowcase';
 import { IconTest } from './test/IconTest';
-import { MaterialIconsPage } from './icons/MaterialIconsPage';
+import { IconLibraryPage } from './icons/IconLibraryPage';
+import { GoogleIconsTest } from './icons/GoogleIconsTest';
 import { Container, Section, Heading, Text, Button } from '../src';
 import { SimpleNavbar } from '../src/components/Navbar';
 import { AuthModal, AuthStatus } from '../src/components/Auth';
 import { Favicon } from '../src/components/Favicon';
 
 function StudioApp() {
-  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates' | 'parallax' | 'pages' | 'sections' | 'misc' | 'test' | 'icons'>('showcase');
+  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates' | 'parallax' | 'pages' | 'sections' | 'misc' | 'test' | 'icons' | 'google-icons'>('showcase');
   const [showAuth, setShowAuth] = useState(false);
   const { workspace, user, login, logout } = useWorkspace();
   
@@ -38,6 +39,11 @@ function StudioApp() {
               label: 'Icons',
               active: currentView === 'icons',
               onClick: () => setCurrentView('icons')
+            },
+            {
+              label: 'Google Icons',
+              active: currentView === 'google-icons',
+              onClick: () => setCurrentView('google-icons')
             },
             {
               label: 'Sections',
@@ -77,7 +83,8 @@ function StudioApp() {
         {/* Main Content - add padding-top for fixed navbar */}
         <main className="qwanyx-pt-16">
           {currentView === 'showcase' && <ComponentShowcase />}
-          {currentView === 'icons' && <MaterialIconsPage />}
+          {currentView === 'icons' && <IconLibraryPage />}
+          {currentView === 'google-icons' && <GoogleIconsTest />}
           {currentView === 'editor' && <ThemeEditor />}
           {currentView === 'parallax' && <ParallaxShowcase />}
           {currentView === 'pages' && <PageShowcase />}

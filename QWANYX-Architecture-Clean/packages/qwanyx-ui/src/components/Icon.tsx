@@ -1,295 +1,391 @@
 import React from 'react'
-import { 
-  Search, Palette, HelpCircle, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
-  Menu, X, ArrowLeft, ArrowRight, ArrowUp, ArrowDown,
-  Filter, Plus, Minus, Check, Copy, Download, Upload, Edit, Trash2, Save, Settings,
-  Home, User, Users, Mail, Phone, Calendar, Clock, Star, Heart, Eye, EyeOff, Lock, Unlock, Key,
-  AlertCircle, AlertTriangle, Info, CheckCircle, XCircle,
-  Image, Camera, Video, Music, Mic, Volume2,
-  File, FileText, Folder, FolderOpen, Paperclip,
-  ShoppingCart, ShoppingBag, CreditCard, DollarSign, Tag, Gift, Package, Truck,
-  MessageSquare, MessageCircle, Send, Bell, BellOff,
-  Grid, List, Layers, Layout, Sidebar,
-  Wifi, WifiOff, Bluetooth, Database, Server, Cloud, Globe, Monitor, Smartphone,
-  Sun, Moon, CloudRain,
-  Github,
-  Car, Wrench, Shield, Zap, Activity, Gauge,
-  type LucideIcon
-} from 'lucide-react'
-
-// Map of icon names to components
-const iconMap: { [key: string]: LucideIcon } = {
-  // Navigation
-  Menu, X, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
-  ArrowLeft, ArrowRight, ArrowUp, ArrowDown,
-  
-  // Actions
-  Search, Filter, Plus, Minus, Check, Copy, Download, Upload, Edit, 
-  Trash: Trash2, // Trash2 is the actual icon name
-  Trash2,
-  Save, Settings,
-  
-  // UI Elements
-  Home, User, Users, Mail, Phone, Calendar, Clock, Star, Heart, Eye, EyeOff, Lock, Unlock, Key,
-  
-  // Status
-  AlertCircle, AlertTriangle, Info, CheckCircle, XCircle, HelpCircle,
-  
-  // Media
-  Image, Camera, Video, Music, Mic, 
-  Volume: Volume2, // Volume2 is the actual icon name
-  Volume2,
-  
-  // Files
-  File, FileText, Folder, FolderOpen, Paperclip,
-  
-  // Commerce
-  ShoppingCart, ShoppingBag, CreditCard, DollarSign, Tag, Gift, Package, Truck,
-  
-  // Communication
-  MessageSquare, MessageCircle, Send, Bell, BellOff,
-  
-  // Layout
-  Grid, List, Layers, Layout, Sidebar,
-  
-  // Technology
-  Wifi, WifiOff, Bluetooth, Database, Server, Cloud, Globe, Monitor, Smartphone,
-  
-  // Weather
-  Sun, Moon, CloudRain,
-  
-  // Social
-  Github,
-  
-  // Automotive
-  Car, Wrench, Shield, Zap, Activity, Gauge,
-  
-  // Other
-  Palette
-}
+import '../styles/components/icon.css'
 
 export interface IconProps {
   name: string
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number
-  color?: string
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
+  color?: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error' | 'info' | 'inherit' | 'foreground' | 'muted'
+  variant?: 'outlined' | 'filled' | 'rounded' | 'sharp'
+  weight?: 'thin' | 'light' | 'regular' | 'medium' | 'bold'
   className?: string
-  strokeWidth?: number
-  variant?: 'outline' | 'bold' | 'thin'
+  style?: React.CSSProperties
+  onClick?: (e: React.MouseEvent) => void
+  spin?: boolean
+}
+
+// Map common icon names to Material Symbols names
+// This helps with backwards compatibility when migrating from other icon libraries
+const iconNameMap: Record<string, string> = {
+  // Navigation
+  'Menu': 'menu',
+  'Close': 'close',
+  'X': 'close',
+  'ArrowBack': 'arrow_back',
+  'ArrowForward': 'arrow_forward',
+  'ArrowUpward': 'arrow_upward',
+  'ArrowDownward': 'arrow_downward',
+  'ArrowLeft': 'arrow_back',
+  'ArrowRight': 'arrow_forward',
+  'ArrowUp': 'arrow_upward',
+  'ArrowDown': 'arrow_downward',
+  'KeyboardArrowDown': 'keyboard_arrow_down',
+  'KeyboardArrowUp': 'keyboard_arrow_up',
+  'KeyboardArrowLeft': 'keyboard_arrow_left',
+  'KeyboardArrowRight': 'keyboard_arrow_right',
+  'ChevronDown': 'expand_more',
+  'ChevronUp': 'expand_less',
+  'ChevronLeft': 'chevron_left',
+  'ChevronRight': 'chevron_right',
+  'ExpandMore': 'expand_more',
+  'ExpandLess': 'expand_less',
+  
+  // Common actions
+  'Search': 'search',
+  'FilterList': 'filter_list',
+  'Filter': 'filter_list',
+  'Add': 'add',
+  'Plus': 'add',
+  'Remove': 'remove',
+  'Minus': 'remove',
+  'Check': 'check',
+  'ContentCopy': 'content_copy',
+  'Copy': 'content_copy',
+  'Download': 'download',
+  'Upload': 'upload',
+  'Edit': 'edit',
+  'Delete': 'delete',
+  'Trash': 'delete',
+  'Trash2': 'delete',
+  'Save': 'save',
+  'Settings': 'settings',
+  'Share': 'share',
+  'Send': 'send',
+  'Print': 'print',
+  'Refresh': 'refresh',
+  
+  // User & Account
+  'Home': 'home',
+  'Person': 'person',
+  'User': 'person',
+  'Group': 'group',
+  'People': 'people',
+  'Users': 'people',
+  'PersonAdd': 'person_add',
+  'Logout': 'logout',
+  
+  // Communication
+  'Mail': 'mail',
+  'Email': 'email',
+  'Phone': 'phone',
+  'Notifications': 'notifications',
+  'NotificationsOff': 'notifications_off',
+  'Bell': 'notifications',
+  'BellOff': 'notifications_off',
+  'MessageSquare': 'message',
+  'MessageCircle': 'chat',
+  'Chat': 'chat',
+  
+  // Time & Calendar
+  'CalendarMonth': 'calendar_month',
+  'Calendar': 'calendar_today',
+  'AccessTime': 'access_time',
+  'Clock': 'schedule',
+  'History': 'history',
+  
+  // Feedback
+  'Star': 'star',
+  'Favorite': 'favorite',
+  'Heart': 'favorite',
+  'Visibility': 'visibility',
+  'VisibilityOff': 'visibility_off',
+  'Eye': 'visibility',
+  'EyeOff': 'visibility_off',
+  
+  // Security
+  'Lock': 'lock',
+  'LockOpen': 'lock_open',
+  'Unlock': 'lock_open',
+  'Key': 'key',
+  'Shield': 'shield',
+  
+  // Status
+  'Error': 'error',
+  'Warning': 'warning',
+  'Info': 'info',
+  'CheckCircle': 'check_circle',
+  'Cancel': 'cancel',
+  'XCircle': 'cancel',
+  'Help': 'help',
+  'HelpCircle': 'help',
+  'AlertCircle': 'error',
+  'AlertTriangle': 'warning',
+  
+  // Business
+  'Dashboard': 'dashboard',
+  'Assignment': 'assignment',
+  'Analytics': 'analytics',
+  'Assessment': 'assessment',
+  'TrendingUp': 'trending_up',
+  'ShoppingCart': 'shopping_cart',
+  'Payment': 'payment',
+  'CreditCard': 'credit_card',
+  'DollarSign': 'attach_money',
+  'Tag': 'label',
+  'Gift': 'card_giftcard',
+  'Package': 'inventory_2',
+  'Truck': 'local_shipping',
+  'ShoppingBag': 'shopping_bag',
+  
+  // Places
+  'LocationOn': 'location_on',
+  
+  // Social (Note: Material Symbols doesn't have social icons, we'll use alternatives)
+  'Facebook': 'public',
+  'Twitter': 'tag',
+  'Instagram': 'camera_alt',
+  'LinkedIn': 'work',
+  'Github': 'code',
+  
+  // Technology
+  'Cloud': 'cloud',
+  'Api': 'api',
+  'Support': 'support_agent',
+  'SupportAgent': 'support_agent',
+  'AutoMode': 'auto_mode',
+  'Wifi': 'wifi',
+  'WifiOff': 'wifi_off',
+  'Bluetooth': 'bluetooth',
+  'Database': 'database',
+  'Server': 'dns',
+  'Globe': 'language',
+  'Monitor': 'computer',
+  'Smartphone': 'smartphone',
+  
+  // Media
+  'Image': 'image',
+  'Camera': 'photo_camera',
+  'Video': 'videocam',
+  'Music': 'music_note',
+  'Mic': 'mic',
+  'Volume': 'volume_up',
+  'Volume2': 'volume_up',
+  
+  // Files
+  'File': 'description',
+  'FileText': 'article',
+  'Folder': 'folder',
+  'FolderOpen': 'folder_open',
+  'Paperclip': 'attach_file',
+  
+  // Layout
+  'Grid': 'grid_view',
+  'List': 'list',
+  'Layers': 'layers',
+  'Layout': 'dashboard',
+  'Sidebar': 'view_sidebar',
+  
+  // Weather
+  'Sun': 'light_mode',
+  'Moon': 'dark_mode',
+  'CloudRain': 'cloudy',
+  
+  // Automotive
+  'Car': 'directions_car',
+  'Wrench': 'build',
+  'Zap': 'bolt',
+  'Activity': 'show_chart',
+  'Gauge': 'speed',
+  
+  // Other
+  'Palette': 'palette'
 }
 
 export const Icon: React.FC<IconProps> = ({
   name,
   size = 'md',
-  color = 'currentColor',
+  color = 'inherit',
+  variant = 'outlined',
+  weight = 'regular',
   className = '',
-  strokeWidth,
-  variant = 'outline'
+  style,
+  onClick,
+  spin = false
 }) => {
-  // Size mapping
-  const sizeMap = {
-    xs: 14,
-    sm: 16,
-    md: 20,
-    lg: 24,
-    xl: 32
-  }
-
-  const iconSize = typeof size === 'number' ? size : sizeMap[size] || 20
+  // Convert icon name to Material Symbols name
+  const symbolName = iconNameMap[name] || name.toLowerCase().replace(/([A-Z])/g, '_$1').replace(/^_/, '').trim()
   
-  // Stroke width based on variant
-  const getStrokeWidth = () => {
-    if (strokeWidth !== undefined) return strokeWidth
-    switch (variant) {
-      case 'thin': return 1
-      case 'outline': return 2
-      case 'bold': return 3
-      default: return 2
-    }
+  const sizeClasses = {
+    'xs': 'qwanyx-icon-xs',
+    'sm': 'qwanyx-icon-sm',
+    'md': 'qwanyx-icon-md',
+    'lg': 'qwanyx-icon-lg',
+    'xl': 'qwanyx-icon-xl',
+    '2xl': 'qwanyx-icon-2xl',
+    '3xl': 'qwanyx-icon-3xl'
   }
   
-  const finalStrokeWidth = getStrokeWidth()
-
-  // Get the icon component (case-insensitive)
-  // First try exact match
-  let IconComponent = iconMap[name]
-  
-  // If not found, try case-insensitive match
-  if (!IconComponent) {
-    const lowerName = name.toLowerCase()
-    const matchedKey = Object.keys(iconMap).find(key => key.toLowerCase() === lowerName)
-    if (matchedKey) {
-      IconComponent = iconMap[matchedKey]
-    }
-  }
-
-  if (IconComponent) {
-    return (
-      <IconComponent 
-        size={iconSize}
-        color={color}
-        strokeWidth={finalStrokeWidth}
-        className={`qwanyx-icon qwanyx-icon--${variant} ${className}`}
-      />
-    )
+  const colorClasses = {
+    'primary': 'qwanyx-icon-primary',
+    'secondary': 'qwanyx-icon-secondary',
+    'accent': 'qwanyx-icon-accent',
+    'success': 'qwanyx-icon-success',
+    'warning': 'qwanyx-icon-warning',
+    'error': 'qwanyx-icon-error',
+    'info': 'qwanyx-icon-info',
+    'inherit': 'qwanyx-icon-inherit',
+    'foreground': 'qwanyx-icon-foreground',
+    'muted': 'qwanyx-icon-muted'
   }
   
-  // Debug: log when icon not found
-  console.log(`Icon "${name}" not found in iconMap. Available icons:`, Object.keys(iconMap))
-
-  // Fallback to text/emoji if not a Lucide icon
-  if (typeof name === 'string' && name.length <= 2) {
-    return (
-      <span 
-        className={`qwanyx-icon qwanyx-icon--emoji ${className}`}
-        style={{ 
-          fontSize: `${iconSize}px`,
-          color,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        {name}
-      </span>
-    )
+  const variantClasses = {
+    'outlined': 'material-symbols-outlined',
+    'filled': 'material-symbols-filled',
+    'rounded': 'material-symbols-rounded',
+    'sharp': 'material-symbols-sharp'
   }
-
-  // Return placeholder if icon not found
-  console.warn(`Icon "${name}" not found`)
+  
+  const weightClasses = {
+    'thin': 'qwanyx-icon-thin',
+    'light': 'qwanyx-icon-light',
+    'regular': 'qwanyx-icon-regular',
+    'medium': 'qwanyx-icon-medium',
+    'bold': 'qwanyx-icon-bold'
+  }
+  
+  const classes = [
+    'qwanyx-icon',
+    variantClasses[variant],
+    sizeClasses[size],
+    colorClasses[color],
+    weightClasses[weight],
+    onClick ? 'qwanyx-icon-clickable' : '',
+    spin ? 'qwanyx-icon-spin' : '',
+    className
+  ].filter(Boolean).join(' ')
+  
   return (
     <span 
-      className={`qwanyx-icon qwanyx-icon--placeholder ${className}`}
-      style={{ 
-        width: `${iconSize}px`,
-        height: `${iconSize}px`,
-        display: 'inline-block',
-        backgroundColor: '#e5e7eb',
-        borderRadius: '4px'
-      }}
-    />
+      className={classes}
+      style={style}
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={name}
+    >
+      {symbolName}
+    </span>
   )
 }
 
-// Export icon names for convenience
+
+// Export common icon names for convenience
 export const Icons = {
   // Navigation
-  Menu: 'Menu',
-  X: 'X',
-  ChevronDown: 'ChevronDown',
-  ChevronUp: 'ChevronUp',
-  ChevronLeft: 'ChevronLeft',
-  ChevronRight: 'ChevronRight',
-  ArrowLeft: 'ArrowLeft',
-  ArrowRight: 'ArrowRight',
-  ArrowUp: 'ArrowUp',
-  ArrowDown: 'ArrowDown',
+  Menu: 'menu',
+  Close: 'close',
+  ArrowBack: 'arrow_back',
+  ArrowForward: 'arrow_forward',
+  ArrowUp: 'arrow_upward',
+  ArrowDown: 'arrow_downward',
+  ChevronDown: 'expand_more',
+  ChevronUp: 'expand_less',
+  ChevronLeft: 'chevron_left',
+  ChevronRight: 'chevron_right',
   
   // Actions
-  Search: 'Search',
-  Filter: 'Filter',
-  Plus: 'Plus',
-  Minus: 'Minus',
-  Check: 'Check',
-  Copy: 'Copy',
-  Download: 'Download',
-  Upload: 'Upload',
-  Edit: 'Edit',
-  Trash: 'Trash2',
-  Save: 'Save',
-  Settings: 'Settings',
+  Search: 'search',
+  Filter: 'filter_list',
+  Add: 'add',
+  Remove: 'remove',
+  Check: 'check',
+  Copy: 'content_copy',
+  Download: 'download',
+  Upload: 'upload',
+  Edit: 'edit',
+  Delete: 'delete',
+  Save: 'save',
+  Settings: 'settings',
+  Share: 'share',
+  Send: 'send',
+  Print: 'print',
+  Refresh: 'refresh',
   
-  // UI Elements
-  Home: 'Home',
-  User: 'User',
-  Users: 'Users',
-  Mail: 'Mail',
-  Phone: 'Phone',
-  Calendar: 'Calendar',
-  Clock: 'Clock',
-  Star: 'Star',
-  Heart: 'Heart',
-  Eye: 'Eye',
-  EyeOff: 'EyeOff',
-  Lock: 'Lock',
-  Unlock: 'Unlock',
-  Key: 'Key',
-  
-  // Status
-  AlertCircle: 'AlertCircle',
-  AlertTriangle: 'AlertTriangle',
-  Info: 'Info',
-  CheckCircle: 'CheckCircle',
-  XCircle: 'XCircle',
-  HelpCircle: 'HelpCircle',
-  
-  // Media
-  Image: 'Image',
-  Camera: 'Camera',
-  Video: 'Video',
-  Music: 'Music',
-  Mic: 'Mic',
-  Volume: 'Volume2',
-  
-  // Files
-  File: 'File',
-  FileText: 'FileText',
-  Folder: 'Folder',
-  FolderOpen: 'FolderOpen',
-  Paperclip: 'Paperclip',
-  
-  // Commerce
-  ShoppingCart: 'ShoppingCart',
-  ShoppingBag: 'ShoppingBag',
-  CreditCard: 'CreditCard',
-  DollarSign: 'DollarSign',
-  Tag: 'Tag',
-  Gift: 'Gift',
-  Package: 'Package',
-  Truck: 'Truck',
+  // User & Account
+  Home: 'home',
+  Person: 'person',
+  People: 'people',
+  PersonAdd: 'person_add',
+  Logout: 'logout',
   
   // Communication
-  MessageSquare: 'MessageSquare',
-  MessageCircle: 'MessageCircle',
-  Send: 'Send',
-  Bell: 'Bell',
-  BellOff: 'BellOff',
+  Mail: 'mail',
+  Email: 'email',
+  Phone: 'phone',
+  Notifications: 'notifications',
+  NotificationsOff: 'notifications_off',
+  Chat: 'chat',
+  Message: 'message',
   
-  // Layout
-  Grid: 'Grid',
-  List: 'List',
-  Layers: 'Layers',
-  Layout: 'Layout',
-  Sidebar: 'Sidebar',
+  // Time & Calendar
+  Calendar: 'calendar_today',
+  Clock: 'schedule',
+  History: 'history',
+  
+  // Feedback
+  Star: 'star',
+  Favorite: 'favorite',
+  Visibility: 'visibility',
+  VisibilityOff: 'visibility_off',
+  
+  // Security
+  Lock: 'lock',
+  LockOpen: 'lock_open',
+  Key: 'key',
+  Shield: 'shield',
+  
+  // Status
+  Error: 'error',
+  Warning: 'warning',
+  Info: 'info',
+  CheckCircle: 'check_circle',
+  Cancel: 'cancel',
+  Help: 'help',
+  
+  // Business
+  Dashboard: 'dashboard',
+  Assignment: 'assignment',
+  Analytics: 'analytics',
+  Assessment: 'assessment',
+  TrendingUp: 'trending_up',
+  ShoppingCart: 'shopping_cart',
+  Payment: 'payment',
   
   // Technology
-  Wifi: 'Wifi',
-  WifiOff: 'WifiOff',
-  Bluetooth: 'Bluetooth',
-  Database: 'Database',
-  Server: 'Server',
-  Cloud: 'Cloud',
-  Globe: 'Globe',
-  Monitor: 'Monitor',
-  Smartphone: 'Smartphone',
+  Cloud: 'cloud',
+  Api: 'api',
+  Support: 'support_agent',
+  Wifi: 'wifi',
+  Database: 'database',
   
-  // Weather
-  Sun: 'Sun',
-  Moon: 'Moon',
-  CloudRain: 'CloudRain',
+  // Media
+  Image: 'image',
+  Camera: 'photo_camera',
+  Video: 'videocam',
+  Music: 'music_note',
+  Mic: 'mic',
+  VolumeUp: 'volume_up',
   
-  // Social
-  Github: 'Github',
+  // Files
+  File: 'description',
+  Folder: 'folder',
+  FolderOpen: 'folder_open',
+  AttachFile: 'attach_file',
   
-  // Automotive
-  Car: 'Car',
-  Wrench: 'Wrench',
-  Shield: 'Shield',
-  Zap: 'Zap',
-  Activity: 'Activity',
-  Gauge: 'Gauge',
-  
-  // Other
-  Palette: 'Palette'
+  // Layout
+  GridView: 'grid_view',
+  List: 'list',
+  Layers: 'layers',
+  ViewSidebar: 'view_sidebar'
 } as const
 
 export type IconName = keyof typeof Icons | string

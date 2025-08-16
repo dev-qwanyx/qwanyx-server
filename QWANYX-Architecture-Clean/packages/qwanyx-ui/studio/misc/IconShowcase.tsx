@@ -7,7 +7,8 @@ import { Grid } from '../../src/components/Container'
 import { Input } from '../../src/components/Input'
 import { SimpleSelect } from '../../src/components/SimpleSelect'
 import { Button } from '../../src/components/Button'
-import * as LucideIcons from 'lucide-react'
+// Lucide removed - using Google Material Symbols now
+// import * as LucideIcons from 'lucide-react'
 
 export const IconShowcase: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -16,12 +17,12 @@ export const IconShowcase: React.FC = () => {
   const [selectedVariant, setSelectedVariant] = useState<'thin' | 'outline' | 'bold'>('outline')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
 
-  // Get all available Lucide icons
-  const allIcons = Object.keys(LucideIcons).filter(
-    key => typeof LucideIcons[key as keyof typeof LucideIcons] === 'function' && 
-    !key.includes('Icon') && 
-    key !== 'createLucideIcon'
-  )
+  // List of available Material Symbols icons (subset for demo)
+  const allIcons = [
+    'home', 'search', 'settings', 'person', 'mail', 'phone', 'calendar_today',
+    'dashboard', 'analytics', 'shopping_cart', 'favorite', 'star', 'delete',
+    'edit', 'save', 'share', 'download', 'upload', 'print', 'refresh'
+  ]
 
   // Filter icons based on search
   const filteredIcons = allIcons.filter(icon => 

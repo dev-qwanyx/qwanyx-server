@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { DoubleImageFlip } from '../../src/components/DoubleImageFlip'
+// DoubleImageFlip removed - needs reimplementation
+// import { DoubleImageFlip } from '../../src/components/DoubleImageFlip'
 import { Container } from '../../src/components/Container'
 import { Heading, Text } from '../../src/components/Text'
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/Card'
@@ -412,13 +413,16 @@ const images = [
               justifyContent: 'center'
             }}>
               {selectedImages.length >= 2 ? (
-                <DoubleImageFlip
-                  images={selectedImages}
-                  size={selectedSize}
-                  flipInterval={flipInterval}
-                  showMysteryIcon={showMysteryIcon}
-                  onImageClick={handleImageClick}
-                />
+                <div>
+                  <img 
+                    src={selectedImages[0]} 
+                    alt="Preview" 
+                    style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }}
+                  />
+                  <Text style={{ color: 'white', marginTop: '1rem' }}>
+                    DoubleImageFlip component temporarily disabled (migration from MUI)
+                  </Text>
+                </div>
               ) : (
                 <Text style={{ color: 'white' }}>
                   Please add at least 2 images to see the demo

@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { MaterialIcon } from '../../src/components/MaterialIcon'
-import { MaterialIconDynamic } from '../../src/components/MaterialIconDynamic'
+import { Icon } from '../../src/components/Icon'
 import { Container } from '../../src/components/Container'
 import { Heading, Text } from '../../src/components/Text'
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/Card'
@@ -10,94 +9,58 @@ import { SimpleSelect } from '../../src/components/SimpleSelect'
 import { Button } from '../../src/components/Button'
 import { useTheme } from '../../src/providers/ThemeProvider'
 
-// Organized icon categories with Material Icons
+// Organized icon categories with Material Symbols (snake_case names)
 const iconCategories = {
   'Navigation': [
-    'Menu', 'Close', 'ArrowBack', 'ArrowForward', 'ArrowUpward', 'ArrowDownward',
-    'KeyboardArrowDown', 'KeyboardArrowUp', 'KeyboardArrowLeft', 'KeyboardArrowRight',
-    'ExpandMore', 'ExpandLess', 'ChevronLeft', 'ChevronRight', 'MoreVert', 'MoreHoriz'
+    'menu', 'close', 'arrow_back', 'arrow_forward', 'arrow_upward', 'arrow_downward',
+    'keyboard_arrow_down', 'keyboard_arrow_up', 'keyboard_arrow_left', 'keyboard_arrow_right',
+    'expand_more', 'expand_less', 'chevron_left', 'chevron_right', 'more_vert', 'more_horiz'
   ],
   'Actions': [
-    'Search', 'Home', 'Settings', 'Done', 'Add', 'Remove', 'Delete', 'Edit',
-    'Save', 'Share', 'Download', 'Upload', 'ContentCopy', 'ContentPaste',
-    'Refresh', 'Sync', 'Print', 'Send', 'Archive', 'Unarchive'
+    'search', 'home', 'settings', 'done', 'add', 'remove', 'delete', 'edit',
+    'save', 'share', 'download', 'upload', 'content_copy', 'content_paste',
+    'refresh', 'sync', 'print', 'send', 'archive', 'unarchive'
   ],
   'User & Account': [
-    'Person', 'Group', 'PersonAdd', 'PersonRemove', 'AccountCircle', 'AccountBox',
-    'SupervisedUserCircle', 'ManageAccounts', 'Badge', 'ContactMail', 'Contacts'
+    'person', 'group', 'person_add', 'person_remove', 'account_circle', 'account_box',
+    'supervised_user_circle', 'manage_accounts', 'badge', 'contact_mail', 'contacts'
   ],
   'Communication': [
-    'Email', 'Mail', 'Message', 'Chat', 'Forum', 'QuestionAnswer',
-    'Phone', 'PhoneInTalk', 'Voicemail', 'DialerSip', 'ContactPhone',
-    'Notifications', 'NotificationsActive', 'NotificationsOff', 'NotificationAdd'
+    'email', 'mail', 'message', 'chat', 'forum', 'question_answer',
+    'phone', 'phone_in_talk', 'voicemail', 'dialer_sip', 'contact_phone',
+    'notifications', 'notifications_active', 'notifications_off', 'notification_add'
   ],
   'Media': [
-    'Image', 'PhotoCamera', 'PhotoLibrary', 'Collections', 'Panorama',
-    'VideoCam', 'VideoLibrary', 'Movie', 'Theaters', 'MusicNote',
-    'Album', 'Mic', 'MicOff', 'VolumeUp', 'VolumeDown', 'VolumeMute', 'VolumeOff',
-    'PlayArrow', 'Pause', 'Stop', 'SkipNext', 'SkipPrevious', 'FastForward', 'FastRewind'
+    'image', 'photo_camera', 'photo_library', 'collections', 'panorama',
+    'videocam', 'video_library', 'movie', 'theaters', 'music_note',
+    'album', 'mic', 'mic_off', 'volume_up', 'volume_down', 'volume_mute', 'volume_off',
+    'play_arrow', 'pause', 'stop', 'skip_next', 'skip_previous', 'fast_forward', 'fast_rewind'
   ],
   'Files & Folders': [
-    'Folder', 'FolderOpen', 'CreateNewFolder', 'FolderShared', 'FolderSpecial',
-    'InsertDriveFile', 'Description', 'Article', 'FileCopy', 'AttachFile',
-    'CloudUpload', 'CloudDownload', 'CloudQueue', 'CloudDone', 'CloudOff'
+    'folder', 'folder_open', 'create_new_folder', 'folder_shared', 'folder_special',
+    'insert_drive_file', 'description', 'article', 'file_copy', 'attach_file',
+    'cloud_upload', 'cloud_download', 'cloud', 'cloud_done', 'cloud_off'
   ],
   'Status & Alerts': [
-    'CheckCircle', 'Cancel', 'Error', 'Warning', 'Info', 'Help',
-    'CheckCircleOutline', 'ErrorOutline', 'WarningAmber', 'InfoOutlined',
-    'ReportProblem', 'Announcement', 'Feedback', 'NewReleases'
+    'check_circle', 'cancel', 'error', 'warning', 'info', 'help',
+    'check_circle_outline', 'error_outline', 'warning', 'info',
+    'report_problem', 'announcement', 'feedback', 'new_releases'
   ],
   'Commerce': [
-    'ShoppingCart', 'ShoppingBag', 'Store', 'Storefront', 'LocalMall',
-    'AddShoppingCart', 'RemoveShoppingCart', 'Payment', 'CreditCard',
-    'AttachMoney', 'MonetizationOn', 'Euro', 'LocalOffer', 'Loyalty',
-    'CardGiftcard', 'Sell', 'Inventory', 'LocalShipping', 'Receipt'
-  ],
-  'Social Media': [
-    'Facebook', 'Twitter', 'Instagram', 'LinkedIn', 'YouTube', 'Pinterest',
-    'Reddit', 'GitHub', 'WhatsApp', 'Telegram', 'Share', 'ThumbUp', 'ThumbDown'
-  ],
-  'Technology': [
-    'Computer', 'Laptop', 'Smartphone', 'Tablet', 'Watch', 'Headphones',
-    'Keyboard', 'Mouse', 'Memory', 'Storage', 'Dns', 'Router',
-    'Wifi', 'WifiOff', 'Bluetooth', 'BluetoothDisabled', 'Battery0Bar',
-    'BatteryFull', 'BatteryCharging', 'PowerSettingsNew', 'Power'
-  ],
-  'Maps & Location': [
-    'Map', 'MyLocation', 'LocationOn', 'LocationOff', 'LocationSearching',
-    'Navigation', 'NearMe', 'Place', 'LocalHospital', 'LocalPharmacy',
-    'Restaurant', 'Fastfood', 'Coffee', 'LocalBar', 'Hotel', 'LocalParking',
-    'DirectionsCar', 'DirectionsBus', 'Train', 'Flight', 'DirectionsBike', 'DirectionsWalk'
-  ],
-  'Business': [
-    'Business', 'Work', 'WorkOutline', 'BusinessCenter', 'Domain',
-    'Assessment', 'Analytics', 'BarChart', 'ShowChart', 'TrendingUp', 'TrendingDown',
-    'AttachMoney', 'MoneyOff', 'Euro', 'CurrencyExchange', 'Paid'
-  ],
-  'Education': [
-    'School', 'MenuBook', 'AutoStories', 'LibraryBooks', 'Book',
-    'Bookmark', 'BookmarkBorder', 'Grade', 'Star', 'StarBorder',
-    'Science', 'Psychology', 'Biotech', 'Calculate', 'Functions'
-  ],
-  'Weather & Nature': [
-    'WbSunny', 'NightsStay', 'Cloud', 'CloudQueue', 'WbCloudy',
-    'Thunderstorm', 'AcUnit', 'Waves', 'Water', 'WaterDrop',
-    'Park', 'Nature', 'LocalFlorist', 'Grass', 'Forest'
-  ],
-  'Security': [
-    'Lock', 'LockOpen', 'Security', 'Shield', 'VerifiedUser',
-    'Fingerprint', 'VpnKey', 'Password', 'Pin', 'Pattern',
-    'AdminPanelSettings', 'Policy', 'PrivacyTip', 'GppGood', 'GppBad'
+    'shopping_cart', 'shopping_bag', 'store', 'storefront', 'local_mall',
+    'add_shopping_cart', 'remove_shopping_cart', 'payment', 'credit_card',
+    'attach_money', 'monetization_on', 'euro', 'local_offer', 'loyalty',
+    'card_giftcard', 'sell', 'inventory', 'local_shipping', 'receipt'
   ]
 }
 
-export const MaterialIconsPage: React.FC = () => {
+export const IconLibraryPage: React.FC = () => {
   const { theme } = useTheme()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedSize, setSelectedSize] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl'>('lg')
   const [selectedColor, setSelectedColor] = useState('foreground')
-  const [selectedVariant, setSelectedVariant] = useState<'filled' | 'outlined' | 'rounded' | 'sharp' | 'twoTone'>('filled')
+  const [selectedVariant, setSelectedVariant] = useState<'filled' | 'outlined' | 'rounded' | 'sharp'>('outlined')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   
@@ -130,14 +93,14 @@ export const MaterialIconsPage: React.FC = () => {
   }, [searchTerm, selectedCategory])
 
   const handleCopyIcon = (iconName: string) => {
-    const code = `<MaterialIcon icon="${iconName}" size="${selectedSize}" />`
+    const code = `<Icon name="${iconName}" size="${selectedSize}" />`
     navigator.clipboard.writeText(code)
     setCopiedIcon(iconName)
     setTimeout(() => setCopiedIcon(null), 2000)
   }
 
   const handleCopyImport = () => {
-    navigator.clipboard.writeText(`import { MaterialIcon } from '@qwanyx/ui'`)
+    navigator.clipboard.writeText(`import { Icon } from '@qwanyx/ui'`)
     alert('Import statement copied to clipboard!')
   }
 
@@ -147,10 +110,10 @@ export const MaterialIconsPage: React.FC = () => {
         {/* Header */}
         <div style={{ padding: '3rem 0 2rem' }}>
           <Heading size="4xl" style={{ marginBottom: '0.5rem' }}>
-            Material Icons Library
+            Icon Library
           </Heading>
           <Text size="lg" style={{ color: '#6b7280' }}>
-            Browse Google Material Icons - Over 2000+ icons with multiple variants
+            Browse Google Material Symbols - Modern icon font with variable styles
           </Text>
         </div>
 
@@ -187,14 +150,14 @@ export const MaterialIconsPage: React.FC = () => {
                         variant={viewMode === 'grid' ? 'solid' : 'outline'}
                         onClick={() => setViewMode('grid')}
                       >
-                        <MaterialIcon icon="GridView" size="sm" />
+                        <Icon name="grid_view" size="sm" />
                       </Button>
                       <Button
                         size="sm"
                         variant={viewMode === 'list' ? 'solid' : 'outline'}
                         onClick={() => setViewMode('list')}
                       >
-                        <MaterialIcon icon="List" size="sm" />
+                        <Icon name="list" size="sm" />
                       </Button>
                     </div>
                   </div>
@@ -208,11 +171,10 @@ export const MaterialIconsPage: React.FC = () => {
                     <SimpleSelect
                       value={selectedVariant}
                       options={[
-                        { value: 'filled', label: 'Filled' },
                         { value: 'outlined', label: 'Outlined' },
+                        { value: 'filled', label: 'Filled' },
                         { value: 'rounded', label: 'Rounded' },
-                        { value: 'sharp', label: 'Sharp' },
-                        { value: 'twoTone', label: 'Two Tone' }
+                        { value: 'sharp', label: 'Sharp' }
                       ]}
                       onChange={(e) => setSelectedVariant((e.target as HTMLSelectElement).value as any)}
                     />
@@ -256,10 +218,8 @@ export const MaterialIconsPage: React.FC = () => {
                         { value: 'warning', label: 'Warning' },
                         { value: 'error', label: 'Error' },
                         { value: 'info', label: 'Info' },
-                        { value: 'text-primary', label: 'Text Primary' },
-                        { value: 'text-secondary', label: 'Text Secondary' },
-                        { value: 'text-muted', label: 'Text Muted' },
-                        { value: 'currentColor', label: 'Current Color' }
+                        { value: 'muted', label: 'Muted' },
+                        { value: 'inherit', label: 'Inherit' }
                       ]}
                       onChange={(e) => setSelectedColor((e.target as HTMLSelectElement).value)}
                     />
@@ -284,7 +244,7 @@ export const MaterialIconsPage: React.FC = () => {
                   setSelectedCategory('all');
                   setSelectedColor('foreground');
                   setSelectedSize('lg');
-                  setSelectedVariant('filled');
+                  setSelectedVariant('outlined');
                 }}
                 variant="ghost"
                 size="sm"
@@ -323,11 +283,12 @@ export const MaterialIconsPage: React.FC = () => {
                   justifyContent: 'center',
                   minHeight: '100px'
                 }}>
-                  <MaterialIconDynamic 
+                  <Icon 
                     name={iconName} 
                     size={selectedSize} 
-                    color={copiedIcon === iconName ? 'white' : getThemeColor(selectedColor)}
+                    color={copiedIcon === iconName ? 'inherit' : selectedColor as any}
                     variant={selectedVariant}
+                    style={copiedIcon === iconName ? { color: 'white' } : {}}
                   />
                   <Text 
                     style={{ 
@@ -366,11 +327,12 @@ export const MaterialIconsPage: React.FC = () => {
                   alignItems: 'center',
                   gap: '1rem'
                 }}>
-                  <MaterialIconDynamic 
+                  <Icon 
                     name={iconName} 
                     size={selectedSize} 
-                    color={copiedIcon === iconName ? 'white' : getThemeColor(selectedColor)}
+                    color={copiedIcon === iconName ? 'inherit' : selectedColor as any}
                     variant={selectedVariant}
+                    style={copiedIcon === iconName ? { color: 'white' } : {}}
                   />
                   <Text 
                     style={{ 
@@ -388,7 +350,7 @@ export const MaterialIconsPage: React.FC = () => {
                       fontFamily: 'monospace'
                     }}
                   >
-                    {copiedIcon === iconName ? 'Copied!' : `<MaterialIcon icon="${iconName}" />`}
+                    {copiedIcon === iconName ? 'Copied!' : `<Icon name="${iconName}" />`}
                   </Text>
                 </CardContent>
               </Card>
@@ -411,23 +373,20 @@ export const MaterialIconsPage: React.FC = () => {
                   borderRadius: '0.5rem',
                   overflow: 'auto'
                 }}>
-                  <code>{`import { MaterialIcon } from '@qwanyx/ui'
+                  <code>{`import { Icon } from '@qwanyx/ui'
 
-// Basic icon (filled by default)
-<MaterialIcon icon="Search" />
+// Basic icon
+<Icon name="Search" />
 
 // With variant
-<MaterialIcon icon="Home" variant="outlined" />
-<MaterialIcon icon="Star" variant="rounded" />
-<MaterialIcon icon="Settings" variant="sharp" />
-<MaterialIcon icon="Favorite" variant="twoTone" />
+<Icon name="Home" variant="outlined" />
+<Icon name="Star" variant="filled" />
+<Icon name="Settings" variant="rounded" />
+<Icon name="Favorite" variant="sharp" />
 
 // With size and color
-<MaterialIcon icon="Star" size="lg" color="#FFD700" />
-
-// Social icons (Material has these!)
-<MaterialIcon icon="Facebook" variant="filled" />
-<MaterialIcon icon="Twitter" variant="outlined" />`}</code>
+<Icon name="Star" size="lg" color="primary" />
+<Icon name="Heart" size="xl" color="error" />`}</code>
                 </pre>
               </div>
               
@@ -435,23 +394,23 @@ export const MaterialIconsPage: React.FC = () => {
                 <Heading size="md" style={{ marginBottom: '1rem' }}>Available Sizes</Heading>
                 <div style={{ background: '#f3f4f6', padding: '1rem', borderRadius: '0.5rem' }}>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                    <MaterialIcon icon="Star" size="xs" />
-                    <Text>xs - 14px</Text>
+                    <Icon name="star" size="xs" />
+                    <Text>xs - 16px</Text>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                    <MaterialIcon icon="Star" size="sm" />
-                    <Text>sm - 18px</Text>
+                    <Icon name="star" size="sm" />
+                    <Text>sm - 20px</Text>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                    <MaterialIcon icon="Star" size="md" />
+                    <Icon name="star" size="md" />
                     <Text>md - 24px (default)</Text>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                    <MaterialIcon icon="Star" size="lg" />
+                    <Icon name="star" size="lg" />
                     <Text>lg - 32px</Text>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <MaterialIcon icon="Star" size="xl" />
+                    <Icon name="star" size="xl" />
                     <Text>xl - 40px</Text>
                   </div>
                 </div>

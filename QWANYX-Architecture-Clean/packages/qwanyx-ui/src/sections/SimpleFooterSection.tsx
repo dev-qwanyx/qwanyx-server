@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Grid } from '../components/Container'
 import { Text } from '../components/Text'
-import { MaterialIcon } from '../components/MaterialIcon'
+import { Icon } from '../components/Icon'
 
 export interface SimpleFooterSectionProps {
   logo?: React.ReactNode
@@ -82,7 +82,7 @@ export const SimpleFooterSection: React.FC<SimpleFooterSectionProps> = ({
               )}
               {address && (
                 <div className="qwanyx-flex qwanyx-items-start qwanyx-gap-2 qwanyx-mt-3">
-                  <MaterialIcon icon="Location" size="sm" color={(textColor || "secondary") as any} />
+                  <Icon name="LocationOn" size="sm" color={(textColor || "secondary") as any} />
                   <div className="qwanyx-space-y-1">
                     {address.street && <Text size="sm" color={(textColor || "secondary") as any}>{address.street}</Text>}
                     {address.city && <Text size="sm" color={(textColor || "secondary") as any}>{address.city}</Text>}
@@ -92,13 +92,13 @@ export const SimpleFooterSection: React.FC<SimpleFooterSectionProps> = ({
               )}
               {phone && (
                 <div className="qwanyx-flex qwanyx-items-center qwanyx-gap-2 qwanyx-mt-2">
-                  <MaterialIcon icon="Phone" size="sm" color={(textColor || "secondary") as any} />
+                  <Icon name="Phone" size="sm" color={(textColor || "secondary") as any} />
                   <Text size="sm" color={(textColor || "secondary") as any}>{phone}</Text>
                 </div>
               )}
               {email && (
                 <div className="qwanyx-flex qwanyx-items-center qwanyx-gap-2 qwanyx-mt-2">
-                  <MaterialIcon icon="Mail" size="sm" color={(textColor || "secondary") as any} />
+                  <Icon name="Mail" size="sm" color={(textColor || "secondary") as any} />
                   <Text size="sm" color={(textColor || "secondary") as any}>
                     <a 
                       href={`mailto:${email}`}
@@ -127,7 +127,7 @@ export const SimpleFooterSection: React.FC<SimpleFooterSectionProps> = ({
                         className={`qwanyx-flex qwanyx-items-center qwanyx-gap-2 qwanyx-text-sm ${textColor ? '' : 'qwanyx-text-secondary'} qwanyx-hover-text-primary qwanyx-transition-colors`}
                         style={textColor && !textColor.includes('var(') ? { color: textColor } : {}}
                       >
-                        <MaterialIcon icon="ChevronRight" size="xs" color={textColor as any} />
+                        <Icon name="ChevronRight" size="xs" color={textColor as any} />
                         {link.label}
                       </a>
                     </div>
@@ -146,7 +146,7 @@ export const SimpleFooterSection: React.FC<SimpleFooterSectionProps> = ({
                       className={`${textColor ? '' : 'qwanyx-text-secondary'} qwanyx-hover-text-primary qwanyx-transition-colors`}
                       style={textColor && !textColor.includes('var(') ? { color: textColor } : {}}
                     >
-                      <MaterialIcon icon={social.icon} size="md" color={textColor as any} />
+                      <Icon name={social.icon} size="md" color={textColor as any} />
                     </a>
                   ))}
                 </div>

@@ -187,11 +187,9 @@ export type { SidebarProps, SimpleSidebarProps, SidebarItem } from './components
 export { DashboardLayout, SimpleDashboardLayout } from './components/DashboardLayout';
 export type { DashboardLayoutProps, SimpleDashboardLayoutProps } from './components/DashboardLayout';
 
+// Icons - Using Google Material Symbols
 export { Icon, Icons } from './components/Icon';
-export type { IconProps, IconName } from './components/Icon';
-
-export { MaterialIcon, Icons as MaterialIcons } from './components/MaterialIcon';
-export type { MaterialIconProps } from './components/MaterialIcon';
+export type { IconProps } from './components/Icon';
 
 export { AuthModal, AuthStatus } from './components/Auth';
 export type { AuthModalProps, AuthStatusProps } from './components/Auth';
@@ -248,8 +246,6 @@ export type {
 } from './components/Form';
 
 // Special Components
-export { DoubleImageFlip } from './components/DoubleImageFlip';
-export type { DoubleImageFlipProps } from './components/DoubleImageFlip';
 
 // Page Components
 export {

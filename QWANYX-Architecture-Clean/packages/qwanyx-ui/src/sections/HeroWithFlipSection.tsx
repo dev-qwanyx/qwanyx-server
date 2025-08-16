@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Container } from '../components/Container'
 import { Heading, Text } from '../components/Text'
 import { Button } from '../components/Button'
-import { DoubleImageFlip } from '../components/DoubleImageFlip'
+// DoubleImageFlip removed - needs reimplementation without lucide-react
+// import { DoubleImageFlip } from '../components/DoubleImageFlip'
 
 export interface HeroWithFlipSectionProps {
   id?: string
@@ -42,18 +43,18 @@ export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
   primaryAction,
   secondaryAction,
   images,
-  flipInterval = 3000,
-  flipIntervalMin,
-  flipIntervalMax,
-  flipDuration = 800,
-  showMysteryIcon = true,
-  hoverScale = 1.02,
+  flipInterval: _flipInterval = 3000,
+  flipIntervalMin: _flipIntervalMin,
+  flipIntervalMax: _flipIntervalMax,
+  flipDuration: _flipDuration = 800,
+  showMysteryIcon: _showMysteryIcon = true,
+  hoverScale: _hoverScale = 1.02,
   backgroundImage,
   backgroundOverlay = true,
   overlayOpacity = 0.7,
   variant = 'default',
   flipPosition = 'right',
-  flipSize = 'md'
+  flipSize: _flipSize = 'md'
 }) => {
   const [isResponsive, setIsResponsive] = useState(false)
   
@@ -135,15 +136,15 @@ export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
             {/* In responsive mode, always show content first */}
             {!isResponsive && flipPosition === 'left' && images.length >= 2 && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <DoubleImageFlip
-                  images={images}
-                  size={flipSize}
-                  flipInterval={flipInterval}
-                  flipIntervalMin={flipIntervalMin}
-                  flipIntervalMax={flipIntervalMax}
-                  flipDuration={flipDuration}
-                  showMysteryIcon={showMysteryIcon}
-                  hoverScale={hoverScale}
+                {/* TODO: Reimplement DoubleImageFlip without lucide-react */}
+                <img 
+                  src={images[0]} 
+                  alt="Hero" 
+                  style={{ 
+                    maxWidth: '100%', 
+                    height: 'auto',
+                    borderRadius: '8px'
+                  }}
                 />
               </div>
             )}
@@ -223,15 +224,15 @@ export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
             {/* Flip Column - Right Position or Responsive Mode */}
             {((isResponsive && images.length >= 2) || (!isResponsive && flipPosition === 'right' && images.length >= 2)) && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <DoubleImageFlip
-                  images={images}
-                  size={flipSize}
-                  flipInterval={flipInterval}
-                  flipIntervalMin={flipIntervalMin}
-                  flipIntervalMax={flipIntervalMax}
-                  flipDuration={flipDuration}
-                  showMysteryIcon={showMysteryIcon}
-                  hoverScale={hoverScale}
+                {/* TODO: Reimplement DoubleImageFlip without lucide-react */}
+                <img 
+                  src={images[0]} 
+                  alt="Hero" 
+                  style={{ 
+                    maxWidth: '100%', 
+                    height: 'auto',
+                    borderRadius: '8px'
+                  }}
                 />
               </div>
             )}
