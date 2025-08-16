@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Container } from '../components/Container'
 import { Heading, Text } from '../components/Text'
 import { Button } from '../components/Button'
-// DoubleImageFlip removed - needs reimplementation without lucide-react
-// import { DoubleImageFlip } from '../components/DoubleImageFlip'
+import { DoubleFlip } from '../components/DoubleFlip'
 
 export interface HeroWithFlipSectionProps {
   id?: string
@@ -22,11 +21,7 @@ export interface HeroWithFlipSectionProps {
   }
   images: string[]
   flipInterval?: number
-  flipIntervalMin?: number
-  flipIntervalMax?: number
   flipDuration?: number
-  showMysteryIcon?: boolean
-  hoverScale?: number
   backgroundImage?: string
   backgroundOverlay?: boolean
   overlayOpacity?: number
@@ -43,18 +38,14 @@ export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
   primaryAction,
   secondaryAction,
   images,
-  flipInterval: _flipInterval = 3000,
-  flipIntervalMin: _flipIntervalMin,
-  flipIntervalMax: _flipIntervalMax,
-  flipDuration: _flipDuration = 800,
-  showMysteryIcon: _showMysteryIcon = true,
-  hoverScale: _hoverScale = 1.02,
+  flipInterval = 3000,
+  flipDuration = 800,
   backgroundImage,
   backgroundOverlay = true,
   overlayOpacity = 0.7,
   variant = 'default',
   flipPosition = 'right',
-  flipSize: _flipSize = 'md'
+  flipSize = 'md'
 }) => {
   const [isResponsive, setIsResponsive] = useState(false)
   
@@ -136,15 +127,16 @@ export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
             {/* In responsive mode, always show content first */}
             {!isResponsive && flipPosition === 'left' && images.length >= 2 && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* TODO: Reimplement DoubleImageFlip without lucide-react */}
-                <img 
-                  src={images[0]} 
-                  alt="Hero" 
-                  style={{ 
-                    maxWidth: '100%', 
-                    height: 'auto',
-                    borderRadius: '8px'
+                <DoubleFlip
+                  images={images}
+                  flipDelay={{ min: flipInterval - 1000, max: flipInterval + 1000 }}
+                  flipDuration={flipDuration}
+                  size={{
+                    mobile: flipSize === 'sm' ? '200px' : flipSize === 'md' ? '250px' : flipSize === 'lg' ? '300px' : '350px',
+                    tablet: flipSize === 'sm' ? '250px' : flipSize === 'md' ? '300px' : flipSize === 'lg' ? '350px' : '400px',
+                    desktop: flipSize === 'sm' ? '300px' : flipSize === 'md' ? '350px' : flipSize === 'lg' ? '400px' : '450px'
                   }}
+                  gap="20px"
                 />
               </div>
             )}
@@ -224,15 +216,16 @@ export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
             {/* Flip Column - Right Position or Responsive Mode */}
             {((isResponsive && images.length >= 2) || (!isResponsive && flipPosition === 'right' && images.length >= 2)) && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* TODO: Reimplement DoubleImageFlip without lucide-react */}
-                <img 
-                  src={images[0]} 
-                  alt="Hero" 
-                  style={{ 
-                    maxWidth: '100%', 
-                    height: 'auto',
-                    borderRadius: '8px'
+                <DoubleFlip
+                  images={images}
+                  flipDelay={{ min: flipInterval - 1000, max: flipInterval + 1000 }}
+                  flipDuration={flipDuration}
+                  size={{
+                    mobile: flipSize === 'sm' ? '200px' : flipSize === 'md' ? '250px' : flipSize === 'lg' ? '300px' : '350px',
+                    tablet: flipSize === 'sm' ? '250px' : flipSize === 'md' ? '300px' : flipSize === 'lg' ? '350px' : '400px',
+                    desktop: flipSize === 'sm' ? '300px' : flipSize === 'md' ? '350px' : flipSize === 'lg' ? '400px' : '450px'
                   }}
+                  gap="20px"
                 />
               </div>
             )}

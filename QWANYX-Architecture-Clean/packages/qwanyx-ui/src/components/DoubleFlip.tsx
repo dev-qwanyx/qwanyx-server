@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './DoubleImageFlip.css';
 
 export interface DoubleFlipProps {
   images: string[];

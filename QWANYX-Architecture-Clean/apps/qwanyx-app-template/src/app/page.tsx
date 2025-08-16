@@ -22,6 +22,7 @@ import { ThemeEditor } from './components/ThemeEditor'
 
 function AppContent() {
   const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'about' | 'services'>('home')
+  const [activeSection, setActiveSection] = useState<string>('details')
   const [user, setUser] = useState<any>(null)
   const [showAuth, setShowAuth] = useState(false)
   
@@ -86,25 +87,28 @@ function AppContent() {
         items={[
           {
             label: 'Détails',
-            active: currentView === 'home',
+            active: activeSection === 'details',
             onClick: () => {
               setCurrentView('home')
+              setActiveSection('details')
               setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100)
             }
           },
           {
             label: 'Services',
-            active: false,
+            active: activeSection === 'services',
             onClick: () => {
               setCurrentView('home')
+              setActiveSection('services')
               setTimeout(() => scrollToSection('services'), 100)
             }
           },
           {
             label: 'Contact',
-            active: false,
+            active: activeSection === 'contact',
             onClick: () => {
               setCurrentView('home')
+              setActiveSection('contact')
               setTimeout(() => scrollToSection('contact'), 100)
             }
           },

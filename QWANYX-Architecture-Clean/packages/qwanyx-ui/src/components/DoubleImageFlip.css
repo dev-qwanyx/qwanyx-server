@@ -1,40 +1,40 @@
 /* Double Image Flip Component Styles */
 
-.qwanyx-double-image-flip {
+.qwanyx-double-flip {
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: visible;
 }
 
-.qwanyx-double-image-flip--loading {
+.qwanyx-double-flip-loading {
   padding: 2rem;
   color: rgb(var(--qwanyx-text-secondary));
   text-align: center;
 }
 
-.qwanyx-double-image-flip__panel {
+.qwanyx-double-flip__panel {
   position: relative;
   transform: translateZ(0);
   transition: transform 0.3s ease;
 }
 
-.qwanyx-double-image-flip__panel:hover {
+.qwanyx-double-flip__panel:hover {
   transform: translateZ(0) scale(1.02);
 }
 
-.qwanyx-double-image-flip__panel--flipping {
+.qwanyx-double-flip__panel--flipping {
   pointer-events: none;
 }
 
-.qwanyx-double-image-flip__card {
+.qwanyx-double-flip__card {
   width: 100%;
   height: 100%;
   position: relative;
   transformStyle: preserve-3d;
 }
 
-.qwanyx-double-image-flip__card-inner {
+.qwanyx-double-flip__card-inner {
   width: 100%;
   height: 100%;
   position: relative;
@@ -42,8 +42,8 @@
   transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-.qwanyx-double-image-flip__card-front,
-.qwanyx-double-image-flip__card-back {
+.qwanyx-double-flip__card-front,
+.qwanyx-double-flip__card-back {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -64,7 +64,7 @@
   transform: rotateY(180deg);
 }
 
-.qwanyx-double-image-flip__image {
+.qwanyx-double-flip__image {
   width: 100%;
   height: 100%;
   object-fit: cover;

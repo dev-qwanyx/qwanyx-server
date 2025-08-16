@@ -46,6 +46,9 @@ export type {
 export { ServiceCard } from './components/ServiceCard';
 export type { ServiceCardProps } from './components/ServiceCard';
 
+export { DoubleFlip } from './components/DoubleFlip';
+export type { DoubleFlipProps } from './components/DoubleFlip';
+
 export { Input, Textarea } from './components/Input';
 export type { InputProps, TextareaProps } from './components/Input';
 
