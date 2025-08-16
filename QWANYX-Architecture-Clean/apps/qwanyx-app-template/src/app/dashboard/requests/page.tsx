@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardHeader, CardTitle, CardContent, Heading, Text, Button, MaterialIcon, Badge, Tabs, TabsList, TabsTrigger, TabsContent } from '@qwanyx/ui';
+import { Card, CardHeader, CardTitle, CardContent, Heading, Text, Button, Icon, Badge, Tabs, TabsList, TabsTrigger, TabsContent } from '@qwanyx/ui';
 
 export default function RequestsPage() {
   const requests = {
@@ -68,7 +68,7 @@ export default function RequestsPage() {
     <div>
       <div className="qwanyx-mb-8">
         <Heading size="2xl">Demandes</Heading>
-        <Text className="qwanyx-mt-2" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+        <Text color="secondary">
           Gérez les demandes des utilisateurs
         </Text>
       </div>
@@ -79,19 +79,19 @@ export default function RequestsPage() {
             <TabsList className="qwanyx-w-full qwanyx-justify-start qwanyx-px-6 qwanyx-pt-6">
               <TabsTrigger value="pending">
                 En attente
-                <Badge variant="destructive" className="qwanyx-ml-2">
+                <Badge variant="solid" className="qwanyx-ml-2">
                   {requests.pending.length}
                 </Badge>
               </TabsTrigger>
               <TabsTrigger value="approved">
                 Approuvées
-                <Badge variant="success" className="qwanyx-ml-2">
+                <Badge variant="solid" className="qwanyx-ml-2">
                   {requests.approved.length}
                 </Badge>
               </TabsTrigger>
               <TabsTrigger value="rejected">
                 Rejetées
-                <Badge variant="secondary" className="qwanyx-ml-2">
+                <Badge variant="outline" className="qwanyx-ml-2">
                   {requests.rejected.length}
                 </Badge>
               </TabsTrigger>
@@ -102,8 +102,7 @@ export default function RequestsPage() {
                 {requests.pending.map((request) => (
                   <div 
                     key={request.id}
-                    className="qwanyx-p-4 qwanyx-border qwanyx-rounded-lg"
-                    style={{ borderColor: 'var(--qwanyx-border)' }}
+                    className="qwanyx-p-4 qwanyx-border qwanyx-rounded-lg qwanyx-border-default"
                   >
                     <div className="qwanyx-flex qwanyx-justify-between qwanyx-items-start">
                       <div>
@@ -114,17 +113,17 @@ export default function RequestsPage() {
                              request.priority === 'medium' ? 'Normal' : 'Faible'}
                           </Badge>
                         </div>
-                        <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                        <Text size="sm" color="secondary">
                           Par {request.user} • {request.date}
                         </Text>
                       </div>
                       <div className="qwanyx-flex qwanyx-gap-2">
-                        <Button size="sm" variant="success">
-                          <MaterialIcon icon="Check" />
+                        <Button size="sm" variant="primary">
+                          <Icon name="check" />
                           Approuver
                         </Button>
-                        <Button size="sm" variant="destructive">
-                          <MaterialIcon icon="Close" />
+                        <Button size="sm" variant="ghost">
+                          <Icon name="close" />
                           Rejeter
                         </Button>
                       </div>
@@ -139,20 +138,19 @@ export default function RequestsPage() {
                 {requests.approved.map((request) => (
                   <div 
                     key={request.id}
-                    className="qwanyx-p-4 qwanyx-border qwanyx-rounded-lg"
-                    style={{ borderColor: 'var(--qwanyx-border)' }}
+                    className="qwanyx-p-4 qwanyx-border qwanyx-rounded-lg qwanyx-border-default"
                   >
                     <div className="qwanyx-flex qwanyx-justify-between qwanyx-items-start">
                       <div>
                         <Text weight="semibold" className="qwanyx-mb-2">{request.title}</Text>
-                        <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                        <Text size="sm" color="secondary">
                           Par {request.user} • {request.date}
                         </Text>
-                        <Text size="sm" style={{ color: 'var(--qwanyx-success)' }}>
+                        <Text size="sm" color="success">
                           Approuvé par {request.approvedBy}
                         </Text>
                       </div>
-                      <Badge variant="success">Approuvée</Badge>
+                      <Badge variant="solid">Approuvée</Badge>
                     </div>
                   </div>
                 ))}
@@ -164,23 +162,22 @@ export default function RequestsPage() {
                 {requests.rejected.map((request) => (
                   <div 
                     key={request.id}
-                    className="qwanyx-p-4 qwanyx-border qwanyx-rounded-lg"
-                    style={{ borderColor: 'var(--qwanyx-border)' }}
+                    className="qwanyx-p-4 qwanyx-border qwanyx-rounded-lg qwanyx-border-default"
                   >
                     <div className="qwanyx-flex qwanyx-justify-between qwanyx-items-start">
                       <div>
                         <Text weight="semibold" className="qwanyx-mb-2">{request.title}</Text>
-                        <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                        <Text size="sm" color="secondary">
                           Par {request.user} • {request.date}
                         </Text>
-                        <Text size="sm" style={{ color: 'var(--qwanyx-destructive)' }}>
+                        <Text size="sm" color="error">
                           Rejeté par {request.rejectedBy}
                         </Text>
-                        <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                        <Text size="sm" color="secondary">
                           Raison: {request.reason}
                         </Text>
                       </div>
-                      <Badge variant="destructive">Rejetée</Badge>
+                      <Badge variant="outline">Rejetée</Badge>
                     </div>
                   </div>
                 ))}

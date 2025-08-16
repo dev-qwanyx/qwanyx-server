@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardHeader, CardTitle, CardContent, Heading, Text, Button, MaterialIcon, Input, Checkbox, Form, Field, Control } from '@qwanyx/ui';
+import { Card, CardHeader, CardTitle, CardContent, Heading, Text, Button, Icon, Input, Checkbox, Form, Field, Control } from '@qwanyx/ui';
 import { useState } from 'react';
 
 export default function SettingsPage() {
@@ -29,7 +29,7 @@ export default function SettingsPage() {
     <div>
       <div className="qwanyx-mb-8">
         <Heading size="2xl">Paramètres</Heading>
-        <Text className="qwanyx-mt-2" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+        <Text color="secondary">
           Configurez les paramètres de votre application
         </Text>
       </div>
@@ -42,7 +42,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="qwanyx-space-y-4">
-              <Field>
+              <Field name="companyName">
                 <Control>
                   <label className="qwanyx-text-sm qwanyx-font-medium">
                     Nom de l'entreprise
@@ -54,7 +54,7 @@ export default function SettingsPage() {
                 </Control>
               </Field>
 
-              <Field>
+              <Field name="email">
                 <Control>
                   <label className="qwanyx-text-sm qwanyx-font-medium">
                     Email de contact
@@ -67,7 +67,7 @@ export default function SettingsPage() {
                 </Control>
               </Field>
 
-              <Field>
+              <Field name="phone">
                 <Control>
                   <label className="qwanyx-text-sm qwanyx-font-medium">
                     Téléphone
@@ -79,7 +79,7 @@ export default function SettingsPage() {
                 </Control>
               </Field>
 
-              <Field>
+              <Field name="address">
                 <Control>
                   <label className="qwanyx-text-sm qwanyx-font-medium">
                     Adresse
@@ -92,7 +92,7 @@ export default function SettingsPage() {
               </Field>
 
               <Button type="submit">
-                <MaterialIcon icon="Save" />
+                <Icon name="save" />
                 Enregistrer les modifications
               </Button>
             </form>
@@ -109,16 +109,16 @@ export default function SettingsPage() {
               <div className="qwanyx-flex qwanyx-items-center qwanyx-justify-between">
                 <div>
                   <Text weight="semibold">Notifications par email</Text>
-                  <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                  <Text size="sm" color="secondary">
                     Recevoir des notifications par email
                   </Text>
                 </div>
                 <Checkbox
                   checked={formData.notifications.email}
-                  onCheckedChange={(checked) => 
+                  onChange={(checked: boolean) => 
                     setFormData({
                       ...formData, 
-                      notifications: {...formData.notifications, email: checked as boolean}
+                      notifications: {...formData.notifications, email: checked}
                     })
                   }
                 />
@@ -127,16 +127,16 @@ export default function SettingsPage() {
               <div className="qwanyx-flex qwanyx-items-center qwanyx-justify-between">
                 <div>
                   <Text weight="semibold">Notifications push</Text>
-                  <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                  <Text size="sm" color="secondary">
                     Recevoir des notifications push sur votre navigateur
                   </Text>
                 </div>
                 <Checkbox
                   checked={formData.notifications.push}
-                  onCheckedChange={(checked) => 
+                  onChange={(checked: boolean) => 
                     setFormData({
                       ...formData, 
-                      notifications: {...formData.notifications, push: checked as boolean}
+                      notifications: {...formData.notifications, push: checked}
                     })
                   }
                 />
@@ -145,16 +145,16 @@ export default function SettingsPage() {
               <div className="qwanyx-flex qwanyx-items-center qwanyx-justify-between">
                 <div>
                   <Text weight="semibold">Notifications SMS</Text>
-                  <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                  <Text size="sm" color="secondary">
                     Recevoir des notifications par SMS
                   </Text>
                 </div>
                 <Checkbox
                   checked={formData.notifications.sms}
-                  onCheckedChange={(checked) => 
+                  onChange={(checked: boolean) => 
                     setFormData({
                       ...formData, 
-                      notifications: {...formData.notifications, sms: checked as boolean}
+                      notifications: {...formData.notifications, sms: checked}
                     })
                   }
                 />
@@ -173,22 +173,22 @@ export default function SettingsPage() {
               <div className="qwanyx-flex qwanyx-items-center qwanyx-justify-between">
                 <div>
                   <Text weight="semibold">Authentification à deux facteurs</Text>
-                  <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                  <Text size="sm" color="secondary">
                     Ajouter une couche de sécurité supplémentaire
                   </Text>
                 </div>
                 <Checkbox
                   checked={formData.security.twoFactor}
-                  onCheckedChange={(checked) => 
+                  onChange={(checked: boolean) => 
                     setFormData({
                       ...formData, 
-                      security: {...formData.security, twoFactor: checked as boolean}
+                      security: {...formData.security, twoFactor: checked}
                     })
                   }
                 />
               </div>
 
-              <Field>
+              <Field name="sessionTimeout">
                 <Control>
                   <label className="qwanyx-text-sm qwanyx-font-medium">
                     Timeout de session (minutes)
@@ -208,11 +208,11 @@ export default function SettingsPage() {
 
               <div className="qwanyx-flex qwanyx-gap-3">
                 <Button variant="outline">
-                  <MaterialIcon icon="Key" />
+                  <Icon name="key" />
                   Changer le mot de passe
                 </Button>
                 <Button variant="outline">
-                  <MaterialIcon icon="History" />
+                  <Icon name="history" />
                   Voir l'historique des connexions
                 </Button>
               </div>
@@ -223,7 +223,7 @@ export default function SettingsPage() {
         {/* Danger Zone */}
         <Card>
           <CardHeader>
-            <CardTitle style={{ color: 'var(--qwanyx-destructive)' }}>Zone dangereuse</CardTitle>
+            <CardTitle>Zone dangereuse</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="qwanyx-space-y-4">
@@ -233,8 +233,8 @@ export default function SettingsPage() {
                   Une fois votre compte supprimé, toutes vos données seront définitivement effacées.
                 </Text>
               </div>
-              <Button variant="destructive">
-                <MaterialIcon icon="Delete" />
+              <Button variant="ghost">
+                <Icon name="delete" />
                 Supprimer le compte
               </Button>
             </div>

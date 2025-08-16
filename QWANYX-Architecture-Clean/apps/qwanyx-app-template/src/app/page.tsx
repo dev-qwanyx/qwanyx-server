@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { ThemeProvider, WorkspaceProvider } from '@qwanyx/ui'
-import { AuthModule, AuthProvider } from '@qwanyx/auth'
+// import { AuthModule, AuthProvider } from '@qwanyx/auth' // Temporairement désactivé
 import { 
   Container, 
   Section, 
@@ -10,12 +10,8 @@ import {
   Text, 
   Button,
   SimpleNavbar,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
+  ServiceCard,
   Grid,
-  MaterialIcon,
   HeroWithFlipSection,
   SimpleFooterSection,
   FeaturesSection,
@@ -86,22 +82,7 @@ function AppContent() {
         title="QWANYX App"
         subtitle="Template"
         fixed={true}
-        actions={
-          user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <Text style={{ color: 'var(--foreground)' }}>
-                {user.firstName || user.email}
-              </Text>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                Déconnexion
-              </Button>
-            </div>
-          ) : (
-            <Button variant="primary" size="sm" onClick={() => setShowAuth(true)}>
-              S'identifier
-            </Button>
-          )
-        }
+        actions={null /* Temporairement désactivé */}
         items={[
           {
             label: 'Détails',
@@ -127,13 +108,14 @@ function AppContent() {
               setTimeout(() => scrollToSection('contact'), 100)
             }
           },
-          ...(user ? [{
+          // Temporairement désactivé
+          /* ...(user ? [{
             label: 'Tableau de bord',
             active: false,
             onClick: () => {
               window.location.href = '/dashboard'
             }
-          }] : [])
+          }] : []) */
         ]}
       />
       
@@ -172,71 +154,42 @@ function AppContent() {
                   Services
                 </Heading>
                 <Grid cols={3} gap="xl">
-                  <Card>
-                    <CardHeader>
-                      <MaterialIcon icon="Cloud" size="xl" color="primary" />
-                      <CardTitle>Cloud Infrastructure</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Text>Scalable cloud hosting with automatic backups and 99.9% uptime guarantee</Text>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <MaterialIcon icon="Analytics" size="xl" color="secondary" />
-                      <CardTitle>Business Analytics</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Text>Real-time dashboards and insights to track your business performance</Text>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <MaterialIcon icon="Shield" size="xl" color="accent" />
-                      <CardTitle>Security Suite</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Text>Advanced threat protection, SSL certificates, and GDPR compliance tools</Text>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <MaterialIcon icon="Api" size="xl" color="success" />
-                      <CardTitle>API Integration</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Text>Connect with 500+ third-party services and automate your workflows</Text>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <MaterialIcon icon="Support" size="xl" color="info" />
-                      <CardTitle>24/7 Support</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Text>Expert technical support available round the clock via chat, phone, or email</Text>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card>
-                    <CardHeader>
-                      <MaterialIcon icon="AutoMode" size="xl" color="warning" />
-                      <CardTitle>AI Automation</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Text>Smart automation powered by AI to streamline repetitive tasks and boost productivity</Text>
-                    </CardContent>
-                  </Card>
+                  <ServiceCard
+                    icon="cloud"
+                    title="Cloud Infrastructure"
+                    description="Scalable cloud hosting with automatic backups and 99.9% uptime guarantee"
+                  />
+                  <ServiceCard
+                    icon="analytics"
+                    title="Business Analytics"
+                    description="Real-time dashboards and insights to track your business performance"
+                  />
+                  <ServiceCard
+                    icon="shield"
+                    title="Security Suite"
+                    description="Advanced threat protection, SSL certificates, and GDPR compliance tools"
+                  />
+                  <ServiceCard
+                    icon="api"
+                    title="API Integration"
+                    description="Connect with 500+ third-party services and automate your workflows"
+                  />
+                  <ServiceCard
+                    icon="support_agent"
+                    title="24/7 Support"
+                    description="Expert technical support available round the clock via chat, phone, or email"
+                  />
+                  <ServiceCard
+                    icon="auto_mode"
+                    title="AI Automation"
+                    description="Smart automation powered by AI to streamline repetitive tasks and boost productivity"
+                  />
                 </Grid>
               </Section>
             </Container>
             
             {/* Contact Section */}
-            <div id="contact" style={{ position: 'relative', paddingBottom: '200px' }}>
+            <div id="contact">
               <ContactFormSection
                 title="Contact Us"
                 subtitle="Have a question? We'd love to hear from you"
@@ -263,56 +216,7 @@ function AppContent() {
           </Container>
         )}
         
-        {currentView === 'dashboard' && (
-          <Container>
-            <Section spacing="xl" className="qwanyx-pt-20">
-              <Heading as="h2" size="3xl" className="qwanyx-mb-4">Tableau de bord</Heading>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Bienvenue {user?.firstName || user?.email} !</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Text size="lg" className="qwanyx-mb-4">
-                    Vous êtes connecté à votre espace personnel.
-                  </Text>
-                  <Grid cols={3} gap="xl">
-                    <Card>
-                      <CardHeader>
-                        <MaterialIcon icon="Person" size="xl" color="primary" />
-                        <CardTitle>Mon profil</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <Text>Email: {user?.email}</Text>
-                        {user?.firstName && <Text>Prénom: {user?.firstName}</Text>}
-                        {user?.lastName && <Text>Nom: {user?.lastName}</Text>}
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader>
-                        <MaterialIcon icon="Settings" size="xl" color="secondary" />
-                        <CardTitle>Paramètres</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <Text>Gérez vos préférences et paramètres de compte</Text>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader>
-                        <MaterialIcon icon="History" size="xl" color="accent" />
-                        <CardTitle>Activité récente</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <Text>Dernière connexion: Aujourd'hui</Text>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Section>
-          </Container>
-        )}
+        {/* Dashboard - Temporairement désactivé */}
         
         {currentView === 'services' && (
           <Container>
@@ -357,7 +261,7 @@ function AppContent() {
         className="qwanyx-footer-custom"
       />
       
-      {/* Auth Modal */}
+      {/* Auth Modal - Temporairement désactivé
       <AuthModule
         workspace="qwanyx-template"
         apiUrl="http://localhost:5002"
@@ -369,7 +273,7 @@ function AppContent() {
         logo="/images/logo.png"
         initialMode="register"
         passwordless={true}
-      />
+      /> */}
     </div>
   )
 }
@@ -377,7 +281,9 @@ function AppContent() {
 export default function App() {
   return (
     <WorkspaceProvider defaultWorkspace="qwanyx-app">
-      <AppContent />
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </WorkspaceProvider>
   )
 }

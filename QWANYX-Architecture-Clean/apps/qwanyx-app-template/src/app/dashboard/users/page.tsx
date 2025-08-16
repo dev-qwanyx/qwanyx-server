@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardHeader, CardTitle, CardContent, Heading, Text, Button, MaterialIcon, Badge } from '@qwanyx/ui';
+import { Card, CardHeader, CardTitle, CardContent, Heading, Text, Button, Icon, Badge } from '@qwanyx/ui';
 
 export default function UsersPage() {
   const users = [
@@ -43,12 +43,12 @@ export default function UsersPage() {
       <div className="qwanyx-mb-8 qwanyx-flex qwanyx-justify-between qwanyx-items-center">
         <div>
           <Heading size="2xl">Utilisateurs</Heading>
-          <Text className="qwanyx-mt-2" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+          <Text color="secondary">
             Gérez les utilisateurs de votre application
           </Text>
         </div>
         <Button>
-          <MaterialIcon icon="PersonAdd" />
+          <Icon name="person_add" />
           Ajouter un utilisateur
         </Button>
       </div>
@@ -61,7 +61,7 @@ export default function UsersPage() {
           <div className="qwanyx-overflow-x-auto">
             <table className="qwanyx-w-full">
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--qwanyx-border)' }}>
+                <tr className="qwanyx-table-header">
                   <th className="qwanyx-text-left qwanyx-p-3">Nom</th>
                   <th className="qwanyx-text-left qwanyx-p-3">Email</th>
                   <th className="qwanyx-text-left qwanyx-p-3">Rôle</th>
@@ -72,7 +72,7 @@ export default function UsersPage() {
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user.id} style={{ borderBottom: '1px solid var(--qwanyx-border)' }}>
+                  <tr key={user.id} className="qwanyx-table-row">
                     <td className="qwanyx-p-3">
                       <Text weight="semibold">{user.name}</Text>
                     </td>
@@ -80,27 +80,27 @@ export default function UsersPage() {
                       <Text>{user.email}</Text>
                     </td>
                     <td className="qwanyx-p-3">
-                      <Badge variant={user.role === 'Admin' ? 'default' : 'outline'}>
+                      <Badge variant={user.role === 'Admin' ? 'solid' : 'outline'}>
                         {user.role}
                       </Badge>
                     </td>
                     <td className="qwanyx-p-3">
-                      <Badge variant={user.status === 'active' ? 'success' : 'secondary'}>
+                      <Badge variant={user.status === 'active' ? 'solid' : 'outline'}>
                         {user.status === 'active' ? 'Actif' : 'Inactif'}
                       </Badge>
                     </td>
                     <td className="qwanyx-p-3">
-                      <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                      <Text size="sm" color="secondary">
                         {user.lastLogin}
                       </Text>
                     </td>
                     <td className="qwanyx-p-3">
                       <div className="qwanyx-flex qwanyx-gap-2">
                         <Button size="sm" variant="ghost">
-                          <MaterialIcon icon="Edit" />
+                          <Icon name="edit" />
                         </Button>
                         <Button size="sm" variant="ghost">
-                          <MaterialIcon icon="Delete" />
+                          <Icon name="delete" />
                         </Button>
                       </div>
                     </td>

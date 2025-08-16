@@ -17,6 +17,7 @@ import {
   CardContent,
   CardFooter,
   CardImage,
+  ServiceCard,
   Input,
   Textarea,
   Form,
@@ -226,25 +227,33 @@ export const ComponentShowcase: React.FC = () => {
           
           {/* Cards Tab */}
           <TabsContent value="cards">
-            <Grid cols={3} gap="lg">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Simple Card</CardTitle>
-                  <CardDescription>This is a basic card with header</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Text>
-                    Cards are versatile containers that can hold any type of content. 
-                    They help organize information in a clear, scannable way.
-                  </Text>
-                </CardContent>
-                <CardFooter>
-                  <Flex gap="sm">
-                    <Button size="sm">Action</Button>
-                    <Button size="sm" variant="ghost">Cancel</Button>
-                  </Flex>
-                </CardFooter>
-              </Card>
+            <div className="qwanyx-space-y-8">
+              {/* Cards Examples */}
+              <Grid cols={3} gap="lg">
+                  <ServiceCard
+                    icon="cloud"
+                    iconColor="primary"
+                    title="Service Card Example"
+                    description="A specialized card component for displaying services with icon, title and description"
+                  />
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Simple Card</CardTitle>
+                      <CardDescription>This is a basic card with header</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Text>
+                        Cards are versatile containers that can hold any type of content. 
+                        They help organize information in a clear, scannable way.
+                      </Text>
+                    </CardContent>
+                    <CardFooter>
+                      <Flex gap="sm">
+                        <Button size="sm">Action</Button>
+                        <Button size="sm" variant="ghost">Cancel</Button>
+                      </Flex>
+                    </CardFooter>
+                  </Card>
               
               <Card variant="outlined">
                 <CardImage 
@@ -273,7 +282,8 @@ export const ComponentShowcase: React.FC = () => {
                   </div>
                 </CardContent>
               </Card>
-            </Grid>
+                </Grid>
+            </div>
           </TabsContent>
           
           {/* Forms Tab */}

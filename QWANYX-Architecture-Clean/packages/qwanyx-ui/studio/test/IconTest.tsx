@@ -32,11 +32,11 @@ const iconTestCases = [
   { name: 'Palette', label: 'Palette LG', size: 'lg' as const },
   { name: 'Palette', label: 'Palette XL', size: 'xl' as const },
   
-  // Different colors
-  { name: 'Heart', label: 'Red Heart', color: '#ef4444' },
-  { name: 'Star', label: 'Yellow Star', color: '#eab308' },
-  { name: 'CheckCircle', label: 'Green Check', color: '#22c55e' },
-  { name: 'AlertCircle', label: 'Blue Alert', color: '#3b82f6' },
+  // Different colors (using theme colors)
+  { name: 'Heart', label: 'Error Heart', color: 'error' as const },
+  { name: 'Star', label: 'Warning Star', color: 'warning' as const },
+  { name: 'CheckCircle', label: 'Success Check', color: 'success' as const },
+  { name: 'AlertCircle', label: 'Info Alert', color: 'info' as const },
 ]
 
 const variantExamples = [
@@ -45,7 +45,7 @@ const variantExamples = [
 ]
 
 export const IconTest: React.FC = () => {
-  const [selectedVariant, setSelectedVariant] = useState<'thin' | 'outline' | 'bold'>('outline')
+  const [selectedVariant, setSelectedVariant] = useState<'outlined' | 'filled' | 'rounded' | 'sharp'>('outlined')
   
   return (
     <Container>
@@ -61,29 +61,36 @@ export const IconTest: React.FC = () => {
               Icon Variants
             </Heading>
             <Text style={{ marginBottom: '1rem' }}>
-              Lucide icons support different visual weights through stroke width. Choose a variant:
+              Google Material Symbols support different visual styles. Choose a variant:
             </Text>
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem' }}>
               <Button 
-                variant={selectedVariant === 'thin' ? 'solid' : 'outline'}
+                variant={selectedVariant === 'outlined' ? 'solid' : 'outline'}
                 size="sm"
-                onClick={() => setSelectedVariant('thin')}
+                onClick={() => setSelectedVariant('outlined')}
               >
-                Thin
+                Outlined (Default)
               </Button>
               <Button 
-                variant={selectedVariant === 'outline' ? 'solid' : 'outline'}
+                variant={selectedVariant === 'filled' ? 'solid' : 'outline'}
                 size="sm"
-                onClick={() => setSelectedVariant('outline')}
+                onClick={() => setSelectedVariant('filled')}
               >
-                Outline (Default)
+                Filled
               </Button>
               <Button 
-                variant={selectedVariant === 'bold' ? 'solid' : 'outline'}
+                variant={selectedVariant === 'rounded' ? 'solid' : 'outline'}
                 size="sm"
-                onClick={() => setSelectedVariant('bold')}
+                onClick={() => setSelectedVariant('rounded')}
               >
-                Bold
+                Rounded
+              </Button>
+              <Button 
+                variant={selectedVariant === 'sharp' ? 'solid' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedVariant('sharp')}
+              >
+                Sharp
               </Button>
             </div>
             
@@ -144,7 +151,7 @@ export const IconTest: React.FC = () => {
                     <Icon 
                       name={test.name} 
                       size={test.size || 'md'}
-                      color={test.color}
+                      color={test.color as any}
                     />
                   </div>
                   <Text size="xs" style={{ fontWeight: 600 }}>

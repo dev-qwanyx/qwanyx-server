@@ -1,6 +1,6 @@
 'use client';
 
-import { DashboardLayout, MaterialIcon } from '@qwanyx/ui';
+import { DashboardLayout, Icon } from '@qwanyx/ui';
 import type { SidebarItem } from '@qwanyx/ui';
 
 interface DashboardViewProps {
@@ -16,31 +16,31 @@ export default function DashboardView({ user, onLogout, currentPath = '/dashboar
       id: 'home',
       label: 'Retour au site',
       href: '/',
-      icon: <MaterialIcon icon="Home" />
+      icon: <Icon name="home" />
     },
     {
       id: 'dashboard',
       label: 'Tableau de bord',
       href: '/dashboard',
-      icon: <MaterialIcon icon="Dashboard" />
+      icon: <Icon name="dashboard" />
     },
     {
       id: 'requests',
       label: 'Demandes',
       href: '/dashboard/requests',
-      icon: <MaterialIcon icon="Assignment" />,
+      icon: <Icon name="assignment" />,
       badge: 3
     },
     {
       id: 'users',
       label: 'Utilisateurs',
       href: '/dashboard/users',
-      icon: <MaterialIcon icon="People" />
+      icon: <Icon name="people" />
     },
     {
       id: 'analytics',
       label: 'Analytiques',
-      icon: <MaterialIcon icon="Analytics" />,
+      icon: <Icon name="analytics" />,
       children: [
         {
           id: 'analytics-overview',
@@ -58,7 +58,7 @@ export default function DashboardView({ user, onLogout, currentPath = '/dashboar
       id: 'settings',
       label: 'Paramètres',
       href: '/dashboard/settings',
-      icon: <MaterialIcon icon="Settings" />
+      icon: <Icon name="settings" />
     }
   ];
 
@@ -67,7 +67,7 @@ export default function DashboardView({ user, onLogout, currentPath = '/dashboar
       sidebarItems={sidebarItems}
       logo={
         <div className="qwanyx-flex qwanyx-items-center qwanyx-gap-2">
-          <MaterialIcon icon="Dashboard" />
+          <Icon name="dashboard" />
           <span className="qwanyx-font-semibold">QWANYX</span>
         </div>
       }

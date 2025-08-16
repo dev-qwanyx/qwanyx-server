@@ -31,7 +31,7 @@ export {
   CardDescription, 
   CardContent, 
   CardFooter,
-  CardImage 
+  CardImage
 } from './components/Card';
 export type { 
   CardProps, 
@@ -40,8 +40,11 @@ export type {
   CardDescriptionProps, 
   CardContentProps, 
   CardFooterProps,
-  CardImageProps 
+  CardImageProps
 } from './components/Card';
+
+export { ServiceCard } from './components/ServiceCard';
+export type { ServiceCardProps } from './components/ServiceCard';
 
 export { Input, Textarea } from './components/Input';
 export type { InputProps, TextareaProps } from './components/Input';

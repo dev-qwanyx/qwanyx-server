@@ -13,8 +13,8 @@ import { Button } from '../../src/components/Button'
 export const IconShowcase: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSize, setSelectedSize] = useState<'xs' | 'sm' | 'md' | 'lg' | 'xl'>('md')
-  const [selectedColor, setSelectedColor] = useState('#000000')
-  const [selectedVariant, setSelectedVariant] = useState<'thin' | 'outline' | 'bold'>('outline')
+  const [selectedColor, setSelectedColor] = useState<'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error' | 'info' | 'inherit' | 'foreground' | 'muted'>('primary')
+  const [selectedVariant, setSelectedVariant] = useState<'outlined' | 'filled' | 'rounded' | 'sharp'>('outlined')
   const [copiedIcon, setCopiedIcon] = useState<string | null>(null)
 
   // List of available Material Symbols icons (subset for demo)
@@ -85,23 +85,34 @@ export const IconShowcase: React.FC = () => {
                 <SimpleSelect
                   value={selectedVariant}
                   options={[
-                    { value: 'thin', label: 'Thin (1px)' },
-                    { value: 'outline', label: 'Outline (2px)' },
-                    { value: 'bold', label: 'Bold (3px)' }
+                    { value: 'outlined', label: 'Outlined' },
+                    { value: 'filled', label: 'Filled' },
+                    { value: 'rounded', label: 'Rounded' },
+                    { value: 'sharp', label: 'Sharp' }
                   ]}
                   onChange={(e) => setSelectedVariant((e.target as HTMLSelectElement).value as any)}
                 />
               </div>
               <div>
                 <Text weight="semibold" style={{ marginBottom: '0.5rem' }}>Color</Text>
-                <Input
-                  type="color"
+                <SimpleSelect
                   value={selectedColor}
-                  onChange={(e) => setSelectedColor(e.target.value)}
-                  style={{ height: '38px', cursor: 'pointer' }}
+                  options={[
+                    { value: 'primary', label: 'Primary' },
+                    { value: 'secondary', label: 'Secondary' },
+                    { value: 'accent', label: 'Accent' },
+                    { value: 'success', label: 'Success' },
+                    { value: 'warning', label: 'Warning' },
+                    { value: 'error', label: 'Error' },
+                    { value: 'info', label: 'Info' },
+                    { value: 'foreground', label: 'Foreground' },
+                    { value: 'muted', label: 'Muted' },
+                    { value: 'inherit', label: 'Inherit' }
+                  ]}
+                  onChange={(e) => setSelectedColor((e.target as HTMLSelectElement).value as any)}
                 />
               </div>
-              <Button onClick={() => { setSearchTerm(''); setSelectedColor('#000000'); setSelectedVariant('outline'); }}>
+              <Button onClick={() => { setSearchTerm(''); setSelectedColor('primary'); setSelectedVariant('outlined'); }}>
                 Reset
               </Button>
             </Grid>
@@ -193,7 +204,7 @@ export const IconShowcase: React.FC = () => {
                           }
                         }}
                       >
-                        <Icon name={iconName} size={selectedSize} color={copiedIcon === iconName ? 'white' : selectedColor} variant={selectedVariant} />
+                        <Icon name={iconName} size={selectedSize} color={copiedIcon === iconName ? 'inherit' : selectedColor} variant={selectedVariant} style={copiedIcon === iconName ? { color: 'white' } : {}} />
                         <Text size="xs" style={{ 
                           marginTop: '0.5rem',
                           color: copiedIcon === iconName ? 'white' : undefined
@@ -247,7 +258,7 @@ export const IconShowcase: React.FC = () => {
                       }
                     }}
                   >
-                    <Icon name={iconName} size={selectedSize} color={copiedIcon === iconName ? 'white' : selectedColor} variant={selectedVariant} />
+                    <Icon name={iconName} size={selectedSize} color={copiedIcon === iconName ? 'inherit' : selectedColor} variant={selectedVariant} style={copiedIcon === iconName ? { color: 'white' } : {}} />
                     <Text size="xs" style={{ 
                       marginTop: '0.5rem',
                       color: copiedIcon === iconName ? 'white' : undefined

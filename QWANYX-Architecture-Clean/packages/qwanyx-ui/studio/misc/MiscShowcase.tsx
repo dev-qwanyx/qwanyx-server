@@ -87,10 +87,6 @@ export const MiscShowcase: React.FC = () => {
     }
   }
 
-  const handleImageClick = (imageSrc: string, side: 'left' | 'right') => {
-    alert(`Clicked ${side} panel\nImage: ${imageSrc}`)
-  }
-
   return (
     <div style={{ padding: '2rem' }}>
       <Container>
