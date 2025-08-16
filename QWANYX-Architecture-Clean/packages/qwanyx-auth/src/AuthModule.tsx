@@ -6,8 +6,10 @@ import {
   Checkbox, 
   Text, 
   Heading, 
-  OTPInput 
+  OTPInput,
+  Alert 
 } from '@qwanyx/ui'
+import { getTranslation, Locale } from './translations'
 
 // Field configuration type
 export interface AuthField {
@@ -28,6 +30,7 @@ export interface AuthModuleProps {
   // Core props
   workspace: string
   apiUrl?: string
+  locale?: Locale // Language setting
   
   // Field configuration
   fields?: AuthField[]
@@ -68,70 +71,33 @@ export interface AuthModuleProps {
   buttonClassName?: string
 }
 
-// Default fields configuration
-const defaultLoginFields: AuthField[] = [
-  {
-    name: 'email',
-    label: 'Email',
-    type: 'email',
-    placeholder: 'votre@email.com',
-    required: true,
-    validation: 'email',
-    autoComplete: 'email'
-  }
-]
-
-const defaultRegisterFields: AuthField[] = [
-  {
-    name: 'email',
-    label: 'Email',
-    type: 'email',
-    placeholder: 'votre@email.com',
-    required: true,
-    validation: 'email',
-    autoComplete: 'email'
-  },
-  {
-    name: 'firstName',
-    label: 'Prénom',
-    type: 'text',
-    required: true,
-    autoComplete: 'given-name'
-  },
-  {
-    name: 'lastName',
-    label: 'Nom',
-    type: 'text',
-    required: true,
-    autoComplete: 'family-name'
-  }
-]
+// We'll define default fields inside the component to access translations
 
 // Validation functions
 const validators = {
-  email: (value: string) => {
+  email: (value: string, t: any) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return emailRegex.test(value) || 'Email invalide'
+    return emailRegex.test(value) || t.invalidEmail
   },
-  phone: (value: string) => {
+  phone: (value: string, t: any) => {
     const phoneRegex = /^[\d\s\-\+\(\)]+$/
-    return phoneRegex.test(value) || 'Numéro de téléphone invalide'
+    return phoneRegex.test(value) || t.invalidPhone
   },
-  linkedin: (value: string) => {
+  linkedin: (value: string, t: any) => {
     const linkedinRegex = /^https?:\/\/(www\.)?linkedin\.com\//
-    return linkedinRegex.test(value) || 'URL LinkedIn invalide'
+    return linkedinRegex.test(value) || t.invalidLinkedin
   },
-  vat: (value: string) => {
+  vat: (value: string, t: any) => {
     // Simple VAT validation (can be enhanced)
     const vatRegex = /^[A-Z]{2}\d+$/
-    return vatRegex.test(value) || 'Numéro de TVA invalide'
+    return vatRegex.test(value) || t.invalidVat
   },
-  url: (value: string) => {
+  url: (value: string, t: any) => {
     try {
       new URL(value)
       return true
     } catch {
-      return 'URL invalide'
+      return t.invalidUrl
     }
   }
 }
@@ -139,9 +105,10 @@ const validators = {
 export const AuthModule: React.FC<AuthModuleProps> = ({
   workspace,
   apiUrl = 'http://localhost:5002',
+  locale = 'fr',
   fields,
-  loginFields = fields || defaultLoginFields,
-  registerFields = fields || defaultRegisterFields,
+  loginFields,
+  registerFields,
   logo,
   primaryColor = 'rgb(var(--qwanyx-primary))',
   buttonText = {},
@@ -160,6 +127,73 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
   buttonSize = 'md',
   buttonClassName = ''
 }) => {
+  const t = getTranslation(locale);
+  
+  // Default fields with translations
+  const defaultLoginFields: AuthField[] = [
+    {
+      name: 'email',
+      label: t.email,
+      type: 'email',
+      placeholder: t.emailPlaceholder,
+      required: true,
+      validation: 'email',
+      autoComplete: 'email'
+    }
+  ];
+
+  const defaultRegisterFields: AuthField[] = [
+    {
+      name: 'email',
+      label: t.email,
+      type: 'email',
+      placeholder: t.emailPlaceholder,
+      required: true,
+      validation: 'email',
+      autoComplete: 'email'
+    },
+    {
+      name: 'firstName',
+      label: t.firstName,
+      type: 'text',
+      required: true,
+      autoComplete: 'given-name'
+    },
+    {
+      name: 'lastName',
+      label: t.lastName,
+      type: 'text',
+      required: true,
+      autoComplete: 'family-name'
+    }
+  ];
+  
+  // Use provided fields or defaults
+  const finalLoginFields = loginFields || fields || defaultLoginFields;
+  const finalRegisterFields = registerFields || fields || defaultRegisterFields;
+  
+  // Helper function to translate API messages
+  const translateApiMessage = (message: string): string => {
+    const lowercaseMsg = message.toLowerCase();
+    
+    // Map common API messages to translations
+    if (lowercaseMsg.includes('user already exists')) return t.userAlreadyExists;
+    if (lowercaseMsg.includes('code sent')) return t.codeSent;
+    if (lowercaseMsg.includes('registration successful')) return t.registrationSuccessful;
+    if (lowercaseMsg.includes('invalid') && lowercaseMsg.includes('code')) return t.codeInvalidMessage;
+    
+    // Return original message if no translation found
+    return message;
+  };
+  
+  // Helper function to determine if message is success or error
+  const isSuccessMessage = (message: string): boolean => {
+    const lowercaseMsg = message.toLowerCase();
+    return lowercaseMsg.includes('sent') || 
+           lowercaseMsg.includes('success') || 
+           lowercaseMsg.includes('envoyé') ||
+           lowercaseMsg.includes('réussi');
+  };
   const [mode, setMode] = useState<'login' | 'register'>(initialMode)
   const [formData, setFormData] = useState<any>({})
   const [errors, setErrors] = useState<any>({})
@@ -188,7 +222,7 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
   }
   
   // Get current fields based on mode
-  const currentFields = mode === 'login' ? loginFields : registerFields
+  const currentFields = mode === 'login' ? finalLoginFields : finalRegisterFields
   
   // Check if field should be displayed
   const shouldShowField = (field: AuthField) => {
@@ -208,16 +242,16 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
   // Validate single field
   const validateField = (field: AuthField, value: any) => {
     if (field.required && !value) {
-      return `${field.label} est requis`
+      return `${field.label} ${t.fieldRequired}`
     }
     
     if (value && field.validation) {
       if (typeof field.validation === 'string' && validators[field.validation as keyof typeof validators]) {
-        const result = validators[field.validation as keyof typeof validators](value)
+        const result = validators[field.validation as keyof typeof validators](value, t)
         if (result !== true) return result
       } else if (field.validation instanceof RegExp) {
         if (!field.validation.test(value)) {
-          return `${field.label} invalide`
+          return `${field.label} ${t.invalidField}`
         }
       } else if (typeof field.validation === 'function') {
         const result = field.validation(value)
@@ -288,7 +322,8 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
           // Show OTP input after successful registration or login request
           setShowOTP(true)
           setUserEmail(formData.email || dataToSend.email)
-          setMessage(data.message || 'Un code à 6 chiffres a été envoyé à votre email')
+          const msg = translateApiMessage(data.message || t.codeSentMessage)
+          setMessage(msg)
         } else if (data.token) {
           // Success with token
           // Store in localStorage
@@ -309,12 +344,12 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
           handleClose()
         }
       } else {
-        const error = data.error || 'Une erreur est survenue'
+        const error = translateApiMessage(data.error || t.unexpectedError)
         setMessage(error)
         if (onError) onError(error)
       }
     } catch (err) {
-      const error = 'Erreur de connexion au serveur'
+      const error = t.connectionError
       setMessage(error)
       if (onError) onError(error)
     } finally {
@@ -364,11 +399,12 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
         
         handleClose()
       } else {
-        setMessage(data.error || 'Code invalide ou expiré')
+        const error = translateApiMessage(data.error || t.codeInvalidMessage)
+        setMessage(error)
         setOtpValue('') // Reset OTP input
       }
     } catch (err) {
-      setMessage('Erreur de connexion au serveur')
+      setMessage(t.connectionError)
       setOtpValue('')
     } finally {
       setLoading(false)
@@ -456,7 +492,7 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
   
   // Auth form content
   const authContent = (
-    <div style={{ padding: asModal ? '2rem' : '0', minWidth: asModal ? '400px' : 'auto' }}>
+    <div style={{ padding: (asModal || asButton) ? '2rem' : '0', minWidth: (asModal || asButton) ? '400px' : 'auto' }}>
       {logo && (
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <img src={logo} alt="Logo" style={{ height: '60px' }} />
@@ -469,10 +505,10 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
         textAlign: 'center'
       }}>
         {showOTP 
-          ? 'Vérification'
+          ? t.verification
           : mode === 'register' 
-            ? (buttonText.register || 'Créer un compte')
-            : (buttonText.login || 'Se connecter')
+            ? (buttonText.register || t.register)
+            : (buttonText.login || t.login)
         }
       </Heading>
       
@@ -484,7 +520,7 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
             marginBottom: '1rem',
             color: 'rgb(var(--qwanyx-text-secondary))'
           }}>
-            Entrez le code à 6 chiffres envoyé à<br />
+            {t.otpInstructions}<br />
             <strong>{userEmail}</strong>
           </Text>
           
@@ -504,16 +540,12 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
           </div>
           
           {message && (
-            <div style={{
-              padding: '0.75rem',
-              marginBottom: '1rem',
-              borderRadius: '0.25rem',
-              backgroundColor: message.includes('envoyé') ? 'rgb(var(--qwanyx-success))' : 'rgb(var(--qwanyx-destructive))',
-              color: 'white',
-              textAlign: 'center'
-            }}>
+            <Alert 
+              variant={isSuccessMessage(message) ? 'success' : 'error'}
+              style={{ marginBottom: '1rem' }}
+            >
               {message}
-            </div>
+            </Alert>
           )}
           
           <Button
@@ -526,7 +558,7 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
             fullWidth
             style={{ marginTop: '1rem' }}
           >
-            Retour
+            {t.back}
           </Button>
         </div>
       ) : (
@@ -540,21 +572,18 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
                 <Checkbox
                   checked={formData.rememberMe || false}
                   onChange={(checked: boolean) => setFormData((prev: any) => ({ ...prev, rememberMe: checked }))}
-                  label="Se souvenir de moi"
+                  label={t.rememberMe}
                 />
               </div>
             )}
             
             {message && (
-              <div style={{
-                padding: '0.75rem',
-                marginBottom: '1rem',
-                borderRadius: '0.25rem',
-                backgroundColor: message.includes('envoyé') ? 'rgb(var(--qwanyx-success))' : 'rgb(var(--qwanyx-destructive))',
-                color: 'white'
-              }}>
+              <Alert 
+                variant={isSuccessMessage(message) ? 'success' : 'error'}
+                style={{ marginBottom: '1rem' }}
+              >
                 {message}
-              </div>
+              </Alert>
             )}
             
             <Button
@@ -566,7 +595,7 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
                 borderColor: primaryColor
               }}
             >
-              {loading ? 'Chargement...' : (buttonText.submit || (mode === 'register' ? "S'inscrire" : 'Se connecter'))}
+              {loading ? t.loading : (buttonText.submit || (mode === 'register' ? t.submitRegister : t.submitLogin))}
             </Button>
           </form>
           
@@ -578,7 +607,7 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
               borderTop: '1px solid rgb(var(--qwanyx-border))'
             }}>
               <Text style={{ fontSize: '0.875rem', color: 'rgb(var(--qwanyx-text-secondary))' }}>
-                {mode === 'register' ? 'Déjà un compte ?' : 'Pas encore de compte ?'}
+                {mode === 'register' ? t.alreadyHaveAccount : t.noAccountYet}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -589,8 +618,8 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
                   }}
                 >
                   {mode === 'register' 
-                    ? (buttonText.switchToLogin || 'Se connecter')
-                    : (buttonText.switchToRegister || "S'inscrire")
+                    ? (buttonText.switchToLogin || t.switchToLogin)
+                    : (buttonText.switchToRegister || t.switchToRegister)
                   }
                 </Button>
               </Text>
@@ -612,7 +641,7 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
           className={buttonClassName}
           style={{ backgroundColor: primaryColor, borderColor: primaryColor }}
         >
-          {buttonText.login || "S'identifier"}
+          {buttonText.login || t.login}
         </Button>
         
         {isOpen && (

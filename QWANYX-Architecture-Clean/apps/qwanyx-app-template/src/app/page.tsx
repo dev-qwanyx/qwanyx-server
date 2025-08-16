@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { ThemeProvider, WorkspaceProvider } from '@qwanyx/ui'
-// import { AuthModule, AuthProvider } from '@qwanyx/auth' // Temporairement désactivé
+import { AuthModule, AuthProvider } from '@qwanyx/auth'
 import { 
   Container, 
   Section, 
@@ -83,7 +83,34 @@ function AppContent() {
         title="QWANYX App"
         subtitle="Template"
         fixed={true}
-        actions={null /* Temporairement désactivé */}
+        actions={
+          user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <Text style={{ color: 'rgb(var(--qwanyx-text-secondary))' }}>
+                {user.email}
+              </Text>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+              >
+                Se déconnecter
+              </Button>
+            </div>
+          ) : (
+            <AuthModule
+              workspace="qwanyx-template"
+              apiUrl="http://localhost:5002"
+              locale="fr"
+              asButton
+              buttonText={{ login: "S'identifier" }}
+              onSuccess={handleAuthSuccess}
+              primaryColor="rgb(var(--qwanyx-primary))"
+              initialMode="login"
+              passwordless={true}
+            />
+          )
+        }
         items={[
           {
             label: 'Détails',
@@ -112,14 +139,13 @@ function AppContent() {
               setTimeout(() => scrollToSection('contact'), 100)
             }
           },
-          // Temporairement désactivé
-          /* ...(user ? [{
+          ...(user ? [{
             label: 'Tableau de bord',
             active: false,
             onClick: () => {
               window.location.href = '/dashboard'
             }
-          }] : []) */
+          }] : [])
         ]}
       />
       
@@ -265,19 +291,6 @@ function AppContent() {
         className="qwanyx-footer-custom"
       />
       
-      {/* Auth Modal - Temporairement désactivé
-      <AuthModule
-        workspace="qwanyx-template"
-        apiUrl="http://localhost:5002"
-        isOpen={showAuth}
-        onClose={() => setShowAuth(false)}
-        asModal
-        onSuccess={handleAuthSuccess}
-        primaryColor="rgb(var(--qwanyx-primary))"
-        logo="/images/logo.png"
-        initialMode="register"
-        passwordless={true}
-      /> */}
     </div>
   )
 }
