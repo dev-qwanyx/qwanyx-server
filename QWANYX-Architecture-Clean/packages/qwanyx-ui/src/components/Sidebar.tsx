@@ -98,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}
                 {hasChildren && (
                   <Icon 
-                    name={isExpanded ? 'chevron-down' : 'chevron-right'} 
+                    name={isExpanded ? 'expand_more' : 'chevron_right'} 
                     className="qwanyx-sidebar__item-chevron"
                   />
                 )}
@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}
                 {hasChildren && (
                   <Icon 
-                    name={isExpanded ? 'chevron-down' : 'chevron-right'} 
+                    name={isExpanded ? 'expand_more' : 'chevron_right'} 
                     className="qwanyx-sidebar__item-chevron"
                   />
                 )}

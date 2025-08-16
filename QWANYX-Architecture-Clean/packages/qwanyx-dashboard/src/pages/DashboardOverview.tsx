@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardHeader, CardTitle, CardContent, Grid, Heading, Text, Button, MaterialIcon } from '@qwanyx/ui'
+import { Card, CardHeader, CardTitle, CardContent, Grid, Heading, Text, Button, Icon } from '@qwanyx/ui'
 
 export const DashboardOverview: React.FC = () => {
   const stats = [
@@ -8,28 +8,28 @@ export const DashboardOverview: React.FC = () => {
       value: '€12,456',
       change: '+12%',
       trend: 'up' as const,
-      icon: <MaterialIcon icon="TrendingUp" />
+      icon: <Icon name="TrendingUp" />
     },
     {
       label: 'Utilisateurs actifs',
       value: '1,234',
       change: '+5%',
       trend: 'up' as const,
-      icon: <MaterialIcon icon="People" />
+      icon: <Icon name="People" />
     },
     {
       label: 'Taux de conversion',
       value: '3.4%',
       change: '-2%',
       trend: 'down' as const,
-      icon: <MaterialIcon icon="Analytics" />
+      icon: <Icon name="Analytics" />
     },
     {
       label: 'Commandes moyennes',
       value: '€156',
       change: '0%',
       trend: 'neutral' as const,
-      icon: <MaterialIcon icon="ShoppingCart" />
+      icon: <Icon name="ShoppingCart" />
     }
   ]
 
@@ -70,11 +70,11 @@ export const DashboardOverview: React.FC = () => {
 
   const getActivityIcon = (type: string) => {
     switch(type) {
-      case 'order': return <MaterialIcon icon="ShoppingCart" />
-      case 'payment': return <MaterialIcon icon="Payment" />
-      case 'user': return <MaterialIcon icon="PersonAdd" />
-      case 'report': return <MaterialIcon icon="Assessment" />
-      default: return <MaterialIcon icon="Info" />
+      case 'order': return <Icon name="ShoppingCart" />
+      case 'payment': return <Icon name="Payment" />
+      case 'user': return <Icon name="PersonAdd" />
+      case 'report': return <Icon name="Assessment" />
+      default: return <Icon name="Info" />
     }
   }
 
@@ -172,19 +172,19 @@ export const DashboardOverview: React.FC = () => {
         <CardContent>
           <div className="qwanyx-flex qwanyx-gap-3 qwanyx-flex-wrap">
             <Button>
-              <MaterialIcon icon="Add" />
+              <Icon name="Add" />
               Nouvelle commande
             </Button>
             <Button variant="outline">
-              <MaterialIcon icon="PersonAdd" />
+              <Icon name="PersonAdd" />
               Ajouter utilisateur
             </Button>
             <Button variant="outline">
-              <MaterialIcon icon="Assessment" />
+              <Icon name="Assessment" />
               Générer rapport
             </Button>
             <Button variant="outline">
-              <MaterialIcon icon="Settings" />
+              <Icon name="Settings" />
               Paramètres
             </Button>
           </div>

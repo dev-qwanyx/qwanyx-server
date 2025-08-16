@@ -11,6 +11,7 @@
   "dependencies": {
     "@qwanyx/ui": "file:../../packages/qwanyx-ui",
     "@qwanyx/auth": "file:../../packages/qwanyx-auth",
+    "@qwanyx/user-management": "file:../../packages/qwanyx-user-management",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18"

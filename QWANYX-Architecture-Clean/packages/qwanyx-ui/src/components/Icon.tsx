@@ -80,6 +80,7 @@ const iconNameMap: Record<string, string> = {
   'Notifications': 'notifications',
   'NotificationsOff': 'notifications_off',
   'Bell': 'notifications',
+  'bell': 'notifications',
   'BellOff': 'notifications_off',
   'MessageSquare': 'message',
   'MessageCircle': 'chat',
@@ -212,7 +213,10 @@ export const Icon: React.FC<IconProps> = ({
   spin = false
 }) => {
   // Convert icon name to Material Symbols name
-  const symbolName = iconNameMap[name] || name.toLowerCase().replace(/([A-Z])/g, '_$1').replace(/^_/, '').trim()
+  const symbolName = iconNameMap[name] || name
+    .replace(/([a-z])([A-Z])/g, '$1_$2')
+    .toLowerCase()
+    .trim()
   
   const sizeClasses = {
     'xs': 'qwanyx-icon-xs',

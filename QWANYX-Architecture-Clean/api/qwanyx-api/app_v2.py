@@ -339,7 +339,178 @@ def verify_code():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# User profile update endpoint
+# Create user in workspace
+@app.route('/users', methods=['POST'])
+@jwt_required()
+def create_user():
+    try:
+        # Get workspace from JWT
+        claims = get_jwt()
+        workspace_code = claims.get('workspace', 'default')
+        
+        workspace_db = workspace_service.get_workspace_db(workspace_code)
+        if workspace_db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+        
+        data = request.get_json()
+        
+        # Check if user already exists
+        if 'email' in data:
+            existing_user = workspace_db.users.find_one({'email': data['email']})
+            if existing_user:
+                return jsonify({'error': 'User already exists'}), 409
+        
+        # Create user
+        user = {
+            'email': data.get('email'),
+            'firstName': data.get('firstName'),
+            'lastName': data.get('lastName'),
+            'name': data.get('name'),
+            'role': data.get('role', 'user'),
+            'status': data.get('status', 'active'),
+            'phone': data.get('phone'),
+            'department': data.get('department'),
+            'jobTitle': data.get('jobTitle'),
+            'created_at': datetime.now(timezone.utc),
+            'auth_method': 'code'
+        }
+        
+        # Remove None values
+        user = {k: v for k, v in user.items() if v is not None}
+        
+        result = workspace_db.users.insert_one(user)
+        user['_id'] = str(result.inserted_id)
+        user['id'] = user['_id']
+        
+        # Format dates
+        if 'created_at' in user and hasattr(user['created_at'], 'isoformat'):
+            user['created_at'] = user['created_at'].isoformat()
+            
+        return jsonify(user), 201
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Get all users in workspace
+@app.route('/users', methods=['GET'])
+@jwt_required()
+def get_users():
+    try:
+        # Get workspace from JWT or query params
+        claims = get_jwt()
+        workspace_code = claims.get('workspace') or request.args.get('workspace', 'default')
+        
+        workspace_db = workspace_service.get_workspace_db(workspace_code)
+        if workspace_db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+        
+        # Get all users
+        users = list(workspace_db.users.find())
+        
+        # Convert ObjectId to string and add default values
+        for user in users:
+            user['_id'] = str(user['_id'])
+            user['id'] = user['_id']  # Add id field for compatibility
+            # Add default values if not present
+            if 'role' not in user:
+                user['role'] = 'user'
+            if 'status' not in user:
+                user['status'] = 'active'
+            # Format dates if present
+            if 'created_at' in user and hasattr(user['created_at'], 'isoformat'):
+                user['created_at'] = user['created_at'].isoformat()
+            if 'updated_at' in user and hasattr(user['updated_at'], 'isoformat'):
+                user['updated_at'] = user['updated_at'].isoformat()
+            if 'last_login' in user and hasattr(user['last_login'], 'isoformat'):
+                user['last_login'] = user['last_login'].isoformat()
+        
+        return jsonify({
+            'users': users,
+            'total': len(users)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Update user in workspace
+@app.route('/users/<user_id>', methods=['PUT'])
+@jwt_required()
+def update_user(user_id):
+    try:
+        # Get workspace from JWT
+        claims = get_jwt()
+        workspace_code = claims.get('workspace', 'default')
+        
+        workspace_db = workspace_service.get_workspace_db(workspace_code)
+        if workspace_db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+        
+        data = request.get_json()
+        
+        # Prepare update fields
+        update_fields = {}
+        allowed_fields = [
+            'email', 'firstName', 'lastName', 'name', 'role', 'status',
+            'phone', 'department', 'jobTitle', 'avatar'
+        ]
+        
+        for field in allowed_fields:
+            if field in data:
+                update_fields[field] = data[field]
+        
+        if not update_fields:
+            return jsonify({'error': 'No fields to update'}), 400
+        
+        # Update user
+        update_fields['updated_at'] = datetime.now(timezone.utc)
+        result = workspace_db.users.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': update_fields}
+        )
+        
+        if result.modified_count == 0:
+            return jsonify({'error': 'User not found'}), 404
+        
+        # Return updated user
+        updated_user = workspace_db.users.find_one({'_id': ObjectId(user_id)})
+        updated_user['_id'] = str(updated_user['_id'])
+        updated_user['id'] = updated_user['_id']
+        
+        # Format dates
+        for date_field in ['created_at', 'updated_at']:
+            if date_field in updated_user and hasattr(updated_user[date_field], 'isoformat'):
+                updated_user[date_field] = updated_user[date_field].isoformat()
+        
+        return jsonify(updated_user), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Delete user from workspace
+@app.route('/users/<user_id>', methods=['DELETE'])
+@jwt_required()
+def delete_user(user_id):
+    try:
+        # Get workspace from JWT
+        claims = get_jwt()
+        workspace_code = claims.get('workspace', 'default')
+        
+        workspace_db = workspace_service.get_workspace_db(workspace_code)
+        if workspace_db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+        
+        # Delete user
+        result = workspace_db.users.delete_one({'_id': ObjectId(user_id)})
+        
+        if result.deleted_count == 0:
+            return jsonify({'error': 'User not found'}), 404
+        
+        return jsonify({'message': 'User deleted successfully'}), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# User profile update endpoint (legacy)
 @app.route('/users/<user_id>/profile', methods=['PUT'])
 @jwt_required()
 def update_user_profile(user_id):
