@@ -1,209 +1,209 @@
 import React from 'react'
-import * as MaterialIcons from '@mui/icons-material'
+
+// Import ONLY the icons we actually use
+import Menu from '@mui/icons-material/Menu'
+import Close from '@mui/icons-material/Close'
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp'
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft'
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
+import ArrowBack from '@mui/icons-material/ArrowBack'
+import ArrowForward from '@mui/icons-material/ArrowForward'
+import ArrowUpward from '@mui/icons-material/ArrowUpward'
+import ArrowDownward from '@mui/icons-material/ArrowDownward'
+import ExpandMore from '@mui/icons-material/ExpandMore'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import Search from '@mui/icons-material/Search'
+import FilterList from '@mui/icons-material/FilterList'
+import Add from '@mui/icons-material/Add'
+import Remove from '@mui/icons-material/Remove'
+import Check from '@mui/icons-material/Check'
+import ContentCopy from '@mui/icons-material/ContentCopy'
+import Download from '@mui/icons-material/Download'
+import Upload from '@mui/icons-material/Upload'
+import Edit from '@mui/icons-material/Edit'
+import Delete from '@mui/icons-material/Delete'
+import Save from '@mui/icons-material/Save'
+import Settings from '@mui/icons-material/Settings'
+import Share from '@mui/icons-material/Share'
+import Send from '@mui/icons-material/Send'
+import Print from '@mui/icons-material/Print'
+import Refresh from '@mui/icons-material/Refresh'
+import Home from '@mui/icons-material/Home'
+import Person from '@mui/icons-material/Person'
+import Group from '@mui/icons-material/Group'
+import People from '@mui/icons-material/People'
+import Mail from '@mui/icons-material/Mail'
+import Email from '@mui/icons-material/Email'
+import Phone from '@mui/icons-material/Phone'
+import CalendarMonth from '@mui/icons-material/CalendarMonth'
+import AccessTime from '@mui/icons-material/AccessTime'
+import Star from '@mui/icons-material/Star'
+import Favorite from '@mui/icons-material/Favorite'
+import Visibility from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import Lock from '@mui/icons-material/Lock'
+import LockOpen from '@mui/icons-material/LockOpen'
+import Key from '@mui/icons-material/Key'
+import Error from '@mui/icons-material/Error'
+import Warning from '@mui/icons-material/Warning'
+import Info from '@mui/icons-material/Info'
+import CheckCircle from '@mui/icons-material/CheckCircle'
+import Cancel from '@mui/icons-material/Cancel'
+import Help from '@mui/icons-material/Help'
+import Dashboard from '@mui/icons-material/Dashboard'
+import Assignment from '@mui/icons-material/Assignment'
+import Analytics from '@mui/icons-material/Analytics'
+import Notifications from '@mui/icons-material/Notifications'
+import NotificationsOff from '@mui/icons-material/NotificationsOff'
+import ShoppingCart from '@mui/icons-material/ShoppingCart'
+import Payment from '@mui/icons-material/Payment'
+import TrendingUp from '@mui/icons-material/TrendingUp'
+import Assessment from '@mui/icons-material/Assessment'
+import PersonAdd from '@mui/icons-material/PersonAdd'
+import Logout from '@mui/icons-material/Logout'
+import History from '@mui/icons-material/History'
+import LocationOn from '@mui/icons-material/LocationOn'
+import Facebook from '@mui/icons-material/Facebook'
+import Twitter from '@mui/icons-material/Twitter'
+import Instagram from '@mui/icons-material/Instagram'
+import LinkedIn from '@mui/icons-material/LinkedIn'
+import Cloud from '@mui/icons-material/Cloud'
+import Shield from '@mui/icons-material/Shield'
+import Api from '@mui/icons-material/Api'
+import SupportAgent from '@mui/icons-material/SupportAgent'
+import AutoMode from '@mui/icons-material/AutoMode'
 
 // Type for Material Icon components
 type MaterialIconComponent = React.ComponentType<{ fontSize?: 'inherit' | 'small' | 'medium' | 'large'; sx?: any }>
 
-// Map common icon names to Material Icons
+// Map common icon names to Material Icons - ONLY imported ones
 const iconMap: Record<string, MaterialIconComponent> = {
   // Navigation
-  Menu: MaterialIcons.Menu,
-  Close: MaterialIcons.Close,
-  X: MaterialIcons.Close,
-  ChevronDown: MaterialIcons.KeyboardArrowDown,
-  ChevronUp: MaterialIcons.KeyboardArrowUp,
-  ChevronLeft: MaterialIcons.KeyboardArrowLeft,
-  ChevronRight: MaterialIcons.KeyboardArrowRight,
-  ArrowLeft: MaterialIcons.ArrowBack,
-  ArrowRight: MaterialIcons.ArrowForward,
-  ArrowUp: MaterialIcons.ArrowUpward,
-  ArrowDown: MaterialIcons.ArrowDownward,
-  ExpandMore: MaterialIcons.ExpandMore,
-  ExpandLess: MaterialIcons.ExpandLess,
+  Menu,
+  Close,
+  X: Close,
+  ChevronDown: KeyboardArrowDown,
+  ChevronUp: KeyboardArrowUp,
+  ChevronLeft: KeyboardArrowLeft,
+  ChevronRight: KeyboardArrowRight,
+  ArrowLeft: ArrowBack,
+  ArrowRight: ArrowForward,
+  ArrowUp: ArrowUpward,
+  ArrowDown: ArrowDownward,
+  ExpandMore,
+  ExpandLess,
   
   // Actions
-  Search: MaterialIcons.Search,
-  Filter: MaterialIcons.FilterList,
-  Plus: MaterialIcons.Add,
-  Add: MaterialIcons.Add,
-  Minus: MaterialIcons.Remove,
-  Remove: MaterialIcons.Remove,
-  Check: MaterialIcons.Check,
-  Copy: MaterialIcons.ContentCopy,
-  Download: MaterialIcons.Download,
-  Upload: MaterialIcons.Upload,
-  Edit: MaterialIcons.Edit,
-  Trash: MaterialIcons.Delete,
-  Delete: MaterialIcons.Delete,
-  Save: MaterialIcons.Save,
-  Settings: MaterialIcons.Settings,
-  Share: MaterialIcons.Share,
-  Send: MaterialIcons.Send,
-  Print: MaterialIcons.Print,
-  Refresh: MaterialIcons.Refresh,
+  Search,
+  Filter: FilterList,
+  Plus: Add,
+  Add,
+  Minus: Remove,
+  Remove,
+  Check,
+  Copy: ContentCopy,
+  Download,
+  Upload,
+  Edit,
+  Trash: Delete,
+  Delete,
+  Save,
+  Settings,
+  Share,
+  Send,
+  Print,
+  Refresh,
   
   // UI Elements
-  Home: MaterialIcons.Home,
-  User: MaterialIcons.Person,
-  Person: MaterialIcons.Person,
-  Users: MaterialIcons.Group,
-  Group: MaterialIcons.Group,
-  Mail: MaterialIcons.Mail,
-  Email: MaterialIcons.Email,
-  Phone: MaterialIcons.Phone,
-  Calendar: MaterialIcons.CalendarMonth,
-  Clock: MaterialIcons.AccessTime,
-  Time: MaterialIcons.AccessTime,
-  Star: MaterialIcons.Star,
-  Heart: MaterialIcons.Favorite,
-  Favorite: MaterialIcons.Favorite,
-  Eye: MaterialIcons.Visibility,
-  EyeOff: MaterialIcons.VisibilityOff,
-  Lock: MaterialIcons.Lock,
-  Unlock: MaterialIcons.LockOpen,
-  Key: MaterialIcons.Key,
+  Home,
+  User: Person,
+  Person,
+  Users: Group,
+  Group,
+  People,
+  Mail,
+  Email,
+  Phone,
+  Calendar: CalendarMonth,
+  Clock: AccessTime,
+  Time: AccessTime,
+  Star,
+  Heart: Favorite,
+  Favorite,
+  Eye: Visibility,
+  EyeOff: VisibilityOff,
+  Lock,
+  Unlock: LockOpen,
+  Key,
   
   // Status & Alerts
-  AlertCircle: MaterialIcons.Error,
-  Error: MaterialIcons.Error,
-  AlertTriangle: MaterialIcons.Warning,
-  Warning: MaterialIcons.Warning,
-  Info: MaterialIcons.Info,
-  CheckCircle: MaterialIcons.CheckCircle,
-  XCircle: MaterialIcons.Cancel,
-  Cancel: MaterialIcons.Cancel,
-  HelpCircle: MaterialIcons.Help,
-  Help: MaterialIcons.Help,
+  AlertCircle: Error,
+  Error,
+  AlertTriangle: Warning,
+  Warning,
+  Info,
+  CheckCircle,
+  XCircle: Cancel,
+  Cancel,
+  HelpCircle: Help,
+  Help,
   
-  // Media
-  Image: MaterialIcons.Image,
-  Camera: MaterialIcons.CameraAlt,
-  Video: MaterialIcons.Videocam,
-  Music: MaterialIcons.MusicNote,
-  Mic: MaterialIcons.Mic,
-  MicOff: MaterialIcons.MicOff,
-  Volume: MaterialIcons.VolumeUp,
-  VolumeOff: MaterialIcons.VolumeOff,
-  Play: MaterialIcons.PlayArrow,
-  Pause: MaterialIcons.Pause,
-  Stop: MaterialIcons.Stop,
-  Forward: MaterialIcons.FastForward,
-  Rewind: MaterialIcons.FastRewind,
+  // Dashboard specific
+  Dashboard,
+  Assignment,
+  Analytics,
+  Bell: Notifications,
+  Notifications,
+  BellOff: NotificationsOff,
+  ShoppingCart,
+  Payment,
+  TrendingUp,
+  Assessment,
+  PersonAdd,
+  Logout,
+  History,
   
-  // Files & Documents
-  File: MaterialIcons.InsertDriveFile,
-  FileText: MaterialIcons.Description,
-  Document: MaterialIcons.Description,
-  Folder: MaterialIcons.Folder,
-  FolderOpen: MaterialIcons.FolderOpen,
-  Paperclip: MaterialIcons.AttachFile,
-  Attach: MaterialIcons.AttachFile,
+  // Footer icons
+  LocationOn,
+  Facebook,
+  Twitter,
+  Instagram,
+  LinkedIn,
   
-  // Commerce
-  ShoppingCart: MaterialIcons.ShoppingCart,
-  Cart: MaterialIcons.ShoppingCart,
-  ShoppingBag: MaterialIcons.ShoppingBag,
-  CreditCard: MaterialIcons.CreditCard,
-  Payment: MaterialIcons.Payment,
-  DollarSign: MaterialIcons.AttachMoney,
-  Money: MaterialIcons.AttachMoney,
-  Tag: MaterialIcons.LocalOffer,
-  Gift: MaterialIcons.CardGiftcard,
-  Package: MaterialIcons.Inventory,
-  Truck: MaterialIcons.LocalShipping,
-  Shipping: MaterialIcons.LocalShipping,
-  Store: MaterialIcons.Store,
-  
-  // Communication
-  MessageSquare: MaterialIcons.Message,
-  Message: MaterialIcons.Message,
-  Chat: MaterialIcons.Chat,
-  Bell: MaterialIcons.Notifications,
-  Notifications: MaterialIcons.Notifications,
-  BellOff: MaterialIcons.NotificationsOff,
-  
-  // Layout & Design
-  Grid: MaterialIcons.GridView,
-  List: MaterialIcons.List,
-  Layers: MaterialIcons.Layers,
-  Layout: MaterialIcons.Dashboard,
-  Dashboard: MaterialIcons.Dashboard,
-  Sidebar: MaterialIcons.ViewSidebar,
-  
-  // Technology
-  Wifi: MaterialIcons.Wifi,
-  WifiOff: MaterialIcons.WifiOff,
-  Bluetooth: MaterialIcons.Bluetooth,
-  Database: MaterialIcons.Storage,
-  Storage: MaterialIcons.Storage,
-  Server: MaterialIcons.Dns,
-  Cloud: MaterialIcons.Cloud,
-  CloudOff: MaterialIcons.CloudOff,
-  Globe: MaterialIcons.Language,
-  Language: MaterialIcons.Language,
-  Monitor: MaterialIcons.Computer,
-  Computer: MaterialIcons.Computer,
-  Smartphone: MaterialIcons.Smartphone,
-  Tablet: MaterialIcons.Tablet,
-  Laptop: MaterialIcons.Laptop,
-  
-  // Weather & Nature
-  Sun: MaterialIcons.WbSunny,
-  Moon: MaterialIcons.NightsStay,
-  CloudRain: MaterialIcons.CloudQueue,
-  Water: MaterialIcons.Water,
-  
-  // Social (Material Icons has these!)
-  Facebook: MaterialIcons.Facebook,
-  Twitter: MaterialIcons.Twitter,
-  Instagram: MaterialIcons.Instagram,
-  LinkedIn: MaterialIcons.LinkedIn,
-  GitHub: MaterialIcons.GitHub,
-  YouTube: MaterialIcons.YouTube,
-  
-  // Automotive & Tools
-  Car: MaterialIcons.DirectionsCar,
-  Wrench: MaterialIcons.Build,
-  Build: MaterialIcons.Build,
-  Shield: MaterialIcons.Shield,
-  Security: MaterialIcons.Security,
-  Zap: MaterialIcons.Bolt,
-  Bolt: MaterialIcons.Bolt,
-  Activity: MaterialIcons.ShowChart,
-  Chart: MaterialIcons.ShowChart,
-  Gauge: MaterialIcons.Speed,
-  Speed: MaterialIcons.Speed,
-  
-  // Other useful icons
-  Palette: MaterialIcons.Palette,
-  Code: MaterialIcons.Code,
-  Link: MaterialIcons.Link,
-  QR: MaterialIcons.QrCode,
-  Location: MaterialIcons.LocationOn,
-  Map: MaterialIcons.Map,
-  Flight: MaterialIcons.Flight,
-  Restaurant: MaterialIcons.Restaurant,
-  Coffee: MaterialIcons.Coffee,
-  School: MaterialIcons.School,
-  Work: MaterialIcons.Work,
-  Business: MaterialIcons.Business,
-  Lightbulb: MaterialIcons.Lightbulb,
-  Bookmark: MaterialIcons.Bookmark,
-  Flag: MaterialIcons.Flag,
-  ThumbUp: MaterialIcons.ThumbUp,
-  ThumbDown: MaterialIcons.ThumbDown,
+  // Service icons
+  CloudIcon: Cloud,
+  Cloud,
+  ShieldIcon: Shield,
+  Shield,
+  ApiIcon: Api,
+  Api,
+  SupportIcon: SupportAgent,
+  Support: SupportAgent,
+  AutoModeIcon: AutoMode,
+  AutoMode,
+}
+
+// Dynamic import function for icons not in the map
+export const loadIcon = async (iconName: string): Promise<MaterialIconComponent | null> => {
+  try {
+    const module = await import(`@mui/icons-material/${iconName}`)
+    return module.default
+  } catch (error) {
+    console.warn(`Failed to load icon "${iconName}"`)
+    return null
+  }
 }
 
 export interface MaterialIconProps {
-  name: string
+  icon: string
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number
   color?: string
   className?: string
-  variant?: 'outlined' | 'filled' | 'rounded' | 'sharp' | 'two-tone'
 }
 
 export const MaterialIcon: React.FC<MaterialIconProps> = ({
-  name,
+  icon,
   size = 'md',
   color = 'currentColor',
   className = ''
@@ -241,20 +241,15 @@ export const MaterialIcon: React.FC<MaterialIconProps> = ({
   }
   
   // Get the icon component (case-insensitive)
-  let IconComponent = iconMap[name]
+  let IconComponent = iconMap[icon]
   
   // If not found, try case-insensitive match
   if (!IconComponent) {
-    const lowerName = name.toLowerCase()
+    const lowerName = icon.toLowerCase()
     const matchedKey = Object.keys(iconMap).find(key => key.toLowerCase() === lowerName)
     if (matchedKey) {
       IconComponent = iconMap[matchedKey]
     }
-  }
-  
-  // Try to get directly from MaterialIcons if not in map
-  if (!IconComponent && MaterialIcons[name as keyof typeof MaterialIcons]) {
-    IconComponent = MaterialIcons[name as keyof typeof MaterialIcons] as MaterialIconComponent
   }
 
   if (IconComponent) {
@@ -271,7 +266,7 @@ export const MaterialIcon: React.FC<MaterialIconProps> = ({
   }
 
   // Fallback to text/emoji if not a Material icon
-  if (typeof name === 'string' && name.length <= 2) {
+  if (typeof icon === 'string' && icon.length <= 2) {
     return (
       <span 
         className={`qwanyx-icon qwanyx-icon--emoji ${className}`}
@@ -284,13 +279,13 @@ export const MaterialIcon: React.FC<MaterialIconProps> = ({
           verticalAlign: 'middle'
         }}
       >
-        {name}
+        {icon}
       </span>
     )
   }
 
   // Return placeholder if icon not found
-  console.warn(`Icon "${name}" not found in Material Icons`)
+  console.warn(`Icon "${icon}" not found. Add it to the import list if needed.`)
   return (
     <span 
       className={`qwanyx-icon qwanyx-icon--placeholder ${className}`}
@@ -305,9 +300,6 @@ export const MaterialIcon: React.FC<MaterialIconProps> = ({
     />
   )
 }
-
-// Note: Direct re-export of all Material Icons removed to avoid Next.js issues
-// Import specific icons as needed
 
 // Export icon names for convenience
 export const Icons = {
@@ -363,7 +355,18 @@ export const Icons = {
   XCircle: 'XCircle',
   HelpCircle: 'HelpCircle',
   
-  // And many more...
+  // Dashboard
+  Dashboard: 'Dashboard',
+  Assignment: 'Assignment',
+  Analytics: 'Analytics',
+  Notifications: 'Notifications',
+  ShoppingCart: 'ShoppingCart',
+  Payment: 'Payment',
+  TrendingUp: 'TrendingUp',
+  Assessment: 'Assessment',
+  PersonAdd: 'PersonAdd',
+  Logout: 'Logout',
+  History: 'History',
 } as const
 
 export type IconName = keyof typeof Icons | string

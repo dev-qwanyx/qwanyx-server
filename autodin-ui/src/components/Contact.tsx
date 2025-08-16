@@ -40,58 +40,23 @@ const Contact: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          style={{
-          maxWidth: '700px',
-          margin: '0 auto',
-          padding: '5rem 0'
-        }}>
-          <h2 style={{
-            fontSize: '2.5rem',
-            fontWeight: 400,
-            textAlign: 'center',
-            marginBottom: '0.75rem',
-            color: 'white'
-          }}>
+          className="contact-container">
+          <h2 className="contact-title">
             Contactez-nous
           </h2>
           
-          <p style={{
-            textAlign: 'center',
-            color: 'rgba(255, 255, 255, 0.8)',
-            marginBottom: '3rem',
-            fontSize: '1rem',
-            fontWeight: 300
-          }}>
+          <p className="contact-subtitle">
             Pour toute question, suggestion ou reporter une correction
           </p>
 
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.98)',
-            borderRadius: '0.75rem',
-            padding: '2.5rem',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)'
-          }}>
+          <div className="contact-form-wrapper">
             <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '0.5rem',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: 'var(--gray-800)'
-                }}>
+              <div className="contact-field">
+                <label className="contact-label">
                   Nom
                 </label>
-                <div style={{ position: 'relative' }}>
-                  <i className="fas fa-user" style={{
-                    position: 'absolute',
-                    left: '1rem',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: 'var(--gray-400)',
-                    fontSize: '0.875rem',
-                    zIndex: 1
-                  }}></i>
+                <div className="contact-input-wrapper">
+                  <i className="fas fa-user contact-input-icon"></i>
                   <Input
                     type="text"
                     name="name"
@@ -99,33 +64,17 @@ const Contact: React.FC = () => {
                     value={formData.name}
                     onChange={handleChange}
                     size="md"
-                    style={{
-                      paddingLeft: '2.5rem'
-                    }}
+                    className="contact-input-with-icon"
                   />
                 </div>
               </div>
 
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '0.5rem',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: 'var(--gray-800)'
-                }}>
+              <div className="contact-field">
+                <label className="contact-label">
                   Email
                 </label>
-                <div style={{ position: 'relative' }}>
-                  <i className="fas fa-envelope" style={{
-                    position: 'absolute',
-                    left: '1rem',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: 'var(--gray-400)',
-                    fontSize: '0.875rem',
-                    zIndex: 1
-                  }}></i>
+                <div className="contact-input-wrapper">
+                  <i className="fas fa-envelope contact-input-icon"></i>
                   <Input
                     type="email"
                     name="email"
@@ -133,21 +82,13 @@ const Contact: React.FC = () => {
                     value={formData.email}
                     onChange={handleChange}
                     size="md"
-                    style={{
-                      paddingLeft: '2.5rem'
-                    }}
+                    className="contact-input-with-icon"
                   />
                 </div>
               </div>
 
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '0.5rem',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: 'var(--gray-800)'
-                }}>
+              <div className="contact-field">
+                <label className="contact-label">
                   Sujet
                 </label>
                 <Input
@@ -160,14 +101,8 @@ const Contact: React.FC = () => {
                 />
               </div>
 
-              <div style={{ marginBottom: '2rem' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '0.5rem',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: 'var(--gray-800)'
-                }}>
+              <div className="contact-field-last">
+                <label className="contact-label">
                   Message
                 </label>
                 <textarea
@@ -176,20 +111,11 @@ const Contact: React.FC = () => {
                   value={formData.message}
                   onChange={handleChange}
                   rows={5}
-                  className="qwanyx-input qwanyx-input--md"
-                  style={{
-                    width: '100%',
-                    resize: 'vertical',
-                    minHeight: '100px',
-                    fontFamily: 'inherit'
-                  }}
+                  className="qwanyx-input qwanyx-input--md contact-textarea"
                 />
               </div>
 
-              <div style={{
-                display: 'flex',
-                justifyContent: 'flex-end'
-              }}>
+              <div className="contact-submit-wrapper">
                 <Button
                   type="submit"
                   variant="solid"

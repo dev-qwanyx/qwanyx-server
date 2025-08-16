@@ -28,16 +28,12 @@ app.config['SMTP_USER'] = os.getenv('SMTP_USER')
 app.config['SMTP_PASS'] = os.getenv('SMTP_PASS')
 app.config['SMTP_FROM'] = os.getenv('SMTP_FROM', 'QWANYX <noreply@qwanyx.com>')
 
-# Extensions
-CORS(app, origins=[
-    "http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
-    "http://localhost:4000", "http://localhost:4001", "http://localhost:4002", "http://localhost:4003", "http://localhost:4004",
-    "http://localhost:4010", "http://localhost:4011", "http://localhost:4012", "http://localhost:4013", "http://localhost:4014",
-    "http://localhost:5173", "http://localhost:5174", "http://localhost:5175",
-    "http://localhost:8090", "http://localhost:8091",
-    "http://127.0.0.1:3000", "http://127.0.0.1:4000", "http://127.0.0.1:4004", "http://127.0.0.1:5173",
-    "http://135.181.72.183:8090", "http://135.181.72.183:8091"
-])
+# Extensions - Allow all origins in development for simplicity
+CORS(app, 
+     origins="*",
+     allow_headers=["Content-Type", "Authorization", "X-Workspace"],
+     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     supports_credentials=True)
 jwt = JWTManager(app)
 
 # MongoDB
@@ -126,6 +122,7 @@ def health():
 
 # Authentication by code (updated for workspaces)
 @app.route('/auth/request-code', methods=['POST'])
+@app.route('/auth/login', methods=['POST'])  # Alias for compatibility
 def request_code():
     try:
         data = request.get_json()
@@ -167,7 +164,7 @@ def request_code():
                 print(f"Email error: {email_error}")
         
         # Always print for testing/dev
-        print(f"AUTH CODE for {email}: {code}")
+        print(f"AUTH CODE for {email}: {code}", flush=True)
         
         return jsonify({'message': 'Code sent'}), 200
         

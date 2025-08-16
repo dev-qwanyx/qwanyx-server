@@ -235,6 +235,10 @@ export type {
   SubmitHandler
 } from './components/Form';
 
+// Special Components
+export { DoubleFlip } from './components/DoubleFlip';
+export type { DoubleFlipProps } from './components/DoubleFlip';
+
 // Templates
 export { QwanyxTemplate } from './templates/QwanyxTemplate';
 export type { QwanyxTemplateProps } from './templates/QwanyxTemplate';

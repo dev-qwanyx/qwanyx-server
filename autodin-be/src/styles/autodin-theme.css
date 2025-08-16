@@ -1,0 +1,351 @@
+/* Autodin Theme Overrides
+   ========================
+   This file shows how to override qwanyx-ui's default theme
+   with application-specific colors and styles
+*/
+
+/* Light mode overrides for Autodin brand */
+:root {
+  /* Override primary color with Autodin orange */
+  --qwanyx-primary: 230 126 34;        /* #E67E22 - Autodin orange */
+  --qwanyx-primary-hover: 211 84 0;    /* #D35400 - Darker orange */
+  --qwanyx-primary-active: 192 57 0;   /* #C03900 - Even darker */
+  --qwanyx-primary-foreground: 255 255 255;
+  
+  /* Autodin specific colors */
+  --autodin-orange: 230 126 34;        /* #E67E22 */
+  --autodin-dark: 44 62 80;            /* #2C3E50 */
+  --autodin-accent: 52 152 219;        /* #3498DB */
+  --autodin-gray: 127 140 141;         /* #7F8C8D */
+  
+  /* Override navigation colors */
+  --qwanyx-nav-background: 255 255 255;
+  --qwanyx-nav-link-active: 230 126 34;
+  
+  /* Autodin specific image paths */
+  --logo-light: url('/assets/img/AutoDinLogo2.png');
+  --logo-dark: url('/assets/img/AutoDinLogo2-dark.png');
+  
+  /* Hero background images */
+  --bg-image-light: linear-gradient(rgba(230, 126, 34, 0.1), rgba(255, 255, 255, 0.9)), 
+                    url('/assets/img/autodinpictures/hero-bg.jpg');
+  --bg-image-dark: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9)), 
+                   url('/assets/img/autodinpictures/hero-bg.jpg');
+}
+
+/* Dark mode overrides for Autodin */
+[data-theme="dark"] {
+  /* Autodin orange adapted for dark mode */
+  --qwanyx-primary: 243 156 18;        /* #F39C12 - Lighter orange */
+  --qwanyx-primary-hover: 245 176 65;  /* #F5B041 - Even lighter on hover */
+  --qwanyx-primary-active: 230 126 34; /* #E67E22 - Original on active */
+  --qwanyx-primary-foreground: 15 23 42;
+  
+  /* Dark mode specific Autodin colors */
+  --autodin-orange: 243 156 18;
+  --autodin-dark: 28 40 51;            /* #1C2833 - Darker version */
+  --autodin-accent: 93 173 226;        /* #5DADE2 - Lighter blue */
+  
+  /* Override card backgrounds for Autodin dark theme */
+  --qwanyx-card: 38 38 38;             /* Slightly lighter than default */
+  --qwanyx-card-hover: 58 58 58;
+  
+  /* Autodin navigation in dark mode */
+  --qwanyx-nav-background: 31 31 31;
+  --qwanyx-nav-link-active: 243 156 18;
+}
+
+/* System preference dark mode */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --qwanyx-primary: 243 156 18;
+    --qwanyx-primary-hover: 245 176 65;
+    --qwanyx-primary-active: 230 126 34;
+    --qwanyx-primary-foreground: 15 23 42;
+    
+    --autodin-orange: 243 156 18;
+    --autodin-dark: 28 40 51;
+    --autodin-accent: 93 173 226;
+    
+    --qwanyx-card: 38 38 38;
+    --qwanyx-card-hover: 58 58 58;
+    
+    --qwanyx-nav-background: 31 31 31;
+    --qwanyx-nav-link-active: 243 156 18;
+  }
+}
+
+/* Autodin-specific component styles */
+.autodin-hero {
+  background: var(--bg-image-light);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+[data-theme="dark"] .autodin-hero {
+  background: var(--bg-image-dark);
+}
+
+/* Autodin service cards */
+.autodin-service-card {
+  background: rgb(var(--qwanyx-card));
+  border: 2px solid rgb(var(--autodin-orange) / 0.2);
+  transition: all var(--qwanyx-transition-base);
+}
+
+.autodin-service-card:hover {
+  border-color: rgb(var(--autodin-orange));
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgb(var(--autodin-orange) / 0.15);
+}
+
+/* Override validate button for Autodin theme */
+.qwanyx-button--validate.qwanyx-button--primary {
+  background-color: rgb(var(--autodin-orange));
+  color: white;
+}
+
+.qwanyx-button--validate.qwanyx-button--primary:hover {
+  background-color: rgb(var(--autodin-orange)); /* Same color on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgb(var(--autodin-orange) / 0.3);
+}
+
+[data-theme="dark"] .qwanyx-button--validate.qwanyx-button--primary {
+  background-color: rgb(var(--autodin-orange));
+  color: rgb(var(--qwanyx-background));
+}
+
+[data-theme="dark"] .qwanyx-button--validate.qwanyx-button--primary:hover {
+  background-color: rgb(var(--autodin-orange));
+  box-shadow: 0 4px 8px rgb(var(--autodin-orange) / 0.4);
+}
+
+/* Autodin logo handling */
+.autodin-logo {
+  width: 150px;
+  height: auto;
+  filter: var(--qwanyx-logo-filter);
+}
+
+[data-theme="dark"] .autodin-logo {
+  filter: brightness(1.1) contrast(1.1);
+}
+
+/* Autodin product images */
+.autodin-product-image {
+  border-radius: var(--qwanyx-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--qwanyx-shadow-md);
+  transition: transform var(--qwanyx-transition-base),
+              box-shadow var(--qwanyx-transition-base);
+}
+
+.autodin-product-image:hover {
+  transform: scale(1.02);
+  box-shadow: var(--qwanyx-shadow-xl);
+}
+
+[data-theme="dark"] .autodin-product-image {
+  filter: brightness(0.95);
+}
+
+/* Autodin navigation bar specific */
+.autodin-navbar {
+  background: rgb(var(--qwanyx-nav-background));
+  border-bottom: 2px solid rgb(var(--autodin-orange) / 0.1);
+}
+
+.autodin-navbar.scrolled {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
+}
+
+[data-theme="dark"] .autodin-navbar {
+  border-bottom-color: rgb(var(--autodin-orange) / 0.2);
+}
+
+[data-theme="dark"] .autodin-navbar.scrolled {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
+}
+
+/* Autodin footer */
+.autodin-footer {
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--qwanyx-background)),
+    rgb(var(--autodin-dark) / 0.05)
+  );
+}
+
+[data-theme="dark"] .autodin-footer {
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--qwanyx-background)),
+    rgb(var(--autodin-dark) / 0.2)
+  );
+}
+
+/* Theme transition helper */
+.autodin-theme-transition {
+  transition: background-color 300ms ease,
+              color 300ms ease,
+              border-color 300ms ease,
+              box-shadow 300ms ease,
+              filter 300ms ease;
+}
+
+/* Navbar scrolled state */
+.qwanyx-navbar.scrolled {
+  box-shadow: var(--qwanyx-shadow-md) !important;
+}
+
+/* Responsive utilities for navbar */
+@media (max-width: 768px) {
+  .qwanyx-navbar__menu--desktop {
+    display: none !important;
+  }
+  
+  .qwanyx-navbar button[aria-label="Toggle menu"] {
+    display: inline-flex !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .qwanyx-navbar button[aria-label="Toggle menu"] {
+    display: none !important;
+  }
+}
+
+/* Hero Section Styles */
+.autodin-hero {
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+              url('https://images.unsplash.com/photo-1487754180451-c456f719a1fc?w=1920&q=80') center/cover;
+  color: white;
+  padding: 6rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+  margin-top: 60px;
+  min-height: 600px;
+  background-attachment: fixed;
+  width: 100%;
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  min-height: 500px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-text {
+  padding-right: 2rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  color: white;
+}
+
+.hero-subtitle {
+  font-size: 1.75rem;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+  opacity: 0.95;
+  color: white;
+  line-height: 1.3;
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  line-height: 1.6;
+  color: white;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.hero-images {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive Hero Styles */
+@media (max-width: 768px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .hero-text {
+    padding-right: 0;
+    order: 1;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.5rem;
+  }
+  
+  .hero-images {
+    order: 2;
+    max-width: 350px;
+    margin: 0 auto;
+  }
+}
+
+/* Button Styles */
+.autodin-button-primary {
+  background-color: var(--autodin-primary) !important;
+  color: white !important;
+  border: none !important;
+  padding: 0.75rem 2rem !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.autodin-button-primary:hover {
+  background-color: var(--autodin-primary-dark) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3) !important;
+}
+
+/* Double Image Flip Styles */
+.double-image-flip-panel {
+  position: relative;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.double-image-flip-panel:hover {
+  transform: scale(1.02);
+}
+
+.double-image-flip-panel:hover .double-image-flip-mystery-hover {
+  opacity: 1 !important;
+}
+
+.double-image-flip-panel.flipping .double-image-flip-mystery-hover {
+  opacity: 0 !important;
+  transition: opacity 0.1s ease;
+}

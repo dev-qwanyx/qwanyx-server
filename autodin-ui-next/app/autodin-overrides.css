@@ -1,0 +1,86 @@
+/* 
+ * Autodin Theme Overrides
+ * Override ONLY CSS variables from qwanyx-ui
+ * NO custom classes allowed!
+ */
+
+:root {
+  /* Brand Colors */
+  --qwanyx-primary: #E67E22;        /* Orange Autodin */
+  --qwanyx-primary-hover: #D35400;   /* Orange plus foncé */
+  --qwanyx-primary-light: #FFF5ED;   /* Orange très clair */
+  --qwanyx-primary-dark: #A85915;    /* Orange très foncé */
+  
+  --qwanyx-secondary: #2C3E50;       /* Bleu-gris foncé */
+  --qwanyx-secondary-hover: #1A252F; /* Plus foncé */
+  --qwanyx-secondary-light: #34495E; /* Plus clair */
+  
+  --qwanyx-accent: #3498DB;          /* Bleu accent */
+  --qwanyx-accent-hover: #2980B9;
+  
+  /* Status Colors */
+  --qwanyx-success: #27AE60;
+  --qwanyx-warning: #F39C12;
+  --qwanyx-error: #E74C3C;
+  --qwanyx-info: #3498DB;
+  
+  /* Neutral Colors */
+  --qwanyx-background: #FFFFFF;
+  --qwanyx-surface: #F8F9FA;
+  --qwanyx-border: #E0E0E0;
+  --qwanyx-text: #2C3E50;
+  --qwanyx-text-muted: #7F8C8D;
+  
+  /* Component specific */
+  --qwanyx-navbar-bg: #FFFFFF;
+  --qwanyx-navbar-text: #2C3E50;
+  --qwanyx-navbar-hover: #E67E22;
+  
+  --qwanyx-button-primary-bg: #E67E22;
+  --qwanyx-button-primary-text: #FFFFFF;
+  --qwanyx-button-primary-hover: #D35400;
+  
+  --qwanyx-card-bg: #FFFFFF;
+  --qwanyx-card-border: #E0E0E0;
+  --qwanyx-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  --qwanyx-hero-bg: linear-gradient(135deg, #E67E22 0%, #D35400 100%);
+  --qwanyx-hero-text: #FFFFFF;
+  
+  /* Typography */
+  --qwanyx-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --qwanyx-font-size-base: 16px;
+  --qwanyx-font-size-sm: 14px;
+  --qwanyx-font-size-lg: 18px;
+  --qwanyx-font-size-xl: 24px;
+  --qwanyx-font-size-2xl: 32px;
+  --qwanyx-font-size-3xl: 48px;
+  
+  /* Spacing */
+  --qwanyx-spacing-xs: 0.25rem;
+  --qwanyx-spacing-sm: 0.5rem;
+  --qwanyx-spacing-md: 1rem;
+  --qwanyx-spacing-lg: 1.5rem;
+  --qwanyx-spacing-xl: 2rem;
+  --qwanyx-spacing-2xl: 3rem;
+  --qwanyx-spacing-3xl: 4rem;
+  
+  /* Border Radius */
+  --qwanyx-radius-sm: 0.25rem;
+  --qwanyx-radius-md: 0.5rem;
+  --qwanyx-radius-lg: 0.75rem;
+  --qwanyx-radius-xl: 1rem;
+  --qwanyx-radius-full: 9999px;
+  
+  /* Transitions */
+  --qwanyx-transition-fast: 150ms ease;
+  --qwanyx-transition-base: 250ms ease;
+  --qwanyx-transition-slow: 350ms ease;
+}
+
+/* Dark mode overrides (si nécessaire plus tard) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* On peut définir un thème sombre ici si besoin */
+  }
+}

@@ -20,6 +20,8 @@
 @import './components/modal.css';
 @import './components/badge.css';
 @import './components/avatar.css';
+@import './components/sidebar.css';
+@import './components/dashboard-layout.css';
 
 /* Reset for smoother integration */
 .qwanyx-ui * {

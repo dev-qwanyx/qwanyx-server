@@ -1,0 +1,32 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  background: white;
+  color: #2C3E50;
+}
+
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove default button styles */
+button {
+  font-family: inherit;
+}

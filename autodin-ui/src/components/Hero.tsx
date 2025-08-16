@@ -79,11 +79,7 @@ const Hero: React.FC = () => {
               <Button 
                 size="lg" 
                 variant="solid" 
-                className="autodin-button-primary"
-                style={{
-                  borderRadius: '50px',
-                  padding: '0.75rem 2rem'
-                }}
+                className="autodin-button-primary hero-button-explore"
                 onClick={() => {
                   document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })
                 }}

@@ -1,0 +1,206 @@
+/* Autodin Navbar Styles - Using qwanyx-ui components */
+
+.autodin-navbar.scrolled {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: relative;
+}
+
+/* Logo */
+.navbar-logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+/* Desktop Navigation */
+.navbar-desktop {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.navbar-desktop .qwanyx-navbar__item {
+  color: var(--autodin-dark, #2C3E50);
+  font-weight: 500;
+  transition: color 0.3s;
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.navbar-desktop .qwanyx-navbar__item:hover {
+  color: var(--autodin-primary, #E67E22);
+}
+
+.navbar-desktop .qwanyx-navbar__item--active {
+  color: var(--autodin-primary, #E67E22);
+  font-weight: 600;
+}
+
+/* Dashboard item */
+.navbar-item-dashboard {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-item-dashboard .qwanyx-icon {
+  color: var(--autodin-primary, #E67E22);
+}
+
+/* Auth buttons */
+.navbar-auth-desktop {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.autodin-button-primary {
+  background: var(--autodin-primary, #E67E22);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.autodin-button-primary:hover {
+  background: var(--autodin-primary-dark, #D35400);
+}
+
+.autodin-button-logout {
+  color: var(--autodin-primary, #E67E22);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.autodin-button-logout:hover {
+  background: rgba(230, 126, 34, 0.1);
+}
+
+/* Mobile Menu Toggle */
+.navbar-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--autodin-dark, #2C3E50);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: background 0.2s;
+}
+
+.navbar-mobile-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Mobile Menu */
+.qwanyx-navbar__menu--mobile {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.qwanyx-navbar__menu--mobile.qwanyx-navbar__menu--open {
+  max-height: 500px;
+  transition: max-height 0.3s ease-in;
+}
+
+.navbar-mobile-nav {
+  padding: 1rem 0;
+}
+
+.navbar-mobile-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--autodin-dark, #2C3E50);
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 0.25rem;
+  transition: background 0.2s;
+}
+
+.navbar-mobile-item:hover {
+  background: rgba(230, 126, 34, 0.1);
+  color: var(--autodin-primary, #E67E22);
+}
+
+.navbar-mobile-item .qwanyx-icon {
+  color: var(--autodin-primary, #E67E22);
+  min-width: 20px;
+}
+
+.navbar-mobile-divider {
+  border-top: 1px solid var(--autodin-border, #E5E7EB);
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+}
+
+.navbar-mobile-button {
+  width: 100%;
+  justify-content: center;
+  margin: 0 1rem;
+  width: calc(100% - 2rem);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar-desktop,
+  .navbar-auth-desktop {
+    display: none !important;
+  }
+  
+  .navbar-mobile-toggle {
+    display: block !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .qwanyx-navbar__menu--mobile {
+    display: none !important;
+  }
+}
+
+/* Main content padding for fixed navbar */
+.main-content {
+  padding-top: 60px;
+}
+
+/* Temporary section styles */
+.hero-section,
+.services-section,
+.contact-section {
+  padding: 4rem 0;
+  min-height: 400px;
+}
+
+.hero-section {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.1) 0%, rgba(44, 62, 80, 0.05) 100%);
+  text-align: center;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  color: var(--autodin-dark, #2C3E50);
+  margin-bottom: 1rem;
+}
+
+.hero-section p {
+  font-size: 1.25rem;
+  color: var(--autodin-text-secondary, #475569);
+}

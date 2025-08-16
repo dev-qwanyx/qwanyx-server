@@ -9,7 +9,7 @@ const autodinRegisterFields: AuthField[] = [
     label: 'Email',
     type: 'email',
     placeholder: 'votre@email.com',
-    required: true,
+    required: true, 
     validation: 'email',
     autoComplete: 'email'
   },

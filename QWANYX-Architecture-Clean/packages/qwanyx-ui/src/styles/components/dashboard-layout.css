@@ -1,0 +1,217 @@
+/* Dashboard Layout Styles */
+
+.qwanyx-dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--qwanyx-background);
+}
+
+/* Main Content Area */
+.qwanyx-dashboard-layout__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: margin-left 0.3s ease;
+}
+
+/* Header */
+.qwanyx-dashboard-layout__header {
+  height: 64px;
+  background: var(--qwanyx-card);
+  border-bottom: 1px solid var(--qwanyx-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.qwanyx-dashboard-layout__header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.qwanyx-dashboard-layout__header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Mobile Menu Button */
+.qwanyx-dashboard-layout__mobile-menu {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .qwanyx-dashboard-layout__mobile-menu {
+    display: flex;
+  }
+}
+
+/* Content */
+.qwanyx-dashboard-layout__content {
+  flex: 1;
+  padding: 2rem 0;
+  overflow-y: auto;
+}
+
+.qwanyx-dashboard-layout__container {
+  width: 100%;
+  max-width: none;
+}
+
+/* Logout Button */
+.qwanyx-dashboard-layout__logout {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+
+.qwanyx-sidebar--collapsed .qwanyx-dashboard-layout__logout {
+  justify-content: center;
+}
+
+.qwanyx-sidebar--collapsed .qwanyx-dashboard-layout__logout span {
+  display: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .qwanyx-dashboard-layout__content {
+    padding: 1.5rem 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .qwanyx-dashboard-layout__header {
+    padding: 0 1rem;
+  }
+  
+  .qwanyx-dashboard-layout__content {
+    padding: 1rem 0;
+  }
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .qwanyx-dashboard-layout {
+  background: var(--qwanyx-background-dark);
+}
+
+[data-theme="dark"] .qwanyx-dashboard-layout__header {
+  background: var(--qwanyx-card-dark);
+  border-bottom-color: var(--qwanyx-border-dark);
+}
+
+/* Animations */
+.qwanyx-dashboard-layout__main {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Grid Helpers for Dashboard Content */
+.qwanyx-dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.qwanyx-dashboard-grid--cols-1 {
+  grid-template-columns: 1fr;
+}
+
+.qwanyx-dashboard-grid--cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.qwanyx-dashboard-grid--cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.qwanyx-dashboard-grid--cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Responsive Grid */
+@media (max-width: 1280px) {
+  .qwanyx-dashboard-grid--cols-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .qwanyx-dashboard-grid--cols-3,
+  .qwanyx-dashboard-grid--cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .qwanyx-dashboard-grid--cols-2,
+  .qwanyx-dashboard-grid--cols-3,
+  .qwanyx-dashboard-grid--cols-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dashboard Card */
+.qwanyx-dashboard-card {
+  background: var(--qwanyx-card);
+  border: 1px solid var(--qwanyx-border);
+  border-radius: var(--qwanyx-radius-lg);
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.qwanyx-dashboard-card:hover {
+  box-shadow: var(--qwanyx-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Stat Card */
+.qwanyx-stat-card {
+  background: var(--qwanyx-card);
+  border: 1px solid var(--qwanyx-border);
+  border-radius: var(--qwanyx-radius-lg);
+  padding: 1.5rem;
+}
+
+.qwanyx-stat-card__label {
+  color: var(--qwanyx-text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.qwanyx-stat-card__value {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--qwanyx-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.qwanyx-stat-card__change {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.qwanyx-stat-card__change--up {
+  color: var(--qwanyx-success);
+}
+
+.qwanyx-stat-card__change--down {
+  color: var(--qwanyx-destructive);
+}
+
+.qwanyx-stat-card__change--neutral {
+  color: var(--qwanyx-text-secondary);
+}

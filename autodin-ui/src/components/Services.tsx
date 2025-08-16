@@ -56,13 +56,7 @@ const Services: React.FC<ServicesProps> = ({ services, isLoggedIn = false, onAut
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
-          style={{
-          textAlign: 'center',
-          fontSize: '2.5rem',
-          marginBottom: '1rem',
-          color: 'var(--gray-800)',
-          fontWeight: 'bold'
-        }}>
+          className="services-title">
           Nos Services
         </motion.h2>
         
@@ -71,14 +65,7 @@ const Services: React.FC<ServicesProps> = ({ services, isLoggedIn = false, onAut
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          style={{
-          textAlign: 'center',
-          fontSize: '1.1rem',
-          color: 'var(--gray-600)',
-          marginBottom: '3rem',
-          maxWidth: '600px',
-          margin: '0 auto 3rem'
-        }}>
+          className="services-subtitle">
           Découvrez comment Autodin facilite votre recherche et vos transactions
         </motion.p>
         
@@ -87,11 +74,7 @@ const Services: React.FC<ServicesProps> = ({ services, isLoggedIn = false, onAut
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '2rem'
-        }}>
+          className="services-grid">
           {services.map((service, index) => (
             <motion.div
               key={service.link}
@@ -104,24 +87,10 @@ const Services: React.FC<ServicesProps> = ({ services, isLoggedIn = false, onAut
             >
               <Card 
                 hoverable
-                className="autodin-service-card"
-                style={{ 
-                  height: '100%',
-                  aspectRatio: '1 / 1',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  cursor: 'pointer'
-                }}
+                className="autodin-service-card services-card"
                 onClick={() => handleCardClick(service)}
               >
-                <CardContent style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                  textAlign: 'center'
-                }}>
+                <CardContent className="services-card-content">
                   <div className="autodin-service-icon">
                     <i className={`fas ${service.icon}`}></i>
                   </div>

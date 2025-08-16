@@ -130,7 +130,7 @@ export const MaterialIconsPage: React.FC = () => {
   }, [searchTerm, selectedCategory])
 
   const handleCopyIcon = (iconName: string) => {
-    const code = `<MaterialIcon name="${iconName}" size="${selectedSize}" />`
+    const code = `<MaterialIcon icon="${iconName}" size="${selectedSize}" />`
     navigator.clipboard.writeText(code)
     setCopiedIcon(iconName)
     setTimeout(() => setCopiedIcon(null), 2000)
@@ -187,14 +187,14 @@ export const MaterialIconsPage: React.FC = () => {
                         variant={viewMode === 'grid' ? 'solid' : 'outline'}
                         onClick={() => setViewMode('grid')}
                       >
-                        <MaterialIcon name="GridView" size="sm" />
+                        <MaterialIcon icon="GridView" size="sm" />
                       </Button>
                       <Button
                         size="sm"
                         variant={viewMode === 'list' ? 'solid' : 'outline'}
                         onClick={() => setViewMode('list')}
                       >
-                        <MaterialIcon name="List" size="sm" />
+                        <MaterialIcon icon="List" size="sm" />
                       </Button>
                     </div>
                   </div>
@@ -388,7 +388,7 @@ export const MaterialIconsPage: React.FC = () => {
                       fontFamily: 'monospace'
                     }}
                   >
-                    {copiedIcon === iconName ? 'Copied!' : `<MaterialIcon name="${iconName}" />`}
+                    {copiedIcon === iconName ? 'Copied!' : `<MaterialIcon icon="${iconName}" />`}
                   </Text>
                 </CardContent>
               </Card>
@@ -414,20 +414,20 @@ export const MaterialIconsPage: React.FC = () => {
                   <code>{`import { MaterialIcon } from '@qwanyx/ui'
 
 // Basic icon (filled by default)
-<MaterialIcon name="Search" />
+<MaterialIcon icon="Search" />
 
 // With variant
-<MaterialIcon name="Home" variant="outlined" />
-<MaterialIcon name="Star" variant="rounded" />
-<MaterialIcon name="Settings" variant="sharp" />
-<MaterialIcon name="Favorite" variant="twoTone" />
+<MaterialIcon icon="Home" variant="outlined" />
+<MaterialIcon icon="Star" variant="rounded" />
+<MaterialIcon icon="Settings" variant="sharp" />
+<MaterialIcon icon="Favorite" variant="twoTone" />
 
 // With size and color
-<MaterialIcon name="Star" size="lg" color="#FFD700" />
+<MaterialIcon icon="Star" size="lg" color="#FFD700" />
 
 // Social icons (Material has these!)
-<MaterialIcon name="Facebook" variant="filled" />
-<MaterialIcon name="Twitter" variant="outlined" />`}</code>
+<MaterialIcon icon="Facebook" variant="filled" />
+<MaterialIcon icon="Twitter" variant="outlined" />`}</code>
                 </pre>
               </div>
               
@@ -435,23 +435,23 @@ export const MaterialIconsPage: React.FC = () => {
                 <Heading size="md" style={{ marginBottom: '1rem' }}>Available Sizes</Heading>
                 <div style={{ background: '#f3f4f6', padding: '1rem', borderRadius: '0.5rem' }}>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                    <MaterialIcon name="Star" size="xs" />
+                    <MaterialIcon icon="Star" size="xs" />
                     <Text>xs - 14px</Text>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                    <MaterialIcon name="Star" size="sm" />
+                    <MaterialIcon icon="Star" size="sm" />
                     <Text>sm - 18px</Text>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                    <MaterialIcon name="Star" size="md" />
+                    <MaterialIcon icon="Star" size="md" />
                     <Text>md - 24px (default)</Text>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                    <MaterialIcon name="Star" size="lg" />
+                    <MaterialIcon icon="Star" size="lg" />
                     <Text>lg - 32px</Text>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <MaterialIcon name="Star" size="xl" />
+                    <MaterialIcon icon="Star" size="xl" />
                     <Text>xl - 40px</Text>
                   </div>
                 </div>

@@ -46,12 +46,20 @@ function AppContent() {
   const handleAuthSuccess = (user: any, token?: string) => {
     setUser(user)
     setShowAuth(false)
-    console.log('User logged in:', user)
+    // Store user info for dashboard
+    localStorage.setItem('user', JSON.stringify(user))
+    if (token) {
+      localStorage.setItem('token', token)
+    }
+    // Redirect to dashboard
+    window.location.href = '/dashboard'
   }
   
   const handleLogout = () => {
     setUser(null)
     // Clear storage
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
     localStorage.removeItem('qwanyx-template_token')
     localStorage.removeItem('qwanyx-template_user')
     sessionStorage.removeItem('qwanyx-template_token')
@@ -60,7 +68,8 @@ function AppContent() {
   
   // Check for existing auth on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('qwanyx-template_user') || 
+    const storedUser = localStorage.getItem('user') || 
+                      localStorage.getItem('qwanyx-template_user') || 
                       sessionStorage.getItem('qwanyx-template_user')
     if (storedUser) {
       try {
@@ -120,9 +129,9 @@ function AppContent() {
           },
           ...(user ? [{
             label: 'Tableau de bord',
-            active: currentView === 'dashboard',
+            active: false,
             onClick: () => {
-              setCurrentView('dashboard')
+              window.location.href = '/dashboard'
             }
           }] : [])
         ]}
@@ -165,7 +174,7 @@ function AppContent() {
                 <Grid cols={3} gap="xl">
                   <Card>
                     <CardHeader>
-                      <MaterialIcon name="Cloud" size="xl" color="primary" />
+                      <MaterialIcon icon="Cloud" size="xl" color="primary" />
                       <CardTitle>Cloud Infrastructure</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -175,7 +184,7 @@ function AppContent() {
                   
                   <Card>
                     <CardHeader>
-                      <MaterialIcon name="Analytics" size="xl" color="secondary" />
+                      <MaterialIcon icon="Analytics" size="xl" color="secondary" />
                       <CardTitle>Business Analytics</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -185,7 +194,7 @@ function AppContent() {
                   
                   <Card>
                     <CardHeader>
-                      <MaterialIcon name="Shield" size="xl" color="accent" />
+                      <MaterialIcon icon="Shield" size="xl" color="accent" />
                       <CardTitle>Security Suite</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -195,7 +204,7 @@ function AppContent() {
                   
                   <Card>
                     <CardHeader>
-                      <MaterialIcon name="Api" size="xl" color="success" />
+                      <MaterialIcon icon="Api" size="xl" color="success" />
                       <CardTitle>API Integration</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -205,7 +214,7 @@ function AppContent() {
                   
                   <Card>
                     <CardHeader>
-                      <MaterialIcon name="Support" size="xl" color="info" />
+                      <MaterialIcon icon="Support" size="xl" color="info" />
                       <CardTitle>24/7 Support</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -215,7 +224,7 @@ function AppContent() {
                   
                   <Card>
                     <CardHeader>
-                      <MaterialIcon name="AutoMode" size="xl" color="warning" />
+                      <MaterialIcon icon="AutoMode" size="xl" color="warning" />
                       <CardTitle>AI Automation</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -269,7 +278,7 @@ function AppContent() {
                   <Grid cols={3} gap="xl">
                     <Card>
                       <CardHeader>
-                        <MaterialIcon name="Person" size="xl" color="primary" />
+                        <MaterialIcon icon="Person" size="xl" color="primary" />
                         <CardTitle>Mon profil</CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -281,7 +290,7 @@ function AppContent() {
                     
                     <Card>
                       <CardHeader>
-                        <MaterialIcon name="Settings" size="xl" color="secondary" />
+                        <MaterialIcon icon="Settings" size="xl" color="secondary" />
                         <CardTitle>Paramètres</CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -291,7 +300,7 @@ function AppContent() {
                     
                     <Card>
                       <CardHeader>
-                        <MaterialIcon name="History" size="xl" color="accent" />
+                        <MaterialIcon icon="History" size="xl" color="accent" />
                         <CardTitle>Activité récente</CardTitle>
                       </CardHeader>
                       <CardContent>

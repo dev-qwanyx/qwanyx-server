@@ -181,6 +181,12 @@ export type {
 export { Alert } from './components/Alert';
 export type { AlertProps } from './components/Alert';
 
+export { Sidebar, SimpleSidebar } from './components/Sidebar';
+export type { SidebarProps, SimpleSidebarProps, SidebarItem } from './components/Sidebar';
+
+export { DashboardLayout, SimpleDashboardLayout } from './components/DashboardLayout';
+export type { DashboardLayoutProps, SimpleDashboardLayoutProps } from './components/DashboardLayout';
+
 export { Icon, Icons } from './components/Icon';
 export type { IconProps, IconName } from './components/Icon';
 
