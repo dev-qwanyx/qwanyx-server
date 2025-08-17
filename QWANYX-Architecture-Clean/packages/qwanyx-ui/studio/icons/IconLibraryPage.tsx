@@ -3,7 +3,9 @@ import { Icon } from '../../src/components/Icon'
 import { Container } from '../../src/components/Container'
 import { Heading, Text } from '../../src/components/Text'
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/Card'
-import { Grid } from '../../src/components/Container'
+import { Grid, GridItem } from '../../src/components/Grid'
+import { Flex, FlexItem } from '../../src/components/Flex'
+import { HStack, VStack } from '../../src/components/Stack'
 import { Input } from '../../src/components/Input'
 import { SimpleSelect } from '../../src/components/SimpleSelect'
 import { Button } from '../../src/components/Button'
@@ -105,108 +107,72 @@ export const IconLibraryPage: React.FC = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
-      <Container>
-        {/* Header */}
-        <div style={{ padding: '3rem 0 2rem' }}>
-          <Heading size="4xl" style={{ marginBottom: '0.5rem' }}>
-            Icon Library
-          </Heading>
-          <Text size="lg" style={{ color: '#6b7280' }}>
-            Browse Google Material Symbols - Modern icon font with variable styles
-          </Text>
-        </div>
+    <Container>
+      {/* Controls - Sticky at top */}
+      <Card style={{ 
+        marginBottom: '0.5rem',
+        position: 'sticky', 
+        top: '0', 
+        zIndex: 10,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        borderRadius: '0'
+      }}>
+          <CardContent style={{ padding: '12px 1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {/* First row of controls */}
+              <Flex gap="sm" wrap="wrap" align="center" style={{ width: '100%' }}>
+                <FlexItem grow={2} style={{ minWidth: '180px' }}>
+                  <Input
+                    placeholder="Search icons..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ width: '100%' }}
+                  />
+                </FlexItem>
+                
+                <FlexItem grow={1} style={{ minWidth: '140px' }}>
+                  <SimpleSelect
+                    value={selectedCategory}
+                    options={[
+                      { value: 'all', label: 'All Categories' },
+                      ...Object.keys(iconCategories).map(cat => ({ value: cat, label: cat }))
+                    ]}
+                    onChange={(e) => setSelectedCategory((e.target as HTMLSelectElement).value)}
+                    style={{ width: '100%' }}
+                  />
+                </FlexItem>
 
-        {/* Controls */}
-        <Card style={{ marginBottom: '2rem', position: 'sticky', top: '1rem', zIndex: 10 }}>
-          <CardContent>
-            <Grid cols={2} style={{ gap: '2rem', marginBottom: '1rem' }}>
-              <div>
-                <Grid cols={3} style={{ gap: '1rem' }}>
-                  <div>
-                    <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>Search</Text>
-                    <Input
-                      placeholder="Search icons..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>Category</Text>
-                    <SimpleSelect
-                      value={selectedCategory}
-                      options={[
-                        { value: 'all', label: 'All Categories' },
-                        ...Object.keys(iconCategories).map(cat => ({ value: cat, label: cat }))
-                      ]}
-                      onChange={(e) => setSelectedCategory((e.target as HTMLSelectElement).value)}
-                    />
-                  </div>
-                  <div>
-                    <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>View Mode</Text>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <Button
-                        size="sm"
-                        variant={viewMode === 'grid' ? 'solid' : 'outline'}
-                        onClick={() => setViewMode('grid')}
-                      >
-                        <Icon name="grid_view" size="sm" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant={viewMode === 'list' ? 'solid' : 'outline'}
-                        onClick={() => setViewMode('list')}
-                      >
-                        <Icon name="list" size="sm" />
-                      </Button>
-                    </div>
-                  </div>
-                </Grid>
-              </div>
-              
-              <div>
-                <Grid cols={4} style={{ gap: '1rem' }}>
-                  <div>
-                    <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>Variant</Text>
-                    <SimpleSelect
-                      value={selectedVariant}
-                      options={[
-                        { value: 'outlined', label: 'Outlined' },
-                        { value: 'filled', label: 'Filled' },
-                        { value: 'rounded', label: 'Rounded' },
-                        { value: 'sharp', label: 'Sharp' }
-                      ]}
-                      onChange={(e) => setSelectedVariant((e.target as HTMLSelectElement).value as any)}
-                    />
-                  </div>
-                  <div>
-                    <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>Size</Text>
-                    <SimpleSelect
-                      value={selectedSize}
-                      options={[
-                        { value: 'xs', label: 'XS' },
-                        { value: 'sm', label: 'SM' },
-                        { value: 'md', label: 'MD' },
-                        { value: 'lg', label: 'LG' },
-                        { value: 'xl', label: 'XL' }
-                      ]}
-                      onChange={(e) => setSelectedSize((e.target as HTMLSelectElement).value as any)}
-                    />
-                  </div>
-                  <div>
-                    <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>
-                      Color
-                      <span style={{
-                        display: 'inline-block',
-                        width: '16px',
-                        height: '16px',
-                        marginLeft: '8px',
-                        backgroundColor: getThemeColor(selectedColor),
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '2px',
-                        verticalAlign: 'middle'
-                      }} />
-                    </Text>
+                <FlexItem style={{ minWidth: '100px' }}>
+                  <SimpleSelect
+                    value={selectedVariant}
+                    options={[
+                      { value: 'outlined', label: 'Outlined' },
+                      { value: 'filled', label: 'Filled' },
+                      { value: 'rounded', label: 'Rounded' },
+                      { value: 'sharp', label: 'Sharp' }
+                    ]}
+                    onChange={(e) => setSelectedVariant((e.target as HTMLSelectElement).value as any)}
+                    style={{ width: '100%' }}
+                  />
+                </FlexItem>
+
+                <FlexItem style={{ minWidth: '70px' }}>
+                  <SimpleSelect
+                    value={selectedSize}
+                    options={[
+                      { value: 'xs', label: 'XS' },
+                      { value: 'sm', label: 'SM' },
+                      { value: 'md', label: 'MD' },
+                      { value: 'lg', label: 'LG' },
+                      { value: 'xl', label: 'XL' }
+                    ]}
+                    onChange={(e) => setSelectedSize((e.target as HTMLSelectElement).value as any)}
+                    style={{ width: '100%' }}
+                  />
+                </FlexItem>
+
+                <FlexItem grow={1} style={{ minWidth: '120px' }}>
+                  <HStack spacing="xs" align="center" style={{ width: '100%' }}>
                     <SimpleSelect
                       value={selectedColor}
                       options={[
@@ -222,47 +188,78 @@ export const IconLibraryPage: React.FC = () => {
                         { value: 'inherit', label: 'Inherit' }
                       ]}
                       onChange={(e) => setSelectedColor((e.target as HTMLSelectElement).value)}
+                      style={{ flex: 1 }}
                     />
-                  </div>
-                  <div>
-                    <Text weight="semibold" size="sm" style={{ marginBottom: '0.5rem' }}>&nbsp;</Text>
-                    <Button onClick={handleCopyImport} variant="outline" size="sm">
-                      Copy Import
+                    <span style={{
+                      display: 'inline-block',
+                      width: '20px',
+                      height: '20px',
+                      backgroundColor: getThemeColor(selectedColor),
+                      border: '1px solid rgb(var(--border))',
+                      borderRadius: '4px'
+                    }} />
+                  </HStack>
+                </FlexItem>
+
+                <FlexItem>
+                  <HStack spacing="xs">
+                    <Button
+                      size="sm"
+                      variant={viewMode === 'grid' ? 'solid' : 'outline'}
+                      onClick={() => setViewMode('grid')}
+                      title="Grid View"
+                    >
+                      <Icon name="grid_view" size="sm" />
                     </Button>
-                  </div>
-                </Grid>
-              </div>
-            </Grid>
-            
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Text size="sm" style={{ color: '#6b7280' }}>
-                Showing {displayIcons.length} icons
-              </Text>
-              <Button 
-                onClick={() => { 
-                  setSearchTerm(''); 
-                  setSelectedCategory('all');
-                  setSelectedColor('foreground');
-                  setSelectedSize('lg');
-                  setSelectedVariant('outlined');
-                }}
-                variant="ghost"
-                size="sm"
-              >
-                Reset All
-              </Button>
+                    <Button
+                      size="sm"
+                      variant={viewMode === 'list' ? 'solid' : 'outline'}
+                      onClick={() => setViewMode('list')}
+                      title="List View"
+                    >
+                      <Icon name="list" size="sm" />
+                    </Button>
+                  </HStack>
+                </FlexItem>
+
+                <FlexItem>
+                  <Button onClick={handleCopyImport} variant="outline" size="sm">
+                    Copy Import
+                  </Button>
+                </FlexItem>
+              </Flex>
+              
+              {/* Stats and reset in same row */}
+              <HStack justify="between" align="center" style={{ width: '100%' }}>
+                <Text size="xs" style={{ color: 'rgb(var(--text-muted))' }}>
+                  {displayIcons.length} icons
+                </Text>
+                <Button 
+                  onClick={() => { 
+                    setSearchTerm(''); 
+                    setSelectedCategory('all');
+                    setSelectedColor('foreground');
+                    setSelectedSize('lg');
+                    setSelectedVariant('outlined');
+                  }}
+                  variant="ghost"
+                  size="xs"
+                >
+                  Reset
+                </Button>
+              </HStack>
             </div>
           </CardContent>
         </Card>
 
         {/* Icon Grid/List */}
         {viewMode === 'grid' ? (
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-            gap: '0.75rem',
-            marginBottom: '3rem'
-          }}>
+          <Grid 
+            columns="auto" 
+            minChildWidth="140px"
+            gap="sm"
+            style={{ marginTop: '0.5rem', marginBottom: '1rem' }}
+          >
             {displayIcons.map(iconName => (
               <Card
                 key={iconName}
@@ -306,15 +303,14 @@ export const IconLibraryPage: React.FC = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
+          </Grid>
         ) : (
-          <div style={{ marginBottom: '3rem' }}>
+          <VStack spacing="xs" style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
             {displayIcons.map(iconName => (
               <Card
                 key={iconName}
                 onClick={() => handleCopyIcon(iconName)}
                 style={{
-                  marginBottom: '0.5rem',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   background: copiedIcon === iconName ? '#10b981' : 'white',
@@ -355,11 +351,11 @@ export const IconLibraryPage: React.FC = () => {
                 </CardContent>
               </Card>
             ))}
-          </div>
+          </VStack>
         )}
 
         {/* Quick Reference */}
-        <Card style={{ marginBottom: '3rem' }}>
+        <Card style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           <CardHeader>
             <CardTitle>Quick Reference</CardTitle>
           </CardHeader>
@@ -418,7 +414,6 @@ export const IconLibraryPage: React.FC = () => {
             </Grid>
           </CardContent>
         </Card>
-      </Container>
-    </div>
+    </Container>
   )
 }

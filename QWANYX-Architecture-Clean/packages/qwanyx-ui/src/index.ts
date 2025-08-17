@@ -105,6 +105,9 @@ export type {
   SimpleNavbarProps 
 } from './components/Navbar';
 
+export { NavigationBar } from './components/NavigationBar';
+export type { NavigationBarProps, NavItem } from './components/NavigationBar';
+
 export {
   Tabs,
   TabsList,
@@ -302,6 +305,10 @@ export type {
   UseFormReturn,
   SubmitHandler
 } from './components/Form';
+
+// SimpleSelect - Basic select component
+export { SimpleSelect } from './components/SimpleSelect';
+export type { SimpleSelectProps, SimpleSelectOption } from './components/SimpleSelect';
 
 // SuperDropdown - The ultimate dropdown component
 export { 

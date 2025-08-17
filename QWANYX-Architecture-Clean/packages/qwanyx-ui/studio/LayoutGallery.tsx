@@ -145,7 +145,7 @@ export const LayoutGallery: React.FC = () => {
     const LayoutComponent = activeLayout.component;
     return (
       <div style={{ position: 'relative', minHeight: '100vh' }}>
-        {/* Close button */}
+        {/* Floating close button */}
         <Button
           variant="ghost"
           size="sm"
@@ -155,50 +155,23 @@ export const LayoutGallery: React.FC = () => {
             top: '80px',
             right: '20px',
             zIndex: 1000,
-            backgroundColor: 'rgba(var(--background), 0.9)',
+            backgroundColor: 'rgba(var(--background), 0.95)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgb(var(--border))',
-            padding: '8px 16px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            padding: '10px 20px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '8px',
+            borderRadius: 'var(--radius)',
+            fontWeight: 500
           }}
         >
-          <span style={{ fontSize: '20px' }}>×</span>
-          Close Preview
+          <span style={{ fontSize: '18px' }}>←</span>
+          Back to Gallery
         </Button>
 
-        {/* Layout title bar */}
-        <div style={{
-          position: 'sticky',
-          top: '64px',
-          backgroundColor: 'rgb(var(--surface))',
-          borderBottom: '1px solid rgb(var(--border))',
-          padding: '16px',
-          zIndex: 100
-        }}>
-          <Container maxWidth="1400px">
-            <HStack justify="between" align="center">
-              <VStack spacing="xs">
-                <Text as="h2" size="2xl" weight="bold">
-                  {activeLayout.title}
-                </Text>
-                <Text size="sm" color="muted">
-                  {activeLayout.description}
-                </Text>
-              </VStack>
-              <HStack spacing="sm">
-                {activeLayout.features.map((feature, index) => (
-                  <Badge key={index} variant="info" size="sm">
-                    {feature}
-                  </Badge>
-                ))}
-              </HStack>
-            </HStack>
-          </Container>
-        </div>
-
-        {/* Full layout demo */}
+        {/* Full layout demo - let it express itself */}
         <LayoutComponent onClose={handleClose} />
       </div>
     );
@@ -267,19 +240,44 @@ export const LayoutGallery: React.FC = () => {
               </CardContent>
 
               <CardFooter justify="between">
-                <Badge 
-                  variant={layout.variant === 'gradient' || layout.variant === 'neon' ? 'default' : 'success'}
-                  style={{
-                    backgroundColor: layout.variant === 'gradient' || layout.variant === 'neon'
-                      ? 'rgba(255,255,255,0.2)'
-                      : undefined,
-                    color: layout.variant === 'gradient' || layout.variant === 'neon'
-                      ? 'white'
-                      : undefined
-                  }}
-                >
-                  Layout System
-                </Badge>
+                <HStack spacing="sm">
+                  <Badge 
+                    variant={layout.variant === 'gradient' || layout.variant === 'neon' ? 'default' : 'success'}
+                    style={{
+                      backgroundColor: layout.variant === 'gradient' || layout.variant === 'neon'
+                        ? 'rgba(255,255,255,0.2)'
+                        : undefined,
+                      color: layout.variant === 'gradient' || layout.variant === 'neon'
+                        ? 'white'
+                        : undefined
+                    }}
+                  >
+                    Layout System
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      // Open documentation in a modal or new tab
+                      window.open(`https://docs.qwanyx.com/layouts/${layout.id}`, '_blank');
+                    }}
+                    style={{
+                      padding: '4px 8px',
+                      color: layout.variant === 'gradient' || layout.variant === 'neon'
+                        ? 'rgba(255,255,255,0.8)'
+                        : 'rgb(var(--text-muted))',
+                      border: 'none',
+                      background: 'transparent'
+                    }}
+                    title="View Documentation"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                      <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                  </Button>
+                </HStack>
                 <Button 
                   variant="primary" 
                   size="sm"

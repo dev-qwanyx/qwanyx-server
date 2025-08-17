@@ -13,7 +13,7 @@ import { AtomsShowcase } from './atoms/AtomsShowcase';
 import { MoleculesShowcase } from './molecules/MoleculesShowcase';
 import { LayoutGallery } from './LayoutGallery';
 import { Container, Section, Heading, Text, Button } from '../src';
-import { SimpleNavbar } from '../src/components/Navbar';
+import { NavigationBar } from '../src/components/NavigationBar';
 import { AuthModal, AuthStatus } from '../src/components/Auth';
 import { Favicon } from '../src/components/Favicon';
 
@@ -25,12 +25,21 @@ function StudioApp() {
   return (
     <>
       <Favicon autoDetect={true} />
-      <div className="qwanyx-min-h-screen qwanyx-bg-background">
-        {/* Using our new Navbar component */}
-        <SimpleNavbar
+      <div style={{ 
+        minHeight: '100vh',
+        backgroundColor: 'rgb(var(--background))',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        {/* Using our new NavigationBar component */}
+        <NavigationBar
           title="QWANYX UI"
           subtitle={`Studio - ${workspace}`}
-          fixed={true}
+          position="fixed"
+          variant="default"
+          search={true}
+          searchPlaceholder="Search components..."
+          mobileMenuType="drawer"
           items={[
             {
               label: 'Components',
@@ -98,14 +107,18 @@ function StudioApp() {
         />
         
         {/* Main Content - add padding-top for fixed navbar */}
-        <main className="qwanyx-pt-16">
+        <main style={{ 
+          paddingTop: '64px',
+          flex: 1,
+          overflow: 'auto'
+        }}>
           {currentView === 'showcase' && <ComponentShowcase />}
           {currentView === 'atoms' && <AtomsShowcase />}
           {currentView === 'molecules' && <MoleculesShowcase />}
           {currentView === 'organisms' && (
             <Container>
               <Section spacing="xl">
-                <Heading as="h1" className="qwanyx-mb-4">🦠 Organisms</Heading>
+                <Heading as="h1" style={{ marginBottom: '16px' }}>🦠 Organisms</Heading>
                 <Text color="secondary">Organisms showcase coming soon...</Text>
               </Section>
             </Container>
@@ -121,9 +134,9 @@ function StudioApp() {
           {currentView === 'templates' && (
             <Container>
               <Section spacing="xl">
-                <div className="qwanyx-text-center qwanyx-py-12">
-                  <Heading as="h2" className="qwanyx-mb-4">Template Library</Heading>
-                  <Text color="secondary" className="qwanyx-mb-6">
+                <div style={{ textAlign: 'center', padding: '48px 0' }}>
+                  <Heading as="h2" style={{ marginBottom: '16px' }}>Template Library</Heading>
+                  <Text color="secondary" style={{ marginBottom: '24px' }}>
                     {user 
                       ? "Your templates will appear here" 
                       : "Sign in to save and manage templates"}
@@ -140,10 +153,14 @@ function StudioApp() {
         </main>
         
         {/* Footer */}
-        <footer className="qwanyx-bg-card qwanyx-border-t qwanyx-mt-20">
+        <footer style={{ 
+          backgroundColor: 'rgb(var(--card))',
+          borderTop: '1px solid rgb(var(--border))',
+          marginTop: '80px'
+        }}>
           <Container>
             <Section spacing="md">
-              <Text align="center" size="sm" color="muted">
+              <Text align="center" size="sm" color="muted" style={{ textAlign: 'center' }}>
                 QWANYX UI - Build beautiful, themeable interfaces with ease
               </Text>
             </Section>
