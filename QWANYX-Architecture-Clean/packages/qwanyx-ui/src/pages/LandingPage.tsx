@@ -2,7 +2,8 @@ import React from 'react'
 import { Page } from '../components/Page'
 import { Hero, HeroTitle, HeroSubtitle, HeroContent, HeroActions } from '../components/Hero'
 import { Button } from '../components/Button'
-import { Container, Section, Grid } from '../components/Container'
+import { Container, Section } from '../components/Container'
+import { Grid } from '../components/Grid'
 import { FeaturesGrid, Feature, FeatureIcon, FeatureTitle, FeatureDescription } from '../components/Feature'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/Card'
 import { Heading, Text } from '../components/Text'
@@ -48,6 +49,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   navigation = {
     title: 'Brand',
     items: [
+      { label: 'Home', href: '#top' },
       { label: 'Features', href: '#features' },
       { label: 'Pricing', href: '#pricing' },
       { label: 'About', href: '#about' },

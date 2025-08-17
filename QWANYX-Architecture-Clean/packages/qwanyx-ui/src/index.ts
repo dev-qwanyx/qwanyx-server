@@ -108,6 +108,9 @@ export type {
 export { NavigationBar } from './components/NavigationBar';
 export type { NavigationBarProps, NavItem } from './components/NavigationBar';
 
+export { SuperNavbar } from './components/SuperNavbar';
+export type { SuperNavbarProps, SuperNavbarMenuItem } from './components/SuperNavbar';
+
 export {
   Tabs,
   TabsList,

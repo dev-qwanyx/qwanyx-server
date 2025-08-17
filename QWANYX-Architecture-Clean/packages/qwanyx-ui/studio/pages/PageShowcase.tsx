@@ -81,20 +81,39 @@ export const PageShowcase: React.FC = () => {
         background: 'white',
         overflow: 'auto'
       }}>
-        <div style={{ 
-          position: 'fixed', 
-          top: '1rem', 
-          right: '1rem', 
-          zIndex: 10000
-        }}>
-          <Button 
-            onClick={() => setShowFullPage(null)}
-            variant="outline"
-            style={{ background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-          >
-            ✕ Close Preview
-          </Button>
-        </div>
+        <button
+          onClick={() => setShowFullPage(null)}
+          style={{ 
+            position: 'fixed', 
+            top: '1rem', 
+            right: '1rem', 
+            zIndex: 10000,
+            width: '28px',
+            height: '28px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            border: '1px solid rgb(var(--border))',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '14px',
+            fontWeight: '300',
+            color: 'rgb(var(--text))',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        >
+          ✕
+        </button>
         <div style={{ minHeight: '100vh' }}>
           {showFullPage === 'landing' && <LandingPage />}
           {showFullPage === 'dashboard' && <DashboardPage />}

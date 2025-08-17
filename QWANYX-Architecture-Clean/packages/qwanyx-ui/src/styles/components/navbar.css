@@ -69,9 +69,12 @@
 
 /* Navbar Menu */
 .qwanyx-navbar__menu {
-  display: flex;
   align-items: center;
   gap: var(--qwanyx-spacing-xs);
+}
+
+.qwanyx-navbar__menu--desktop {
+  display: flex;
 }
 
 .qwanyx-navbar__menu--mobile {

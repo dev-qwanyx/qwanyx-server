@@ -17,6 +17,7 @@ import {
   Text,
   Code,
   Button,
+  Icon,
   Card,
   CardHeader,
   CardTitle,
@@ -262,52 +263,175 @@ export const ComponentShowcase: React.FC = () => {
                     title="Service Card Example"
                     description="A specialized card component for displaying services with icon, title and description"
                   />
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Simple Card</CardTitle>
-                      <CardDescription>This is a basic card with header</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Text>
-                        Cards are versatile containers that can hold any type of content. 
-                        They help organize information in a clear, scannable way.
-                      </Text>
-                    </CardContent>
-                    <CardFooter>
-                      <Flex gap="sm">
-                        <Button size="sm">Action</Button>
-                        <Button size="sm" variant="ghost">Cancel</Button>
-                      </Flex>
-                    </CardFooter>
-                  </Card>
-              
-              <Card variant="outlined">
-                <CardImage 
-                  src="https://picsum.photos/400/200?random=1" 
-                  alt="Random landscape"
-                  aspectRatio="16/9"
-                />
-                <CardContent>
-                  <Heading as="h4">Card with Image</Heading>
-                  <Text size="sm" color="secondary" className="qwanyx-mt-2">
-                    This card includes an image at the top. Images can have different aspect ratios.
-                  </Text>
-                </CardContent>
-              </Card>
-              
-              <Card variant="filled" hoverable>
-                <CardContent>
-                  <Heading as="h4">Hoverable Card</Heading>
-                  <Text size="sm" color="secondary" className="qwanyx-mt-2">
-                    This card has a hover effect. Try hovering over it to see the elevation change.
-                  </Text>
-                  <div className="qwanyx-mt-4">
-                    <Button size="sm" fullWidth>
-                      Learn More
-                    </Button>
+                  {/* Beautiful Card Showcase */}
+                  <div className="qwanyx-mb-8">
+                    <Heading as="h3" className="qwanyx-mb-4">🎨 Beautiful Card Designs</Heading>
+                    <Text color="muted" className="qwanyx-mb-6">
+                      Inspired by Stripe, Linear, Vercel, and Apple - the world's best card designs
+                    </Text>
+                    
+                    <Grid cols={3} gap="lg">
+                      {/* Elevated Card with Lift Animation */}
+                      <Card variant="elevated" hoverable animation="lift">
+                        <CardHeader>
+                          <CardTitle>Elevated Card</CardTitle>
+                          <CardDescription>Lifts on hover like Stripe</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Text>
+                            Beautiful shadow transitions that create depth and hierarchy.
+                          </Text>
+                        </CardContent>
+                        <CardFooter>
+                          <Button size="sm" fullWidth>Learn More</Button>
+                        </CardFooter>
+                      </Card>
+                      
+                      {/* Glass Card with Blur */}
+                      <Card variant="glass" hoverable blur animation="morph">
+                        <CardHeader>
+                          <CardTitle>Glass Morphism</CardTitle>
+                          <CardDescription>Like Linear's beautiful cards</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Text>
+                            Translucent background with backdrop blur creates a modern glass effect.
+                          </Text>
+                        </CardContent>
+                        <CardFooter>
+                          <Button size="sm" variant="ghost">Explore</Button>
+                        </CardFooter>
+                      </Card>
+                      
+                      {/* Neon Card with Glow */}
+                      <Card variant="neon" hoverable glowColor="rgb(59, 130, 246)" animation="glow">
+                        <CardHeader>
+                          <CardTitle>Neon Glow</CardTitle>
+                          <CardDescription>Vercel-style glowing borders</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Text>
+                            Animated glowing borders that pulse with energy on hover.
+                          </Text>
+                        </CardContent>
+                        <CardFooter>
+                          <Button size="sm" color="primary">Deploy Now</Button>
+                        </CardFooter>
+                      </Card>
+                      
+                      {/* Gradient Card */}
+                      <Card 
+                        variant="gradient" 
+                        hoverable 
+                        gradientFrom="rgb(147, 51, 234)" 
+                        gradientTo="rgb(79, 70, 229)"
+                        animation="lift"
+                      >
+                        <CardHeader>
+                          <CardTitle style={{ color: 'white' }}>Gradient Card</CardTitle>
+                          <CardDescription style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                            Rich gradients like Apple
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Text style={{ color: 'white' }}>
+                            Vibrant gradients create visual interest and draw attention.
+                          </Text>
+                        </CardContent>
+                        <CardFooter>
+                          <Button size="sm" variant="ghost" style={{ color: 'white', borderColor: 'white' }}>
+                            Get Started
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                      
+                      {/* Tilt Card */}
+                      <Card variant="filled" hoverable animation="tilt">
+                        <CardHeader>
+                          <CardTitle>3D Tilt Effect</CardTitle>
+                          <CardDescription>Interactive perspective shift</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Text>
+                            Move your mouse over this card to see it tilt in 3D space.
+                          </Text>
+                        </CardContent>
+                        <CardFooter bordered justify="between">
+                          <Text size="sm" color="muted">Interactive</Text>
+                          <Icon name="3d_rotation" size="sm" />
+                        </CardFooter>
+                      </Card>
+                      
+                      {/* Outlined Card */}
+                      <Card variant="outlined" hoverable clickable>
+                        <CardHeader bordered>
+                          <CardTitle size="md">Minimal Design</CardTitle>
+                          <CardDescription>Clean and simple</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Text>
+                            Sometimes less is more. This card uses subtle borders and shadows.
+                          </Text>
+                        </CardContent>
+                        <CardFooter>
+                          <Button size="sm" variant="outline" fullWidth>View Details</Button>
+                        </CardFooter>
+                      </Card>
+                    </Grid>
                   </div>
-                </CardContent>
-              </Card>
+                  
+                  {/* Card with Image Examples */}
+                  <div className="qwanyx-mb-8">
+                    <Heading as="h3" className="qwanyx-mb-4">Cards with Media</Heading>
+                    <Grid cols={2} gap="lg">
+                      <Card variant="elevated" hoverable animation="lift">
+                        <CardImage 
+                          src="https://picsum.photos/600/400?random=10" 
+                          alt="Beautiful landscape"
+                          aspectRatio="16/9"
+                          overlay
+                        />
+                        <CardHeader>
+                          <CardTitle>Mountain Vista</CardTitle>
+                          <CardDescription>Captured at golden hour</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Text size="sm">
+                            Experience the breathtaking beauty of mountain landscapes.
+                          </Text>
+                        </CardContent>
+                        <CardFooter justify="between">
+                          <Flex gap="xs" align="center">
+                            <Icon name="favorite" size="sm" />
+                            <Text size="sm">1.2k</Text>
+                          </Flex>
+                          <Button size="sm" variant="ghost">Share</Button>
+                        </CardFooter>
+                      </Card>
+                      
+                      <Card variant="glass" hoverable blur animation="morph">
+                        <CardImage 
+                          src="https://picsum.photos/600/400?random=11" 
+                          alt="City lights"
+                          aspectRatio="16/9"
+                          overlay
+                          overlayGradient="linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 50%)"
+                        />
+                        <CardHeader>
+                          <CardTitle>Urban Dreams</CardTitle>
+                          <CardDescription>City lights at night</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Text size="sm">
+                            The pulse of the city comes alive after dark.
+                          </Text>
+                        </CardContent>
+                        <CardFooter>
+                          <Button size="sm" fullWidth>Explore Gallery</Button>
+                        </CardFooter>
+                      </Card>
+                    </Grid>
+                  </div>
                 </Grid>
             </div>
           </TabsContent>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { SimpleNavbar } from './Navbar'
+import { SuperNavbar } from './SuperNavbar'
 import { Footer } from './Footer'
 import './Page.css'
 
@@ -89,14 +89,78 @@ export const Page: React.FC<PageProps> = ({
     <div className="qwanyx-page-wrapper">
       {/* Automatic Navigation */}
       {navigation && (
-        <SimpleNavbar
+        <SuperNavbar
           title={navigation.title}
           subtitle={navigation.subtitle}
-          logo={navigation.logo}
-          items={navigation.items}
+          logo={navigation.logo || '/images/logo.png'}
+          items={navigation.items?.map(item => ({
+            label: item.label,
+            href: item.href,
+            onClick: item.onClick,
+            active: item.active
+          }))}
           actions={navigation.actions}
-          fixed={navigation.fixed}
-          sticky={navigation.sticky ?? true}
+          position={navigation.fixed ? 'fixed' : (navigation.sticky !== false ? 'sticky' : 'static')}
+          transparent={true}
+          blur={true}
+          elevated={true}
+          hideOnScroll={false}
+          search={true}
+          searchPlaceholder="Search our platform..."
+          onSearch={(query) => console.log('Search:', query)}
+          user={{
+            name: 'John Doe',
+            email: 'john@example.com',
+            avatar: 'https://i.pravatar.cc/150?img=3',
+            role: 'Premium User'
+          }}
+          userMenuItems={[
+            { label: 'Profile', icon: 'person', href: '#profile' },
+            { label: 'Settings', icon: 'settings', href: '#settings' },
+            { label: 'Billing', icon: 'payment', href: '#billing' },
+            { divider: true },
+            { label: 'Help & Support', icon: 'help', href: '#support' }
+          ]}
+          onLogout={() => console.log('Logout')}
+          notifications={[
+            {
+              id: '1',
+              title: 'Welcome to our platform!',
+              description: 'Get started with our quick tour',
+              time: '2 min ago',
+              icon: 'celebration',
+              type: 'success'
+            },
+            {
+              id: '2',
+              title: 'New feature available',
+              description: 'Check out the new dashboard',
+              time: '1 hour ago',
+              icon: 'new_releases',
+              type: 'info'
+            },
+            {
+              id: '3',
+              title: 'Your trial expires soon',
+              description: 'Upgrade to continue using premium features',
+              time: '1 day ago',
+              icon: 'warning',
+              type: 'warning',
+              read: true
+            }
+          ]}
+          notificationCount={2}
+          onNotificationClick={(id) => console.log('Notification clicked:', id)}
+          onNotificationsClear={() => console.log('Clear notifications')}
+          primaryAction={{
+            label: 'Get Started',
+            onClick: () => console.log('Primary action'),
+            icon: 'rocket_launch'
+          }}
+          variant="default"
+          mobileBreakpoint={768}
+          mobileMenuType="drawer"
+          dark={false}
         />
       )}
       

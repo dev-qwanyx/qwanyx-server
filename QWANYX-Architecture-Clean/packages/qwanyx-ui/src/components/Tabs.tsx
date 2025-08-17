@@ -22,6 +22,8 @@ export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   swipeable?: boolean; // For mobile
   color?: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error' | 'info';
   backgroundColor?: string; // Custom background color for active tabs (e.g., 'rgb(var(--surface))')
+  mobileMode?: 'tabs' | 'dropdown' | 'auto'; // Mobile display mode
+  mobileBreakpoint?: number; // Breakpoint for mobile mode (default 640px)
 }
 
 export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
@@ -36,11 +38,31 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
   swipeable = false,
   color = 'primary',
   backgroundColor,
+  mobileMode = 'auto',
+  mobileBreakpoint = 640,
   style,
   ...props
 }, ref) => {
   const [internalValue, setInternalValue] = useState(defaultValue || '');
+  const [isMobile, setIsMobile] = useState(false);
   const activeTab = value !== undefined ? value : internalValue;
+  
+  // Check if we should use mobile mode
+  useEffect(() => {
+    const checkMobile = () => {
+      if (mobileMode === 'dropdown') {
+        setIsMobile(true);
+      } else if (mobileMode === 'tabs') {
+        setIsMobile(false);
+      } else { // auto mode
+        setIsMobile(window.innerWidth <= mobileBreakpoint);
+      }
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [mobileMode, mobileBreakpoint]);
   
   const setActiveTab = (id: string) => {
     if (value === undefined) {
@@ -56,6 +78,86 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
     ...style
   };
   
+  // Mobile dropdown mode
+  if (isMobile && orientation === 'horizontal') {
+    // Extract tab triggers and contents from children
+    let triggers: Array<{ value: string; label: React.ReactNode; disabled?: boolean }> = [];
+    let contents: React.ReactElement[] = [];
+    
+    React.Children.forEach(children, (child) => {
+      if (React.isValidElement(child)) {
+        if (child.type === TabsList) {
+          // Extract triggers from TabsList
+          React.Children.forEach(child.props.children, (trigger) => {
+            if (React.isValidElement(trigger) && trigger.type === TabsTrigger) {
+              triggers.push({
+                value: trigger.props.value,
+                label: trigger.props.children,
+                disabled: trigger.props.disabled
+              });
+            }
+          });
+        } else if (child.type === TabsContent) {
+          contents.push(child as React.ReactElement);
+        }
+      }
+    });
+    
+    return (
+      <TabsContext.Provider value={{ activeTab, setActiveTab, variant, color, backgroundColor }}>
+        <div ref={ref} style={tabsStyle} {...props}>
+          {/* Mobile Dropdown */}
+          <div style={{ marginBottom: '20px' }}>
+            <select
+              value={activeTab}
+              onChange={(e) => setActiveTab(e.target.value)}
+              style={{
+                width: fullWidth ? '100%' : 'auto',
+                padding: '10px 16px',
+                fontSize: '16px',
+                borderRadius: 'var(--radius)',
+                border: '2px solid rgb(var(--border))',
+                backgroundColor: 'rgb(var(--background))',
+                color: 'rgb(var(--text))',
+                cursor: 'pointer',
+                outline: 'none',
+                transition: 'all 0.2s ease',
+                appearance: 'none',
+                backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgb(107,114,128)' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e")`,
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 10px center',
+                backgroundSize: '20px',
+                paddingRight: '40px',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = `rgb(var(--${color}))`;
+                e.target.style.boxShadow = `0 0 0 3px rgba(var(--${color}), 0.1)`;
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgb(var(--border))';
+                e.target.style.boxShadow = 'none';
+              }}
+            >
+              {triggers.map((trigger) => (
+                <option 
+                  key={trigger.value} 
+                  value={trigger.value}
+                  disabled={trigger.disabled}
+                >
+                  {trigger.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Tab Contents */}
+          {contents}
+        </div>
+      </TabsContext.Provider>
+    );
+  }
+
+  // Regular tabs mode
   return (
     <TabsContext.Provider value={{ activeTab, setActiveTab, variant, color, backgroundColor }}>
       <div ref={ref} style={tabsStyle} {...props}>
@@ -583,6 +685,8 @@ export interface SimpleTabsProps {
   className?: string;
   color?: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error' | 'info';
   backgroundColor?: string;
+  mobileMode?: 'tabs' | 'dropdown' | 'auto';
+  mobileBreakpoint?: number;
 }
 
 export const SimpleTabs: React.FC<SimpleTabsProps> = ({
@@ -594,7 +698,9 @@ export const SimpleTabs: React.FC<SimpleTabsProps> = ({
   orientation = 'horizontal',
   className = '',
   color,
-  backgroundColor
+  backgroundColor,
+  mobileMode = 'auto',
+  mobileBreakpoint = 640
 }) => {
   const defaultValue = defaultTab || tabs[0]?.id;
   
@@ -606,6 +712,8 @@ export const SimpleTabs: React.FC<SimpleTabsProps> = ({
       className={className}
       color={color}
       backgroundColor={backgroundColor}
+      mobileMode={mobileMode}
+      mobileBreakpoint={mobileBreakpoint}
     >
       <TabsList 
         variant={variant} 
