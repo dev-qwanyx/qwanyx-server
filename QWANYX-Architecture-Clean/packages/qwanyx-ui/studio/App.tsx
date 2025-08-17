@@ -11,13 +11,14 @@ import { IconTest } from './test/IconTest';
 import { IconLibraryPage } from './icons/IconLibraryPage';
 import { AtomsShowcase } from './atoms/AtomsShowcase';
 import { MoleculesShowcase } from './molecules/MoleculesShowcase';
+import { LayoutGallery } from './LayoutGallery';
 import { Container, Section, Heading, Text, Button } from '../src';
 import { SimpleNavbar } from '../src/components/Navbar';
 import { AuthModal, AuthStatus } from '../src/components/Auth';
 import { Favicon } from '../src/components/Favicon';
 
 function StudioApp() {
-  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates' | 'parallax' | 'pages' | 'sections' | 'misc' | 'test' | 'icons' | 'atoms' | 'molecules' | 'organisms'>('showcase');
+  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates' | 'parallax' | 'pages' | 'sections' | 'misc' | 'test' | 'icons' | 'atoms' | 'molecules' | 'organisms' | 'layouts'>('showcase');
   const [showAuth, setShowAuth] = useState(false);
   const { workspace, user, login, logout } = useWorkspace();
   
@@ -50,6 +51,11 @@ function StudioApp() {
               label: '🦠 Organisms',
               active: currentView === 'organisms',
               onClick: () => setCurrentView('organisms')
+            },
+            {
+              label: '📐 Layouts',
+              active: currentView === 'layouts',
+              onClick: () => setCurrentView('layouts')
             },
             {
               label: 'Icons',
@@ -104,6 +110,7 @@ function StudioApp() {
               </Section>
             </Container>
           )}
+          {currentView === 'layouts' && <LayoutGallery />}
           {currentView === 'icons' && <IconLibraryPage />}
           {currentView === 'editor' && <ThemeEditor />}
           {currentView === 'parallax' && <ParallaxShowcase />}

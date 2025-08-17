@@ -55,8 +55,36 @@ export type { InputProps, TextareaProps } from './components/Input';
 export { Heading, Text, Code } from './components/Text';
 export type { HeadingProps, TextProps, CodeProps } from './components/Text';
 
-export { Container, Section, Grid, Flex } from './components/Container';
-export type { ContainerProps, SectionProps, GridProps, FlexProps } from './components/Container';
+export { Container, Section } from './components/Container';
+export type { ContainerProps, SectionProps } from './components/Container';
+
+// Layout Components
+export { Grid, GridItem } from './components/Grid';
+export type { GridProps, GridItemProps } from './components/Grid';
+
+export { Flex, FlexItem, Spacer } from './components/Flex';
+export type { FlexProps, FlexItemProps, SpacerProps } from './components/Flex';
+
+export { Stack, VStack, HStack, Center } from './components/Stack';
+export type { StackProps, VStackProps, HStackProps, CenterProps } from './components/Stack';
+
+export { Masonry, AdvancedMasonry } from './components/Masonry';
+export type { MasonryProps, AdvancedMasonryProps } from './components/Masonry';
+
+export { 
+  HolyGrailLayout, 
+  MagazineLayout, 
+  SplitLayout, 
+  BentoLayout, 
+  AsymmetricLayout 
+} from './components/Layouts';
+export type { 
+  HolyGrailLayoutProps, 
+  MagazineLayoutProps, 
+  SplitLayoutProps, 
+  BentoLayoutProps, 
+  AsymmetricLayoutProps 
+} from './components/Layouts';
 
 export { 
   Navbar,
