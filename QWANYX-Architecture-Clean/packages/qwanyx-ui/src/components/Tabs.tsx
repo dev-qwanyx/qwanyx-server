@@ -5,6 +5,8 @@ interface TabsContextType {
   activeTab: string;
   setActiveTab: (id: string) => void;
   variant?: 'line' | 'boxed' | 'pills' | 'segment' | 'nav';
+  color?: string;
+  backgroundColor?: string;
 }
 
 const TabsContext = createContext<TabsContextType | undefined>(undefined);
@@ -18,6 +20,8 @@ export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   fullWidth?: boolean;
   orientation?: 'horizontal' | 'vertical';
   swipeable?: boolean; // For mobile
+  color?: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error' | 'info';
+  backgroundColor?: string; // Custom background color for active tabs (e.g., 'rgb(var(--surface))')
 }
 
 export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
@@ -30,6 +34,8 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
   fullWidth = false,
   orientation = 'horizontal',
   swipeable = false,
+  color = 'primary',
+  backgroundColor,
   style,
   ...props
 }, ref) => {
@@ -51,7 +57,7 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
   };
   
   return (
-    <TabsContext.Provider value={{ activeTab, setActiveTab, variant }}>
+    <TabsContext.Provider value={{ activeTab, setActiveTab, variant, color, backgroundColor }}>
       <div ref={ref} style={tabsStyle} {...props}>
         {children}
       </div>
@@ -196,8 +202,10 @@ export const TabsTrigger: React.FC<TabsTriggerProps> = ({
     throw new Error('TabsTrigger must be used within Tabs');
   }
   
-  const { activeTab, setActiveTab } = context;
+  const { activeTab, setActiveTab, color: contextColor, backgroundColor: contextBgColor } = context;
   const isActive = activeTab === value;
+  const tabColor = contextColor || 'primary';
+  const tabBgColor = contextBgColor || 'rgb(var(--surface))'; // Default to surface (grey) instead of background (white)
   
   const handleClick = () => {
     if (!disabled) {
@@ -232,11 +240,11 @@ export const TabsTrigger: React.FC<TabsTriggerProps> = ({
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: 0,
         marginBottom: '-1px',
-        backgroundColor: isActive ? 'rgb(var(--background))' : 'transparent',
+        backgroundColor: isActive ? tabBgColor : 'transparent',
         borderTop: isActive ? '1px solid rgb(var(--border))' : '1px solid transparent',
         borderLeft: isActive ? '1px solid rgb(var(--border))' : '1px solid transparent',
         borderRight: isActive ? '1px solid rgb(var(--border))' : '1px solid transparent',
-        borderBottom: isActive ? '1px solid rgb(var(--background))' : '1px solid transparent',
+        borderBottom: isActive ? `1px solid ${tabBgColor}` : '1px solid transparent',
       };
     }
     if (variant === 'line') {
@@ -252,6 +260,7 @@ export const TabsTrigger: React.FC<TabsTriggerProps> = ({
   return (
     <Button
       variant={getButtonVariant()}
+      color={tabColor as any}
       size={size as any}
       fullWidth={fullWidth}
       icon={icon}
@@ -357,6 +366,8 @@ export interface SimpleTabsProps {
   fullWidth?: boolean;
   orientation?: 'horizontal' | 'vertical';
   className?: string;
+  color?: 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error' | 'info';
+  backgroundColor?: string;
 }
 
 export const SimpleTabs: React.FC<SimpleTabsProps> = ({
@@ -366,7 +377,9 @@ export const SimpleTabs: React.FC<SimpleTabsProps> = ({
   size = 'md',
   fullWidth = false,
   orientation = 'horizontal',
-  className = ''
+  className = '',
+  color,
+  backgroundColor
 }) => {
   const defaultValue = defaultTab || tabs[0]?.id;
   
@@ -376,6 +389,8 @@ export const SimpleTabs: React.FC<SimpleTabsProps> = ({
       variant={variant}
       orientation={orientation}
       className={className}
+      color={color}
+      backgroundColor={backgroundColor}
     >
       <TabsList 
         variant={variant} 
