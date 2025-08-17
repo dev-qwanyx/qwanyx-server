@@ -33,15 +33,7 @@ export interface ProgressProps {
 }
 
 
-const colorClasses = {
-  primary: 'qwanyx-text-primary',
-  secondary: 'qwanyx-text-secondary',
-  accent: 'qwanyx-text-accent',
-  success: 'qwanyx-text-success',
-  warning: 'qwanyx-text-warning',
-  error: 'qwanyx-text-error',
-  info: 'qwanyx-text-info',
-};
+// Color mappings are now handled in the Icon component and inline styles
 
 /**
  * Progress component for showing completion status
@@ -96,8 +88,18 @@ export const Progress: React.FC<ProgressProps> = ({
       iconName = 'clock_loader_90'; // Using 90 for values > 90
     }
 
+    const circularColors = {
+      primary: 'rgb(59 130 246)',
+      secondary: 'rgb(168 85 247)',
+      accent: 'rgb(34 197 94)',
+      success: 'rgb(34 197 94)',
+      warning: 'rgb(250 204 21)',
+      error: 'rgb(239 68 68)',
+      info: 'rgb(59 130 246)',
+    };
+
     return (
-      <div className={`qwanyx-inline-flex qwanyx-items-center qwanyx-gap-2 ${className}`}>
+      <div className={className} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
         <div role="progressbar" aria-valuenow={normalizedValue} aria-valuemin={0} aria-valuemax={100} aria-label={label}>
           <Icon 
             name={iconName}
@@ -107,7 +109,7 @@ export const Progress: React.FC<ProgressProps> = ({
           />
         </div>
         {showPercent && (
-          <span className={`qwanyx-text-sm ${colorClasses[color]}`}>
+          <span style={{ fontSize: '14px', color: circularColors[color] }}>
             {normalizedValue}%
           </span>
         )}
@@ -119,29 +121,46 @@ export const Progress: React.FC<ProgressProps> = ({
     const totalDots = 10;
     const filledDots = Math.round((normalizedValue / 100) * totalDots);
     
+    const dotColors = {
+      primary: 'rgb(59 130 246)',
+      secondary: 'rgb(168 85 247)',
+      accent: 'rgb(34 197 94)',
+      success: 'rgb(34 197 94)',
+      warning: 'rgb(250 204 21)',
+      error: 'rgb(239 68 68)',
+      info: 'rgb(59 130 246)',
+    };
+
     return (
       <div 
-        className={`qwanyx-inline-flex qwanyx-items-center qwanyx-gap-2 ${className}`}
+        className={className}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+        }}
         role="progressbar" 
         aria-valuenow={normalizedValue} 
         aria-valuemin={0} 
         aria-valuemax={100} 
         aria-label={label}
       >
-        <div className="qwanyx-flex qwanyx-gap-1">
+        <div style={{ display: 'flex', gap: '4px' }}>
           {Array.from({ length: totalDots }).map((_, index) => (
             <div
               key={index}
-              className={`qwanyx-w-2 qwanyx-h-2 qwanyx-rounded-full qwanyx-transition-colors ${
-                index < filledDots 
-                  ? `qwanyx-bg-current ${colorClasses[color]}` 
-                  : 'qwanyx-bg-gray-300'
-              }`}
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: index < filledDots ? dotColors[color] : 'rgb(209 213 219)',
+                transition: 'background-color 300ms',
+              }}
             />
           ))}
         </div>
         {showPercent && (
-          <span className={`qwanyx-text-sm ${colorClasses[color]}`}>
+          <span style={{ fontSize: '14px', color: dotColors[color] }}>
             {normalizedValue}%
           </span>
         )}
@@ -150,11 +169,27 @@ export const Progress: React.FC<ProgressProps> = ({
   }
 
   // Default bar progress
+  const barColors = {
+    primary: 'rgb(59 130 246)',
+    secondary: 'rgb(168 85 247)',
+    accent: 'rgb(34 197 94)',
+    success: 'rgb(34 197 94)',
+    warning: 'rgb(250 204 21)',
+    error: 'rgb(239 68 68)',
+    info: 'rgb(59 130 246)',
+  };
+
   return (
-    <div className={`qwanyx-w-full ${className}`}>
-      <div className="qwanyx-flex qwanyx-items-center qwanyx-gap-2">
+    <div className={className} style={{ width: '100%' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div 
-          className="qwanyx-flex-1 qwanyx-bg-gray-200 qwanyx-rounded-full qwanyx-h-2 qwanyx-overflow-hidden"
+          style={{
+            flex: 1,
+            backgroundColor: 'rgb(229 231 235)',
+            borderRadius: '9999px',
+            height: '8px',
+            overflow: 'hidden',
+          }}
           role="progressbar" 
           aria-valuenow={normalizedValue} 
           aria-valuemin={0} 
@@ -162,20 +197,21 @@ export const Progress: React.FC<ProgressProps> = ({
           aria-label={label}
         >
           <div 
-            className={`qwanyx-h-full qwanyx-rounded-full qwanyx-transition-all qwanyx-duration-300 ${
-              color === 'primary' ? 'qwanyx-bg-primary' :
-              color === 'secondary' ? 'qwanyx-bg-secondary' :
-              color === 'accent' ? 'qwanyx-bg-accent' :
-              color === 'success' ? 'qwanyx-bg-success' :
-              color === 'warning' ? 'qwanyx-bg-warning' :
-              color === 'error' ? 'qwanyx-bg-error' :
-              'qwanyx-bg-info'
-            }`}
-            style={{ width: `${normalizedValue}%` }}
+            style={{
+              height: '100%',
+              borderRadius: '9999px',
+              backgroundColor: barColors[color],
+              width: `${normalizedValue}%`,
+              transition: 'width 300ms ease',
+            }}
           />
         </div>
         {showPercent && (
-          <span className={`qwanyx-text-sm qwanyx-min-w-[3ch] ${colorClasses[color]}`}>
+          <span style={{ 
+            fontSize: '14px', 
+            minWidth: '3ch',
+            color: barColors[color]
+          }}>
             {normalizedValue}%
           </span>
         )}

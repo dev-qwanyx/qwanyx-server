@@ -1,8 +1,10 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useRef, useEffect } from 'react';
+import { Button } from './Button';
 
 interface TabsContextType {
   activeTab: string;
   setActiveTab: (id: string) => void;
+  variant?: 'line' | 'boxed' | 'pills' | 'segment' | 'nav';
 }
 
 const TabsContext = createContext<TabsContextType | undefined>(undefined);
@@ -11,9 +13,11 @@ export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultValue?: string;
   value?: string;
   onValueChange?: (value: string) => void;
-  variant?: 'line' | 'boxed' | 'pills';
+  variant?: 'line' | 'boxed' | 'pills' | 'segment' | 'nav';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
+  orientation?: 'horizontal' | 'vertical';
+  swipeable?: boolean; // For mobile
 }
 
 export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
@@ -24,7 +28,9 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
   variant = 'line',
   size = 'md',
   fullWidth = false,
-  className = '',
+  orientation = 'horizontal',
+  swipeable = false,
+  style,
   ...props
 }, ref) => {
   const [internalValue, setInternalValue] = useState(defaultValue || '');
@@ -37,16 +43,16 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
     onValueChange?.(id);
   };
   
-  const baseClasses = 'w-full';
-  
-  const combinedClassName = [
-    baseClasses,
-    className
-  ].filter(Boolean).join(' ');
+  const tabsStyle: React.CSSProperties = {
+    width: fullWidth ? '100%' : 'auto',
+    display: orientation === 'vertical' ? 'flex' : 'block',
+    gap: orientation === 'vertical' ? '24px' : undefined,
+    ...style
+  };
   
   return (
-    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
-      <div ref={ref} className={combinedClassName} {...props}>
+    <TabsContext.Provider value={{ activeTab, setActiveTab, variant }}>
+      <div ref={ref} style={tabsStyle} {...props}>
         {children}
       </div>
     </TabsContext.Provider>
@@ -56,9 +62,10 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
 Tabs.displayName = 'Tabs';
 
 export interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'line' | 'boxed' | 'pills';
+  variant?: 'line' | 'boxed' | 'pills' | 'segment' | 'nav';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
+  orientation?: 'horizontal' | 'vertical';
 }
 
 export const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(({
@@ -66,61 +73,124 @@ export const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(({
   variant = 'line',
   size = 'md',
   fullWidth = false,
-  className = '',
+  orientation = 'horizontal',
+  style,
   ...props
-}, ref) => {
-  const baseClasses = 'flex';
+}) => {
+  const [indicatorStyle, setIndicatorStyle] = useState<React.CSSProperties>({});
+  const listRef = useRef<HTMLDivElement>(null);
+  const context = useContext(TabsContext);
   
-  const variantClasses = {
-    line: 'border-b border-border',
-    boxed: 'border-b border-gray-200',
-    pills: 'gap-2'
+  // Calculate indicator position for sliding animation (only for line variant)
+  useEffect(() => {
+    if (variant === 'line' && listRef.current && context?.activeTab) {
+      const activeButton = listRef.current.querySelector(`[data-value="${context.activeTab}"]`) as HTMLElement;
+      if (activeButton) {
+        const { offsetLeft, offsetWidth, offsetTop, offsetHeight } = activeButton;
+        setIndicatorStyle({
+          position: 'absolute',
+          bottom: orientation === 'horizontal' ? '0' : undefined,
+          left: orientation === 'horizontal' ? `${offsetLeft}px` : '0',
+          top: orientation === 'vertical' ? `${offsetTop}px` : undefined,
+          width: orientation === 'horizontal' ? `${offsetWidth}px` : '2px',
+          height: orientation === 'horizontal' ? '2px' : `${offsetHeight}px`,
+          backgroundColor: 'rgb(var(--primary))',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          borderRadius: 'var(--radius-full)',
+          zIndex: 10
+        });
+      }
+    }
+  }, [context?.activeTab, variant, orientation]);
+  
+  const getListStyles = (): React.CSSProperties => {
+    const base: React.CSSProperties = {
+      display: orientation === 'vertical' ? 'flex' : 'inline-flex',
+      flexDirection: orientation === 'vertical' ? 'column' : 'row',
+      position: 'relative',
+      width: fullWidth ? '100%' : 'auto',
+      gap: variant === 'pills' ? '8px' : variant === 'segment' ? '0' : '4px',
+    };
+    
+    switch (variant) {
+      case 'line':
+        return {
+          ...base,
+          borderBottom: orientation === 'horizontal' ? '1px solid rgb(var(--border))' : undefined,
+          borderLeft: orientation === 'vertical' ? '1px solid rgb(var(--border))' : undefined,
+        };
+      case 'boxed':
+        return {
+          ...base,
+          borderBottom: '1px solid rgb(var(--border))',
+          gap: '0'
+        };
+      case 'segment':
+        return {
+          ...base,
+          backgroundColor: 'rgb(var(--surface))',
+          padding: '4px',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.05)',
+        };
+      case 'nav':
+        return {
+          ...base,
+          backgroundColor: 'rgb(var(--background))',
+          boxShadow: 'var(--shadow)',
+          borderRadius: 'var(--radius-lg)',
+          padding: '8px',
+        };
+      default:
+        return base;
+    }
   };
   
-  const widthClass = fullWidth ? 'w-full' : '';
-  
-  const combinedClassName = [
-    baseClasses,
-    variantClasses[variant],
-    widthClass,
-    className
-  ].filter(Boolean).join(' ');
+  const listStyles = {
+    ...getListStyles(),
+    ...style
+  };
   
   return (
-    <div ref={ref} className={combinedClassName} {...props}>
+    <div ref={listRef} style={listStyles} {...props}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           return React.cloneElement(child as React.ReactElement<any>, {
             variant,
             size,
-            fullWidth
+            fullWidth,
+            orientation
           });
         }
         return child;
       })}
+      {variant === 'line' && <div style={indicatorStyle} />}
     </div>
   );
 });
 
 TabsList.displayName = 'TabsList';
 
-export interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface TabsTriggerProps {
   value: string;
-  variant?: 'line' | 'boxed' | 'pills';
+  variant?: 'line' | 'boxed' | 'pills' | 'segment' | 'nav';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
+  orientation?: 'horizontal' | 'vertical';
+  icon?: React.ReactNode;
+  disabled?: boolean;
+  children: React.ReactNode;
 }
 
-export const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(({
+export const TabsTrigger: React.FC<TabsTriggerProps> = ({
   children,
   value,
   variant = 'line',
   size = 'md',
   fullWidth = false,
-  className = '',
-  onClick,
-  ...props
-}, ref) => {
+  icon,
+  disabled,
+}) => {
   const context = useContext(TabsContext);
   if (!context) {
     throw new Error('TabsTrigger must be used within Tabs');
@@ -129,65 +199,90 @@ export const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>
   const { activeTab, setActiveTab } = context;
   const isActive = activeTab === value;
   
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setActiveTab(value);
-    onClick?.(e);
+  const handleClick = () => {
+    if (!disabled) {
+      setActiveTab(value);
+    }
   };
   
-  const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg'
+  // Map tab variants to button variants
+  const getButtonVariant = () => {
+    switch (variant) {
+      case 'line':
+        return 'tab';
+      case 'boxed':
+        return 'ghost'; // Use ghost with custom styling
+      case 'pills':
+        return 'pill';
+      case 'segment':
+        return 'segment';
+      case 'nav':
+        return 'nav';
+      default:
+        return 'tab';
+    }
   };
   
-  const variantClasses = {
-    line: isActive
-      ? 'border-b-2 border-blue-500 text-blue-500 -mb-[1px]'
-      : 'text-gray-600 hover:text-gray-900 hover:border-b-2 hover:border-gray-300 -mb-[1px]',
-    boxed: isActive
-      ? 'bg-white border border-gray-200 border-b-white -mb-[1px] rounded-t-md text-gray-900'
-      : 'border border-transparent hover:bg-gray-50 text-gray-600 hover:text-gray-900',
-    pills: isActive
-      ? 'bg-blue-500 text-white rounded-full'
-      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full'
+  // Custom styles for boxed variant
+  const getCustomStyles = (): React.CSSProperties | undefined => {
+    if (variant === 'boxed') {
+      return {
+        borderTopLeftRadius: 'var(--radius)',
+        borderTopRightRadius: 'var(--radius)',
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        marginBottom: '-1px',
+        backgroundColor: isActive ? 'rgb(var(--background))' : 'transparent',
+        borderTop: isActive ? '1px solid rgb(var(--border))' : '1px solid transparent',
+        borderLeft: isActive ? '1px solid rgb(var(--border))' : '1px solid transparent',
+        borderRight: isActive ? '1px solid rgb(var(--border))' : '1px solid transparent',
+        borderBottom: isActive ? '1px solid rgb(var(--background))' : '1px solid transparent',
+      };
+    }
+    if (variant === 'line') {
+      // Remove the bottom border from tab buttons since we draw the indicator separately
+      return {
+        borderBottom: 'none',
+        marginBottom: '0'
+      };
+    }
+    return undefined;
   };
-  
-  const baseClasses = 'font-medium transition-all duration-200 focus:outline-none';
-  const widthClass = fullWidth ? 'flex-1' : '';
-  
-  const combinedClassName = [
-    baseClasses,
-    sizeClasses[size],
-    variantClasses[variant],
-    widthClass,
-    className
-  ].filter(Boolean).join(' ');
   
   return (
-    <button
-      ref={ref}
-      type="button"
+    <Button
+      variant={getButtonVariant()}
+      size={size as any}
+      fullWidth={fullWidth}
+      icon={icon}
+      iconPosition="left"
+      isActive={isActive}
+      onClick={handleClick}
+      disabled={disabled}
+      animationType="none" // Tabs have their own animations
+      showRipple={true} // Ensure ripple is enabled
+      style={getCustomStyles()}
+      data-value={value}
       role="tab"
       aria-selected={isActive}
-      className={combinedClassName}
-      onClick={handleClick}
-      {...props}
     >
       {children}
-    </button>
+    </Button>
   );
-});
+};
 
 TabsTrigger.displayName = 'TabsTrigger';
 
 export interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
+  keepMounted?: boolean; // Keep content in DOM when not active
 }
 
 export const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(({
   children,
   value,
-  className = '',
+  keepMounted = false,
+  style,
   ...props
 }, ref) => {
   const context = useContext(TabsContext);
@@ -196,16 +291,48 @@ export const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(({
   }
   
   const { activeTab } = context;
+  const isActive = activeTab === value;
   
-  if (activeTab !== value) {
+  if (!isActive && !keepMounted) {
     return null;
   }
+  
+  const contentStyle: React.CSSProperties = {
+    marginTop: '24px',
+    display: isActive ? 'block' : 'none',
+    animation: isActive ? 'fadeIn 0.3s ease-out' : undefined,
+    ...style
+  };
+  
+  // Add fade animation
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const styleId = 'qwanyx-tab-content-animation';
+      if (!document.getElementById(styleId)) {
+        const styleTag = document.createElement('style');
+        styleTag.id = styleId;
+        styleTag.textContent = `
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `;
+        document.head.appendChild(styleTag);
+      }
+    }
+  }, []);
   
   return (
     <div
       ref={ref}
       role="tabpanel"
-      className={`mt-6 ${className}`}
+      style={contentStyle}
       {...props}
     >
       {children}
@@ -221,12 +348,14 @@ export interface SimpleTabsProps {
     id: string;
     label: string;
     content: React.ReactNode;
+    icon?: React.ReactNode;
     disabled?: boolean;
   }>;
   defaultTab?: string;
-  variant?: 'line' | 'boxed' | 'pills';
+  variant?: 'line' | 'boxed' | 'pills' | 'segment' | 'nav';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
+  orientation?: 'horizontal' | 'vertical';
   className?: string;
 }
 
@@ -236,17 +365,29 @@ export const SimpleTabs: React.FC<SimpleTabsProps> = ({
   variant = 'line',
   size = 'md',
   fullWidth = false,
+  orientation = 'horizontal',
   className = ''
 }) => {
   const defaultValue = defaultTab || tabs[0]?.id;
   
   return (
-    <Tabs defaultValue={defaultValue} className={className}>
-      <TabsList variant={variant} size={size} fullWidth={fullWidth}>
+    <Tabs 
+      defaultValue={defaultValue} 
+      variant={variant}
+      orientation={orientation}
+      className={className}
+    >
+      <TabsList 
+        variant={variant} 
+        size={size} 
+        fullWidth={fullWidth}
+        orientation={orientation}
+      >
         {tabs.map((tab) => (
           <TabsTrigger
             key={tab.id}
             value={tab.id}
+            icon={tab.icon}
             disabled={tab.disabled}
           >
             {tab.label}

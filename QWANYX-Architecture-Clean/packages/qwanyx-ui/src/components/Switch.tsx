@@ -51,43 +51,7 @@ export interface SwitchProps {
   required?: boolean;
 }
 
-const sizeClasses = {
-  xs: {
-    track: 'qwanyx-w-6 qwanyx-h-3',
-    thumb: 'qwanyx-w-2 qwanyx-h-2',
-    translate: 'qwanyx-translate-x-3',
-  },
-  sm: {
-    track: 'qwanyx-w-8 qwanyx-h-4',
-    thumb: 'qwanyx-w-3 qwanyx-h-3',
-    translate: 'qwanyx-translate-x-4',
-  },
-  md: {
-    track: 'qwanyx-w-11 qwanyx-h-6',
-    thumb: 'qwanyx-w-5 qwanyx-h-5',
-    translate: 'qwanyx-translate-x-5',
-  },
-  lg: {
-    track: 'qwanyx-w-14 qwanyx-h-7',
-    thumb: 'qwanyx-w-6 qwanyx-h-6',
-    translate: 'qwanyx-translate-x-7',
-  },
-  xl: {
-    track: 'qwanyx-w-16 qwanyx-h-8',
-    thumb: 'qwanyx-w-7 qwanyx-h-7',
-    translate: 'qwanyx-translate-x-8',
-  },
-};
-
-const colorClasses = {
-  primary: 'qwanyx-bg-primary',
-  secondary: 'qwanyx-bg-secondary',
-  accent: 'qwanyx-bg-accent',
-  success: 'qwanyx-bg-success',
-  warning: 'qwanyx-bg-warning',
-  error: 'qwanyx-bg-error',
-  info: 'qwanyx-bg-info',
-};
+// Size and color mappings are now handled with inline styles
 
 /**
  * Switch component for binary choices
@@ -131,6 +95,40 @@ export const Switch: React.FC<SwitchProps> = ({
     }
   };
 
+  const trackSizes = {
+    xs: { width: '24px', height: '12px' },
+    sm: { width: '32px', height: '16px' },
+    md: { width: '44px', height: '24px' },
+    lg: { width: '56px', height: '28px' },
+    xl: { width: '64px', height: '32px' },
+  };
+
+  const thumbSizes = {
+    xs: { width: '8px', height: '8px' },
+    sm: { width: '12px', height: '12px' },
+    md: { width: '20px', height: '20px' },
+    lg: { width: '24px', height: '24px' },
+    xl: { width: '28px', height: '28px' },
+  };
+
+  const thumbTranslate = {
+    xs: isChecked ? '14px' : '2px',
+    sm: isChecked ? '18px' : '2px',
+    md: isChecked ? '22px' : '2px',
+    lg: isChecked ? '30px' : '2px',
+    xl: isChecked ? '34px' : '2px',
+  };
+
+  const bgColors = {
+    primary: 'rgb(59 130 246)',
+    secondary: 'rgb(168 85 247)',
+    accent: 'rgb(34 197 94)',
+    success: 'rgb(34 197 94)',
+    warning: 'rgb(250 204 21)',
+    error: 'rgb(239 68 68)',
+    info: 'rgb(59 130 246)',
+  };
+
   const switchElement = (
     <>
       <button
@@ -142,25 +140,32 @@ export const Switch: React.FC<SwitchProps> = ({
         disabled={disabled}
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
-        className={`
-          qwanyx-relative qwanyx-inline-flex qwanyx-shrink-0 qwanyx-cursor-pointer
-          qwanyx-rounded-full qwanyx-border-2 qwanyx-border-transparent
-          qwanyx-transition-colors qwanyx-duration-200 qwanyx-ease-in-out
-          focus:qwanyx-outline-none focus:qwanyx-ring-2 focus:qwanyx-ring-offset-2 focus:qwanyx-ring-primary
-          ${sizeClasses[size].track}
-          ${isChecked ? colorClasses[color] : 'qwanyx-bg-gray-300'}
-          ${disabled ? 'qwanyx-opacity-50 qwanyx-cursor-not-allowed' : ''}
-        `}
+        style={{
+          position: 'relative',
+          display: 'inline-flex',
+          ...trackSizes[size],
+          backgroundColor: isChecked ? bgColors[color] : 'rgb(209 213 219)',
+          borderRadius: '9999px',
+          border: '2px solid transparent',
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          opacity: disabled ? 0.5 : 1,
+          transition: 'background-color 200ms ease-in-out',
+          outline: 'none',
+        }}
       >
         <span
           aria-hidden="true"
-          className={`
-            qwanyx-pointer-events-none qwanyx-inline-block qwanyx-rounded-full
-            qwanyx-bg-white qwanyx-shadow-lg qwanyx-transform qwanyx-ring-0
-            qwanyx-transition-transform qwanyx-duration-200 qwanyx-ease-in-out
-            ${sizeClasses[size].thumb}
-            ${isChecked ? sizeClasses[size].translate : 'qwanyx-translate-x-0.5'}
-          `}
+          style={{
+            position: 'absolute',
+            ...thumbSizes[size],
+            backgroundColor: 'white',
+            borderRadius: '9999px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+            transform: `translateX(${thumbTranslate[size]})`,
+            transition: 'transform 200ms ease-in-out',
+            top: '50%',
+            marginTop: `-${parseInt(thumbSizes[size].height) / 2}px`,
+          }}
         />
       </button>
       {/* Hidden input for form submission */}
@@ -186,23 +191,26 @@ export const Switch: React.FC<SwitchProps> = ({
 
   return (
     <label 
-      className={`
-        qwanyx-inline-flex qwanyx-items-center qwanyx-gap-3
-        ${disabled ? 'qwanyx-cursor-not-allowed qwanyx-opacity-50' : 'qwanyx-cursor-pointer'}
-        ${className}
-      `}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '12px',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.5 : 1,
+      }}
+      className={className}
     >
       {labelPosition === 'left' && (
-        <span className="qwanyx-select-none">
+        <span style={{ userSelect: 'none' }}>
           {label}
-          {required && <span className="qwanyx-text-error qwanyx-ml-1">*</span>}
+          {required && <span style={{ color: 'rgb(239 68 68)', marginLeft: '4px' }}>*</span>}
         </span>
       )}
       {switchElement}
       {labelPosition === 'right' && (
-        <span className="qwanyx-select-none">
+        <span style={{ userSelect: 'none' }}>
           {label}
-          {required && <span className="qwanyx-text-error qwanyx-ml-1">*</span>}
+          {required && <span style={{ color: 'rgb(239 68 68)', marginLeft: '4px' }}>*</span>}
         </span>
       )}
     </label>
@@ -226,15 +234,21 @@ export const SwitchGroup: React.FC<SwitchGroupProps> = ({
   return (
     <div className={className}>
       {label && (
-        <div className="qwanyx-text-sm qwanyx-font-medium qwanyx-text-foreground qwanyx-mb-3">
+        <div style={{ 
+          fontSize: '14px', 
+          fontWeight: '500', 
+          marginBottom: '12px' 
+        }}>
           {label}
         </div>
       )}
       <div 
-        className={`
-          qwanyx-flex
-          ${orientation === 'vertical' ? 'qwanyx-flex-col qwanyx-space-y-3' : 'qwanyx-flex-row qwanyx-flex-wrap qwanyx-gap-4'}
-        `}
+        style={{
+          display: 'flex',
+          flexDirection: orientation === 'vertical' ? 'column' : 'row',
+          gap: orientation === 'vertical' ? '12px' : '16px',
+          flexWrap: orientation === 'horizontal' ? 'wrap' : undefined,
+        }}
       >
         {children}
       </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container } from './Container';
+import { Button } from './Button';
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   fixed?: boolean;
@@ -122,45 +123,36 @@ export const NavbarItem = React.forwardRef<HTMLDivElement, NavbarItemProps>(({
   href,
   onClick
 }, ref) => {
-  const combinedClassName = [
-    'qwanyx-navbar__item',
-    active && 'qwanyx-navbar__item--active',
-    className
-  ].filter(Boolean).join(' ');
-  
-  if (Component === 'a' || href) {
-    return (
-      <a 
-        ref={ref as any}
-        className={combinedClassName}
-        href={href}
-        onClick={onClick}
-      >
-        {children}
-      </a>
-    );
-  }
-  
-  if (Component === 'button') {
-    return (
-      <button
-        ref={ref as any}
-        className={combinedClassName}
-        onClick={onClick}
-      >
-        {children}
-      </button>
-    );
-  }
-  
+  // Use Button component for consistent ripple effect
   return (
-    <div
-      ref={ref}
-      className={combinedClassName}
-      onClick={onClick}
+    <Button
+      ref={ref as any}
+      variant="ghost"
+      isActive={active}
+      onClick={(e) => {
+        // If href is provided, navigate
+        if (href) {
+          window.location.href = href;
+        }
+        onClick?.();
+      }}
+      showRipple={true}
+      animationType="none"
+      className={className}
+      style={{
+        padding: '8px 16px',
+        borderRadius: 'var(--radius)',
+        fontWeight: active ? 600 : 500,
+        color: active ? 'rgb(var(--primary))' : 'rgb(var(--text))',
+        backgroundColor: active ? 'rgba(var(--primary), 0.1)' : 'transparent',
+        border: 'none',
+        height: 'auto',
+        transition: 'all 0.2s ease',
+        textDecoration: 'none',
+      }}
     >
       {children}
-    </div>
+    </Button>
   );
 });
 

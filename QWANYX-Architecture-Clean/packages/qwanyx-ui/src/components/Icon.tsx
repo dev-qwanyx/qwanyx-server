@@ -1,5 +1,4 @@
-import React from 'react'
-import '../styles/components/icon.css'
+import React, { useEffect } from 'react'
 
 export interface IconProps {
   name: string
@@ -201,6 +200,20 @@ const iconNameMap: Record<string, string> = {
   'Palette': 'palette'
 }
 
+// Ensure Material Symbols fonts are loaded
+const ensureFontsLoaded = () => {
+  if (typeof document === 'undefined') return
+  
+  const linkId = 'qwanyx-material-symbols-font'
+  if (!document.getElementById(linkId)) {
+    const link = document.createElement('link')
+    link.id = linkId
+    link.rel = 'stylesheet'
+    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap'
+    document.head.appendChild(link)
+  }
+}
+
 export const Icon: React.FC<IconProps> = ({
   name,
   size = 'md',
@@ -212,69 +225,99 @@ export const Icon: React.FC<IconProps> = ({
   onClick,
   spin = false
 }) => {
+  useEffect(() => {
+    ensureFontsLoaded()
+  }, [])
   // Convert icon name to Material Symbols name
   const symbolName = iconNameMap[name] || name
     .replace(/([a-z])([A-Z])/g, '$1_$2')
     .toLowerCase()
     .trim()
   
-  const sizeClasses = {
-    'xs': 'qwanyx-icon-xs',
-    'sm': 'qwanyx-icon-sm',
-    'md': 'qwanyx-icon-md',
-    'lg': 'qwanyx-icon-lg',
-    'xl': 'qwanyx-icon-xl',
-    '2xl': 'qwanyx-icon-2xl',
-    '3xl': 'qwanyx-icon-3xl'
+  const sizes = {
+    'xs': { fontSize: '16px', width: '16px', height: '16px' },
+    'sm': { fontSize: '20px', width: '20px', height: '20px' },
+    'md': { fontSize: '24px', width: '24px', height: '24px' },
+    'lg': { fontSize: '28px', width: '28px', height: '28px' },
+    'xl': { fontSize: '32px', width: '32px', height: '32px' },
+    '2xl': { fontSize: '40px', width: '40px', height: '40px' },
+    '3xl': { fontSize: '48px', width: '48px', height: '48px' }
   }
   
-  const colorClasses = {
-    'primary': 'qwanyx-icon-primary',
-    'secondary': 'qwanyx-icon-secondary',
-    'accent': 'qwanyx-icon-accent',
-    'success': 'qwanyx-icon-success',
-    'warning': 'qwanyx-icon-warning',
-    'error': 'qwanyx-icon-error',
-    'info': 'qwanyx-icon-info',
-    'inherit': 'qwanyx-icon-inherit',
-    'foreground': 'qwanyx-icon-foreground',
-    'muted': 'qwanyx-icon-muted'
+  const colors = {
+    'primary': 'rgb(59 130 246)',
+    'secondary': 'rgb(168 85 247)',
+    'accent': 'rgb(34 197 94)',
+    'success': 'rgb(34 197 94)',
+    'warning': 'rgb(250 204 21)',
+    'error': 'rgb(239 68 68)',
+    'info': 'rgb(59 130 246)',
+    'inherit': 'inherit',
+    'foreground': 'rgb(15 23 42)',
+    'muted': 'rgb(148 163 184)'
   }
   
-  const variantClasses = {
-    'outlined': 'material-symbols-outlined',
-    'filled': 'material-symbols-filled',
-    'rounded': 'material-symbols-rounded',
-    'sharp': 'material-symbols-sharp'
+  const fontWeights = {
+    'thin': 100,
+    'light': 300,
+    'regular': 400,
+    'medium': 500,
+    'bold': 700
   }
   
-  const weightClasses = {
-    'thin': 'qwanyx-icon-thin',
-    'light': 'qwanyx-icon-light',
-    'regular': 'qwanyx-icon-regular',
-    'medium': 'qwanyx-icon-medium',
-    'bold': 'qwanyx-icon-bold'
+  // Material Symbols font family based on variant
+  const fontFamily = {
+    'outlined': 'Material Symbols Outlined',
+    'filled': 'Material Symbols Filled', 
+    'rounded': 'Material Symbols Rounded',
+    'sharp': 'Material Symbols Sharp'
   }
   
-  const classes = [
-    'qwanyx-icon',
-    variantClasses[variant],
-    sizeClasses[size],
-    colorClasses[color],
-    weightClasses[weight],
-    onClick ? 'qwanyx-icon-clickable' : '',
-    spin ? 'qwanyx-icon-spin' : '',
-    className
-  ].filter(Boolean).join(' ')
+  const iconStyle = {
+    fontFamily: fontFamily[variant],
+    fontWeight: fontWeights[weight],
+    fontSize: sizes[size].fontSize,
+    width: sizes[size].width,
+    height: sizes[size].height,
+    color: colors[color],
+    display: 'inline-block',
+    lineHeight: 1,
+    textTransform: 'none' as const,
+    letterSpacing: 'normal',
+    wordWrap: 'normal' as const,
+    whiteSpace: 'nowrap' as const,
+    direction: 'ltr' as const,
+    cursor: onClick ? 'pointer' : 'default',
+    userSelect: 'none' as const,
+    transition: 'color 200ms ease, transform 200ms ease',
+    animation: spin ? 'spin 1s linear infinite' : undefined,
+    ...style
+  }
+  
+  // Add spin animation via style tag if needed
+  if (spin && typeof document !== 'undefined') {
+    const styleId = 'qwanyx-icon-spin-animation'
+    if (!document.getElementById(styleId)) {
+      const styleTag = document.createElement('style')
+      styleTag.id = styleId
+      styleTag.textContent = `
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `
+      document.head.appendChild(styleTag)
+    }
+  }
   
   return (
     <span 
-      className={classes}
-      style={style}
+      style={iconStyle}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       aria-label={name}
+      className={className}
     >
       {symbolName}
     </span>

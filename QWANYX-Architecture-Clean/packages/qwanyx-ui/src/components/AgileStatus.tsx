@@ -1,9 +1,6 @@
 import React from 'react';
 import { Icon } from './Icon';
-import { Badge } from './Badge';
 import { Progress } from './Progress';
-import { Flex } from './Container';
-import { Text } from './Text';
 
 export type AgileStatus = 'backlog' | 'todo' | 'doing' | 'review' | 'done' | 'blocked' | 'validated' | 'archived';
 
@@ -197,12 +194,10 @@ export const AgileStatusBadge: React.FC<AgileStatusBadgeProps> = ({
   status,
   progress,
   showIcon = true,
-  size = 'md',
   variant = 'solid',
   className = ''
 }) => {
   const config = statusConfig[status];
-  const actualProgress = progress ?? config.defaultProgress;
   
   const statusBgColors = {
     backlog: 'rgb(148 163 184)', // Gray

@@ -24,23 +24,7 @@ export interface SpinnerProps {
   label?: string;
 }
 
-const sizeClasses = {
-  xs: 'qwanyx-w-3 qwanyx-h-3',
-  sm: 'qwanyx-w-4 qwanyx-h-4',
-  md: 'qwanyx-w-6 qwanyx-h-6',
-  lg: 'qwanyx-w-8 qwanyx-h-8',
-  xl: 'qwanyx-w-12 qwanyx-h-12',
-};
-
-const colorClasses = {
-  primary: 'qwanyx-text-primary',
-  secondary: 'qwanyx-text-secondary',
-  accent: 'qwanyx-text-accent',
-  success: 'qwanyx-text-success',
-  warning: 'qwanyx-text-warning',
-  error: 'qwanyx-text-error',
-  info: 'qwanyx-text-info',
-};
+// Size and color mappings are now handled in the Icon component
 
 /**
  * Spinner component for loading states
