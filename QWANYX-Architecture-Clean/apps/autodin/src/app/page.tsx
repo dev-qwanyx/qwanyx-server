@@ -8,12 +8,7 @@ import {
   Heading, 
   Text, 
   Button,
-  Navbar,
-  NavbarBrand,
-  NavbarLogo,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenu,
+  SuperNavbar,
   ServiceCard,
   Grid,
   HeroWithFlipSection,
@@ -41,48 +36,45 @@ function AppContent() {
   
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'rgb(var(--background))' }}>
-      <Navbar position="fixed">
-        <NavbarBrand>
-          <NavbarLogo src="/images/logo.png" alt="Autodin" />
-          <Text size="lg" weight="bold">Autodin</Text>
-        </NavbarBrand>
-        <NavbarContent justify="center">
-          <NavbarItem 
-            isActive={activeSection === 'details'}
-            onClick={() => {
+      <SuperNavbar
+        logo="/images/logo.png"
+        title="Autodin"
+        subtitle="La Marketplace #1 des Pièces Auto"
+        position="sticky"
+        transparent={true}
+        blur={true}
+        elevated={true}
+        search={true}
+        searchPlaceholder="Rechercher des pièces..."
+        items={[
+          { 
+            label: 'Accueil',
+            onClick: () => {
               setActiveSection('details')
               setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100)
-            }}
-          >
-            Accueil
-          </NavbarItem>
-          <NavbarItem 
-            isActive={activeSection === 'services'}
-            onClick={() => {
+            }
+          },
+          { 
+            label: 'Services',
+            onClick: () => {
               setActiveSection('services')
               setTimeout(() => scrollToSection('services'), 100)
-            }}
-          >
-            Services
-          </NavbarItem>
-          <NavbarItem 
-            isActive={activeSection === 'contact'}
-            onClick={() => {
+            }
+          },
+          { 
+            label: 'Contact',
+            onClick: () => {
               setActiveSection('contact')
               setTimeout(() => scrollToSection('contact'), 100)
-            }}
-          >
-            Contact
-          </NavbarItem>
-        </NavbarContent>
-        <NavbarContent justify="end">
-          <NavbarItem>
-            <Button variant="outline" size="sm">
-              Se connecter
-            </Button>
-          </NavbarItem>
-        </NavbarContent>
-      </Navbar>
+            }
+          }
+        ]}
+        primaryAction={{
+          label: 'Se connecter',
+          onClick: () => console.log('Login'),
+          icon: 'login'
+        }}
+      />
       
       <main>
         <HeroWithFlipSection
@@ -116,7 +108,7 @@ function AppContent() {
             <Heading as="h2" size="5xl" align="center" style={{ color: '#E67E22' }}>
               Nos Services
             </Heading>
-            <Grid columns={3} gap="xl">
+            <Grid cols={3} gap="xl">
               <ServiceCard
                 icon="search"
                 title="Recherche Avancée"

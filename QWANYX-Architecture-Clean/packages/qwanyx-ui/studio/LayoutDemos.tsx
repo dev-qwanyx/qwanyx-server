@@ -73,14 +73,14 @@ const generateImageCard = (index: number, height?: string) => (
 // Grid Layout Demo
 export const GridLayoutDemo: React.FC<{ onClose: () => void }> = () => {
   return (
-    <Container maxWidth="1400px" padding="xl">
+    <Container  padding="xl">
       <VStack spacing="2xl">
         {/* 12-column demonstration */}
         <section>
           <Text as="h3" size="xl" weight="semibold" style={{ marginBottom: '21px' }}>
             12-Column Grid System
           </Text>
-          <Grid columns={12} gap="md">
+          <Grid cols={12} gap="md">
             <GridItem span={12}>
               {generateCard(0, 'gradient', 'Full Width (12 columns)')}
             </GridItem>
@@ -125,7 +125,7 @@ export const GridLayoutDemo: React.FC<{ onClose: () => void }> = () => {
           <Text as="h3" size="xl" weight="semibold" style={{ marginBottom: '21px' }}>
             Auto-Fit Responsive Grid
           </Text>
-          <Grid columns="auto" gap="lg" minChildWidth="300px">
+          <Grid cols="auto" gap="lg" minChildWidth="300px">
             {Array.from({ length: 9 }).map((_, i) => generateCard(i))}
           </Grid>
         </section>
@@ -138,19 +138,19 @@ export const GridLayoutDemo: React.FC<{ onClose: () => void }> = () => {
           <VStack spacing="lg">
             <div>
               <Text size="sm" color="muted" style={{ marginBottom: '8px' }}>Gap: xs (8px)</Text>
-              <Grid columns={4} gap="xs">
+              <Grid cols={4} gap="xs">
                 {Array.from({ length: 4 }).map((_, i) => generateCard(i, 'outlined'))}
               </Grid>
             </div>
             <div>
               <Text size="sm" color="muted" style={{ marginBottom: '8px' }}>Gap: md (21px)</Text>
-              <Grid columns={4} gap="md">
+              <Grid cols={4} gap="md">
                 {Array.from({ length: 4 }).map((_, i) => generateCard(i, 'glass'))}
               </Grid>
             </div>
             <div>
               <Text size="sm" color="muted" style={{ marginBottom: '8px' }}>Gap: xl (55px)</Text>
-              <Grid columns={4} gap="xl">
+              <Grid cols={4} gap="xl">
                 {Array.from({ length: 4 }).map((_, i) => generateCard(i, 'gradient'))}
               </Grid>
             </div>
@@ -164,7 +164,7 @@ export const GridLayoutDemo: React.FC<{ onClose: () => void }> = () => {
 // Flexbox Layout Demo
 export const FlexLayoutDemo: React.FC<{ onClose: () => void }> = () => {
   return (
-    <Container maxWidth="1400px" padding="xl">
+    <Container  padding="xl">
       <VStack spacing="2xl">
         {/* Justify options */}
         <section>
@@ -260,7 +260,7 @@ export const FlexLayoutDemo: React.FC<{ onClose: () => void }> = () => {
 // Stack Layout Demo
 export const StackLayoutDemo: React.FC<{ onClose: () => void }> = () => {
   return (
-    <Container maxWidth="1400px" padding="xl">
+    <Container  padding="xl">
       <VStack spacing="2xl">
         {/* VStack with dividers */}
         <section>
@@ -353,13 +353,13 @@ export const MasonryLayoutDemo: React.FC<{ onClose: () => void }> = () => {
   const heights = [200, 300, 250, 400, 350, 280, 320, 260, 380, 300, 340, 290];
   
   return (
-    <Container maxWidth="1400px" padding="xl">
+    <Container  padding="xl">
       <VStack spacing="2xl">
         <section>
           <Text as="h3" size="xl" weight="semibold" style={{ marginBottom: '21px' }}>
             Pinterest-Style Masonry Grid
           </Text>
-          <Masonry columns="auto" gap="lg">
+          <Masonry cols="auto" gap="lg">
             {heights.map((height, i) => (
               <Card 
                 key={i} 
@@ -446,7 +446,7 @@ export const HolyGrailLayoutDemo: React.FC<{ onClose: () => void }> = () => {
           <Text color="muted">
             The Holy Grail layout is perfect for dashboards, admin panels, and content-heavy applications.
           </Text>
-          <Grid columns={2} gap="md">
+          <Grid cols={2} gap="md">
             {Array.from({ length: 6 }).map((_, i) => generateCard(i))}
           </Grid>
         </VStack>
@@ -458,7 +458,7 @@ export const HolyGrailLayoutDemo: React.FC<{ onClose: () => void }> = () => {
 // Magazine Layout Demo
 export const MagazineLayoutDemo: React.FC<{ onClose: () => void }> = () => {
   return (
-    <Container maxWidth="1400px" padding="xl">
+    <Container  padding="xl">
       <MagazineLayout
         hero={
           <Card variant="gradient" gradientFrom="#667eea" gradientTo="#764ba2">
@@ -521,7 +521,7 @@ export const MagazineLayoutDemo: React.FC<{ onClose: () => void }> = () => {
       >
         <VStack spacing="xl">
           <Text as="h2" size="2xl" weight="bold">Latest Articles</Text>
-          <Grid columns={2} gap="lg">
+          <Grid cols={2} gap="lg">
             {Array.from({ length: 6 }).map((_, i) => generateCard(i))}
           </Grid>
         </VStack>
@@ -533,7 +533,7 @@ export const MagazineLayoutDemo: React.FC<{ onClose: () => void }> = () => {
 // Split Layout Demo
 export const SplitLayoutDemo: React.FC<{ onClose: () => void }> = () => {
   return (
-    <Container maxWidth="1400px" padding="xl">
+    <Container  padding="xl">
       <VStack spacing="2xl">
         <section>
           <Text as="h3" size="xl" weight="semibold" style={{ marginBottom: '21px' }}>
@@ -653,7 +653,7 @@ export const BentoLayoutDemo: React.FC<{ onClose: () => void }> = () => {
   ];
 
   return (
-    <Container maxWidth="1400px" padding="xl">
+    <Container  padding="xl">
       <VStack spacing="xl">
         <Text as="h3" size="xl" weight="semibold">
           Japanese-Inspired Bento Grid
@@ -712,7 +712,7 @@ export const BentoLayoutDemo: React.FC<{ onClose: () => void }> = () => {
 // Asymmetric Layout Demo
 export const AsymmetricLayoutDemo: React.FC<{ onClose: () => void }> = () => {
   return (
-    <Container maxWidth="1400px" padding="xl">
+    <Container  padding="xl">
       <VStack spacing="2xl">
         <section>
           <Text as="h3" size="xl" weight="semibold" style={{ marginBottom: '21px' }}>

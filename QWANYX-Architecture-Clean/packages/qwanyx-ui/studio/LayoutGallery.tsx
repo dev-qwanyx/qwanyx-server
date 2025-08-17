@@ -194,7 +194,7 @@ export const LayoutGallery: React.FC = () => {
         </Center>
 
         {/* Layout cards grid */}
-        <Grid columns={3} gap="lg" minChildWidth="320px">
+        <Grid cols={3} gap="lg" minChildWidth="320px">
           {layouts.map((layout) => (
             <Card
               key={layout.id}

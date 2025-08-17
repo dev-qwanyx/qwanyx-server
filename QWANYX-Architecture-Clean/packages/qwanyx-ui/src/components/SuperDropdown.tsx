@@ -218,22 +218,22 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
   showBadges = false,
   showCheckboxes = false,
   grouped = false,
-  nested = false,
-  showBreadcrumbs = false,
+  nested: _nested = false,
+  showBreadcrumbs: _showBreadcrumbs = false,
   maxRecentItems = 5,
   showPinnedSection = false,
-  virtualScroll = false,
+  virtualScroll: _virtualScroll = false,
   itemHeight = 40,
   maxHeight = 600,
-  asyncLoad,
+  asyncLoad: _asyncLoad,
   loading = false,
   clearable = false,
   closeOnSelect = true,
-  blurOnSelect = true,
-  openOnFocus = false,
-  autoFocus = false,
+  blurOnSelect: _blurOnSelect = true,
+  openOnFocus: _openOnFocus = false,
+  autoFocus: _autoFocus = false,
   animation = 'spring',
-  animationDuration = 200,
+  animationDuration: _animationDuration = 200,
   size = 'md',
   variant = 'default',
   color = 'primary',
@@ -241,9 +241,9 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
   className = '',
   dropdownClassName = '',
   position = 'auto',
-  align = 'start',
+  align: _align = 'start',
   offset = 4,
-  onOpen,
+  onOpen: _onOpen,
   onClose,
   onSearch,
   onCreate,
@@ -253,7 +253,7 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [recentItems, setRecentItems] = useState<string[]>([]);
-  const [pinnedItems, setPinnedItems] = useState<string[]>([]);
+  const [pinnedItems, _setPinnedItems] = useState<string[]>([]);
   const [previewOption, setPreviewOption] = useState<DropdownOption | null>(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0, height: 400 });
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(-1);
@@ -372,14 +372,14 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
           const spaceBelow = viewportHeight - rect.bottom;
           const spaceAbove = rect.top;
           
-          let actualPosition = position;
+          // let _actualPosition = position;
           
           if (position === 'auto') {
             if (spaceBelow < maxHeight && spaceAbove > spaceBelow) {
               top = rect.top - maxHeight - offset;
-              actualPosition = 'top';
+              // actualPosition = 'top';
             } else {
-              actualPosition = 'bottom';
+              // actualPosition = 'bottom';
             }
           } else if (position === 'top') {
             top = rect.top - maxHeight - offset;
@@ -626,15 +626,15 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
   };
   
   // Color mappings
-  const colors = {
-    primary: 'var(--primary)',
-    secondary: 'var(--secondary)',
-    accent: 'var(--accent)',
-    success: 'var(--success)',
-    warning: 'var(--warning)',
-    error: 'var(--error)',
-    info: 'var(--info)',
-  };
+  // const _colors = {
+  //   primary: 'var(--primary)',
+  //   secondary: 'var(--secondary)',
+  //   accent: 'var(--accent)',
+  //   success: 'var(--success)',
+  //   warning: 'var(--warning)',
+  //   error: 'var(--error)',
+  //   info: 'var(--info)',
+  // };
   
   // Render option content
   const renderOption = (option: DropdownOption, index: number) => {
@@ -716,7 +716,7 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
           typeof option.icon === 'string' && option.icon.length === 1 ? (
             <div style={{ fontSize: '24px', flexShrink: 0 }}>{option.icon}</div>
           ) : typeof option.icon === 'string' ? (
-            <Icon name={option.icon} size="sm" color={option.color || color} />
+            <Icon name={option.icon} size="sm" color={(option.color || color) as 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error' | 'info' | 'inherit' | 'foreground' | 'muted'} />
           ) : (
             <div style={{ fontSize: '24px', flexShrink: 0 }}>{option.icon}</div>
           )
@@ -1082,7 +1082,7 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
                     onSearch?.(e.target.value);
                   }}
                   placeholder={searchPlaceholder}
-                  size={size}
+                  inputSize={size}
                   icon={<Icon name="search" size="sm" />}
                   iconPosition="left"
                   autoFocus
@@ -1243,7 +1243,7 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
                       marginTop: '8px',
                     }}
                   >
-                    <Icon name="add" size="sm" color={color} />
+                    <Icon name="add" size="sm" color={color as 'primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error' | 'info' | 'inherit' | 'foreground' | 'muted'} />
                     <span>Create "{searchValue}"</span>
                   </div>
                 )}

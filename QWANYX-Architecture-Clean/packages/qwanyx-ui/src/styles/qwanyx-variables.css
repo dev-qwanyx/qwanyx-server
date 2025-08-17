@@ -66,6 +66,13 @@
   --z-popover: 1040;
   --z-tooltip: 1050;
   --z-toast: 1060;
+  
+  /* Container Max Widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
 }
 
 /* Dark Mode - Automatically switches with system preference */

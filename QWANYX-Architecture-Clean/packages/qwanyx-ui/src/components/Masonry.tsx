@@ -161,7 +161,7 @@ export const AdvancedMasonry = React.forwardRef<HTMLDivElement, AdvancedMasonryP
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [columnCount, setColumnCount] = useState(3);
-  const [layout, setLayout] = useState<{ [key: number]: number }>({});
+  const [_layout, _setLayout] = useState<{ [key: number]: number }>({});
 
   // Golden ratio based spacing
   const gaps = {
@@ -237,7 +237,7 @@ export const AdvancedMasonry = React.forwardRef<HTMLDivElement, AdvancedMasonryP
       });
 
       container.style.height = `${Math.max(...columnHeights) - gapSize}px`;
-      setLayout(newLayout);
+      _setLayout(newLayout);
     };
 
     // Delay to ensure DOM is ready

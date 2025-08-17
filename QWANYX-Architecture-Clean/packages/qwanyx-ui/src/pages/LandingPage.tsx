@@ -2,8 +2,7 @@ import React from 'react'
 import { Page } from '../components/Page'
 import { Hero, HeroTitle, HeroSubtitle, HeroContent, HeroActions } from '../components/Hero'
 import { Button } from '../components/Button'
-import { Container, Section } from '../components/Container'
-import { Grid } from '../components/Grid'
+import { Container, Section, Grid } from '../components/Container'
 import { FeaturesGrid, Feature, FeatureIcon, FeatureTitle, FeatureDescription } from '../components/Feature'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/Card'
 import { Heading, Text } from '../components/Text'
@@ -173,7 +172,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <Heading size="2xl">Pricing</Heading>
               <Text size="lg">Choose the perfect plan for your needs</Text>
             </div>
-            <Grid cols={pricing.length}>
+            <Grid cols={pricing.length as 1 | 2 | 3 | 4 | 5 | 6 | 12 | 'auto'}>
               {pricing.map((plan, index) => (
                 <Card 
                   key={index} 

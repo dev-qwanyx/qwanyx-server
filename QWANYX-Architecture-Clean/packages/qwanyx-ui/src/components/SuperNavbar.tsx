@@ -133,13 +133,12 @@ export const SuperNavbar: React.FC<SuperNavbarProps> = ({
   mobileMenuType = 'drawer',
   
   // Theming
-  dark = false,
-  color,
+  // dark = false,
+  // color = undefined,
   height = '64px',
   className = '',
   style = {},
 }) => {
-  console.log('SuperNavbar items:', items);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(searchExpanded);
   const [searchQuery, setSearchQuery] = useState('');
@@ -150,7 +149,6 @@ export const SuperNavbar: React.FC<SuperNavbarProps> = ({
   const [hidden, setHidden] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
-  console.log('isMobile:', isMobile);
   
   const navRef = useRef<HTMLElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -465,16 +463,25 @@ export const SuperNavbar: React.FC<SuperNavbarProps> = ({
               ) : logo
             )}
             {(title || subtitle) && (
-              <div>
+              <div style={{ 
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '2px'
+              }}>
                 {title && (
-                  <Text size="lg" weight="bold">
-                    {title}
-                  </Text>
+                  <span style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: 'rgb(var(--text))',
+                    lineHeight: '1.2'
+                  }}>{title}</span>
                 )}
                 {subtitle && (
-                  <Text size="xs" color="muted">
-                    {subtitle}
-                  </Text>
+                  <span style={{
+                    fontSize: '11px',
+                    color: 'rgb(var(--muted))',
+                    lineHeight: '1.2'
+                  }}>{subtitle}</span>
                 )}
               </div>
             )}

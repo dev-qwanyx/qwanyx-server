@@ -96,7 +96,7 @@ export const LayoutShowcase: React.FC = () => {
               <Text as="h2" size="2xl" weight="semibold" style={{ marginBottom: '21px' }}>
                 12-Column Grid
               </Text>
-              <Grid columns={12} gap="md">
+              <Grid cols={12} gap="md">
                 <GridItem span={4}>{generateCard(0)}</GridItem>
                 <GridItem span={4}>{generateCard(1)}</GridItem>
                 <GridItem span={4}>{generateCard(2)}</GridItem>
@@ -115,7 +115,7 @@ export const LayoutShowcase: React.FC = () => {
               <Text as="h2" size="2xl" weight="semibold" style={{ marginBottom: '21px' }}>
                 Auto-Fit Responsive Grid
               </Text>
-              <Grid columns="auto" gap="lg" minChildWidth="280px">
+              <Grid cols="auto" gap="lg" minChildWidth="280px">
                 {Array.from({ length: 8 }).map((_, i) => generateCard(i))}
               </Grid>
             </div>
@@ -126,13 +126,13 @@ export const LayoutShowcase: React.FC = () => {
                 Various Column Grids
               </Text>
               <VStack spacing="lg">
-                <Grid columns={3} gap="md">
+                <Grid cols={3} gap="md">
                   {Array.from({ length: 3 }).map((_, i) => generateCard(i, 'glass'))}
                 </Grid>
-                <Grid columns={4} gap="md">
+                <Grid cols={4} gap="md">
                   {Array.from({ length: 4 }).map((_, i) => generateCard(i, 'neon'))}
                 </Grid>
-                <Grid columns={5} gap="md">
+                <Grid cols={5} gap="md">
                   {Array.from({ length: 5 }).map((_, i) => generateCard(i, 'filled'))}
                 </Grid>
               </VStack>
@@ -278,7 +278,7 @@ export const LayoutShowcase: React.FC = () => {
               <Text as="h2" size="2xl" weight="semibold" style={{ marginBottom: '21px' }}>
                 Dynamic Masonry Grid
               </Text>
-              <Masonry columns="auto" gap="lg">
+              <Masonry cols="auto" gap="lg">
                 {Array.from({ length: 15 }).map((_, i) => 
                   generateImageCard(i, `${200 + (i % 4) * 100}`)
                 )}
@@ -335,7 +335,7 @@ export const LayoutShowcase: React.FC = () => {
               >
                 <VStack spacing="lg" style={{ padding: '20px' }}>
                   <Text as="h2" size="2xl" weight="bold">Main Content Area</Text>
-                  <Grid columns={2} gap="md">
+                  <Grid cols={2} gap="md">
                     {Array.from({ length: 4 }).map((_, i) => generateCard(i))}
                   </Grid>
                 </VStack>
@@ -390,7 +390,7 @@ export const LayoutShowcase: React.FC = () => {
               }
               gap="xl"
             >
-              <Grid columns={2} gap="lg">
+              <Grid cols={2} gap="lg">
                 {Array.from({ length: 6 }).map((_, i) => generateCard(i))}
               </Grid>
             </MagazineLayout>
@@ -574,7 +574,7 @@ export const LayoutShowcase: React.FC = () => {
               <Text as="h2" size="2xl" weight="semibold" style={{ marginBottom: '21px' }}>
                 Dashboard-Style Layout
               </Text>
-              <Grid columns={12} gap="lg">
+              <Grid cols={12} gap="lg">
                 <GridItem span={8}>
                   <VStack spacing="lg">
                     <Card variant="gradient" gradientFrom="#f093fb" gradientTo="#f5576c">
@@ -586,7 +586,7 @@ export const LayoutShowcase: React.FC = () => {
                         </Center>
                       </CardContent>
                     </Card>
-                    <Grid columns={2} gap="md">
+                    <Grid cols={2} gap="md">
                       {Array.from({ length: 4 }).map((_, i) => generateCard(i))}
                     </Grid>
                   </VStack>
@@ -620,7 +620,7 @@ export const LayoutShowcase: React.FC = () => {
               <Text as="h2" size="2xl" weight="semibold" style={{ marginBottom: '21px' }}>
                 Mixed Grid and Flex
               </Text>
-              <Grid columns={3} gap="lg">
+              <Grid cols={3} gap="lg">
                 <GridItem span={2}>
                   <Flex direction="column" gap="md">
                     {generateImageCard(0)}

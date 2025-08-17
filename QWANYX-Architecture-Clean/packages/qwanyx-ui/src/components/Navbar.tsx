@@ -118,7 +118,7 @@ export interface NavbarItemProps {
 export const NavbarItem = React.forwardRef<HTMLDivElement, NavbarItemProps>(({
   children,
   active = false,
-  as: Component = 'div',
+  as: _Component = 'div',
   className = '',
   href,
   onClick
@@ -129,7 +129,7 @@ export const NavbarItem = React.forwardRef<HTMLDivElement, NavbarItemProps>(({
       ref={ref as any}
       variant="ghost"
       isActive={active}
-      onClick={(e) => {
+      onClick={() => {
         // If href is provided, navigate
         if (href) {
           window.location.href = href;
@@ -219,7 +219,7 @@ export const SimpleNavbar: React.FC<SimpleNavbarProps> = ({
   ...props
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  const [isMobile, setIsMobile] = React.useState(false);
+  const [_isMobile, setIsMobile] = React.useState(false);
   
   React.useEffect(() => {
     const checkMobile = () => {

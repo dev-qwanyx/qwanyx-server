@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react'
 import { Icon } from '../../src/components/Icon'
-import { Container } from '../../src/components/Container'
+import { Container, Grid } from '../../src/components/Container'
 import { Heading, Text } from '../../src/components/Text'
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/Card'
-import { Grid, GridItem } from '../../src/components/Grid'
+// import { GridItem } from '../../src/components/Grid'
 import { Flex, FlexItem } from '../../src/components/Flex'
 import { HStack, VStack } from '../../src/components/Stack'
 import { Input } from '../../src/components/Input'
@@ -255,7 +255,7 @@ export const IconLibraryPage: React.FC = () => {
         {/* Icon Grid/List */}
         {viewMode === 'grid' ? (
           <Grid 
-            columns="auto" 
+            cols="auto" 
             minChildWidth="140px"
             gap="sm"
             style={{ marginTop: '0.5rem', marginBottom: '1rem' }}

@@ -34,7 +34,7 @@ import {
 export const AtomsShowcase: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
-  const [switchValue, setSwitchValue] = useState(false);
+  const [_switchValue, _setSwitchValue] = useState(false);
 
   return (
     <Container>

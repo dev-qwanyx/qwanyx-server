@@ -21,6 +21,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "studio"],
+  "include": ["src"],
+  "exclude": ["studio", "**/*.test.tsx", "**/*.stories.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

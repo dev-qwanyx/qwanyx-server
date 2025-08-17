@@ -90,10 +90,11 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(({
           // Extract triggers from TabsList
           React.Children.forEach(child.props.children, (trigger) => {
             if (React.isValidElement(trigger) && trigger.type === TabsTrigger) {
+              const triggerProps = trigger.props as TabsTriggerProps;
               triggers.push({
-                value: trigger.props.value,
-                label: trigger.props.children,
-                disabled: trigger.props.disabled
+                value: triggerProps.value,
+                label: triggerProps.children,
+                disabled: triggerProps.disabled
               });
             }
           });

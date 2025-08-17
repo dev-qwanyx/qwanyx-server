@@ -26,8 +26,10 @@ export * from './ThemeToggle'
 export * from './Icon'
 export * from './Spinner'
 export * from './Switch'
-export * from './Grid'
-export * from './Flex'
+// Grid is already exported from Container, so we skip Grid.tsx
+// export * from './Grid'
+// Flex is already exported from Container
+// export * from './Flex'
 export * from './Stack'
 export * from './Masonry'
 export * from './Layouts'
