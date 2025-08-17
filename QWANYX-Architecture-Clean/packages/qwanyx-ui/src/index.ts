@@ -205,6 +205,14 @@ export type { SpinnerProps, SpinnerWithTextProps } from './components/Spinner';
 export { Switch, SwitchGroup } from './components/Switch';
 export type { SwitchProps, SwitchGroupProps } from './components/Switch';
 
+// Checkbox (new improved version)
+export { Checkbox as CheckboxNew, CheckboxGroup } from './components/Checkbox';
+export type { CheckboxProps as CheckboxNewProps, CheckboxGroupProps } from './components/Checkbox';
+
+// Radio (new improved version)
+export { Radio as RadioNew, RadioGroup } from './components/Radio';
+export type { RadioProps as RadioNewProps, RadioGroupProps } from './components/Radio';
+
 // Progress
 export { Progress, ProgressWithLabel } from './components/Progress';
 export type { ProgressProps, ProgressWithLabelProps } from './components/Progress';
@@ -266,6 +274,18 @@ export type {
   UseFormReturn,
   SubmitHandler
 } from './components/Form';
+
+// SuperDropdown - The ultimate dropdown component
+export { 
+  SuperDropdown,
+  MultiSelect,
+  Combobox,
+  CommandPalette
+} from './components/SuperDropdown';
+export type { 
+  SuperDropdownProps,
+  DropdownOption
+} from './components/SuperDropdown';
 
 // Special Components
 

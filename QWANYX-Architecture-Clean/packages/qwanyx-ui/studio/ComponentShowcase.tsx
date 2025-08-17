@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { QwanyxTemplate } from '../src/templates/QwanyxTemplate';
+import { 
+  SuperDropdown, 
+  MultiSelect, 
+  Combobox, 
+  CommandPalette 
+} from '../src/components/SuperDropdown';
+import type { DropdownOption } from '../src/components/SuperDropdown';
 import {
   Container,
   Section,
@@ -60,10 +67,28 @@ import {
   AnimateOnClick,
 } from '../src';
 
+// Import the new Checkbox and Radio components separately
+import { Checkbox as CheckboxNew, CheckboxGroup } from '../src/components/Checkbox';
+import { Radio as RadioNew, RadioGroup } from '../src/components/Radio';
+
 export const ComponentShowcase: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Checkbox states
+  const [checkbox1, setCheckbox1] = useState(false);
+  const [checkbox2, setCheckbox2] = useState(true);
+  const [checkbox3, setCheckbox3] = useState(false);
+  const [checkbox4, setCheckbox4] = useState(false);
+  const [indeterminate, setIndeterminate] = useState(false);
+  
+  // Radio states
+  const [radioGroup1, setRadioGroup1] = useState('basic');
+  const [radioGroup2, setRadioGroup2] = useState('small');
+  const [radioGroup3, setRadioGroup3] = useState('primary');
+  const [radioGender, setRadioGender] = useState('');
+  const [radioDelivery, setRadioDelivery] = useState('standard');
   
   return (
     <Container>
@@ -288,10 +313,702 @@ export const ComponentShowcase: React.FC = () => {
           
           {/* Forms Tab */}
           <TabsContent value="forms">
-            <Grid cols={2} gap="lg">
-              <div className="qwanyx-space-y-6">
-                <div>
-                  <Heading as="h3" className="qwanyx-mb-4">Input Variants</Heading>
+            <div className="qwanyx-space-y-8">
+              {/* SuperDropdown Showcase */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>🚀 SuperDropdown - The Ultimate Dropdown</CardTitle>
+                  <CardDescription>Rich dropdowns with avatars, icons, search, multi-select, and more!</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Grid cols={2} gap="lg">
+                    {/* Rich Team Member Select */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-2">Rich Team Member Select</Text>
+                      <SuperDropdown
+                        options={[
+                          {
+                            value: 'john',
+                            label: 'John Doe',
+                            description: 'Product Designer',
+                            avatar: 'https://i.pravatar.cc/150?u=john',
+                            status: 'online',
+                            group: 'Design Team',
+                            tags: ['UI', 'UX'],
+                            badge: 'Lead',
+                          },
+                          {
+                            value: 'jane',
+                            label: 'Jane Smith',
+                            description: 'Frontend Developer',
+                            avatar: 'https://i.pravatar.cc/150?u=jane',
+                            status: 'busy',
+                            group: 'Engineering',
+                            tags: ['React', 'TypeScript'],
+                            badge: 5,
+                          },
+                          {
+                            value: 'bob',
+                            label: 'Bob Johnson',
+                            description: 'Backend Developer',
+                            avatar: 'https://i.pravatar.cc/150?u=bob',
+                            status: 'away',
+                            group: 'Engineering',
+                            tags: ['Node.js', 'Python'],
+                          },
+                        ] as DropdownOption[]}
+                        placeholder="Assign to team member..."
+                        showAvatars
+                        showDescriptions
+                        showStatus
+                        showTags
+                        showBadges
+                        grouped
+                        searchable
+                        fuzzySearch
+                        clearable
+                        size="md"
+                        animation="spring"
+                        variant="outlined"
+                      />
+                    </div>
+                    
+                    {/* Multi-Select with Icons */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-2">Multi-Select Languages</Text>
+                      <MultiSelect
+                        options={[
+                          { value: 'js', label: 'JavaScript', icon: '🟨', tags: ['Frontend', 'Backend'] },
+                          { value: 'ts', label: 'TypeScript', icon: '🔷', tags: ['Frontend', 'Backend'] },
+                          { value: 'py', label: 'Python', icon: '🐍', tags: ['Backend', 'AI'] },
+                          { value: 'go', label: 'Go', icon: '🐹', tags: ['Backend'] },
+                          { value: 'rust', label: 'Rust', icon: '🦀', tags: ['Systems'] },
+                        ] as DropdownOption[]}
+                        placeholder="Select languages..."
+                        showIcons
+                        showTags
+                        searchable
+                        size="md"
+                        variant="filled"
+                        color="secondary"
+                      />
+                    </div>
+                    
+                    {/* Command Palette Style */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-2">Command Palette (⌘K Style)</Text>
+                      <CommandPalette
+                        options={[
+                          {
+                            value: 'create',
+                            label: 'Create New Project',
+                            icon: 'add_circle',
+                            group: 'Actions',
+                            command: '⌘N',
+                          },
+                          {
+                            value: 'import',
+                            label: 'Import from CSV',
+                            icon: 'upload_file',
+                            group: 'Actions',
+                            command: '⌘I',
+                          },
+                          {
+                            value: 'export',
+                            label: 'Export Data',
+                            icon: 'download',
+                            group: 'Actions',
+                            command: '⌘E',
+                          },
+                          {
+                            value: 'preferences',
+                            label: 'Preferences',
+                            icon: 'settings',
+                            group: 'Settings',
+                            command: '⌘,',
+                          },
+                        ] as DropdownOption[]}
+                        placeholder="Type a command or search..."
+                        showIcons
+                        showDescriptions
+                        grouped
+                        size="md"
+                        variant="glass"
+                        animation="morph"
+                      />
+                    </div>
+                    
+                    {/* Countries with Flags */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-2">Countries with Flags</Text>
+                      <SuperDropdown
+                        options={[
+                          { value: 'us', label: 'United States', icon: '🇺🇸' },
+                          { value: 'gb', label: 'United Kingdom', icon: '🇬🇧' },
+                          { value: 'fr', label: 'France', icon: '🇫🇷' },
+                          { value: 'de', label: 'Germany', icon: '🇩🇪' },
+                          { value: 'jp', label: 'Japan', icon: '🇯🇵' },
+                        ] as DropdownOption[]}
+                        placeholder="Select a country..."
+                        showIcons
+                        searchable
+                        clearable
+                        size="md"
+                      />
+                    </div>
+                  </Grid>
+                </CardContent>
+              </Card>
+              
+              {/* Checkbox Showcase */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>✅ Enhanced Checkbox Component</CardTitle>
+                  <CardDescription>Beautiful checkboxes with animations, variants, and sizes</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Grid cols={3} gap="lg">
+                    {/* Sizes */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Sizes</Text>
+                      <div className="qwanyx-space-y-3">
+                        <CheckboxNew 
+                          size="xs" 
+                          label="Extra Small" 
+                          checked={checkbox1}
+                          onChange={setCheckbox1}
+                        />
+                        <CheckboxNew 
+                          size="sm" 
+                          label="Small" 
+                          checked={checkbox2}
+                          onChange={setCheckbox2}
+                        />
+                        <CheckboxNew 
+                          size="md" 
+                          label="Medium (default)" 
+                          checked={checkbox3}
+                          onChange={setCheckbox3}
+                        />
+                        <CheckboxNew 
+                          size="lg" 
+                          label="Large" 
+                          checked={checkbox4}
+                          onChange={setCheckbox4}
+                        />
+                        <CheckboxNew 
+                          size="xl" 
+                          label="Extra Large" 
+                          defaultChecked
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Variants */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Variants</Text>
+                      <div className="qwanyx-space-y-3">
+                        <CheckboxNew 
+                          variant="default" 
+                          label="Default" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          variant="filled" 
+                          label="Filled" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          variant="outlined" 
+                          label="Outlined" 
+                          defaultChecked
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Colors */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Colors</Text>
+                      <div className="qwanyx-space-y-3">
+                        <CheckboxNew 
+                          color="primary" 
+                          label="Primary" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          color="secondary" 
+                          label="Secondary" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          color="accent" 
+                          label="Accent" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          color="success" 
+                          label="Success" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          color="warning" 
+                          label="Warning" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          color="error" 
+                          label="Error" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          color="info" 
+                          label="Info" 
+                          defaultChecked
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Animations */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Animations</Text>
+                      <div className="qwanyx-space-y-3">
+                        <CheckboxNew 
+                          animation="none" 
+                          label="No Animation" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          animation="smooth" 
+                          label="Smooth (default)" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          animation="bounce" 
+                          label="Bounce" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          animation="pop" 
+                          label="Pop" 
+                          defaultChecked
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* States */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">States</Text>
+                      <div className="qwanyx-space-y-3">
+                        <CheckboxNew 
+                          label="Normal" 
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          label="Disabled Unchecked" 
+                          disabled
+                        />
+                        <CheckboxNew 
+                          label="Disabled Checked" 
+                          disabled
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          label="Indeterminate" 
+                          indeterminate
+                          checked={indeterminate}
+                          onChange={setIndeterminate}
+                        />
+                        <CheckboxNew 
+                          label="Required" 
+                          required
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Label Positions */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Label Positions</Text>
+                      <div className="qwanyx-space-y-3">
+                        <CheckboxNew 
+                          label="Label on Right" 
+                          labelPosition="right"
+                          defaultChecked
+                        />
+                        <CheckboxNew 
+                          label="Label on Left" 
+                          labelPosition="left"
+                          defaultChecked
+                        />
+                      </div>
+                    </div>
+                  </Grid>
+                  
+                  {/* Checkbox Group */}
+                  <div className="qwanyx-mt-8">
+                    <Text weight="semibold" className="qwanyx-mb-4">Checkbox Groups</Text>
+                    <Grid cols={2} gap="lg">
+                      <CheckboxGroup 
+                        label="Vertical Group" 
+                        orientation="vertical"
+                        gap="md"
+                      >
+                        <CheckboxNew label="Option 1" defaultChecked />
+                        <CheckboxNew label="Option 2" />
+                        <CheckboxNew label="Option 3" defaultChecked />
+                        <CheckboxNew label="Option 4" />
+                      </CheckboxGroup>
+                      
+                      <CheckboxGroup 
+                        label="Horizontal Group" 
+                        orientation="horizontal"
+                        gap="lg"
+                      >
+                        <CheckboxNew label="Read" defaultChecked />
+                        <CheckboxNew label="Write" defaultChecked />
+                        <CheckboxNew label="Execute" />
+                      </CheckboxGroup>
+                    </Grid>
+                  </div>
+                  
+                  {/* Interactive Examples */}
+                  <div className="qwanyx-mt-8">
+                    <Text weight="semibold" className="qwanyx-mb-4">Interactive Examples</Text>
+                    <Grid cols={2} gap="lg">
+                      <Card variant="filled">
+                        <CardContent>
+                          <Text weight="medium" className="qwanyx-mb-3">Terms and Conditions</Text>
+                          <CheckboxNew 
+                            label="I accept the terms and conditions" 
+                            required
+                            size="lg"
+                            color="success"
+                            animation="pop"
+                          />
+                        </CardContent>
+                      </Card>
+                      
+                      <Card variant="filled">
+                        <CardContent>
+                          <Text weight="medium" className="qwanyx-mb-3">Newsletter Preferences</Text>
+                          <CheckboxGroup orientation="vertical" gap="sm">
+                            <CheckboxNew 
+                              label="Weekly updates" 
+                              size="sm"
+                              defaultChecked
+                            />
+                            <CheckboxNew 
+                              label="Product announcements" 
+                              size="sm"
+                              defaultChecked
+                            />
+                            <CheckboxNew 
+                              label="Marketing emails" 
+                              size="sm"
+                            />
+                          </CheckboxGroup>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Radio Showcase */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>🔘 Enhanced Radio Component</CardTitle>
+                  <CardDescription>Beautiful radio buttons with animations, variants, and sizes</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Grid cols={3} gap="lg">
+                    {/* Sizes */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Sizes</Text>
+                      <RadioGroup 
+                        name="radioSizes" 
+                        value={radioGroup2}
+                        onChange={setRadioGroup2}
+                        orientation="vertical"
+                      >
+                        <RadioNew 
+                          size="xs" 
+                          label="Extra Small" 
+                          value="xs"
+                        />
+                        <RadioNew 
+                          size="sm" 
+                          label="Small" 
+                          value="small"
+                        />
+                        <RadioNew 
+                          size="md" 
+                          label="Medium (default)" 
+                          value="medium"
+                        />
+                        <RadioNew 
+                          size="lg" 
+                          label="Large" 
+                          value="large"
+                        />
+                        <RadioNew 
+                          size="xl" 
+                          label="Extra Large" 
+                          value="xl"
+                        />
+                      </RadioGroup>
+                    </div>
+                    
+                    {/* Variants */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Variants</Text>
+                      <div className="qwanyx-space-y-3">
+                        <RadioNew 
+                          variant="default" 
+                          label="Default" 
+                          defaultChecked
+                        />
+                        <RadioNew 
+                          variant="filled" 
+                          label="Filled" 
+                        />
+                        <RadioNew 
+                          variant="outlined" 
+                          label="Outlined" 
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Colors */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Colors</Text>
+                      <RadioGroup 
+                        name="radioColors" 
+                        value={radioGroup3}
+                        onChange={setRadioGroup3}
+                        orientation="vertical"
+                      >
+                        <RadioNew 
+                          color="primary" 
+                          label="Primary" 
+                          value="primary"
+                        />
+                        <RadioNew 
+                          color="secondary" 
+                          label="Secondary" 
+                          value="secondary"
+                        />
+                        <RadioNew 
+                          color="accent" 
+                          label="Accent" 
+                          value="accent"
+                        />
+                        <RadioNew 
+                          color="success" 
+                          label="Success" 
+                          value="success"
+                        />
+                        <RadioNew 
+                          color="warning" 
+                          label="Warning" 
+                          value="warning"
+                        />
+                        <RadioNew 
+                          color="error" 
+                          label="Error" 
+                          value="error"
+                        />
+                        <RadioNew 
+                          color="info" 
+                          label="Info" 
+                          value="info"
+                        />
+                      </RadioGroup>
+                    </div>
+                    
+                    {/* Animations */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Animations</Text>
+                      <div className="qwanyx-space-y-3">
+                        <RadioNew 
+                          animation="none" 
+                          label="No Animation" 
+                          defaultChecked
+                        />
+                        <RadioNew 
+                          animation="smooth" 
+                          label="Smooth (default)" 
+                        />
+                        <RadioNew 
+                          animation="bounce" 
+                          label="Bounce" 
+                        />
+                        <RadioNew 
+                          animation="pop" 
+                          label="Pop" 
+                        />
+                        <RadioNew 
+                          animation="pulse" 
+                          label="Pulse" 
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* States */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">States</Text>
+                      <div className="qwanyx-space-y-3">
+                        <RadioNew 
+                          label="Normal" 
+                          defaultChecked
+                        />
+                        <RadioNew 
+                          label="Disabled Unchecked" 
+                          disabled
+                        />
+                        <RadioNew 
+                          label="Disabled Checked" 
+                          disabled
+                          defaultChecked
+                        />
+                        <RadioNew 
+                          label="Required" 
+                          required
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Label Positions */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-4">Label Positions</Text>
+                      <div className="qwanyx-space-y-3">
+                        <RadioNew 
+                          label="Label on Right" 
+                          labelPosition="right"
+                          defaultChecked
+                        />
+                        <RadioNew 
+                          label="Label on Left" 
+                          labelPosition="left"
+                        />
+                      </div>
+                    </div>
+                  </Grid>
+                  
+                  {/* Radio Groups */}
+                  <div className="qwanyx-mt-8">
+                    <Text weight="semibold" className="qwanyx-mb-4">Radio Groups</Text>
+                    <Grid cols={2} gap="lg">
+                      <RadioGroup 
+                        label="Choose your plan" 
+                        orientation="vertical"
+                        gap="md"
+                        name="plan"
+                        value={radioGroup1}
+                        onChange={setRadioGroup1}
+                      >
+                        <RadioNew label="Free - $0/month" value="free" />
+                        <RadioNew label="Basic - $9/month" value="basic" />
+                        <RadioNew label="Pro - $19/month" value="pro" />
+                        <RadioNew label="Enterprise - Custom" value="enterprise" />
+                      </RadioGroup>
+                      
+                      <RadioGroup 
+                        label="Notification Preference" 
+                        orientation="horizontal"
+                        gap="lg"
+                        name="notifications"
+                      >
+                        <RadioNew label="All" value="all" />
+                        <RadioNew label="Email Only" value="email" />
+                        <RadioNew label="SMS Only" value="sms" />
+                        <RadioNew label="None" value="none" />
+                      </RadioGroup>
+                    </Grid>
+                  </div>
+                  
+                  {/* Interactive Examples */}
+                  <div className="qwanyx-mt-8">
+                    <Text weight="semibold" className="qwanyx-mb-4">Interactive Examples</Text>
+                    <Grid cols={2} gap="lg">
+                      <Card variant="filled">
+                        <CardContent>
+                          <Text weight="medium" className="qwanyx-mb-3">Gender Selection</Text>
+                          <RadioGroup 
+                            orientation="horizontal" 
+                            gap="md"
+                            name="gender"
+                            value={radioGender}
+                            onChange={setRadioGender}
+                          >
+                            <RadioNew 
+                              label="Male" 
+                              value="male"
+                              size="lg"
+                              color="info"
+                              animation="pop"
+                            />
+                            <RadioNew 
+                              label="Female" 
+                              value="female"
+                              size="lg"
+                              color="info"
+                              animation="pop"
+                            />
+                            <RadioNew 
+                              label="Other" 
+                              value="other"
+                              size="lg"
+                              color="info"
+                              animation="pop"
+                            />
+                          </RadioGroup>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card variant="filled">
+                        <CardContent>
+                          <Text weight="medium" className="qwanyx-mb-3">Delivery Speed</Text>
+                          <RadioGroup 
+                            orientation="vertical" 
+                            gap="sm"
+                            name="delivery"
+                            value={radioDelivery}
+                            onChange={setRadioDelivery}
+                          >
+                            <RadioNew 
+                              label="Standard (5-7 days)" 
+                              value="standard"
+                              size="sm"
+                              color="secondary"
+                              animation="pulse"
+                            />
+                            <RadioNew 
+                              label="Express (2-3 days)" 
+                              value="express"
+                              size="sm"
+                              color="warning"
+                              animation="pulse"
+                            />
+                            <RadioNew 
+                              label="Overnight (1 day)" 
+                              value="overnight"
+                              size="sm"
+                              color="success"
+                              animation="pulse"
+                            />
+                          </RadioGroup>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Original Input/Textarea sections */}
+              <Grid cols={2} gap="lg">
+                <div className="qwanyx-space-y-6">
+                  <div>
+                    <Heading as="h3" className="qwanyx-mb-4">Input Variants</Heading>
                   <div className="qwanyx-space-y-3">
                     <Input 
                       placeholder="Default input" 
@@ -383,6 +1100,7 @@ export const ComponentShowcase: React.FC = () => {
                 </div>
               </div>
             </Grid>
+            </div>
           </TabsContent>
           
           {/* Layout Tab */}
@@ -525,6 +1243,70 @@ export const ComponentShowcase: React.FC = () => {
                       </TabsContent>
                       <TabsContent value="tab3">
                         <Card><CardContent>Content for Tab 3</CardContent></Card>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                  
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-3">Mobile Dropdown Mode (Force Dropdown)</Text>
+                    <Tabs defaultValue="tab1" mobileMode="dropdown">
+                      <TabsList variant="line">
+                        <TabsTrigger value="tab1">Overview</TabsTrigger>
+                        <TabsTrigger value="tab2">Analytics</TabsTrigger>
+                        <TabsTrigger value="tab3">Reports</TabsTrigger>
+                        <TabsTrigger value="tab4">Settings</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="tab1">
+                        <Card><CardContent>Overview content - Perfect for mobile devices!</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab2">
+                        <Card><CardContent>Analytics content - Works great on small screens</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab3">
+                        <Card><CardContent>Reports content - Responsive and accessible</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab4">
+                        <Card><CardContent>Settings content - Dropdown mode saves space</CardContent></Card>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                  
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-3">Scrollable Tabs (Many Items)</Text>
+                    <Tabs defaultValue="tab1">
+                      <TabsList variant="boxed" scrollable>
+                        <TabsTrigger value="tab1">Dashboard</TabsTrigger>
+                        <TabsTrigger value="tab2">User Management</TabsTrigger>
+                        <TabsTrigger value="tab3">Products & Inventory</TabsTrigger>
+                        <TabsTrigger value="tab4">Orders & Shipping</TabsTrigger>
+                        <TabsTrigger value="tab5">Analytics Reports</TabsTrigger>
+                        <TabsTrigger value="tab6">System Settings</TabsTrigger>
+                        <TabsTrigger value="tab7">Notifications Center</TabsTrigger>
+                        <TabsTrigger value="tab8">Customer Support</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="tab1">
+                        <Card><CardContent>Dashboard content - Drag or use arrows to scroll!</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab2">
+                        <Card><CardContent>User Management content</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab3">
+                        <Card><CardContent>Products & Inventory content</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab4">
+                        <Card><CardContent>Orders & Shipping content</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab5">
+                        <Card><CardContent>Analytics Reports content</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab6">
+                        <Card><CardContent>System Settings content</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab7">
+                        <Card><CardContent>Notifications Center content</CardContent></Card>
+                      </TabsContent>
+                      <TabsContent value="tab8">
+                        <Card><CardContent>Customer Support content</CardContent></Card>
                       </TabsContent>
                     </Tabs>
                   </div>
@@ -875,6 +1657,169 @@ export const ComponentShowcase: React.FC = () => {
                           </div>
                         </div>
                       </Form>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* SuperDropdown Showcase */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>🚀 SuperDropdown - The Ultimate Dropdown</CardTitle>
+                      <CardDescription>Rich dropdowns with avatars, icons, search, multi-select, and more!</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="qwanyx-space-y-6">
+                        {/* Rich Team Member Select */}
+                        <div>
+                          <Text weight="semibold" className="qwanyx-mb-2">Rich Team Member Select</Text>
+                          <SuperDropdown
+                            options={[
+                              {
+                                value: 'john',
+                                label: 'John Doe',
+                                description: 'Product Designer',
+                                avatar: 'https://i.pravatar.cc/150?u=john',
+                                status: 'online',
+                                group: 'Design Team',
+                                tags: ['UI', 'UX'],
+                                badge: 'Lead',
+                              },
+                              {
+                                value: 'jane',
+                                label: 'Jane Smith',
+                                description: 'Frontend Developer',
+                                avatar: 'https://i.pravatar.cc/150?u=jane',
+                                status: 'busy',
+                                group: 'Engineering',
+                                tags: ['React', 'TypeScript'],
+                                badge: 5,
+                              },
+                              {
+                                value: 'bob',
+                                label: 'Bob Johnson',
+                                description: 'Backend Developer',
+                                avatar: 'https://i.pravatar.cc/150?u=bob',
+                                status: 'away',
+                                group: 'Engineering',
+                                tags: ['Node.js', 'Python'],
+                              },
+                            ] as DropdownOption[]}
+                            placeholder="Assign to team member..."
+                            showAvatars
+                            showDescriptions
+                            showStatus
+                            showTags
+                            showBadges
+                            grouped
+                            searchable
+                            fuzzySearch
+                            clearable
+                            size="md"
+                            animation="spring"
+                            variant="outlined"
+                          />
+                        </div>
+                        
+                        {/* Multi-Select with Icons */}
+                        <div>
+                          <Text weight="semibold" className="qwanyx-mb-2">Multi-Select Languages</Text>
+                          <MultiSelect
+                            options={[
+                              { value: 'js', label: 'JavaScript', icon: '🟨', tags: ['Frontend', 'Backend'] },
+                              { value: 'ts', label: 'TypeScript', icon: '🔷', tags: ['Frontend', 'Backend'] },
+                              { value: 'py', label: 'Python', icon: '🐍', tags: ['Backend', 'AI'] },
+                              { value: 'go', label: 'Go', icon: '🐹', tags: ['Backend'] },
+                              { value: 'rust', label: 'Rust', icon: '🦀', tags: ['Systems'] },
+                            ] as DropdownOption[]}
+                            placeholder="Select languages..."
+                            showIcons
+                            showTags
+                            searchable
+                            size="md"
+                            variant="filled"
+                            color="secondary"
+                          />
+                        </div>
+                        
+                        {/* Command Palette Style */}
+                        <div>
+                          <Text weight="semibold" className="qwanyx-mb-2">Command Palette (⌘K Style)</Text>
+                          <CommandPalette
+                            options={[
+                              {
+                                value: 'create',
+                                label: 'Create New Project',
+                                icon: 'add_circle',
+                                group: 'Actions',
+                                command: '⌘N',
+                              },
+                              {
+                                value: 'import',
+                                label: 'Import from CSV',
+                                icon: 'upload_file',
+                                group: 'Actions',
+                                command: '⌘I',
+                              },
+                              {
+                                value: 'export',
+                                label: 'Export Data',
+                                icon: 'download',
+                                group: 'Actions',
+                                command: '⌘E',
+                              },
+                              {
+                                value: 'preferences',
+                                label: 'Preferences',
+                                icon: 'settings',
+                                group: 'Settings',
+                                command: '⌘,',
+                              },
+                            ] as DropdownOption[]}
+                            placeholder="Type a command or search..."
+                            showIcons
+                            showDescriptions
+                            grouped
+                            size="md"
+                            variant="glass"
+                            animation="morph"
+                          />
+                        </div>
+                        
+                        {/* Combobox with Create */}
+                        <div>
+                          <Text weight="semibold" className="qwanyx-mb-2">Combobox with Create Option</Text>
+                          <Combobox
+                            options={[
+                              { value: 'react', label: 'React' },
+                              { value: 'vue', label: 'Vue' },
+                              { value: 'angular', label: 'Angular' },
+                              { value: 'svelte', label: 'Svelte' },
+                            ] as DropdownOption[]}
+                            placeholder="Select or create framework..."
+                            createOption={(value: string) => ({ value, label: value })}
+                            onCreate={(value: string) => console.log('Creating:', value)}
+                            size="md"
+                          />
+                        </div>
+                        
+                        {/* Simple Countries Dropdown */}
+                        <div>
+                          <Text weight="semibold" className="qwanyx-mb-2">Countries with Flags</Text>
+                          <SuperDropdown
+                            options={[
+                              { value: 'us', label: 'United States', icon: '🇺🇸' },
+                              { value: 'gb', label: 'United Kingdom', icon: '🇬🇧' },
+                              { value: 'fr', label: 'France', icon: '🇫🇷' },
+                              { value: 'de', label: 'Germany', icon: '🇩🇪' },
+                              { value: 'jp', label: 'Japan', icon: '🇯🇵' },
+                            ] as DropdownOption[]}
+                            placeholder="Select a country..."
+                            showIcons
+                            searchable
+                            clearable
+                            size="md"
+                          />
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
