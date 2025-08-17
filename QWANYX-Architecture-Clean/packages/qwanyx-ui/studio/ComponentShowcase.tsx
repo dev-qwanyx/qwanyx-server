@@ -75,6 +75,7 @@ export const ComponentShowcase: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLanguages, setSelectedLanguages] = useState<(string | number)[]>([]);
   
   // Checkbox states
   const [checkbox1, setCheckbox1] = useState(false);
@@ -384,6 +385,8 @@ export const ComponentShowcase: React.FC = () => {
                           { value: 'go', label: 'Go', icon: '🐹', tags: ['Backend'] },
                           { value: 'rust', label: 'Rust', icon: '🦀', tags: ['Systems'] },
                         ] as DropdownOption[]}
+                        value={selectedLanguages}
+                        onChange={setSelectedLanguages}
                         placeholder="Select languages..."
                         showIcons
                         showTags
@@ -391,6 +394,49 @@ export const ComponentShowcase: React.FC = () => {
                         size="md"
                         variant="filled"
                         color="secondary"
+                      />
+                    </div>
+                    
+                    {/* Fullscreen Mode (Mobile) */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-2">Fullscreen Mode (for mobile)</Text>
+                      <SuperDropdown
+                        options={[
+                          { value: 'profile', label: 'Profile Settings', icon: '👤', description: 'Manage your profile' },
+                          { value: 'notifications', label: 'Notifications', icon: '🔔', description: 'Notification preferences' },
+                          { value: 'privacy', label: 'Privacy', icon: '🔒', description: 'Privacy settings' },
+                          { value: 'security', label: 'Security', icon: '🛡️', description: 'Account security' },
+                          { value: 'billing', label: 'Billing', icon: '💳', description: 'Payment methods' },
+                        ] as DropdownOption[]}
+                        placeholder="Select a setting..."
+                        dropdownMode="fullscreen"
+                        searchable
+                        showIcons
+                        showDescriptions
+                        size="md"
+                        variant="default"
+                      />
+                    </div>
+                    
+                    {/* Full Height Mode */}
+                    <div>
+                      <Text weight="semibold" className="qwanyx-mb-2">Full Height Mode</Text>
+                      <SuperDropdown
+                        options={[
+                          { value: 'dashboard', label: 'Dashboard', icon: '📊' },
+                          { value: 'projects', label: 'Projects', icon: '📁' },
+                          { value: 'tasks', label: 'Tasks', icon: '✅' },
+                          { value: 'calendar', label: 'Calendar', icon: '📅' },
+                          { value: 'team', label: 'Team', icon: '👥' },
+                          { value: 'reports', label: 'Reports', icon: '📈' },
+                          { value: 'settings', label: 'Settings', icon: '⚙️' },
+                        ] as DropdownOption[]}
+                        placeholder="Navigate to..."
+                        dropdownMode="fullHeight"
+                        searchable
+                        showIcons
+                        size="md"
+                        variant="outlined"
                       />
                     </div>
                     
@@ -1730,6 +1776,8 @@ export const ComponentShowcase: React.FC = () => {
                               { value: 'go', label: 'Go', icon: '🐹', tags: ['Backend'] },
                               { value: 'rust', label: 'Rust', icon: '🦀', tags: ['Systems'] },
                             ] as DropdownOption[]}
+                            value={selectedLanguages}
+                            onChange={setSelectedLanguages}
                             placeholder="Select languages..."
                             showIcons
                             showTags
@@ -1738,6 +1786,54 @@ export const ComponentShowcase: React.FC = () => {
                             variant="filled"
                             color="secondary"
                           />
+                        </div>
+                        
+                        {/* Positioning Mode Examples */}
+                        <div>
+                          <Text weight="semibold" className="qwanyx-mb-2">Positioning Modes</Text>
+                          <Flex gap="md" wrap="wrap">
+                            <div style={{ flex: 1, minWidth: '200px' }}>
+                              <Text size="sm" color="muted" className="qwanyx-mb-1">Attached (Default)</Text>
+                              <SuperDropdown
+                                options={[
+                                  { value: '1', label: 'Option 1' },
+                                  { value: '2', label: 'Option 2' },
+                                  { value: '3', label: 'Option 3' },
+                                ] as DropdownOption[]}
+                                placeholder="Attached mode"
+                                dropdownMode="attached"
+                                size="sm"
+                              />
+                            </div>
+                            
+                            <div style={{ flex: 1, minWidth: '200px' }}>
+                              <Text size="sm" color="muted" className="qwanyx-mb-1">Fullscreen (Mobile)</Text>
+                              <SuperDropdown
+                                options={[
+                                  { value: '1', label: 'Mobile Option 1' },
+                                  { value: '2', label: 'Mobile Option 2' },
+                                  { value: '3', label: 'Mobile Option 3' },
+                                ] as DropdownOption[]}
+                                placeholder="Fullscreen mode"
+                                dropdownMode="fullscreen"
+                                size="sm"
+                              />
+                            </div>
+                            
+                            <div style={{ flex: 1, minWidth: '200px' }}>
+                              <Text size="sm" color="muted" className="qwanyx-mb-1">Full Height</Text>
+                              <SuperDropdown
+                                options={[
+                                  { value: '1', label: 'Navigation 1' },
+                                  { value: '2', label: 'Navigation 2' },
+                                  { value: '3', label: 'Navigation 3' },
+                                ] as DropdownOption[]}
+                                placeholder="Full height"
+                                dropdownMode="fullHeight"
+                                size="sm"
+                              />
+                            </div>
+                          </Flex>
                         </div>
                         
                         {/* Command Palette Style */}

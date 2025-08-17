@@ -104,12 +104,10 @@ export const Radio: React.FC<RadioProps> = ({
       transition: {
         duration: animation === 'smooth' ? 0.2 : 
                   animation === 'pulse' ? 0.3 : 0.3,
-        type: animation === 'pop' ? 'spring' : 
-              animation === 'pulse' ? 'tween' : 'tween',
-        stiffness: animation === 'pop' ? 500 : undefined,
-        damping: animation === 'pop' ? 25 : undefined,
-        ease: animation === 'bounce' ? [0.68, -0.55, 0.265, 1.55] : 
-              animation === 'pulse' ? 'easeInOut' : 'easeOut',
+        type: (animation === 'pop' ? 'spring' : 'tween') as any,
+        ...(animation === 'pop' ? { stiffness: 500, damping: 25 } : {}),
+        ease: (animation === 'bounce' ? [0.68, -0.55, 0.265, 1.55] : 
+              animation === 'pulse' ? 'easeInOut' : 'easeOut') as any,
       }
     }
   };
