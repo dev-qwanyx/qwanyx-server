@@ -9,13 +9,15 @@ import { SectionShowcase } from './sections/SectionShowcase'
 import { MiscShowcase } from './misc/MiscShowcase';
 import { IconTest } from './test/IconTest';
 import { IconLibraryPage } from './icons/IconLibraryPage';
+import { AtomsShowcase } from './atoms/AtomsShowcase';
+import { MoleculesShowcase } from './molecules/MoleculesShowcase';
 import { Container, Section, Heading, Text, Button } from '../src';
 import { SimpleNavbar } from '../src/components/Navbar';
 import { AuthModal, AuthStatus } from '../src/components/Auth';
 import { Favicon } from '../src/components/Favicon';
 
 function StudioApp() {
-  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates' | 'parallax' | 'pages' | 'sections' | 'misc' | 'test' | 'icons'>('showcase');
+  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates' | 'parallax' | 'pages' | 'sections' | 'misc' | 'test' | 'icons' | 'atoms' | 'molecules' | 'organisms'>('showcase');
   const [showAuth, setShowAuth] = useState(false);
   const { workspace, user, login, logout } = useWorkspace();
   
@@ -33,6 +35,21 @@ function StudioApp() {
               label: 'Components',
               active: currentView === 'showcase',
               onClick: () => setCurrentView('showcase')
+            },
+            {
+              label: '⚛️ Atoms',
+              active: currentView === 'atoms',
+              onClick: () => setCurrentView('atoms')
+            },
+            {
+              label: '🧬 Molecules',
+              active: currentView === 'molecules',
+              onClick: () => setCurrentView('molecules')
+            },
+            {
+              label: '🦠 Organisms',
+              active: currentView === 'organisms',
+              onClick: () => setCurrentView('organisms')
             },
             {
               label: 'Icons',
@@ -77,6 +94,16 @@ function StudioApp() {
         {/* Main Content - add padding-top for fixed navbar */}
         <main className="qwanyx-pt-16">
           {currentView === 'showcase' && <ComponentShowcase />}
+          {currentView === 'atoms' && <AtomsShowcase />}
+          {currentView === 'molecules' && <MoleculesShowcase />}
+          {currentView === 'organisms' && (
+            <Container>
+              <Section spacing="xl">
+                <Heading as="h1" className="qwanyx-mb-4">🦠 Organisms</Heading>
+                <Text color="secondary">Organisms showcase coming soon...</Text>
+              </Section>
+            </Container>
+          )}
           {currentView === 'icons' && <IconLibraryPage />}
           {currentView === 'editor' && <ThemeEditor />}
           {currentView === 'parallax' && <ParallaxShowcase />}

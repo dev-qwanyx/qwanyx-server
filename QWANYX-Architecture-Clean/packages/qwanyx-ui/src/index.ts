@@ -197,6 +197,22 @@ export type { DashboardLayoutProps, SimpleDashboardLayoutProps } from './compone
 export { Icon, Icons } from './components/Icon';
 export type { IconProps } from './components/Icon';
 
+// Spinner
+export { Spinner, SpinnerWithText } from './components/Spinner';
+export type { SpinnerProps, SpinnerWithTextProps } from './components/Spinner';
+
+// Switch
+export { Switch, SwitchGroup } from './components/Switch';
+export type { SwitchProps, SwitchGroupProps } from './components/Switch';
+
+// Progress
+export { Progress, ProgressWithLabel } from './components/Progress';
+export type { ProgressProps, ProgressWithLabelProps } from './components/Progress';
+
+// Agile Status (Molecules using Progress)
+export { AgileStatusIcon, AgileStatusBadge, AgileTaskCard } from './components/AgileStatus';
+export type { AgileStatus, AgileStatusIconProps, AgileStatusBadgeProps, AgileTaskCardProps } from './components/AgileStatus';
+
 export { AuthModal, AuthStatus } from './components/Auth';
 export type { AuthModalProps, AuthStatusProps } from './components/Auth';
 
