@@ -17,6 +17,8 @@ import {
   AgileStatusIcon,
   AgileStatusBadge,
   AgileTaskCard,
+  // User Profile Molecule
+  UserProfile,
 } from '../../src';
 
 export const MoleculesShowcase: React.FC = () => {
@@ -30,13 +32,162 @@ export const MoleculesShowcase: React.FC = () => {
           </Text>
         </div>
 
-        <Tabs defaultValue="agile">
+        <Tabs defaultValue="user">
           <TabsList variant="boxed" fullWidth>
+            <TabsTrigger value="user">👤 User Profile</TabsTrigger>
             <TabsTrigger value="agile">📊 Agile Status</TabsTrigger>
             <TabsTrigger value="forms">📝 Form Groups</TabsTrigger>
             <TabsTrigger value="cards">🃏 Card Variants</TabsTrigger>
             <TabsTrigger value="navigation">🧭 Navigation</TabsTrigger>
           </TabsList>
+
+          {/* User Profile Tab */}
+          <TabsContent value="user">
+            <div className="qwanyx-space-y-12">
+              <div>
+                <Heading as="h3" className="qwanyx-mb-4">UserProfile</Heading>
+                <Text color="muted" className="qwanyx-mb-6">
+                  Status: <Badge color="success" size="sm">New</Badge> • 
+                  Molecule composée d'Avatar + Text + Flex
+                </Text>
+                
+                <div className="qwanyx-space-y-8">
+                  {/* Sizes */}
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Sizes</Text>
+                    <Flex gap="lg" wrap="wrap" align="center">
+                      <Card>
+                        <CardContent>
+                          <UserProfile
+                            user={{
+                              name: 'John Doe',
+                              email: 'john@example.com',
+                              avatar: 'https://i.pravatar.cc/150?img=1'
+                            }}
+                            size="sm"
+                          />
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent>
+                          <UserProfile
+                            user={{
+                              name: 'Jane Smith',
+                              email: 'jane@example.com',
+                              avatar: 'https://i.pravatar.cc/150?img=2'
+                            }}
+                            size="md"
+                          />
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent>
+                          <UserProfile
+                            user={{
+                              name: 'Bob Johnson',
+                              email: 'bob@example.com',
+                              avatar: 'https://i.pravatar.cc/150?img=3'
+                            }}
+                            size="lg"
+                          />
+                        </CardContent>
+                      </Card>
+                    </Flex>
+                  </div>
+
+                  {/* Orientations */}
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Orientations</Text>
+                    <Flex gap="lg" wrap="wrap">
+                      <Card>
+                        <CardContent>
+                          <Text size="xs" color="secondary" className="qwanyx-mb-2">Horizontal</Text>
+                          <UserProfile
+                            user={{
+                              name: 'Alice Cooper',
+                              email: 'alice@example.com',
+                              role: 'Designer',
+                              avatar: 'https://i.pravatar.cc/150?img=5'
+                            }}
+                            orientation="horizontal"
+                            showRole={true}
+                            showEmail={false}
+                          />
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent>
+                          <Text size="xs" color="secondary" className="qwanyx-mb-2">Vertical</Text>
+                          <UserProfile
+                            user={{
+                              name: 'Charlie Brown',
+                              email: 'charlie@example.com',
+                              role: 'Developer',
+                              avatar: 'https://i.pravatar.cc/150?img=8'
+                            }}
+                            orientation="vertical"
+                            showRole={true}
+                          />
+                        </CardContent>
+                      </Card>
+                    </Flex>
+                  </div>
+
+                  {/* Without Avatar */}
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Fallback (No Avatar)</Text>
+                    <Flex gap="lg" wrap="wrap">
+                      <Card>
+                        <CardContent>
+                          <UserProfile
+                            user={{
+                              name: 'Philippe Martin',
+                              email: 'phil@pixanima.com'
+                            }}
+                            size="md"
+                          />
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent>
+                          <UserProfile
+                            user={{
+                              name: 'Marie Dupont',
+                              role: 'Admin'
+                            }}
+                            showRole={true}
+                            showEmail={false}
+                          />
+                        </CardContent>
+                      </Card>
+                    </Flex>
+                  </div>
+
+                  {/* Interactive */}
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Interactive (with onClick)</Text>
+                    <Flex gap="lg" wrap="wrap">
+                      <Card>
+                        <CardContent>
+                          <UserProfile
+                            user={{
+                              name: 'Click Me',
+                              email: 'interactive@example.com'
+                            }}
+                            onClick={() => alert('User clicked!')}
+                          />
+                        </CardContent>
+                      </Card>
+                    </Flex>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
 
           {/* Agile Status Tab */}
           <TabsContent value="agile">

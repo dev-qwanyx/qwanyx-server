@@ -182,7 +182,7 @@ export default function DashboardPage() {
     )
   }
 
-  // Dashboard configuration for Autodin
+  // Dashboard configuration for Autodin - Simplified with only left sidebar
   const dashboardConfig: DashboardConfig = createMarketplaceDashboard({
     title: 'Autodin',
     primaryColor: '#E67E22',
@@ -193,30 +193,6 @@ export default function DashboardPage() {
       role: user.role || 'Vendeur',
       avatar: user.avatar
     } : undefined,
-    navbarStyle: {
-      backgroundColor: 'rgba(var(--qwanyx-card), 0.85)',
-      borderBottom: '1px solid rgba(var(--qwanyx-border), 0.5)',
-      backdropFilter: 'blur(10px)'
-    },
-    navbarItems: [
-      { label: 'Accueil', href: '/' },
-      { label: 'Marketplace', href: '/marketplace' },
-      { label: 'Services', href: '/services' },
-      { label: 'Contact', href: '/contact' }
-    ],
-    navbarActions: (
-      <Button 
-        size="sm" 
-        variant="outline"
-        style={{ 
-          borderColor: 'white',
-          color: 'white'
-        }}
-        onClick={() => router.push('/dashboard/new-listing')}
-      >
-        + Nouvelle annonce
-      </Button>
-    ),
     sidebarItems: [
       {
         id: 'overview',
@@ -294,7 +270,6 @@ export default function DashboardPage() {
     sidebarStyle: {
       borderRight: '2px solid rgba(230, 126, 34, 0.2)'
     },
-    onLogout: handleLogout,
     stats,
     recentActivity,
     quickActions: [

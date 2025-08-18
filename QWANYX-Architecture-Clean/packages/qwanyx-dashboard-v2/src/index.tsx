@@ -53,18 +53,11 @@ export interface DashboardActivity {
 }
 
 export interface DashboardConfig {
-  // Navigation
+  // Basic Info
   title: string
   logo?: ReactNode | string
-  navbarItems?: Array<{
-    label: string
-    href?: string
-    onClick?: () => void
-  }>
-  navbarActions?: ReactNode
-  navbarStyle?: React.CSSProperties
   
-  // Sidebar
+  // Sidebar (only layout component in dashboard-v2)
   sidebarItems: SidebarItem[]
   sidebarFooter?: ReactNode
   sidebarTheme?: 'light' | 'dark' | 'auto'
@@ -72,7 +65,6 @@ export interface DashboardConfig {
   
   // User
   user?: DashboardUser
-  onLogout?: () => void
   
   // Content
   stats?: DashboardStat[]
@@ -132,14 +124,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     }))
   }))
 
-  const navbarConfig = {
-    title: config.title,
-    variant: 'default' as const,
-    style: config.navbarStyle,
-    items: config.navbarItems || [],
-    actions: config.navbarActions
-  }
-
   const sidebarConfig = {
     items: sidebarItemsWithActive,
     logo: config.logo,
@@ -147,7 +131,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     theme: config.sidebarTheme || 'light',
     user: config.user,
     footer: config.sidebarFooter,
-    onLogout: config.onLogout,
     style: config.sidebarStyle
   }
 
@@ -155,18 +138,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     const { stats = [], recentActivity = [], quickActions = [] } = config
     
     return (
-      <div style={{ paddingTop: '1rem' }}>
-        {config.user && (
-          <div style={{ marginBottom: '1.5rem' }}>
-            <Text size="2xl" weight="bold">
-              Welcome back, {config.user.name}!
-            </Text>
-            <Text size="sm" color="secondary">
-              Here's an overview of your dashboard
-            </Text>
-          </div>
-        )}
-        
+      <div>
         {/* Statistics */}
         {stats.length > 0 && (
           <Grid cols={stats.length <= 4 ? stats.length : 4} style={{ marginBottom: '1.5rem', gap: '1rem' }}>
@@ -299,8 +271,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <DashboardLayout
-      navbar={navbarConfig}
+      navbar={false}  // No navbar in dashboard-v2
       sidebar={sidebarConfig}
+      rightSidebar={false}  // No right sidebar in dashboard-v2
       contentPadding={config.contentPadding !== false}
     >
       {renderContent()}

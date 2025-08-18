@@ -290,7 +290,7 @@ export default function UsersContent() {
   }
 
   return (
-    <div style={{ position: 'relative', top: 0, paddingTop: '60px' }}>
+    <div>
       {/* Stats Cards */}
       <Grid cols={4} style={{ marginBottom: '1.5rem', gap: '1rem' }}>
         <Card>

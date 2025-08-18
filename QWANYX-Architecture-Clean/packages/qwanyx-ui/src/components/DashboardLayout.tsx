@@ -18,11 +18,13 @@ const HolyGrailLayoutDashboard: React.FC<DashboardLayoutProps> = ({
   sidebar,
   rightSidebar,
   children,
-  contentPadding = true,
+  contentPadding = true, // kept for compatibility
   contentMaxWidth = false,
   className = '',
   style
 }) => {
+  // Use contentPadding to avoid unused variable warning
+  void contentPadding
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [rightSidebarCollapsed, setRightSidebarCollapsed] = useState(false)
 
@@ -42,10 +44,10 @@ const HolyGrailLayoutDashboard: React.FC<DashboardLayoutProps> = ({
   }
 
   const mainStyles: React.CSSProperties = {
-    marginTop: navbar !== false ? `${navbarHeight}px` : 0,
+    marginTop: 0,
     marginLeft: sidebar !== false ? `${typeof sidebarWidth === 'number' ? sidebarWidth + 'px' : sidebarWidth}` : 0,
     marginRight: rightSidebar !== false ? `${typeof rightSidebarWidth === 'number' ? rightSidebarWidth + 'px' : rightSidebarWidth}` : 0,
-    minHeight: navbar !== false ? `calc(100vh - ${navbarHeight}px)` : '100vh',
+    minHeight: '100vh',
     transition: 'margin 300ms cubic-bezier(0.4, 0, 0.2, 1)',
     display: 'flex',
     flexDirection: 'column' as const
@@ -54,7 +56,7 @@ const HolyGrailLayoutDashboard: React.FC<DashboardLayoutProps> = ({
   const contentStyles: React.CSSProperties = {
     flex: 1,
     width: '100%',
-    padding: contentPadding ? '2rem' : 0,
+    padding: '30px 30px 0 30px',
     maxWidth: contentMaxWidth !== false ? 
       (typeof contentMaxWidth === 'number' ? `${contentMaxWidth}px` : contentMaxWidth) : 
       undefined,
@@ -84,8 +86,8 @@ const HolyGrailLayoutDashboard: React.FC<DashboardLayoutProps> = ({
           collapsed={sidebarCollapsed}
           onCollapse={setSidebarCollapsed}
           style={{
-            top: navbar !== false ? `${navbarHeight}px` : 0,
-            height: navbar !== false ? `calc(100vh - ${navbarHeight}px)` : '100vh',
+            top: 0,
+            height: '100vh',
             zIndex: 40,
             ...sidebar?.style
           }}

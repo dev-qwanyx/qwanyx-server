@@ -387,3 +387,7 @@ export type { ContactFormSectionProps, ContactFormField } from './sections/Conta
 // Templates
 export { QwanyxTemplate } from './templates/QwanyxTemplate';
 export type { QwanyxTemplateProps } from './templates/QwanyxTemplate';
+
+// Molecules - UserProfile
+export { UserProfile } from './molecules/UserProfile';
+export type { UserProfileProps } from './molecules/UserProfile';

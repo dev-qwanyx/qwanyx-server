@@ -67,13 +67,13 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(({
   // Generate color from name for initials
   const getColorFromName = (name: string) => {
     const colors = [
-      'rgb(var(--primary))',
-      'rgb(var(--secondary))',
-      'rgb(var(--accent))',
-      'rgb(var(--success))',
-      'rgb(var(--warning))',
-      'rgb(var(--error))',
-      'rgb(var(--info))'
+      'rgb(var(--qwanyx-primary))',
+      'rgb(var(--qwanyx-secondary))',
+      'rgb(var(--qwanyx-accent))',
+      'rgb(var(--qwanyx-success))',
+      'rgb(var(--qwanyx-warning))',
+      'rgb(var(--qwanyx-error))',
+      'rgb(var(--qwanyx-info))'
     ];
     
     let hash = 0;
@@ -85,10 +85,10 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(({
   
   // Status colors
   const statusColors = {
-    online: 'rgb(var(--success))',
-    offline: 'rgb(var(--muted))',
-    away: 'rgb(var(--warning))',
-    busy: 'rgb(var(--error))'
+    online: 'rgb(var(--qwanyx-success))',
+    offline: 'rgb(var(--qwanyx-muted))',
+    away: 'rgb(var(--qwanyx-warning))',
+    busy: 'rgb(var(--qwanyx-error))'
   };
   
   // Status positions
@@ -111,9 +111,9 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(({
     width: sizeMap[size],
     height: sizeMap[size],
     borderRadius: shape === 'circle' ? '50%' : 'var(--radius)',
-    backgroundColor: (!src || imageError) && !fallback && name 
-      ? getColorFromName(name) 
-      : 'rgb(var(--muted))',
+    backgroundColor: (!src || imageError) 
+      ? (name ? getColorFromName(name) : 'rgb(var(--qwanyx-muted))') 
+      : 'transparent',
     overflow: 'hidden',
     flexShrink: 0,
     userSelect: 'none',
@@ -135,8 +135,8 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(({
     width: '100%',
     height: '100%',
     fontSize: fontSizeMap[size],
-    fontWeight: 500,
-    color: 'white'
+    fontWeight: 600,
+    color: 'rgba(255, 255, 255, 0.95)'
   };
   
   // Status styles

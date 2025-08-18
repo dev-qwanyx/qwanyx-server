@@ -3,6 +3,7 @@ import { Icon } from './Icon'
 import { Text } from './Text'
 import { Button } from './Button'
 import { Badge } from './Badge'
+import { UserProfile } from '../molecules/UserProfile'
 
 export interface SidebarItem {
   id: string
@@ -35,7 +36,6 @@ export interface SuperSidebarProps {
   theme?: 'light' | 'dark' | 'auto'
   className?: string
   style?: React.CSSProperties
-  onLogout?: () => void
 }
 
 export const SuperSidebar: React.FC<SuperSidebarProps> = ({
@@ -51,8 +51,7 @@ export const SuperSidebar: React.FC<SuperSidebarProps> = ({
   position = 'left',
   theme = 'light',
   className = '',
-  style,
-  onLogout
+  style
 }) => {
   const [expandedItems, setExpandedItems] = useState<string[]>([])
   const [isCollapsed, setIsCollapsed] = useState(collapsed)
@@ -89,21 +88,6 @@ export const SuperSidebar: React.FC<SuperSidebarProps> = ({
     ...style
   }
 
-  const headerStyles: React.CSSProperties = {
-    padding: '1.5rem',
-    borderBottom: '1px solid rgb(var(--qwanyx-border))',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    minHeight: '80px'
-  }
-
-  const logoContainerStyles: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    overflow: 'hidden'
-  }
 
   const contentStyles: React.CSSProperties = {
     flex: 1,
@@ -116,31 +100,6 @@ export const SuperSidebar: React.FC<SuperSidebarProps> = ({
     padding: '1.5rem',
     borderTop: '1px solid rgb(var(--qwanyx-border))',
     marginTop: 'auto'
-  }
-
-  const userStyles: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    padding: '0.75rem',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    transition: 'background-color 200ms ease',
-    backgroundColor: 'transparent'
-  }
-
-  const avatarStyles: React.CSSProperties = {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    backgroundColor: 'rgb(var(--qwanyx-primary))',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    fontSize: '1rem',
-    fontWeight: 'bold',
-    flexShrink: 0
   }
 
   const renderMenuItem = (item: SidebarItem, depth = 0): React.ReactNode => {
@@ -254,85 +213,98 @@ export const SuperSidebar: React.FC<SuperSidebarProps> = ({
 
   return (
     <aside className={className} style={sidebarStyles}>
-      {/* Header */}
-      <div style={headerStyles}>
-        <div style={logoContainerStyles}>
-          {logo && (
-            typeof logo === 'string' ? (
-              <img 
-                src={logo} 
-                alt={title || 'Logo'} 
-                style={{ height: '40px', width: 'auto' }}
-              />
-            ) : logo
-          )}
-          {!isCollapsed && title && (
-            <Text size="lg" weight="bold">
-              {title}
-            </Text>
-          )}
-        </div>
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={toggleCollapse}
-          style={{ padding: '0.5rem' }}
-        >
-          <Icon 
-            name={isCollapsed ? 'MenuOpen' : 'Menu'}
-            size="md"
-          />
-        </Button>
-      </div>
-
-      {/* User Section */}
-      {user && (
-        <div style={{ padding: '1rem', borderBottom: '1px solid rgb(var(--qwanyx-border))' }}>
-          <div 
-            style={userStyles}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(var(--qwanyx-primary-rgb), 0.05)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent'
+      {/* Header with burger and user profile */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        borderBottom: '1px solid rgb(var(--qwanyx-border))'
+      }}>
+        {/* Back to site button */}
+        <div style={{
+          padding: '1rem 1.5rem',
+          borderBottom: '1px solid rgb(var(--qwanyx-border))'
+        }}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => window.location.href = '/'}
+            style={{ 
+              padding: '0.5rem',
+              width: '100%',
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              gap: '0.5rem'
             }}
           >
-            <div style={avatarStyles}>
-              {user.avatar ? (
-                <img 
-                  src={user.avatar} 
-                  alt={user.name}
-                  style={{ width: '100%', height: '100%', borderRadius: '50%' }}
-                />
-              ) : (
-                user.name.charAt(0).toUpperCase()
-              )}
-            </div>
-            
-            {!isCollapsed && (
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <Text size="sm" weight="semibold" style={{ 
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
-                }}>
-                  {user.name}
-                </Text>
-                {user.role && (
-                  <Text size="xs" color="secondary" style={{ 
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}>
-                    {user.role}
-                  </Text>
-                )}
-              </div>
-            )}
-          </div>
+            <Icon 
+              name="ChevronLeft"
+              size="md"
+            />
+            {!isCollapsed && <span>Retour au site</span>}
+          </Button>
         </div>
-      )}
+
+        {/* Burger menu */}
+        <div style={{
+          padding: '1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: isCollapsed ? 'center' : 'flex-start'
+        }}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleCollapse}
+            style={{ padding: '0.5rem' }}
+          >
+            <Icon 
+              name={isCollapsed ? 'MenuOpen' : 'Menu'}
+              size="md"
+            />
+          </Button>
+          
+          {!user && !isCollapsed && (
+            <>
+              {logo && (
+                typeof logo === 'string' ? (
+                  <img 
+                    src={logo} 
+                    alt={title || 'Logo'} 
+                    style={{ height: '40px', width: 'auto', marginLeft: '0.75rem' }}
+                  />
+                ) : <div style={{ marginLeft: '0.75rem' }}>{logo}</div>
+              )}
+              {title && (
+                <Text size="lg" weight="bold" style={{ marginLeft: '0.75rem' }}>
+                  {title}
+                </Text>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* User Profile below burger */}
+        {user && (
+          <div style={{ 
+            padding: isCollapsed ? '0 0.5rem 1.5rem 0.5rem' : '0 1.5rem 1.5rem 1.5rem',
+            display: 'flex',
+            justifyContent: isCollapsed ? 'center' : 'flex-start'
+          }}>
+            <UserProfile
+              user={{
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar,
+                role: user.role
+              }}
+              size="md"
+              showName={!isCollapsed}
+              showEmail={!isCollapsed}
+              orientation="horizontal"
+              style={{ padding: 0 }}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Navigation Items */}
       <div style={contentStyles}>
@@ -343,28 +315,6 @@ export const SuperSidebar: React.FC<SuperSidebarProps> = ({
       {footer && !isCollapsed && (
         <div style={footerStyles}>
           {footer}
-        </div>
-      )}
-
-      {/* Logout Button */}
-      {onLogout && (
-        <div style={{ padding: '1rem' }}>
-          <Button
-            variant="ghost"
-            fullWidth={!isCollapsed}
-            onClick={onLogout}
-            style={{ 
-              justifyContent: isCollapsed ? 'center' : 'flex-start',
-              color: 'rgb(var(--qwanyx-destructive))'
-            }}
-          >
-            <Icon name="Logout" size="md" />
-            {!isCollapsed && (
-              <Text size="sm" style={{ marginLeft: '0.75rem' }}>
-                Déconnexion
-              </Text>
-            )}
-          </Button>
         </div>
       )}
     </aside>
