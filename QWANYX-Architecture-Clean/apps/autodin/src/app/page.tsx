@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import { ThemeProvider, WorkspaceProvider } from '@qwanyx/ui'
+import { useState, useEffect } from 'react'
 import { 
   Container, 
   Section, 
@@ -14,11 +13,73 @@ import {
   HeroWithFlipSection,
   SimpleFooterSection,
   ContactFormSection,
-  detailedContactFields
+  detailedContactFields,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalBody,
+  ModalFooter
 } from '@qwanyx/ui'
+import { AuthModule } from '@qwanyx/auth'
 
 function AppContent() {
   const [activeSection, setActiveSection] = useState<string>('details')
+  const [showAuth, setShowAuth] = useState(false)
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
+  const [user, setUser] = useState<any>(null)
+  const [showTestModal, setShowTestModal] = useState(false)
+  
+  // Debug
+  useEffect(() => {
+    console.log('Auth state changed:', { showAuth, authMode })
+  }, [showAuth, authMode])
+  
+  useEffect(() => {
+    console.log('TEST MODAL STATE CHANGED:', showTestModal)
+  }, [showTestModal])
+  
+  // Check for existing session on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('autodin_user')
+    const storedToken = localStorage.getItem('autodin_token')
+    const tokenExpiry = localStorage.getItem('autodin_token_expiry')
+    
+    if (storedUser && storedToken && tokenExpiry) {
+      const expiryTime = parseInt(tokenExpiry)
+      if (expiryTime > Date.now()) {
+        setUser(JSON.parse(storedUser))
+      } else {
+        // Token expired, clean up
+        localStorage.removeItem('autodin_user')
+        localStorage.removeItem('autodin_token')
+        localStorage.removeItem('autodin_token_expiry')
+      }
+    }
+  }, [])
+  
+  const handleAuthSuccess = (authUser: any, token?: string) => {
+    setUser(authUser)
+    setShowAuth(false)
+    
+    // Store in localStorage for persistence
+    if (token) {
+      const expiryTime = Date.now() + (5 * 24 * 60 * 60 * 1000) // 5 days
+      localStorage.setItem('autodin_user', JSON.stringify(authUser))
+      localStorage.setItem('autodin_token', token)
+      localStorage.setItem('autodin_token_expiry', expiryTime.toString())
+    }
+    
+    console.log('Authentication successful:', authUser)
+  }
+  
+  const handleLogout = () => {
+    setUser(null)
+    localStorage.removeItem('autodin_user')
+    localStorage.removeItem('autodin_token')
+    localStorage.removeItem('autodin_token_expiry')
+    sessionStorage.removeItem('autodin_user')
+    sessionStorage.removeItem('autodin_token')
+  }
   
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
@@ -67,16 +128,59 @@ function AppContent() {
               setActiveSection('contact')
               setTimeout(() => scrollToSection('contact'), 100)
             }
-          }
+          },
+          ...(user ? [
+            {
+              label: 'Dashboard',
+              onClick: () => {
+                window.location.href = '/dashboard'
+              }
+            }
+          ] : [])
         ]}
-        primaryAction={{
+        primaryAction={user ? {
+          label: `${user.firstName || user.email}`,
+          onClick: () => {
+            console.log('Logout clicked')
+            handleLogout()
+          },
+          icon: 'logout'
+        } : {
           label: 'Se connecter',
-          onClick: () => console.log('Login'),
+          onClick: () => {
+            console.log('Login button clicked - setting showAuth to true')
+            setAuthMode('login')
+            setShowAuth(true)
+            console.log('After setState - showAuth should be true now')
+          },
           icon: 'login'
         }}
+        secondaryAction={!user ? {
+          label: "S'inscrire",
+          onClick: () => {
+            console.log('Register clicked')
+            setAuthMode('register')
+            setShowAuth(true)
+          },
+          variant: 'outline' as const
+        } : undefined}
       />
       
       <main>
+        {/* Test button for modal */}
+        <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}>
+          <Button 
+            onClick={() => {
+              console.log('Test button clicked, current state:', showTestModal);
+              setShowTestModal(true);
+              console.log('State should be true now');
+            }}
+            style={{ backgroundColor: 'red' }}
+          >
+            Test Modal (State: {showTestModal ? 'TRUE' : 'FALSE'})
+          </Button>
+        </div>
+
         <HeroWithFlipSection
           title="La Marketplace #1 des Pièces Auto"
           subtitle="Autodin Belgium"
@@ -191,16 +295,72 @@ function AppContent() {
         copyright="© 2024 Autodin. Tous droits réservés."
         style={{ backgroundColor: '#2C3E50', color: '#ffffff' }}
       />
+      
+      {/* Auth Modal */}
+      {console.log('Rendering AuthModule with isOpen:', showAuth)}
+      <AuthModule
+        workspace="autodin"
+        apiUrl="http://localhost:5002"
+        locale="fr"
+        initialMode={authMode}
+        allowModeSwitch={true}
+        passwordless={true}
+        rememberMe={true}
+        logo="/images/logo.png"
+        primaryColor="#E67E22"
+        isOpen={showAuth}
+        onClose={() => {
+          console.log('AuthModule onClose called')
+          setShowAuth(false)
+        }}
+        asModal={true}
+        onSuccess={handleAuthSuccess}
+        onError={(error) => console.error('Auth error:', error)}
+      />
+
+      {/* Test Modal - SUPER SIMPLE */}
+      {showTestModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 99999
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '2rem',
+            borderRadius: '8px',
+            maxWidth: '500px',
+            width: '90%'
+          }}>
+            <h2>Test Modal (Direct HTML)</h2>
+            <p>Si vous voyez ça, le problème vient du composant Modal!</p>
+            <button 
+              onClick={() => setShowTestModal(false)}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 export default function App() {
-  return (
-    <WorkspaceProvider defaultWorkspace="autodin">
-      <ThemeProvider>
-        <AppContent />
-      </ThemeProvider>
-    </WorkspaceProvider>
-  )
+  return <AppContent />
 }

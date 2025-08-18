@@ -27,6 +27,19 @@ import {
   SwitchGroup,
   Progress,
   ProgressWithLabel,
+  // Modal components
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  ModalDescription,
+  ModalBody,
+  ModalFooter,
+  SimpleModal,
+  // OTP components
+  OTPInput,
+  OTPTimer,
+  // Alert component
+  Alert,
   // Divider,
   // Tooltip,
 } from '../../src';
@@ -35,6 +48,13 @@ export const AtomsShowcase: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const [textareaValue, setTextareaValue] = useState('');
   const [_switchValue, _setSwitchValue] = useState(false);
+  const [showBasicModal, setShowBasicModal] = useState(false);
+  const [showSimpleModal, setShowSimpleModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [otpValue, setOtpValue] = useState('');
+  const [otpValueFilled, setOtpValueFilled] = useState('123456');
+  const [otpValuePartial, setOtpValuePartial] = useState('123');
+  const [otpValueError, setOtpValueError] = useState('');
 
   return (
     <Container>
@@ -238,6 +258,445 @@ export const AtomsShowcase: React.FC = () => {
                   <Link href="#" underline="always">Always Underlined</Link>
                   <Link href="#">External Link</Link>
                 </Flex>
+              </div>
+
+              {/* Modal Atom */}
+              <div>
+                <Heading as="h3" className="qwanyx-mb-4">Modal</Heading>
+                <Text color="muted" className="qwanyx-mb-6">
+                  Status: <Badge color="success" size="sm">Stable</Badge> • 
+                  Used in: Dialogs, Forms, Confirmations, Authentication
+                </Text>
+                
+                <div className="qwanyx-space-y-4">
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-2">Types</Text>
+                    <Flex gap="sm" wrap="wrap">
+                      <Button onClick={() => setShowBasicModal(true)}>
+                        Basic Modal
+                      </Button>
+                      <Button variant="outline" onClick={() => setShowSimpleModal(true)}>
+                        Simple Modal
+                      </Button>
+                      <Button variant="ghost" onClick={() => setShowAuthModal(true)}>
+                        Auth-like Modal
+                      </Button>
+                    </Flex>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-2">Features</Text>
+                    <Grid cols={2} gap="sm">
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Portal Rendering</Text>
+                          <Text size="xs" color="muted">Renders outside DOM hierarchy</Text>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Focus Management</Text>
+                          <Text size="xs" color="muted">Traps focus within modal</Text>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Keyboard Support</Text>
+                          <Text size="xs" color="muted">ESC to close, Tab navigation</Text>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Responsive</Text>
+                          <Text size="xs" color="muted">Adapts to screen size</Text>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </div>
+                </div>
+
+                {/* Basic Modal */}
+                <Modal
+                  isOpen={showBasicModal}
+                  onClose={() => setShowBasicModal(false)}
+                  size="md"
+                >
+                  <ModalHeader>
+                    <ModalTitle>Basic Modal</ModalTitle>
+                    <ModalDescription>
+                      This is a basic modal with all standard components
+                    </ModalDescription>
+                  </ModalHeader>
+                  <ModalBody>
+                    <Text>
+                      Modal content goes here. You can put any content inside the modal body.
+                      This modal demonstrates the basic structure with header, body, and footer.
+                    </Text>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button variant="ghost" onClick={() => setShowBasicModal(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={() => setShowBasicModal(false)}>
+                      Confirm
+                    </Button>
+                  </ModalFooter>
+                </Modal>
+
+                {/* Simple Modal */}
+                <SimpleModal
+                  isOpen={showSimpleModal}
+                  onClose={() => setShowSimpleModal(false)}
+                  title="Simple Modal"
+                  description="Quick modal setup with SimpleModal component"
+                  footer={
+                    <>
+                      <Button variant="ghost" onClick={() => setShowSimpleModal(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={() => setShowSimpleModal(false)}>
+                        OK
+                      </Button>
+                    </>
+                  }
+                >
+                  <Text>
+                    SimpleModal is a convenience component that wraps the Modal components
+                    for common use cases. Perfect for quick confirmations and simple dialogs.
+                  </Text>
+                </SimpleModal>
+
+                {/* Auth-like Modal */}
+                <Modal
+                  isOpen={showAuthModal}
+                  onClose={() => setShowAuthModal(false)}
+                  size="md"
+                >
+                  <div style={{ padding: '2rem' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                      <Heading as="h2" size="2xl">Welcome Back</Heading>
+                      <Text color="muted" style={{ marginTop: '0.5rem' }}>
+                        Sign in to your account
+                      </Text>
+                    </div>
+                    
+                    <form onSubmit={(e) => { e.preventDefault(); setShowAuthModal(false); }}>
+                      <Input
+                        type="email"
+                        placeholder="Email"
+                        fullWidth
+                        style={{ marginBottom: '1rem' }}
+                        required
+                      />
+                      <Input
+                        type="password"
+                        placeholder="Password"
+                        fullWidth
+                        style={{ marginBottom: '1.5rem' }}
+                        required
+                      />
+                      <Button type="submit" fullWidth variant="primary">
+                        Sign In
+                      </Button>
+                    </form>
+                    
+                    <div style={{
+                      marginTop: '1.5rem',
+                      textAlign: 'center',
+                      paddingTop: '1rem',
+                      borderTop: '1px solid rgb(var(--border))'
+                    }}>
+                      <Text size="sm" color="muted">
+                        Don't have an account?
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {}}
+                          style={{ marginLeft: '0.5rem' }}
+                        >
+                          Sign up
+                        </Button>
+                      </Text>
+                    </div>
+                  </div>
+                </Modal>
+              </div>
+
+              {/* OTP Input Atom */}
+              <div>
+                <Heading as="h3" className="qwanyx-mb-4">OTP Input</Heading>
+                <Text color="muted" className="qwanyx-mb-6">
+                  Status: <Badge color="success" size="sm">Stable</Badge> • 
+                  Used in: Authentication, Verification, Two-factor auth
+                </Text>
+                
+                <div className="qwanyx-space-y-6">
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Different States</Text>
+                    
+                    <div className="qwanyx-space-y-8">
+                      {/* Empty State */}
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold" className="qwanyx-mb-3">Empty (Default)</Text>
+                          <OTPInput
+                            value={otpValue}
+                            onChange={setOtpValue}
+                            onComplete={(code) => {
+                              console.log('OTP Complete:', code);
+                            }}
+                          />
+                          <Text size="xs" color="muted" className="qwanyx-mt-2">
+                            Current value: {otpValue || '(empty)'}
+                          </Text>
+                        </CardContent>
+                      </Card>
+
+                      {/* Partially Filled */}
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold" className="qwanyx-mb-3">Partially Filled</Text>
+                          <OTPInput
+                            value={otpValuePartial}
+                            onChange={setOtpValuePartial}
+                            onComplete={(code) => {
+                              console.log('OTP Complete:', code);
+                            }}
+                          />
+                          <Text size="xs" color="muted" className="qwanyx-mt-2">
+                            Current value: {otpValuePartial}
+                          </Text>
+                        </CardContent>
+                      </Card>
+
+                      {/* Fully Filled */}
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold" className="qwanyx-mb-3">Fully Filled (Success)</Text>
+                          <OTPInput
+                            value={otpValueFilled}
+                            onChange={setOtpValueFilled}
+                            onComplete={(code) => {
+                              console.log('OTP Complete:', code);
+                            }}
+                          />
+                          <Text size="xs" color="muted" className="qwanyx-mt-2">
+                            Current value: {otpValueFilled}
+                          </Text>
+                        </CardContent>
+                      </Card>
+
+                      {/* Error State */}
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold" className="qwanyx-mb-3">Error State</Text>
+                          <OTPInput
+                            value={otpValueError}
+                            onChange={setOtpValueError}
+                            error={true}
+                            onComplete={(code) => {
+                              console.log('OTP Complete:', code);
+                            }}
+                          />
+                          <Text size="xs" color="error" className="qwanyx-mt-2">
+                            Invalid code. Please try again.
+                          </Text>
+                        </CardContent>
+                      </Card>
+
+                      {/* Disabled State */}
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold" className="qwanyx-mb-3">Disabled</Text>
+                          <OTPInput
+                            value="123"
+                            onChange={() => {}}
+                            disabled={true}
+                          />
+                          <Text size="xs" color="muted" className="qwanyx-mt-2">
+                            Input is disabled
+                          </Text>
+                        </CardContent>
+                      </Card>
+
+                      {/* With Timer */}
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold" className="qwanyx-mb-3">With Timer</Text>
+                          <OTPInput
+                            value=""
+                            onChange={() => {}}
+                            onComplete={(code) => {
+                              console.log('OTP Complete:', code);
+                            }}
+                          />
+                          <div className="qwanyx-mt-4">
+                            <OTPTimer
+                              duration={120}
+                              onExpire={() => console.log('Code expired')}
+                              onResend={() => console.log('Resend code')}
+                            />
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Different Lengths */}
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold" className="qwanyx-mb-3">4-Digit Code</Text>
+                          <OTPInput
+                            length={4}
+                            value=""
+                            onChange={() => {}}
+                            onComplete={(code) => {
+                              console.log('OTP Complete:', code);
+                            }}
+                          />
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-3">Features</Text>
+                    <Grid cols={2} gap="sm">
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Auto-focus</Text>
+                          <Text size="xs" color="muted">Automatically focuses next input</Text>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Paste Support</Text>
+                          <Text size="xs" color="muted">Paste full code at once</Text>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Keyboard Navigation</Text>
+                          <Text size="xs" color="muted">Arrow keys, backspace support</Text>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Visual Feedback</Text>
+                          <Text size="xs" color="muted">Success, error, filled states</Text>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </div>
+                </div>
+              </div>
+
+              {/* Alert Atom */}
+              <div>
+                <Heading as="h3" className="qwanyx-mb-4">Alert</Heading>
+                <Text color="muted" className="qwanyx-mb-6">
+                  Status: <Badge color="success" size="sm">Stable</Badge> • 
+                  Used in: Forms, Notifications, Feedback messages
+                </Text>
+                
+                <div className="qwanyx-space-y-4">
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Alert Variants</Text>
+                    
+                    {/* Info Alert */}
+                    <div className="qwanyx-mb-4">
+                      <Alert variant="info" title="Information">
+                        This is an informational alert. Use it to provide helpful information to users.
+                      </Alert>
+                    </div>
+
+                    {/* Success Alert */}
+                    <div className="qwanyx-mb-4">
+                      <Alert variant="success" title="Success!">
+                        Your operation completed successfully. Everything went as expected.
+                      </Alert>
+                    </div>
+
+                    {/* Warning Alert */}
+                    <div className="qwanyx-mb-4">
+                      <Alert variant="warning" title="Warning">
+                        Please be careful. This action may have unintended consequences.
+                      </Alert>
+                    </div>
+
+                    {/* Error Alert */}
+                    <div className="qwanyx-mb-4">
+                      <Alert variant="error" title="Error">
+                        Something went wrong. Please try again or contact support.
+                      </Alert>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Without Title</Text>
+                    
+                    <div className="qwanyx-space-y-4">
+                      <Alert variant="info">
+                        Simple info message without a title.
+                      </Alert>
+                      
+                      <Alert variant="success">
+                        Operation completed successfully!
+                      </Alert>
+                      
+                      <Alert variant="warning">
+                        Please review your settings.
+                      </Alert>
+                      
+                      <Alert variant="error">
+                        Invalid input provided.
+                      </Alert>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Dismissible Alerts</Text>
+                    
+                    <div className="qwanyx-space-y-4">
+                      <Alert 
+                        variant="info" 
+                        title="Dismissible Alert"
+                        dismissible
+                        onDismiss={() => console.log('Alert dismissed')}
+                      >
+                        This alert can be dismissed by clicking the X button.
+                      </Alert>
+                      
+                      <Alert 
+                        variant="success" 
+                        dismissible
+                        onDismiss={() => console.log('Success alert dismissed')}
+                      >
+                        Success message that can be closed.
+                      </Alert>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Real-world Examples</Text>
+                    
+                    <div className="qwanyx-space-y-4">
+                      <Alert variant="success">
+                        ✅ Your profile has been updated successfully.
+                      </Alert>
+                      
+                      <Alert variant="error" title="Login Failed">
+                        Invalid email or password. Please try again.
+                      </Alert>
+                      
+                      <Alert variant="warning" title="Subscription Expiring">
+                        Your subscription will expire in 3 days. Please renew to continue using all features.
+                      </Alert>
+                      
+                      <Alert variant="info" title="New Feature">
+                        🎉 We've added dark mode support! Check it out in your settings.
+                      </Alert>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>

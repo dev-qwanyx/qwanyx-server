@@ -468,12 +468,16 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
       default:
         return (
           <div key={field.name} style={{ marginBottom: '1rem' }}>
+            {field.label && (
+              <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem', fontWeight: '500' }}>
+                {field.label} {field.required && '*'}
+              </label>
+            )}
             <Input
               {...commonProps}
               type={field.type || 'text'}
               value={formData[field.name] || ''}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange(field, e.target.value)}
-              label={field.label}
             />
             {field.helperText && (
               <Text style={{ fontSize: '0.75rem', color: 'rgb(var(--qwanyx-text-secondary))', marginTop: '0.25rem' }}>
@@ -653,12 +657,51 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
     )
   }
   
-  // If used as modal
+  // If used as modal - render directly like the test modal that works
   if (asModal) {
+    if (!isOpen) return null;
+    
     return (
-      <Modal isOpen={isOpen} onClose={handleClose}>
-        {authContent}
-      </Modal>
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 99999
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          maxWidth: '500px',
+          width: '90%',
+          maxHeight: '90vh',
+          overflow: 'auto',
+          position: 'relative'
+        }}>
+          <button
+            onClick={handleClose}
+            style={{
+              position: 'absolute',
+              top: '1rem',
+              right: '1rem',
+              background: 'none',
+              border: 'none',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+              color: '#666',
+              zIndex: 1
+            }}
+          >
+            ×
+          </button>
+          {authContent}
+        </div>
+      </div>
     )
   }
   

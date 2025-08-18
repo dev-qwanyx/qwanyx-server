@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 
 export interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean;
@@ -62,7 +61,8 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
   
   if (!isOpen) return null;
   
-  return createPortal(
+  // Simple rendering without createPortal for now
+  return (
     <div
       className={combinedOverlayClassName}
       onClick={handleOverlayClick}
@@ -87,8 +87,7 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
         )}
         {children}
       </div>
-    </div>,
-    document.body
+    </div>
   );
 });
 

@@ -119,10 +119,68 @@ export const OTPInput: React.FC<OTPInputProps> = ({
     inputRefs.current[index]?.select();
   };
 
+  const getInputStyle = (index: number) => {
+    const baseStyle = {
+      width: '48px',
+      height: '56px',
+      textAlign: 'center' as const,
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      borderRadius: '8px',
+      border: '2px solid rgb(var(--qwanyx-border))',
+      backgroundColor: 'rgb(var(--qwanyx-input))',
+      color: 'rgb(var(--qwanyx-foreground))',
+      outline: 'none',
+      transition: 'all 200ms ease'
+    };
+
+    if (disabled) {
+      return {
+        ...baseStyle,
+        backgroundColor: 'rgb(var(--qwanyx-muted))',
+        color: 'rgb(var(--qwanyx-muted-foreground))',
+        borderColor: 'rgb(var(--qwanyx-border))',
+        cursor: 'not-allowed',
+        opacity: 0.6
+      };
+    } else if (error) {
+      return {
+        ...baseStyle,
+        borderColor: 'rgb(var(--qwanyx-error))',
+        backgroundColor: 'rgb(var(--qwanyx-input))'
+      };
+    } else if (digits[index]) {
+      return {
+        ...baseStyle,
+        borderColor: 'rgb(var(--qwanyx-success))',
+        backgroundColor: 'rgb(var(--qwanyx-card))'
+      };
+    }
+    
+    return baseStyle;
+  };
+
+  const getInputClassName = (index: number) => {
+    const classes = ['qwanyx-otp-input'];
+    
+    if (disabled) {
+      classes.push('qwanyx-otp-input--disabled');
+    } else if (error) {
+      classes.push('qwanyx-otp-input--error');
+    } else if (digits[index]) {
+      classes.push('qwanyx-otp-input--filled');
+    }
+    
+    return classes.join(' ');
+  };
+
   return (
-    <div className={`flex gap-2 justify-center ${className}`}>
+    <div 
+      className={`qwanyx-otp-container ${className}`}
+      style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}
+    >
       {Array.from({ length }, (_, index) => (
-        <div key={index} className="relative">
+        <div key={index} className="qwanyx-otp-digit-wrapper" style={{ position: 'relative' }}>
           <input
             ref={(el) => {
               if (el) inputRefs.current[index] = el;
@@ -136,29 +194,24 @@ export const OTPInput: React.FC<OTPInputProps> = ({
             onPaste={handlePaste}
             onFocus={() => handleFocus(index)}
             disabled={disabled}
-            className={`
-              w-12 h-14 
-              text-center text-2xl font-bold
-              border-2 rounded-lg
-              transition-all duration-200
-              ${disabled 
-                ? 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed' 
-                : 'bg-white text-gray-900 hover:border-blue-400 focus:border-blue-500'
-              }
-              ${error 
-                ? 'border-red-500 focus:border-red-500 animate-shake' 
-                : digits[index] 
-                  ? 'border-green-500' 
-                  : 'border-gray-300'
-              }
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20
-            `}
+            className={getInputClassName(index)}
+            style={getInputStyle(index)}
           />
           {/* Dot indicator for filled fields */}
-          {digits[index] && (
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-            </div>
+          {digits[index] && !error && (
+            <div 
+              className="qwanyx-otp-dot" 
+              style={{
+                position: 'absolute',
+                bottom: '-8px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '6px',
+                height: '6px',
+                backgroundColor: 'rgb(var(--qwanyx-primary))',
+                borderRadius: '50%'
+              }}
+            />
           )}
         </div>
       ))}
@@ -211,12 +264,12 @@ export const OTPTimer: React.FC<OTPTimerProps> = ({
 
   if (expired) {
     return (
-      <div className="text-center">
-        <p className="text-red-600 text-sm mb-2">Code expired</p>
+      <div className="qwanyx-otp-timer">
+        <p className="qwanyx-otp-timer-expired">Code expired</p>
         {canResend && (
           <button
             onClick={handleResend}
-            className="text-blue-500 hover:underline text-sm"
+            className="qwanyx-otp-resend-button"
           >
             Resend code
           </button>
@@ -225,11 +278,17 @@ export const OTPTimer: React.FC<OTPTimerProps> = ({
     );
   }
 
+  const getCountdownClassName = () => {
+    if (timeLeft < 30) return 'qwanyx-otp-timer-countdown qwanyx-otp-timer-countdown--danger';
+    if (timeLeft < 60) return 'qwanyx-otp-timer-countdown qwanyx-otp-timer-countdown--warning';
+    return 'qwanyx-otp-timer-countdown';
+  };
+
   return (
-    <div className="text-center">
-      <p className="text-gray-600 text-sm">
+    <div className="qwanyx-otp-timer">
+      <p className="qwanyx-otp-timer-text">
         Code expires in{' '}
-        <span className={`font-mono font-bold ${timeLeft < 60 ? 'text-red-600' : 'text-gray-900'}`}>
+        <span className={getCountdownClassName()}>
           {formatTime(timeLeft)}
         </span>
       </p>

@@ -20,8 +20,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, clas
       badge: item.badge,
       children: item.children ? convertMenuItemsToSidebar(item.children) : undefined,
       onClick: item.onClick || (item.module ? async () => {
-        await loadModule(item.module)
-        setCurrentModule(item.module)
+        if (item.module) {
+          await loadModule(item.module)
+          setCurrentModule(item.module)
+        }
       } : undefined)
     }))
   }
