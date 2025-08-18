@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { 
   Container, Text, Card, CardContent, CardHeader, CardTitle, 
   Grid, Button, Badge, Input, SimpleSelect, Modal, ModalHeader, 
-  ModalTitle, ModalBody, ModalFooter, Form, FormField, Avatar, Flex 
+  ModalTitle, ModalBody, ModalFooter, Form, FormField, Avatar, Flex,
+  UserProfile 
 } from '@qwanyx/ui'
 
 interface User {
@@ -45,33 +46,46 @@ export default function UsersContent() {
     try {
       setLoading(true)
       const token = localStorage.getItem('autodin_token')
+      const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
       
-      const response = await fetch('http://localhost:5002/api/users', {
+      console.log('Fetching users with token:', token ? 'Present' : 'Missing')
+      console.log('Using workspace:', workspace)
+      
+      const response = await fetch('http://localhost:5002/users', {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Workspace': workspace
         }
       })
       
+      console.log('Response status:', response.status)
+      
       if (response.ok) {
         const data = await response.json()
+        console.log('Users data received:', data)
+        
         // Transform API data to match our User interface
-        const transformedUsers = data.users?.map((u: any) => ({
-          id: u._id || u.id,
+        // L'API retourne directement un array d'utilisateurs
+        const usersArray = Array.isArray(data) ? data : (data.users || [])
+        console.log('Users array:', usersArray)
+        
+        const transformedUsers = usersArray.map((u: any) => ({
+          id: u._id?.$oid || u._id || u.id,
           email: u.email,
-          firstName: u.firstName || u.name?.split(' ')[0],
-          lastName: u.lastName || u.name?.split(' ')[1],
+          firstName: u.first_name || u.firstName || u.name?.split(' ')[0] || '',
+          lastName: u.last_name || u.lastName || u.name?.split(' ').slice(1).join(' ') || '',
           role: u.role || 'member',
-          status: u.status || 'active',
-          createdAt: u.createdAt || new Date().toISOString(),
-          lastLogin: u.lastLogin,
+          status: u.is_active ? 'active' : (u.status || 'inactive'),
+          createdAt: u.created_at?.$date || u.created_at || u.createdAt || new Date().toISOString(),
+          lastLogin: u.last_login || u.lastLogin,
           stats: {
             totalListings: u.stats?.totalListings || 0,
             totalSales: u.stats?.totalSales || 0,
             totalRevenue: u.stats?.totalRevenue || 0,
             rating: u.stats?.rating || 0
           }
-        })) || []
+        }))
         
         setUsers(transformedUsers)
         setFilteredUsers(transformedUsers)
@@ -419,20 +433,15 @@ export default function UsersContent() {
                     }}
                   >
                     <td style={{ padding: '1rem' }}>
-                      <Flex align="center" gap="sm">
-                        <Avatar 
-                          name={`${user.firstName || ''} ${user.lastName || ''}`}
-                          size="sm"
-                        />
-                        <div>
-                          <Text size="sm" weight="medium">
-                            {user.firstName} {user.lastName}
-                          </Text>
-                          <Text size="xs" color="secondary">
-                            {user.email}
-                          </Text>
-                        </div>
-                      </Flex>
+                      <UserProfile
+                        user={{
+                          name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
+                          email: user.email
+                        }}
+                        size="sm"
+                        showEmail={true}
+                        orientation="horizontal"
+                      />
                     </td>
                     <td style={{ padding: '1rem' }}>
                       <SimpleSelect
