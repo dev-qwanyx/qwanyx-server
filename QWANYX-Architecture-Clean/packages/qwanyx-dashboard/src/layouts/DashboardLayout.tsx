@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { DashboardLayout as UILayout, SidebarItem } from '@qwanyx/ui'
+import { HolyGrailLayout, SuperNavbar, SuperSidebar, type SidebarItem } from '@qwanyx/ui'
 import { useDashboard } from '../providers/DashboardProvider'
 import { DashboardMenuItem } from '../types'
 
@@ -15,7 +15,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, clas
     return items.map(item => ({
       id: item.id,
       label: item.label,
-      icon: item.icon,
+      icon: typeof item.icon === 'string' ? item.icon : undefined,
       href: item.href,
       badge: item.badge,
       children: item.children ? convertMenuItemsToSidebar(item.children) : undefined,
@@ -30,15 +30,43 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, clas
 
   const sidebarItems = convertMenuItemsToSidebar(config.menuItems)
 
+  // Configure navbar props
+  const navbarProps = {
+    logo: config.logo,
+    title: config.title || 'Dashboard',
+    position: 'fixed' as const,
+    transparent: false,
+    blur: true,
+    elevated: true,
+    primaryAction: config.user ? {
+      label: config.user.name,
+      onClick: () => {},
+      icon: 'person'
+    } : undefined
+  }
+
+  // Configure sidebar props
+  const sidebarProps = {
+    items: sidebarItems,
+    logo: config.logo,
+    title: config.title,
+    user: config.user ? {
+      name: config.user.name,
+      email: config.user.email,
+      avatar: config.user.avatar,
+      role: config.user.role
+    } : undefined,
+    onLogout: config.onLogout,
+    theme: config.theme
+  }
+
   return (
-    <UILayout
-      sidebarItems={sidebarItems}
-      logo={config.logo}
-      user={config.user}
-      onLogout={config.onLogout}
+    <HolyGrailLayout
+      navbar={navbarProps}
+      sidebar={sidebarProps}
       className={className}
     >
       {children}
-    </UILayout>
+    </HolyGrailLayout>
   )
 }

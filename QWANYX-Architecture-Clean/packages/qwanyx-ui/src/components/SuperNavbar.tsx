@@ -66,6 +66,12 @@ export interface SuperNavbarProps {
     onClick: () => void;
     icon?: string;
   };
+  secondaryAction?: {
+    label: string;
+    onClick: () => void;
+    icon?: string;
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  };
   
   // Behavior
   variant?: 'default' | 'minimal' | 'centered' | 'dashboard' | 'landing';
@@ -118,6 +124,7 @@ export const SuperNavbar: React.FC<SuperNavbarProps> = ({
   // Actions
   actions,
   primaryAction,
+  secondaryAction,
   
   // Behavior
   variant = 'default',
@@ -404,17 +411,32 @@ export const SuperNavbar: React.FC<SuperNavbarProps> = ({
   };
   
   // Calculate navbar styles
+  const getBackgroundColor = () => {
+    if (typeof window === 'undefined') {
+      // Server-side rendering fallback
+      return transparent && !scrolled 
+        ? 'rgba(255, 255, 255, 0.85)'
+        : blur 
+          ? 'rgba(255, 255, 255, 0.98)'
+          : 'rgb(var(--background))';
+    }
+    
+    // Client-side with getComputedStyle
+    const bgValue = getComputedStyle(document.documentElement).getPropertyValue('--background').trim();
+    return transparent && !scrolled 
+      ? `rgba(${bgValue}, 0.85)` 
+      : blur 
+        ? `rgba(${bgValue}, 0.98)`
+        : 'rgb(var(--background))';
+  };
+
   const navbarStyles: React.CSSProperties = {
     position,
     top: hidden ? `-${height}` : 0,
     left: 0,
     right: 0,
     height,
-    backgroundColor: transparent && !scrolled 
-      ? `rgba(${getComputedStyle(document.documentElement).getPropertyValue('--background').trim()}, 0.85)` 
-      : blur 
-        ? `rgba(${getComputedStyle(document.documentElement).getPropertyValue('--background').trim()}, 0.98)`
-        : 'rgb(var(--background))',
+    backgroundColor: getBackgroundColor(),
     backdropFilter: blur ? 'blur(10px)' : 'none',
     borderBottom: bordered ? '1px solid rgb(var(--border))' : 'none',
     boxShadow: elevated || scrolled ? 'var(--shadow)' : 'none',
@@ -641,12 +663,34 @@ export const SuperNavbar: React.FC<SuperNavbarProps> = ({
             {/* Custom Actions */}
             {actions}
             
+            {/* Secondary Action */}
+            {secondaryAction && !isMobile && (
+              <Button
+                variant={secondaryAction.variant || "outline"}
+                size="sm"
+                onClick={() => {
+                  console.log('SuperNavbar: Secondary action clicked')
+                  if (secondaryAction.onClick) {
+                    secondaryAction.onClick()
+                  }
+                }}
+              >
+                {secondaryAction.icon && <Icon name={secondaryAction.icon} size="sm" />}
+                {secondaryAction.label}
+              </Button>
+            )}
+            
             {/* Primary Action */}
             {primaryAction && !isMobile && (
               <Button
                 variant="primary"
                 size="sm"
-                onClick={primaryAction.onClick}
+                onClick={() => {
+                  console.log('SuperNavbar: Primary action clicked')
+                  if (primaryAction.onClick) {
+                    primaryAction.onClick()
+                  }
+                }}
               >
                 {primaryAction.icon && <Icon name={primaryAction.icon} size="sm" />}
                 {primaryAction.label}
@@ -920,6 +964,22 @@ export const SuperNavbar: React.FC<SuperNavbarProps> = ({
             ))}
           </div>
           
+          {/* Mobile Secondary Action */}
+          {secondaryAction && (
+            <Button
+              variant={secondaryAction.variant || "outline"}
+              size="md"
+              onClick={() => {
+                secondaryAction.onClick();
+                setIsMobileMenuOpen(false);
+              }}
+              style={{ width: '100%', marginTop: '1rem' }}
+            >
+              {secondaryAction.icon && <Icon name={secondaryAction.icon} size="sm" />}
+              {secondaryAction.label}
+            </Button>
+          )}
+          
           {/* Mobile Primary Action */}
           {primaryAction && (
             <Button
@@ -929,7 +989,7 @@ export const SuperNavbar: React.FC<SuperNavbarProps> = ({
                 primaryAction.onClick();
                 setIsMobileMenuOpen(false);
               }}
-              style={{ width: '100%', marginTop: '1rem' }}
+              style={{ width: '100%', marginTop: '0.5rem' }}
             >
               {primaryAction.icon && <Icon name={primaryAction.icon} size="sm" />}
               {primaryAction.label}

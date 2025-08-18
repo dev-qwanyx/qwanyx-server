@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import { ThemeProvider } from '@qwanyx/ui'
+import { ThemeProvider, WorkspaceProvider } from '@qwanyx/ui'
+import { AuthProvider } from '@qwanyx/auth'
 
 // Autodin theme configuration
 const autodinTheme = {
@@ -40,11 +41,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, [])
   
   return (
-    <ThemeProvider 
-      defaultTheme={autodinTheme}
-      persistTheme={false} // Don't save to localStorage - always use Autodin theme
-    >
-      {children}
-    </ThemeProvider>
+    <WorkspaceProvider defaultWorkspace="autodin">
+      <ThemeProvider 
+        defaultTheme={autodinTheme}
+        persistTheme={false} // Don't save to localStorage - always use Autodin theme
+      >
+        <AuthProvider workspace="autodin">
+          {children}
+        </AuthProvider>
+      </ThemeProvider>
+    </WorkspaceProvider>
   )
 }

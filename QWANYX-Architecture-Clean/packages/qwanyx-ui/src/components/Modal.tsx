@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
+import '../styles/components/modal.css';
 
 export interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean;
@@ -61,8 +63,8 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
   
   if (!isOpen) return null;
   
-  // Simple rendering without createPortal for now
-  return (
+  // Use portal to render modal outside of DOM hierarchy
+  const modalContent = (
     <div
       className={combinedOverlayClassName}
       onClick={handleOverlayClick}
@@ -89,6 +91,16 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(({
       </div>
     </div>
   );
+  
+  // Check if we're in browser environment
+  if (typeof window !== 'undefined') {
+    return ReactDOM.createPortal(
+      modalContent,
+      document.body
+    );
+  }
+  
+  return modalContent;
 });
 
 Modal.displayName = 'Modal';

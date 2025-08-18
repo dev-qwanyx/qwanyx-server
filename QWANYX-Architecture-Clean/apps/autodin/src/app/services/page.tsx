@@ -15,7 +15,6 @@ import {
   CardContent,
   Button
 } from '@qwanyx/ui'
-import '../autodin.css'
 
 export default function ServicesPage() {
   const navigation = {

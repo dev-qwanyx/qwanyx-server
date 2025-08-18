@@ -12,6 +12,7 @@ import { IconLibraryPage } from './icons/IconLibraryPage';
 import { AtomsShowcase } from './atoms/AtomsShowcase';
 import { MoleculesShowcase } from './molecules/MoleculesShowcase';
 import { LayoutGallery } from './LayoutGallery';
+import { DashboardShowcase } from './dashboard/DashboardShowcase';
 import { Container, Section, Heading, Text, Button } from '../src';
 import { NavigationBar } from '../src/components/NavigationBar';
 import { AuthModal, AuthStatus } from '../src/components/Auth';
@@ -65,6 +66,11 @@ function StudioApp() {
               label: '📐 Layouts',
               active: currentView === 'layouts',
               onClick: () => setCurrentView('layouts')
+            },
+            {
+              label: '🎯 Dashboard',
+              active: currentView === 'dashboard',
+              onClick: () => setCurrentView('dashboard')
             },
             {
               label: 'Icons',
@@ -124,6 +130,7 @@ function StudioApp() {
             </Container>
           )}
           {currentView === 'layouts' && <LayoutGallery />}
+          {currentView === 'dashboard' && <DashboardShowcase />}
           {currentView === 'icons' && <IconLibraryPage />}
           {currentView === 'editor' && <ThemeEditor />}
           {currentView === 'parallax' && <ParallaxShowcase />}

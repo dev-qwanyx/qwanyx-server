@@ -225,8 +225,8 @@ export type { AlertProps } from './components/Alert';
 export { Sidebar, SimpleSidebar } from './components/Sidebar';
 export type { SidebarProps, SimpleSidebarProps, SidebarItem } from './components/Sidebar';
 
-export { DashboardLayout, SimpleDashboardLayout } from './components/DashboardLayout';
-export type { DashboardLayoutProps, SimpleDashboardLayoutProps } from './components/DashboardLayout';
+export { DashboardLayout, ContentLayout, FullWidthLayout } from './components/DashboardLayout';
+export type { DashboardLayoutProps } from './components/DashboardLayout';
 
 // Icons - Using Google Material Symbols
 export { Icon, Icons } from './components/Icon';

@@ -13,10 +13,12 @@
     "build": "vite build",
     "type-check": "tsc --noEmit"
   },
+  "dependencies": {
+    "@qwanyx/ui": "file:../qwanyx-ui"
+  },
   "peerDependencies": {
     "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "@qwanyx/ui": "workspace:*"
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.45",

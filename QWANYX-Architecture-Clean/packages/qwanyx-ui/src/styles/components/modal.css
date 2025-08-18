@@ -4,11 +4,11 @@
 .qwanyx-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgb(var(--qwanyx-modal-overlay) / var(--qwanyx-modal-overlay-opacity));
+  background-color: rgba(0, 0, 0, 0.5);
   padding: 1rem;
   animation: qwanyx-fade-in 200ms ease-out;
 }
@@ -17,11 +17,13 @@
 .qwanyx-modal {
   position: relative;
   width: 100%;
-  background-color: rgb(var(--qwanyx-modal));
-  color: rgb(var(--qwanyx-modal-foreground));
-  border-radius: var(--qwanyx-radius-lg);
-  box-shadow: var(--qwanyx-shadow-xl);
+  background-color: white;
+  color: #333;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   animation: qwanyx-zoom-in 200ms ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* Size variations */
@@ -51,17 +53,18 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  padding: 0.25rem;
-  border-radius: var(--qwanyx-radius-lg);
+  padding: 0.5rem;
+  border-radius: 8px;
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: background-color var(--qwanyx-transition-base);
-  color: rgb(var(--qwanyx-text-muted));
+  transition: background-color 0.2s ease;
+  color: #666;
+  z-index: 10;
 }
 
 .qwanyx-modal__close:hover {
-  background-color: rgb(var(--qwanyx-muted));
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .qwanyx-modal__close svg {
@@ -72,21 +75,22 @@
 /* Modal Header */
 .qwanyx-modal__header {
   padding: 1.5rem;
-  border-bottom: 1px solid rgb(var(--qwanyx-border));
+  border-bottom: 1px solid #e5e5e5;
 }
 
 /* Modal Title */
 .qwanyx-modal__title {
-  font-size: var(--qwanyx-text-xl);
-  font-weight: var(--qwanyx-font-semibold);
-  color: rgb(var(--qwanyx-text-primary));
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111;
+  margin: 0;
 }
 
 /* Modal Description */
 .qwanyx-modal__description {
   margin-top: 0.25rem;
-  font-size: var(--qwanyx-text-sm);
-  color: rgb(var(--qwanyx-text-secondary));
+  font-size: 0.875rem;
+  color: #666;
 }
 
 /* Modal Body */
@@ -99,7 +103,7 @@
   display: flex;
   align-items: center;
   padding: 1.5rem;
-  border-top: 1px solid rgb(var(--qwanyx-border));
+  border-top: 1px solid #e5e5e5;
   gap: 0.75rem;
 }
 

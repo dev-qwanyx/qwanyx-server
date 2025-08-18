@@ -1,0 +1,101 @@
+/* Alert Component Styles */
+
+.qwanyx-alert {
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 1rem;
+  position: relative;
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Variant styles */
+.qwanyx-alert--info {
+  background-color: rgba(var(--qwanyx-info), 0.1);
+  border-color: rgba(var(--qwanyx-info), 0.3);
+  color: rgb(var(--qwanyx-info));
+}
+
+.qwanyx-alert--success {
+  background-color: rgba(var(--qwanyx-success), 0.1);
+  border-color: rgba(var(--qwanyx-success), 0.3);
+  color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-alert--warning {
+  background-color: rgba(var(--qwanyx-warning), 0.1);
+  border-color: rgba(var(--qwanyx-warning), 0.3);
+  color: rgb(var(--qwanyx-warning));
+}
+
+.qwanyx-alert--error {
+  background-color: rgba(var(--qwanyx-error), 0.1);
+  border-color: rgba(var(--qwanyx-error), 0.3);
+  color: rgb(var(--qwanyx-error));
+}
+
+/* Alert content layout */
+.qwanyx-alert__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.qwanyx-alert__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.qwanyx-alert__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: rgb(var(--qwanyx-foreground));
+}
+
+.qwanyx-alert__message {
+  font-size: 0.875rem;
+  color: rgb(var(--qwanyx-text-secondary));
+  line-height: 1.5;
+}
+
+/* Dismiss button */
+.qwanyx-alert__dismiss {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: currentColor;
+  opacity: 0.6;
+  transition: opacity 200ms ease;
+  border-radius: 4px;
+}
+
+.qwanyx-alert__dismiss:hover {
+  opacity: 1;
+  background-color: rgba(var(--qwanyx-foreground), 0.05);
+}
+
+.qwanyx-alert__dismiss:focus {
+  outline: 2px solid rgb(var(--qwanyx-ring));
+  outline-offset: 2px;
+}
+
+.qwanyx-alert__dismiss svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Screen reader only text */
+.qwanyx-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

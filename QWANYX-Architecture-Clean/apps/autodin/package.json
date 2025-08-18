@@ -11,6 +11,7 @@
   "dependencies": {
     "@qwanyx/auth": "file:../../packages/qwanyx-auth",
     "@qwanyx/dashboard": "file:../../packages/qwanyx-dashboard",
+    "@qwanyx/dashboard-v2": "file:../../packages/qwanyx-dashboard-v2",
     "@qwanyx/ui": "file:../../packages/qwanyx-ui",
     "@qwanyx/user-management": "file:../../packages/qwanyx-user-management",
     "critters": "^0.0.23",

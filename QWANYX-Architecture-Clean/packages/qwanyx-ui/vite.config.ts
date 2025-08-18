@@ -25,7 +25,12 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'QwanyxUI',
-      fileName: (format) => `index.${format}.js`,
+      fileName: (format) => {
+        if (format === 'es') return 'index.mjs';
+        if (format === 'umd') return 'index.js';
+        return `index.${format}.js`;
+      },
+      formats: ['es', 'umd']
     },
     rollupOptions: {
       external: ['react', 'react-dom'],
