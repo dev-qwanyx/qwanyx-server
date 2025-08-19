@@ -68,8 +68,8 @@ function AppContent() {
       name: 'proTypes',
       label: "Type d'activité",
       type: 'checkbox' as const,
-      showIf: (formData: any) => formData.accountType === 'professionnel',
-      helperText: 'Sélectionnez toutes les activités qui vous concernent',
+      required: true,
+      helperText: 'Sélectionnez au moins une activité (obligatoire)',
       options: [
         { value: 'garagiste', label: 'Garagiste' },
         { value: 'fournisseur', label: 'Fournisseur de pièces' },

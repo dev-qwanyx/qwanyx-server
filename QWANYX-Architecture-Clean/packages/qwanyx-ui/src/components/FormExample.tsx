@@ -4,10 +4,10 @@ import {
   Form, 
   Field, 
   Select, 
-  Checkbox, 
-  Radio, 
   FileInput
 } from './Form';
+import { Radio } from './Radio';
+import { Checkbox } from './Checkbox';
 import { Input, Textarea } from './Input';
 import { Button } from './Button';
 import { Heading, Text } from './Text';

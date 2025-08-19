@@ -240,13 +240,13 @@ export type { SpinnerProps, SpinnerWithTextProps } from './components/Spinner';
 export { Switch, SwitchGroup } from './components/Switch';
 export type { SwitchProps, SwitchGroupProps } from './components/Switch';
 
-// Checkbox (new improved version)
-export { Checkbox as CheckboxNew, CheckboxGroup } from './components/Checkbox';
-export type { CheckboxProps as CheckboxNewProps, CheckboxGroupProps } from './components/Checkbox';
+// Checkbox - Official component with animations and CheckboxGroup
+export { Checkbox, CheckboxGroup } from './components/Checkbox';
+export type { CheckboxProps, CheckboxGroupProps } from './components/Checkbox';
 
 // Radio (new improved version)
-export { Radio as RadioNew, RadioGroup } from './components/Radio';
-export type { RadioProps as RadioNewProps, RadioGroupProps } from './components/Radio';
+export { Radio, RadioGroup } from './components/Radio';
+export type { RadioProps, RadioGroupProps } from './components/Radio';
 
 // Progress
 export { Progress, ProgressWithLabel } from './components/Progress';
@@ -290,8 +290,6 @@ export {
   Field, 
   Control, 
   Select, 
-  Checkbox, 
-  Radio, 
   FileInput,
   useFormContext,
   useForm
@@ -302,8 +300,6 @@ export type {
   ControlProps, 
   SelectProps, 
   SelectOption,
-  CheckboxProps, 
-  RadioProps, 
   FileInputProps,
   FieldValues,
   UseFormReturn,

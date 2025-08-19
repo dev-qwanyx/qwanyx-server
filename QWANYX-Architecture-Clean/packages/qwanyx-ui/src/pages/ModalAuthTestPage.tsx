@@ -147,7 +147,7 @@ export const ModalAuthTestPage = () => {
           <div style={{ marginBottom: '1.5rem' }}>
             <Checkbox
               checked={formData.rememberMe}
-              onChange={(checked) => setFormData({...formData, rememberMe: checked})}
+              onChange={(checked: boolean) => setFormData({...formData, rememberMe: checked})}
               label="Se souvenir de moi"
             />
           </div>

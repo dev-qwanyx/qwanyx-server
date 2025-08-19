@@ -20,7 +20,8 @@ export * from './Favicon'
 export * from './Animated'
 export * from './Parallax'
 export * from './Form'
-export * from './RadioGroup'
+export * from './Radio' // Official Radio component with animations and RadioGroup
+export * from './Checkbox' // Official Checkbox component with animations and CheckboxGroup
 export * from './SimpleSelect'
 export * from './Page'
 export * from './ThemeToggle'
