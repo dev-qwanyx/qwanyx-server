@@ -4,6 +4,7 @@ import {
   Button, 
   Input, 
   Checkbox,
+  CheckboxGroup,
   Radio,
   RadioGroup,
   SimpleSelect,
@@ -22,7 +23,7 @@ export interface AuthField {
   placeholder?: string
   required?: boolean
   validation?: 'email' | 'phone' | 'linkedin' | 'vat' | 'url' | RegExp | ((value: string) => boolean | string)
-  options?: Array<{ value: string; label: string }> // For select and radio types
+  options?: Array<{ value: string; label: string; disabled?: boolean }> // For select and radio types
   showIf?: string | ((formData: any) => boolean) // Conditional display
   defaultValue?: any
   helperText?: string
@@ -244,7 +245,15 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
   
   // Validate single field
   const validateField = (field: AuthField, value: any) => {
-    if (field.required && !value) {
+    // For checkbox groups with options, check if at least one is selected
+    if (field.type === 'checkbox' && field.options && field.options.length > 0) {
+      if (field.required) {
+        const hasSelection = value && Object.values(value).some((checked) => checked === true)
+        if (!hasSelection) {
+          return `${field.label} ${t.fieldRequired}`
+        }
+      }
+    } else if (field.required && !value) {
       return `${field.label} ${t.fieldRequired}`
     }
     
@@ -429,14 +438,55 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
     
     switch (field.type) {
       case 'checkbox':
-        return (
-          <Checkbox
-            key={field.name}
-            checked={formData[field.name] || false}
-            onChange={(checked: boolean) => handleFieldChange(field, checked)}
-            label={field.label}
-          />
-        )
+        // 🤖 AI Note: Si le checkbox a des options, on crée un groupe de checkboxes
+        // Sinon, c'est un simple checkbox boolean
+        if (field.options && field.options.length > 0) {
+          return (
+            <div key={field.name} style={{ marginBottom: '1rem' }}>
+              <Text size="sm" weight="medium" style={{ marginBottom: '0.5rem', display: 'block' }}>
+                {field.label} {field.required && '*'}
+              </Text>
+              <CheckboxGroup
+                orientation="vertical"
+                gap="sm"
+              >
+                {field.options.map((option) => (
+                  <Checkbox
+                    key={option.value}
+                    checked={formData[field.name]?.[option.value] || false}
+                    onChange={(checked: boolean) => {
+                      // Store as object { optionValue: true/false }
+                      const newValue = { ...formData[field.name], [option.value]: checked }
+                      handleFieldChange(field, newValue)
+                    }}
+                    label={option.label}
+                    disabled={loading || option.disabled}
+                  />
+                ))}
+              </CheckboxGroup>
+              {field.helperText && (
+                <Text size="xs" color="secondary" style={{ marginTop: '0.25rem' }}>
+                  {field.helperText}
+                </Text>
+              )}
+              {errors[field.name] && (
+                <Text size="xs" color="error" style={{ marginTop: '0.25rem' }}>
+                  {errors[field.name]}
+                </Text>
+              )}
+            </div>
+          )
+        } else {
+          // Simple boolean checkbox
+          return (
+            <Checkbox
+              key={field.name}
+              checked={formData[field.name] || false}
+              onChange={(checked: boolean) => handleFieldChange(field, checked)}
+              label={field.label}
+            />
+          )
+        }
         
       case 'radio':
         return (

@@ -14,7 +14,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@qwanyx/ui": "file:../qwanyx-ui"
+    "@qwanyx/ui": "file:../qwanyx-ui",
+    "@qwanyx/form": "file:../qwanyx-form"
   },
   "peerDependencies": {
     "react": "^18.0.0",
