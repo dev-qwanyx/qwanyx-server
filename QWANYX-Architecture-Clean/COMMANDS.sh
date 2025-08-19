@@ -17,19 +17,26 @@ cd /opt/qwanyx/apps/qwanyx-server
 # Pull latest changes (already done by webhook)
 echo "Code already updated by webhook"
 
-# Install/Update Node.js dependencies for Autodin Next.js
-echo "📦 Installing dependencies for Autodin Next.js..."
-cd apps/autodin
-npm install
-
-# Build Next.js production version
-echo "🔨 Building Autodin Next.js..."
-npm run build
-
-# Start Autodin with PM2 on port 8090 (replacing Flask)
-echo "🚀 Starting Autodin Next.js on port 8090..."
-PORT=8090 pm2 start npm --name "autodin-next" -- start
-pm2 save
+# Check if Autodin Next.js exists
+if [ -d "apps/autodin/.next" ]; then
+    echo "📦 Found pre-built Autodin Next.js..."
+    cd apps/autodin
+    
+    # Install production dependencies only
+    npm install --production
+    
+    # Start Autodin with PM2 on port 8090
+    echo "🚀 Starting Autodin Next.js on port 8090..."
+    PORT=8090 pm2 start npm --name "autodin-next" -- start
+    pm2 save
+else
+    echo "⚠️ No pre-built Next.js found. Building from source..."
+    cd apps/autodin
+    npm install
+    npm run build
+    PORT=8090 pm2 start npm --name "autodin-next" -- start
+    pm2 save
+fi
 
 # Keep Belgicomics Flask running
 echo "🚀 Restarting Belgicomics Flask..."

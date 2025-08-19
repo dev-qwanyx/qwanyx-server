@@ -132,14 +132,14 @@ export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(({
   };
   
   const colorMap = {
-    primary: 'rgb(var(--qwanyx-foreground))',
-    secondary: 'rgb(var(--qwanyx-foreground) / 0.7)',
-    muted: 'rgb(var(--qwanyx-foreground) / 0.5)',
-    accent: 'rgb(var(--qwanyx-primary))',
-    success: 'rgb(var(--qwanyx-success))',
-    warning: 'rgb(var(--qwanyx-warning))',
-    error: 'rgb(var(--qwanyx-error))',
-    info: 'rgb(var(--qwanyx-info))'
+    primary: 'rgb(var(--foreground))',
+    secondary: 'rgb(var(--foreground) / 0.7)',
+    muted: 'rgb(var(--foreground) / 0.5)',
+    accent: 'rgb(var(--primary))',
+    success: 'rgb(var(--success))',
+    warning: 'rgb(var(--warning))',
+    error: 'rgb(var(--error))',
+    info: 'rgb(var(--info))'
   };
   
   const textStyle: React.CSSProperties = {

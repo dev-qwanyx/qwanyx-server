@@ -1,6 +1,10 @@
 // Import styles
 import './styles.css';
 
+// Page Component - Foundation of all views
+export { Page } from './components/Page';
+export type { PageProps } from './components/Page';
+
 // Theme Provider
 export { ThemeProvider, useTheme } from './providers/ThemeProvider';
 export type { Theme } from './providers/ThemeProvider';
@@ -89,6 +93,15 @@ export type {
 
 export { Navbar } from './components/Navbar';
 export type { NavbarProps, NavbarMenuItem } from './components/Navbar';
+
+export { NavbarNew } from './components/NavbarNew';
+export type { NavbarProps as NavbarNewProps, NavbarMenuItem as NavbarNewMenuItem, NavbarUser } from './components/NavbarNew';
+
+export { Logo } from './components/Logo';
+export type { LogoProps } from './components/Logo';
+
+export { SearchBar } from './components/SearchBar';
+export type { SearchBarProps } from './components/SearchBar';
 
 export { NavigationBar } from './components/NavigationBar';
 export type { NavigationBarProps, NavItem } from './components/NavigationBar';
@@ -307,32 +320,19 @@ export type {
 
 // Special Components
 
-// Page Components
-export {
-  Page,
-  PageHeader,
-  PageContent,
-  PageFooter,
-  PageSection
-} from './components/Page';
-export type {
-  PageProps,
-  PageHeaderProps,
-  PageContentProps,
-  PageFooterProps,
-  PageSectionProps,
-  NavigationItem
-} from './components/Page';
 
-// Preconfigured Pages
-export { LandingPage } from './pages/LandingPage';
-export type { LandingPageProps } from './pages/LandingPage';
+// Preconfigured Pages - TODO: Fix these after refactoring
+// export { LandingPage } from './pages/LandingPage';
+// export type { LandingPageProps } from './pages/LandingPage';
 
-export { DashboardPage } from './pages/DashboardPage';
-export type { DashboardPageProps } from './pages/DashboardPage';
+// export { DashboardPage } from './pages/DashboardPage';
+// export type { DashboardPageProps } from './pages/DashboardPage';
 
-export { MarketplacePage } from './pages/MarketplacePage';
-export type { MarketplacePageProps, MarketplaceItem } from './pages/MarketplacePage';
+// export { MarketplacePage } from './pages/MarketplacePage';
+// export type { MarketplacePageProps, MarketplaceItem } from './pages/MarketplacePage';
+
+// export { ThemePage } from './pages/ThemePage';
+// export type { ThemePageProps } from './pages/ThemePage';
 
 // Preconfigured Sections
 export { HeroSection } from './sections/HeroSection';

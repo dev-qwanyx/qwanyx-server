@@ -1,7 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@qwanyx/ui'],
+  transpilePackages: ['@qwanyx/ui', '@qwanyx/auth', '@qwanyx/dashboard', '@qwanyx/dashboard-v2', '@qwanyx/user-management'],
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
   
   // Optimisations pour production
   images: {

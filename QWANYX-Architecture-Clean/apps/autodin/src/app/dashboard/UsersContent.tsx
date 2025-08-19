@@ -123,7 +123,7 @@ export default function UsersContent() {
         // Find current user's role
         const userEmail = localStorage.getItem('autodin_user_email')
         if (userEmail) {
-          const currentUser = transformedUsers.find(u => u.email === userEmail)
+          const currentUser = transformedUsers.find((u: any) => u.email === userEmail)
           if (currentUser) {
             setCurrentUserRole(currentUser.role)
             console.log('Current user role:', currentUser.role)
@@ -148,7 +148,7 @@ export default function UsersContent() {
         email: 'jean.dupont@example.com',
         firstName: 'Jean',
         lastName: 'Dupont',
-        role: 'owner',
+        role: 'administrateur' as const,
         status: 'active',
         createdAt: '2024-01-15',
         lastLogin: '2024-12-10',
@@ -164,7 +164,7 @@ export default function UsersContent() {
         email: 'marie.martin@example.com',
         firstName: 'Marie',
         lastName: 'Martin',
-        role: 'admin',
+        role: 'administrateur' as const,
         status: 'active',
         createdAt: '2024-02-20',
         lastLogin: '2024-12-09',
@@ -180,7 +180,7 @@ export default function UsersContent() {
         email: 'pierre.bernard@example.com',
         firstName: 'Pierre',
         lastName: 'Bernard',
-        role: 'member',
+        role: 'particulier' as const,
         status: 'active',
         createdAt: '2024-03-10',
         lastLogin: '2024-12-08',

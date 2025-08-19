@@ -22,6 +22,6 @@
     }
   },
   "include": ["src"],
-  "exclude": ["studio", "**/*.test.tsx", "**/*.stories.tsx"],
+  "exclude": ["studio", "**/*.test.tsx", "**/*.stories.tsx", "src/pages-backup"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
