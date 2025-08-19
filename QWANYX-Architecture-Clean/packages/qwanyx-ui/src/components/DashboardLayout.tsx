@@ -1,9 +1,9 @@
 import React, { useState, ReactNode } from 'react'
-import { SuperNavbar, SuperNavbarProps } from './SuperNavbar'
+import { Navbar, NavbarProps } from './Navbar'
 import { SuperSidebar, SuperSidebarProps } from './SuperSidebar'
 
 export interface DashboardLayoutProps {
-  navbar?: SuperNavbarProps | false
+  navbar?: NavbarProps | false
   sidebar?: SuperSidebarProps | false
   rightSidebar?: SuperSidebarProps | false
   children: ReactNode
@@ -67,7 +67,7 @@ const HolyGrailLayoutDashboard: React.FC<DashboardLayoutProps> = ({
     <div className={className} style={layoutStyles}>
       {/* Top Navigation Bar */}
       {navbar !== false && (
-        <SuperNavbar
+        <Navbar
           {...navbar}
           position="fixed"
           style={{

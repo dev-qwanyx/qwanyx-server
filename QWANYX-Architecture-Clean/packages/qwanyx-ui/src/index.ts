@@ -87,30 +87,13 @@ export type {
   AsymmetricLayoutProps 
 } from './components/Layouts';
 
-export { 
-  Navbar,
-  NavbarBrand,
-  NavbarLogo,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenu,
-  SimpleNavbar 
-} from './components/Navbar';
-export type { 
-  NavbarProps,
-  NavbarBrandProps,
-  NavbarLogoProps,
-  NavbarContentProps,
-  NavbarItemProps,
-  NavbarMenuProps,
-  SimpleNavbarProps 
-} from './components/Navbar';
+export { Navbar } from './components/Navbar';
+export type { NavbarProps, NavbarMenuItem } from './components/Navbar';
 
 export { NavigationBar } from './components/NavigationBar';
 export type { NavigationBarProps, NavItem } from './components/NavigationBar';
 
-export { SuperNavbar } from './components/SuperNavbar';
-export type { SuperNavbarProps, SuperNavbarMenuItem } from './components/SuperNavbar';
+// SuperNavbar has been renamed to Navbar and is exported above
 
 export {
   Tabs,

@@ -10,7 +10,7 @@ import {
   Heading,
   Text,
   // Navigation
-  SimpleNavbar,
+  Navbar,
   // Hero
   Hero,
   HeroTitle,
@@ -115,9 +115,9 @@ export const QwanyxTemplate: React.FC<QwanyxTemplateProps> = ({
       <Favicon autoDetect={true} />
       
       {/* Navigation */}
-      <SimpleNavbar
+      <Navbar
         title={companyName}
-        fixed={true}
+        position="fixed"
         className={`transition-all duration-300 ${
           isScrolled ? 'bg-white shadow-lg' : 'bg-transparent'
         }`}

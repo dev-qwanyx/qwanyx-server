@@ -1,0 +1,172 @@
+/* Google Material Symbols Font */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+/* Base Icon Styles */
+.qwanyx-icon {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+  vertical-align: middle;
+  user-select: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* Variants */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-filled {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-sharp {
+  font-family: 'Material Symbols Sharp';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Sizes */
+.qwanyx-icon-xs {
+  font-size: 16px;
+  font-variation-settings: 'FILL' inherit, 'wght' inherit, 'GRAD' inherit, 'opsz' 20;
+}
+
+.qwanyx-icon-sm {
+  font-size: 20px;
+  font-variation-settings: 'FILL' inherit, 'wght' inherit, 'GRAD' inherit, 'opsz' 20;
+}
+
+.qwanyx-icon-md {
+  font-size: 24px;
+  font-variation-settings: 'FILL' inherit, 'wght' inherit, 'GRAD' inherit, 'opsz' 24;
+}
+
+.qwanyx-icon-lg {
+  font-size: 32px;
+  font-variation-settings: 'FILL' inherit, 'wght' inherit, 'GRAD' inherit, 'opsz' 40;
+}
+
+.qwanyx-icon-xl {
+  font-size: 40px;
+  font-variation-settings: 'FILL' inherit, 'wght' inherit, 'GRAD' inherit, 'opsz' 48;
+}
+
+.qwanyx-icon-2xl {
+  font-size: 48px;
+  font-variation-settings: 'FILL' inherit, 'wght' inherit, 'GRAD' inherit, 'opsz' 48;
+}
+
+.qwanyx-icon-3xl {
+  font-size: 64px;
+  font-variation-settings: 'FILL' inherit, 'wght' inherit, 'GRAD' inherit, 'opsz' 48;
+}
+
+/* Colors using CSS variables from theme */
+.qwanyx-icon-primary {
+  color: rgb(var(--qwanyx-primary));
+}
+
+.qwanyx-icon-secondary {
+  color: rgb(var(--qwanyx-secondary));
+}
+
+.qwanyx-icon-accent {
+  color: rgb(var(--qwanyx-accent));
+}
+
+.qwanyx-icon-success {
+  color: rgb(var(--qwanyx-success));
+}
+
+.qwanyx-icon-warning {
+  color: rgb(var(--qwanyx-warning));
+}
+
+.qwanyx-icon-error {
+  color: rgb(var(--qwanyx-error));
+}
+
+.qwanyx-icon-info {
+  color: rgb(var(--qwanyx-info));
+}
+
+.qwanyx-icon-inherit {
+  color: inherit;
+}
+
+.qwanyx-icon-foreground {
+  color: rgb(var(--qwanyx-foreground));
+}
+
+.qwanyx-icon-muted {
+  color: rgb(var(--qwanyx-text-muted));
+}
+
+/* Clickable icons */
+.qwanyx-icon-clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.qwanyx-icon-clickable:hover {
+  transform: scale(1.1);
+}
+
+.qwanyx-icon-clickable:active {
+  transform: scale(0.95);
+}
+
+/* Weight variations */
+.qwanyx-icon-thin {
+  font-variation-settings: 'FILL' inherit, 'wght' 100, 'GRAD' inherit, 'opsz' inherit;
+}
+
+.qwanyx-icon-light {
+  font-variation-settings: 'FILL' inherit, 'wght' 300, 'GRAD' inherit, 'opsz' inherit;
+}
+
+.qwanyx-icon-regular {
+  font-variation-settings: 'FILL' inherit, 'wght' 400, 'GRAD' inherit, 'opsz' inherit;
+}
+
+.qwanyx-icon-medium {
+  font-variation-settings: 'FILL' inherit, 'wght' 500, 'GRAD' inherit, 'opsz' inherit;
+}
+
+.qwanyx-icon-bold {
+  font-variation-settings: 'FILL' inherit, 'wght' 700, 'GRAD' inherit, 'opsz' inherit;
+}
+
+/* Rotating animation for loading icons */
+@keyframes qwanyx-icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.qwanyx-icon-spin {
+  animation: qwanyx-icon-spin 1s linear infinite;
+}

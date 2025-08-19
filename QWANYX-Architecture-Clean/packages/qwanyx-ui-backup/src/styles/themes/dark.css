@@ -1,0 +1,486 @@
+/* QWANYX UI - Dark Theme */
+
+[data-theme="dark"] {
+  /* ===== Core Brand Colors (adjusted for dark mode) ===== */
+  --qwanyx-primary: 96 165 250;           /* Lighter blue for dark mode */
+  --qwanyx-primary-hover: 147 197 253;
+  --qwanyx-primary-active: 59 130 246;
+  --qwanyx-primary-foreground: 15 23 42;
+  
+  --qwanyx-secondary: 196 181 253;        /* Lighter purple for dark mode */
+  --qwanyx-secondary-hover: 221 214 254;
+  --qwanyx-secondary-active: 167 139 250;
+  --qwanyx-secondary-foreground: 15 23 42;
+  
+  --qwanyx-accent: 74 222 128;            /* Lighter green for dark mode */
+  --qwanyx-accent-hover: 134 239 172;
+  --qwanyx-accent-active: 34 197 94;
+  --qwanyx-accent-foreground: 15 23 42;
+  
+  /* ===== Semantic Colors ===== */
+  --qwanyx-success: 74 222 128;
+  --qwanyx-success-hover: 134 239 172;
+  --qwanyx-success-foreground: 15 23 42;
+  
+  --qwanyx-warning: 252 211 77;
+  --qwanyx-warning-hover: 253 224 71;
+  --qwanyx-warning-foreground: 15 23 42;
+  
+  --qwanyx-error: 248 113 113;
+  --qwanyx-error-hover: 252 165 165;
+  --qwanyx-error-foreground: 15 23 42;
+  
+  --qwanyx-info: 96 165 250;
+  --qwanyx-info-hover: 147 197 253;
+  --qwanyx-info-foreground: 15 23 42;
+  
+  /* ===== Base Layout Colors ===== */
+  --qwanyx-background: 15 23 42;          /* Dark navy */
+  --qwanyx-foreground: 226 232 240;       /* Light gray */
+  --qwanyx-muted: 30 41 59;               /* Darker navy */
+  --qwanyx-muted-foreground: 148 163 184; /* Mid gray */
+  
+  /* ===== Component Surfaces ===== */
+  --qwanyx-card: 30 41 59;
+  --qwanyx-card-hover: 51 65 85;
+  --qwanyx-card-foreground: 226 232 240;
+  
+  --qwanyx-popover: 30 41 59;
+  --qwanyx-popover-foreground: 226 232 240;
+  
+  --qwanyx-modal: 30 41 59;
+  --qwanyx-modal-foreground: 226 232 240;
+  --qwanyx-modal-overlay: 0 0 0;
+  --qwanyx-modal-overlay-opacity: 0.7;
+  
+  /* ===== Borders & Dividers ===== */
+  --qwanyx-border: 51 65 85;
+  --qwanyx-border-hover: 71 85 105;
+  --qwanyx-border-focus: 96 165 250;
+  --qwanyx-divider: 30 41 59;
+  
+  /* ===== Form Elements ===== */
+  --qwanyx-input: 30 41 59;
+  --qwanyx-input-border: 51 65 85;
+  --qwanyx-input-border-hover: 71 85 105;
+  --qwanyx-input-border-focus: 96 165 250;
+  --qwanyx-input-placeholder: 100 116 139;
+  --qwanyx-input-disabled: 15 23 42;
+  
+  --qwanyx-ring: 96 165 250;
+  --qwanyx-ring-offset: 15 23 42;
+  
+  /* ===== Text Hierarchy ===== */
+  --qwanyx-text-primary: 226 232 240;
+  --qwanyx-text-secondary: 148 163 184;
+  --qwanyx-text-muted: 100 116 139;
+  --qwanyx-text-disabled: 71 85 105;
+  --qwanyx-text-inverse: 15 23 42;
+  
+  /* ===== Navigation ===== */
+  --qwanyx-nav-background: 30 41 59;
+  --qwanyx-nav-foreground: 226 232 240;
+  --qwanyx-nav-border: 51 65 85;
+  --qwanyx-nav-hover: 51 65 85;
+  --qwanyx-nav-active: 71 85 105;
+  --qwanyx-nav-link: 148 163 184;
+  --qwanyx-nav-link-hover: 226 232 240;
+  --qwanyx-nav-link-active: 96 165 250;
+  
+  /* ===== Buttons ===== */
+  --qwanyx-button-background: 30 41 59;
+  --qwanyx-button-foreground: 226 232 240;
+  --qwanyx-button-border: 51 65 85;
+  --qwanyx-button-hover: 51 65 85;
+  --qwanyx-button-active: 71 85 105;
+  --qwanyx-button-disabled: 15 23 42;
+  --qwanyx-button-disabled-foreground: 71 85 105;
+  
+  /* ===== Badges & Tags ===== */
+  --qwanyx-badge-background: 51 65 85;
+  --qwanyx-badge-foreground: 226 232 240;
+  --qwanyx-badge-border: 71 85 105;
+  
+  /* ===== Tables ===== */
+  --qwanyx-table-background: 30 41 59;
+  --qwanyx-table-foreground: 226 232 240;
+  --qwanyx-table-border: 51 65 85;
+  --qwanyx-table-header: 15 23 42;
+  --qwanyx-table-header-foreground: 226 232 240;
+  --qwanyx-table-row-hover: 51 65 85;
+  --qwanyx-table-row-selected: 71 85 105;
+  --qwanyx-table-row-striped: 15 23 42;
+  
+  /* ===== Code Blocks ===== */
+  --qwanyx-code-background: 15 23 42;
+  --qwanyx-code-foreground: 226 232 240;
+  --qwanyx-code-border: 30 41 59;
+  --qwanyx-code-inline-background: 51 65 85;
+  --qwanyx-code-inline-foreground: 248 113 113;
+  
+  /* ===== Tooltips ===== */
+  --qwanyx-tooltip-background: 226 232 240;
+  --qwanyx-tooltip-foreground: 15 23 42;
+  
+  /* ===== Scrollbars ===== */
+  --qwanyx-scrollbar-track: 15 23 42;
+  --qwanyx-scrollbar-thumb: 71 85 105;
+  --qwanyx-scrollbar-thumb-hover: 100 116 139;
+  
+  /* ===== Selection ===== */
+  --qwanyx-selection-background: 96 165 250;
+  --qwanyx-selection-foreground: 15 23 42;
+  --qwanyx-selection-opacity: 0.3;
+  
+  /* ===== Focus States ===== */
+  --qwanyx-focus-ring: 96 165 250;
+  --qwanyx-focus-ring-offset: 15 23 42;
+  --qwanyx-focus-opacity: 0.4;
+  
+  /* ===== Shadows (softer in dark mode) ===== */
+  --qwanyx-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --qwanyx-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --qwanyx-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --qwanyx-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --qwanyx-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --qwanyx-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --qwanyx-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+  
+  /* ===== Images & Icons (filters for dark mode) ===== */
+  --qwanyx-image-filter: brightness(0.9) contrast(1.1);
+  --qwanyx-icon-filter: brightness(0.95);
+  --qwanyx-logo-filter: brightness(0.9) contrast(1.2);
+  
+  /* Adjustments for images in dark mode */
+  --qwanyx-image-brightness: 0.9;
+  --qwanyx-image-contrast: 1.1;
+  --qwanyx-image-opacity: 0.95;
+  
+  /* ===== Charts & Data Visualization (brighter for dark mode) ===== */
+  --qwanyx-chart-1: 96 165 250;
+  --qwanyx-chart-2: 196 181 253;
+  --qwanyx-chart-3: 74 222 128;
+  --qwanyx-chart-4: 252 211 77;
+  --qwanyx-chart-5: 248 113 113;
+  --qwanyx-chart-6: 244 114 182;
+  --qwanyx-chart-7: 45 212 191;
+  --qwanyx-chart-8: 251 191 36;
+  
+  /* ===== Skeleton Loading ===== */
+  --qwanyx-skeleton-base: 51 65 85;
+  --qwanyx-skeleton-highlight: 71 85 105;
+  
+  /* ===== Status Indicators ===== */
+  --qwanyx-status-online: 74 222 128;
+  --qwanyx-status-offline: 100 116 139;
+  --qwanyx-status-busy: 248 113 113;
+  --qwanyx-status-away: 252 211 77;
+  
+  /* ===== Progress Bars ===== */
+  --qwanyx-progress-background: 51 65 85;
+  --qwanyx-progress-foreground: 96 165 250;
+  
+  /* ===== Syntax Highlighting (adjusted for dark mode) ===== */
+  --qwanyx-syntax-comment: 100 116 139;
+  --qwanyx-syntax-keyword: 196 181 253;
+  --qwanyx-syntax-string: 74 222 128;
+  --qwanyx-syntax-number: 251 191 36;
+  --qwanyx-syntax-function: 96 165 250;
+  --qwanyx-syntax-variable: 248 113 113;
+  --qwanyx-syntax-constant: 45 212 191;
+  --qwanyx-syntax-class: 244 114 182;
+  
+  /* ===== Overlays & Backdrops ===== */
+  --qwanyx-overlay: 0 0 0;
+  --qwanyx-overlay-opacity: 0.7;
+  
+  /* ===== Layout ===== */
+  --qwanyx-sidebar-background: 15 23 42;
+  --qwanyx-sidebar-foreground: 226 232 240;
+  --qwanyx-sidebar-border: 51 65 85;
+  --qwanyx-sidebar-hover: 30 41 59;
+  --qwanyx-sidebar-active: 96 165 250;
+  --qwanyx-sidebar-active-foreground: 15 23 42;
+  
+  /* ===== Alerts & Notifications ===== */
+  --qwanyx-alert-background: 30 41 59;
+  --qwanyx-alert-foreground: 226 232 240;
+  --qwanyx-alert-border: 51 65 85;
+  
+  /* Color scheme for browser UI elements */
+  color-scheme: dark;
+}
+
+/* System preference for dark mode */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* All dark theme variables repeated here for system preference */
+    --qwanyx-primary: 96 165 250;
+    --qwanyx-primary-hover: 147 197 253;
+    --qwanyx-primary-active: 59 130 246;
+    --qwanyx-primary-foreground: 15 23 42;
+    
+    --qwanyx-secondary: 196 181 253;
+    --qwanyx-secondary-hover: 221 214 254;
+    --qwanyx-secondary-active: 167 139 250;
+    --qwanyx-secondary-foreground: 15 23 42;
+    
+    --qwanyx-accent: 74 222 128;
+    --qwanyx-accent-hover: 134 239 172;
+    --qwanyx-accent-active: 34 197 94;
+    --qwanyx-accent-foreground: 15 23 42;
+    
+    --qwanyx-success: 74 222 128;
+    --qwanyx-success-hover: 134 239 172;
+    --qwanyx-success-foreground: 15 23 42;
+    
+    --qwanyx-warning: 252 211 77;
+    --qwanyx-warning-hover: 253 224 71;
+    --qwanyx-warning-foreground: 15 23 42;
+    
+    --qwanyx-error: 248 113 113;
+    --qwanyx-error-hover: 252 165 165;
+    --qwanyx-error-foreground: 15 23 42;
+    
+    --qwanyx-info: 96 165 250;
+    --qwanyx-info-hover: 147 197 253;
+    --qwanyx-info-foreground: 15 23 42;
+    
+    --qwanyx-background: 15 23 42;
+    --qwanyx-foreground: 226 232 240;
+    --qwanyx-muted: 30 41 59;
+    --qwanyx-muted-foreground: 148 163 184;
+    
+    --qwanyx-card: 30 41 59;
+    --qwanyx-card-hover: 51 65 85;
+    --qwanyx-card-foreground: 226 232 240;
+    
+    --qwanyx-popover: 30 41 59;
+    --qwanyx-popover-foreground: 226 232 240;
+    
+    --qwanyx-modal: 30 41 59;
+    --qwanyx-modal-foreground: 226 232 240;
+    --qwanyx-modal-overlay: 0 0 0;
+    --qwanyx-modal-overlay-opacity: 0.7;
+    
+    --qwanyx-border: 51 65 85;
+    --qwanyx-border-hover: 71 85 105;
+    --qwanyx-border-focus: 96 165 250;
+    --qwanyx-divider: 30 41 59;
+    
+    --qwanyx-input: 30 41 59;
+    --qwanyx-input-border: 51 65 85;
+    --qwanyx-input-border-hover: 71 85 105;
+    --qwanyx-input-border-focus: 96 165 250;
+    --qwanyx-input-placeholder: 100 116 139;
+    --qwanyx-input-disabled: 15 23 42;
+    
+    --qwanyx-ring: 96 165 250;
+    --qwanyx-ring-offset: 15 23 42;
+    
+    --qwanyx-text-primary: 226 232 240;
+    --qwanyx-text-secondary: 148 163 184;
+    --qwanyx-text-muted: 100 116 139;
+    --qwanyx-text-disabled: 71 85 105;
+    --qwanyx-text-inverse: 15 23 42;
+    
+    --qwanyx-nav-background: 30 41 59;
+    --qwanyx-nav-foreground: 226 232 240;
+    --qwanyx-nav-border: 51 65 85;
+    --qwanyx-nav-hover: 51 65 85;
+    --qwanyx-nav-active: 71 85 105;
+    --qwanyx-nav-link: 148 163 184;
+    --qwanyx-nav-link-hover: 226 232 240;
+    --qwanyx-nav-link-active: 96 165 250;
+    
+    --qwanyx-button-background: 30 41 59;
+    --qwanyx-button-foreground: 226 232 240;
+    --qwanyx-button-border: 51 65 85;
+    --qwanyx-button-hover: 51 65 85;
+    --qwanyx-button-active: 71 85 105;
+    --qwanyx-button-disabled: 15 23 42;
+    --qwanyx-button-disabled-foreground: 71 85 105;
+    
+    --qwanyx-badge-background: 51 65 85;
+    --qwanyx-badge-foreground: 226 232 240;
+    --qwanyx-badge-border: 71 85 105;
+    
+    --qwanyx-table-background: 30 41 59;
+    --qwanyx-table-foreground: 226 232 240;
+    --qwanyx-table-border: 51 65 85;
+    --qwanyx-table-header: 15 23 42;
+    --qwanyx-table-header-foreground: 226 232 240;
+    --qwanyx-table-row-hover: 51 65 85;
+    --qwanyx-table-row-selected: 71 85 105;
+    --qwanyx-table-row-striped: 15 23 42;
+    
+    --qwanyx-code-background: 15 23 42;
+    --qwanyx-code-foreground: 226 232 240;
+    --qwanyx-code-border: 30 41 59;
+    --qwanyx-code-inline-background: 51 65 85;
+    --qwanyx-code-inline-foreground: 248 113 113;
+    
+    --qwanyx-tooltip-background: 226 232 240;
+    --qwanyx-tooltip-foreground: 15 23 42;
+    
+    --qwanyx-scrollbar-track: 15 23 42;
+    --qwanyx-scrollbar-thumb: 71 85 105;
+    --qwanyx-scrollbar-thumb-hover: 100 116 139;
+    
+    --qwanyx-selection-background: 96 165 250;
+    --qwanyx-selection-foreground: 15 23 42;
+    --qwanyx-selection-opacity: 0.3;
+    
+    --qwanyx-focus-ring: 96 165 250;
+    --qwanyx-focus-ring-offset: 15 23 42;
+    --qwanyx-focus-opacity: 0.4;
+    
+    --qwanyx-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --qwanyx-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --qwanyx-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --qwanyx-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --qwanyx-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+    --qwanyx-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    --qwanyx-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+    
+    --qwanyx-image-filter: brightness(0.9) contrast(1.1);
+    --qwanyx-icon-filter: brightness(0.95);
+    --qwanyx-logo-filter: brightness(0.9) contrast(1.2);
+    
+    --qwanyx-image-brightness: 0.9;
+    --qwanyx-image-contrast: 1.1;
+    --qwanyx-image-opacity: 0.95;
+    
+    --qwanyx-chart-1: 96 165 250;
+    --qwanyx-chart-2: 196 181 253;
+    --qwanyx-chart-3: 74 222 128;
+    --qwanyx-chart-4: 252 211 77;
+    --qwanyx-chart-5: 248 113 113;
+    --qwanyx-chart-6: 244 114 182;
+    --qwanyx-chart-7: 45 212 191;
+    --qwanyx-chart-8: 251 191 36;
+    
+    --qwanyx-skeleton-base: 51 65 85;
+    --qwanyx-skeleton-highlight: 71 85 105;
+    
+    --qwanyx-status-online: 74 222 128;
+    --qwanyx-status-offline: 100 116 139;
+    --qwanyx-status-busy: 248 113 113;
+    --qwanyx-status-away: 252 211 77;
+    
+    --qwanyx-progress-background: 51 65 85;
+    --qwanyx-progress-foreground: 96 165 250;
+    
+    --qwanyx-syntax-comment: 100 116 139;
+    --qwanyx-syntax-keyword: 196 181 253;
+    --qwanyx-syntax-string: 74 222 128;
+    --qwanyx-syntax-number: 251 191 36;
+    --qwanyx-syntax-function: 96 165 250;
+    --qwanyx-syntax-variable: 248 113 113;
+    --qwanyx-syntax-constant: 45 212 191;
+    --qwanyx-syntax-class: 244 114 182;
+    
+    --qwanyx-overlay: 0 0 0;
+    --qwanyx-overlay-opacity: 0.7;
+    
+    --qwanyx-sidebar-background: 15 23 42;
+    --qwanyx-sidebar-foreground: 226 232 240;
+    --qwanyx-sidebar-border: 51 65 85;
+    --qwanyx-sidebar-hover: 30 41 59;
+    --qwanyx-sidebar-active: 96 165 250;
+    --qwanyx-sidebar-active-foreground: 15 23 42;
+    
+    --qwanyx-alert-background: 30 41 59;
+    --qwanyx-alert-foreground: 226 232 240;
+    --qwanyx-alert-border: 51 65 85;
+    
+    color-scheme: dark;
+  }
+}
+
+/* Dark mode specific adjustments */
+[data-theme="dark"] .qwanyx-button--ghost:hover {
+  background-color: rgb(var(--qwanyx-button-hover) / 0.5);
+}
+
+[data-theme="dark"] .qwanyx-button--outline {
+  border-color: rgb(var(--qwanyx-button-border));
+  color: rgb(var(--qwanyx-button-foreground));
+}
+
+[data-theme="dark"] .qwanyx-button--outline:hover {
+  background-color: rgb(var(--qwanyx-button-hover) / 0.2);
+}
+
+/* Dark mode card styles */
+[data-theme="dark"] .qwanyx-card {
+  background-color: rgb(var(--qwanyx-card));
+  color: rgb(var(--qwanyx-card-foreground));
+  border-color: rgb(var(--qwanyx-border));
+}
+
+/* Dark mode input styles */
+[data-theme="dark"] .qwanyx-input,
+[data-theme="dark"] .qwanyx-textarea,
+[data-theme="dark"] .qwanyx-select {
+  background-color: rgb(var(--qwanyx-input));
+  color: rgb(var(--qwanyx-foreground));
+  border-color: rgb(var(--qwanyx-input-border));
+}
+
+[data-theme="dark"] .qwanyx-input::placeholder,
+[data-theme="dark"] .qwanyx-textarea::placeholder {
+  color: rgb(var(--qwanyx-input-placeholder));
+}
+
+/* Dark mode modal styles */
+[data-theme="dark"] .qwanyx-modal {
+  background-color: rgb(var(--qwanyx-modal));
+  color: rgb(var(--qwanyx-modal-foreground));
+}
+
+[data-theme="dark"] .qwanyx-modal-overlay {
+  background-color: rgb(var(--qwanyx-modal-overlay) / var(--qwanyx-modal-overlay-opacity));
+}
+
+/* Dark mode navigation */
+[data-theme="dark"] .qwanyx-navbar {
+  background-color: rgb(var(--qwanyx-nav-background));
+  color: rgb(var(--qwanyx-nav-foreground));
+  border-color: rgb(var(--qwanyx-nav-border));
+}
+
+[data-theme="dark"] .qwanyx-nav-link {
+  color: rgb(var(--qwanyx-nav-link));
+}
+
+[data-theme="dark"] .qwanyx-nav-link:hover {
+  color: rgb(var(--qwanyx-nav-link-hover));
+  background-color: rgb(var(--qwanyx-nav-hover));
+}
+
+/* Dark mode badges */
+[data-theme="dark"] .qwanyx-badge {
+  background-color: rgb(var(--qwanyx-badge-background));
+  color: rgb(var(--qwanyx-badge-foreground));
+  border-color: rgb(var(--qwanyx-badge-border));
+}
+
+/* Dark mode tooltips */
+[data-theme="dark"] .qwanyx-tooltip {
+  background-color: rgb(var(--qwanyx-tooltip-background));
+  color: rgb(var(--qwanyx-tooltip-foreground));
+}
+
+/* Dark mode scrollbars */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background-color: rgb(var(--qwanyx-scrollbar-track));
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background-color: rgb(var(--qwanyx-scrollbar-thumb));
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(var(--qwanyx-scrollbar-thumb-hover));
+}

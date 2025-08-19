@@ -35,6 +35,6 @@ export * from './Switch'
 export * from './Stack'
 export * from './Masonry'
 export * from './Layouts'
-export * from './SuperNavbar'
+// SuperNavbar has been renamed to Navbar and is already exported above
 export * from './SuperSidebar'
 export * from './DashboardLayout'

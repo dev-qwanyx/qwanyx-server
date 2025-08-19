@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modal Test - QWANYX UI</title>
+  <link rel="stylesheet" href="./dist/ui.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    /* Test if modal styles are working */
+    .test-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .test-modal {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>Modal Component Test</h1>
+    <p>Test page to verify Modal CSS is working correctly</p>
+
+    <div class="button-grid">
+      <button class="qwanyx-button" onclick="openTestModal()">
+        Open Test Modal
+      </button>
+      
+      <button class="qwanyx-button" onclick="openQwanyxModal()">
+        Open QWANYX Modal
+      </button>
+    </div>
+
+    <!-- Test Modal with simple HTML -->
+    <div id="testModal" class="test-modal-overlay hidden">
+      <div class="test-modal">
+        <h2>Test Modal</h2>
+        <p>This is a test modal using basic HTML/CSS to verify the overlay is working.</p>
+        <button onclick="closeTestModal()">Close</button>
+      </div>
+    </div>
+
+    <!-- QWANYX Modal using the actual classes -->
+    <div id="qwanyxModal" class="qwanyx-modal-overlay hidden">
+      <div class="qwanyx-modal qwanyx-modal--md">
+        <button class="qwanyx-modal__close" onclick="closeQwanyxModal()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        <div class="qwanyx-modal__header">
+          <h2 class="qwanyx-modal__title">QWANYX Modal</h2>
+          <p class="qwanyx-modal__description">This modal uses QWANYX UI CSS classes</p>
+        </div>
+        
+        <div class="qwanyx-modal__body">
+          <p>This is the modal body content. The modal should have:</p>
+          <ul>
+            <li>A semi-transparent overlay background</li>
+            <li>Centered content</li>
+            <li>Proper z-index layering</li>
+            <li>Smooth animations</li>
+          </ul>
+        </div>
+        
+        <div class="qwanyx-modal__footer qwanyx-modal__footer--right">
+          <button class="qwanyx-button" onclick="closeQwanyxModal()">Cancel</button>
+          <button class="qwanyx-button qwanyx-button--primary" onclick="closeQwanyxModal()">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openTestModal() {
+      document.getElementById('testModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeTestModal() {
+      document.getElementById('testModal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function openQwanyxModal() {
+      const modal = document.getElementById('qwanyxModal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      
+      // Check computed styles
+      const overlay = modal;
+      const styles = window.getComputedStyle(overlay);
+      console.log('Modal overlay styles:', {
+        position: styles.position,
+        background: styles.backgroundColor,
+        zIndex: styles.zIndex,
+        display: styles.display
+      });
+    }
+
+    function closeQwanyxModal() {
+      document.getElementById('qwanyxModal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    // Close on overlay click
+    document.getElementById('testModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeTestModal();
+      }
+    });
+
+    document.getElementById('qwanyxModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeQwanyxModal();
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeTestModal();
+        closeQwanyxModal();
+      }
+    });
+  </script>
+</body>
+</html>

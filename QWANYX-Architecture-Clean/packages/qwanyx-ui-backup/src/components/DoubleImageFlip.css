@@ -1,0 +1,112 @@
+/* Double Image Flip Component Styles */
+
+.qwanyx-double-flip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.qwanyx-double-flip-loading {
+  padding: 2rem;
+  color: rgb(var(--qwanyx-text-secondary));
+  text-align: center;
+}
+
+.qwanyx-double-flip__panel {
+  position: relative;
+  transform: translateZ(0);
+  transition: transform 0.3s ease;
+}
+
+.qwanyx-double-flip__panel:hover {
+  transform: translateZ(0) scale(1.02);
+}
+
+.qwanyx-double-flip__panel--flipping {
+  pointer-events: none;
+}
+
+.qwanyx-double-flip__card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transformStyle: preserve-3d;
+}
+
+.qwanyx-double-flip__card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transformStyle: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.qwanyx-double-flip__card-front,
+.qwanyx-double-flip__card-back {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  border-radius: var(--qwanyx-radius-lg);
+}
+
+.qwanyx-double-image-flip__card-front {
+  transform: rotateY(0deg);
+}
+
+.qwanyx-double-image-flip__card-back {
+  transform: rotateY(180deg);
+}
+
+.qwanyx-double-flip__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+  border-radius: var(--qwanyx-radius-lg);
+}
+
+.qwanyx-double-image-flip__mystery {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgb(var(--qwanyx-primary));
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 2px solid rgba(var(--qwanyx-primary), 0.2);
+}
+
+.qwanyx-double-image-flip__panel:hover .qwanyx-double-image-flip__mystery {
+  opacity: 1;
+}
+
+/* Animation for flipping state */
+@keyframes flipPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+
+.qwanyx-double-image-flip__panel--flipping {
+  animation: flipPulse 0.8s ease-in-out;
+}

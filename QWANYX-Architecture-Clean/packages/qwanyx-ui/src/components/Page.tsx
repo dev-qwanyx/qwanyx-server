@@ -1,5 +1,5 @@
 import React from 'react'
-import { SuperNavbar } from './SuperNavbar'
+import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 import './Page.css'
 
@@ -89,7 +89,7 @@ export const Page: React.FC<PageProps> = ({
     <div className="qwanyx-page-wrapper">
       {/* Automatic Navigation */}
       {navigation && (
-        <SuperNavbar
+        <Navbar
           title={navigation.title}
           subtitle={navigation.subtitle}
           logo={navigation.logo || '/images/logo.png'}
@@ -107,7 +107,7 @@ export const Page: React.FC<PageProps> = ({
           hideOnScroll={false}
           search={true}
           searchPlaceholder="Search our platform..."
-          onSearch={(query) => console.log('Search:', query)}
+          onSearch={(query: string) => console.log('Search:', query)}
           user={{
             name: 'John Doe',
             email: 'john@example.com',
@@ -150,7 +150,7 @@ export const Page: React.FC<PageProps> = ({
             }
           ]}
           notificationCount={2}
-          onNotificationClick={(id) => console.log('Notification clicked:', id)}
+          onNotificationClick={(id: string) => console.log('Notification clicked:', id)}
           onNotificationsClear={() => console.log('Clear notifications')}
           primaryAction={{
             label: 'Get Started',

@@ -7,7 +7,7 @@ import {
   Heading, 
   Text, 
   Button,
-  SuperNavbar,
+  Navbar,
   ServiceCard,
   Grid,
   HeroWithFlipSection,
@@ -46,6 +46,15 @@ function AppContent() {
       required: true
     },
     {
+      name: 'email',
+      label: 'Email',
+      type: 'email' as const,
+      placeholder: 'Entrez votre email',
+      required: true,
+      validation: 'email' as const,
+      autoComplete: 'email'
+    },
+    {
       name: 'phone',
       label: 'Téléphone',
       type: 'tel' as const,
@@ -65,24 +74,12 @@ function AppContent() {
       ]
     },
     {
-      name: 'proTypes',
-      label: "Type d'activité",
-      type: 'checkbox' as const,
-      required: true,
-      helperText: 'Sélectionnez au moins une activité (obligatoire)',
-      options: [
-        { value: 'garagiste', label: 'Garagiste' },
-        { value: 'fournisseur', label: 'Fournisseur de pièces' },
-        { value: 'carrossier', label: 'Carrossier' }
-      ]
-    },
-    {
       name: 'companyName',
       label: "Nom de l'entreprise",
       type: 'text' as const,
       placeholder: 'Nom de votre entreprise',
       showIf: (formData: any) => formData.accountType === 'professionnel',
-      required: false
+      required: true
     },
     {
       name: 'vatNumber',
@@ -91,16 +88,21 @@ function AppContent() {
       placeholder: 'BE0123456789',
       helperText: 'Format: BE0123456789',
       showIf: (formData: any) => formData.accountType === 'professionnel',
+      required: true,
       validation: 'vat' as const
     },
     {
-      name: 'email',
-      label: 'Email',
-      type: 'email' as const,
-      placeholder: 'Entrez votre email',
+      name: 'proTypes',
+      label: "Type d'activité",
+      type: 'checkbox' as const,
+      showIf: (formData: any) => formData.accountType === 'professionnel',
       required: true,
-      validation: 'email' as const,
-      autoComplete: 'email'
+      helperText: 'Sélectionnez au moins une activité (obligatoire)',
+      options: [
+        { value: 'garagiste', label: 'Garagiste' },
+        { value: 'fournisseur', label: 'Fournisseur de pièces' },
+        { value: 'carrossier', label: 'Carrossier' }
+      ]
     }
   ]
   
@@ -172,7 +174,7 @@ function AppContent() {
   
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'rgb(var(--background))' }}>
-      <SuperNavbar
+      <Navbar
         logo="/images/logo.png"
         title="Autodin"
         subtitle="La Marketplace #1 des Pièces Auto"

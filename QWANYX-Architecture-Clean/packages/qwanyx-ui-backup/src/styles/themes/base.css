@@ -1,0 +1,315 @@
+/* QWANYX UI - Complete Theme System */
+
+/* Base theme structure - defines all available theme variables */
+/* This file contains the complete set of CSS variables that can be themed */
+
+:root {
+  /* ===== Core Brand Colors ===== */
+  --qwanyx-primary: 59 130 246;           /* Primary brand color */
+  --qwanyx-primary-hover: 37 99 235;      /* Primary hover state */
+  --qwanyx-primary-active: 29 78 216;     /* Primary active state */
+  --qwanyx-primary-foreground: 255 255 255;
+  
+  --qwanyx-secondary: 168 85 247;
+  --qwanyx-secondary-hover: 147 51 234;
+  --qwanyx-secondary-active: 126 34 206;
+  --qwanyx-secondary-foreground: 255 255 255;
+  
+  --qwanyx-accent: 34 197 94;
+  --qwanyx-accent-hover: 22 163 74;
+  --qwanyx-accent-active: 21 128 61;
+  --qwanyx-accent-foreground: 255 255 255;
+  
+  /* ===== Semantic Colors ===== */
+  --qwanyx-success: 34 197 94;
+  --qwanyx-success-hover: 22 163 74;
+  --qwanyx-success-foreground: 255 255 255;
+  
+  --qwanyx-warning: 250 204 21;
+  --qwanyx-warning-hover: 245 158 11;
+  --qwanyx-warning-foreground: 0 0 0;
+  
+  --qwanyx-error: 239 68 68;
+  --qwanyx-error-hover: 220 38 38;
+  --qwanyx-error-foreground: 255 255 255;
+  
+  --qwanyx-info: 59 130 246;
+  --qwanyx-info-hover: 37 99 235;
+  --qwanyx-info-foreground: 255 255 255;
+  
+  /* ===== Base Layout Colors ===== */
+  --qwanyx-background: 255 255 255;
+  --qwanyx-foreground: 15 23 42;
+  --qwanyx-muted: 248 250 252;
+  --qwanyx-muted-foreground: 100 116 139;
+  
+  /* ===== Component Surfaces ===== */
+  --qwanyx-card: 255 255 255;
+  --qwanyx-card-hover: 248 250 252;
+  --qwanyx-card-foreground: 15 23 42;
+  
+  --qwanyx-popover: 255 255 255;
+  --qwanyx-popover-foreground: 15 23 42;
+  
+  --qwanyx-modal: 255 255 255;
+  --qwanyx-modal-foreground: 15 23 42;
+  --qwanyx-modal-overlay: 0 0 0;
+  --qwanyx-modal-overlay-opacity: 0.5;
+  
+  /* ===== Borders & Dividers ===== */
+  --qwanyx-border: 226 232 240;
+  --qwanyx-border-hover: 203 213 225;
+  --qwanyx-border-focus: 59 130 246;
+  --qwanyx-divider: 241 245 249;
+  
+  /* ===== Form Elements ===== */
+  --qwanyx-input: 255 255 255;
+  --qwanyx-input-border: 226 232 240;
+  --qwanyx-input-border-hover: 203 213 225;
+  --qwanyx-input-border-focus: 59 130 246;
+  --qwanyx-input-placeholder: 148 163 184;
+  --qwanyx-input-disabled: 248 250 252;
+  
+  --qwanyx-ring: 59 130 246;
+  --qwanyx-ring-offset: 255 255 255;
+  
+  /* ===== Text Hierarchy ===== */
+  --qwanyx-text-primary: 15 23 42;
+  --qwanyx-text-secondary: 71 85 105;
+  --qwanyx-text-muted: 148 163 184;
+  --qwanyx-text-disabled: 203 213 225;
+  --qwanyx-text-inverse: 255 255 255;
+  
+  /* ===== Navigation ===== */
+  --qwanyx-nav-background: 255 255 255;
+  --qwanyx-nav-foreground: 15 23 42;
+  --qwanyx-nav-border: 226 232 240;
+  --qwanyx-nav-hover: 248 250 252;
+  --qwanyx-nav-active: 241 245 249;
+  --qwanyx-nav-link: 71 85 105;
+  --qwanyx-nav-link-hover: 15 23 42;
+  --qwanyx-nav-link-active: 59 130 246;
+  
+  /* ===== Buttons ===== */
+  --qwanyx-button-background: 255 255 255;
+  --qwanyx-button-foreground: 15 23 42;
+  --qwanyx-button-border: 226 232 240;
+  --qwanyx-button-hover: 248 250 252;
+  --qwanyx-button-active: 241 245 249;
+  --qwanyx-button-disabled: 248 250 252;
+  --qwanyx-button-disabled-foreground: 148 163 184;
+  
+  /* ===== Badges & Tags ===== */
+  --qwanyx-badge-background: 241 245 249;
+  --qwanyx-badge-foreground: 15 23 42;
+  --qwanyx-badge-border: 226 232 240;
+  
+  /* ===== Tables ===== */
+  --qwanyx-table-background: 255 255 255;
+  --qwanyx-table-foreground: 15 23 42;
+  --qwanyx-table-border: 226 232 240;
+  --qwanyx-table-header: 248 250 252;
+  --qwanyx-table-header-foreground: 15 23 42;
+  --qwanyx-table-row-hover: 248 250 252;
+  --qwanyx-table-row-selected: 241 245 249;
+  --qwanyx-table-row-striped: 248 250 252;
+  
+  /* ===== Code Blocks ===== */
+  --qwanyx-code-background: 30 41 59;
+  --qwanyx-code-foreground: 226 232 240;
+  --qwanyx-code-border: 51 65 85;
+  --qwanyx-code-inline-background: 241 245 249;
+  --qwanyx-code-inline-foreground: 220 38 38;
+  
+  /* ===== Tooltips ===== */
+  --qwanyx-tooltip-background: 15 23 42;
+  --qwanyx-tooltip-foreground: 255 255 255;
+  
+  /* ===== Scrollbars ===== */
+  --qwanyx-scrollbar-track: 248 250 252;
+  --qwanyx-scrollbar-thumb: 203 213 225;
+  --qwanyx-scrollbar-thumb-hover: 148 163 184;
+  
+  /* ===== Selection ===== */
+  --qwanyx-selection-background: 59 130 246;
+  --qwanyx-selection-foreground: 255 255 255;
+  --qwanyx-selection-opacity: 0.2;
+  
+  /* ===== Focus States ===== */
+  --qwanyx-focus-ring: 59 130 246;
+  --qwanyx-focus-ring-offset: 255 255 255;
+  --qwanyx-focus-opacity: 0.25;
+  
+  /* ===== Shadows ===== */
+  --qwanyx-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --qwanyx-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --qwanyx-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --qwanyx-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --qwanyx-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --qwanyx-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --qwanyx-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  
+  /* ===== Images & Icons ===== */
+  /* Use CSS filters for theme-aware images */
+  --qwanyx-image-filter: none;
+  --qwanyx-icon-filter: none;
+  --qwanyx-logo-filter: none;
+  
+  /* Brightness and contrast adjustments */
+  --qwanyx-image-brightness: 1;
+  --qwanyx-image-contrast: 1;
+  --qwanyx-image-opacity: 1;
+  
+  /* ===== Charts & Data Visualization ===== */
+  --qwanyx-chart-1: 59 130 246;
+  --qwanyx-chart-2: 168 85 247;
+  --qwanyx-chart-3: 34 197 94;
+  --qwanyx-chart-4: 250 204 21;
+  --qwanyx-chart-5: 239 68 68;
+  --qwanyx-chart-6: 236 72 153;
+  --qwanyx-chart-7: 20 184 166;
+  --qwanyx-chart-8: 251 146 60;
+  
+  /* ===== Skeleton Loading ===== */
+  --qwanyx-skeleton-base: 226 232 240;
+  --qwanyx-skeleton-highlight: 241 245 249;
+  
+  /* ===== Status Indicators ===== */
+  --qwanyx-status-online: 34 197 94;
+  --qwanyx-status-offline: 148 163 184;
+  --qwanyx-status-busy: 239 68 68;
+  --qwanyx-status-away: 250 204 21;
+  
+  /* ===== Agile/Project Status Colors ===== */
+  --qwanyx-status-backlog: 148 163 184;      /* Gray - Not started */
+  --qwanyx-status-todo: 59 130 246;          /* Blue - Ready to start */
+  --qwanyx-status-doing: 251 146 60;         /* Orange - In progress */
+  --qwanyx-status-review: 168 85 247;        /* Purple - Under review */
+  --qwanyx-status-done: 34 197 94;           /* Green - Completed */
+  --qwanyx-status-blocked: 239 68 68;        /* Red - Blocked */
+  --qwanyx-status-archived: 71 85 105;       /* Dark gray - Historical */
+  --qwanyx-status-validated: 20 184 166;     /* Teal - Approved/Validated */
+  
+  /* ===== Progress Bars ===== */
+  --qwanyx-progress-background: 226 232 240;
+  --qwanyx-progress-foreground: 59 130 246;
+  
+  /* ===== Syntax Highlighting (for code) ===== */
+  --qwanyx-syntax-comment: 148 163 184;
+  --qwanyx-syntax-keyword: 147 51 234;
+  --qwanyx-syntax-string: 34 197 94;
+  --qwanyx-syntax-number: 251 146 60;
+  --qwanyx-syntax-function: 59 130 246;
+  --qwanyx-syntax-variable: 239 68 68;
+  --qwanyx-syntax-constant: 20 184 166;
+  --qwanyx-syntax-class: 236 72 153;
+  
+  /* ===== Overlays & Backdrops ===== */
+  --qwanyx-overlay: 0 0 0;
+  --qwanyx-overlay-opacity: 0.5;
+  --qwanyx-backdrop-blur: blur(4px);
+  
+  /* ===== Animations ===== */
+  --qwanyx-transition-fast: 150ms ease;
+  --qwanyx-transition-base: 200ms ease;
+  --qwanyx-transition-slow: 300ms ease;
+  --qwanyx-transition-slower: 500ms ease;
+  
+  /* ===== Layout ===== */
+  --qwanyx-sidebar-background: 248 250 252;
+  --qwanyx-sidebar-foreground: 15 23 42;
+  --qwanyx-sidebar-border: 226 232 240;
+  --qwanyx-sidebar-hover: 241 245 249;
+  --qwanyx-sidebar-active: 59 130 246;
+  --qwanyx-sidebar-active-foreground: 255 255 255;
+  
+  /* ===== Alerts & Notifications ===== */
+  --qwanyx-alert-background: 255 255 255;
+  --qwanyx-alert-foreground: 15 23 42;
+  --qwanyx-alert-border: 226 232 240;
+  
+  /* ===== Spacing Scale ===== */
+  --qwanyx-spacing-xs: 0.25rem;
+  --qwanyx-spacing-sm: 0.5rem;
+  --qwanyx-spacing-md: 1rem;
+  --qwanyx-spacing-lg: 1.5rem;
+  --qwanyx-spacing-xl: 2rem;
+  --qwanyx-spacing-2xl: 3rem;
+  --qwanyx-spacing-3xl: 4rem;
+  --qwanyx-spacing-4xl: 6rem;
+  
+  /* ===== Border Radius ===== */
+  --qwanyx-radius-sm: 0.125rem;
+  --qwanyx-radius-md: 0.375rem;
+  --qwanyx-radius-lg: 0.5rem;
+  --qwanyx-radius-xl: 0.75rem;
+  --qwanyx-radius-2xl: 1rem;
+  --qwanyx-radius-3xl: 1.5rem;
+  --qwanyx-radius-full: 9999px;
+  
+  /* ===== Font Sizes ===== */
+  --qwanyx-text-xs: 0.75rem;
+  --qwanyx-text-sm: 0.875rem;
+  --qwanyx-text-base: 1rem;
+  --qwanyx-text-lg: 1.125rem;
+  --qwanyx-text-xl: 1.25rem;
+  --qwanyx-text-2xl: 1.5rem;
+  --qwanyx-text-3xl: 1.875rem;
+  --qwanyx-text-4xl: 2.25rem;
+  --qwanyx-text-5xl: 3rem;
+  --qwanyx-text-6xl: 3.75rem;
+  
+  /* ===== Font Weights ===== */
+  --qwanyx-font-thin: 100;
+  --qwanyx-font-light: 300;
+  --qwanyx-font-normal: 400;
+  --qwanyx-font-medium: 500;
+  --qwanyx-font-semibold: 600;
+  --qwanyx-font-bold: 700;
+  --qwanyx-font-extrabold: 800;
+  --qwanyx-font-black: 900;
+  
+  /* ===== Line Heights ===== */
+  --qwanyx-leading-none: 1;
+  --qwanyx-leading-tight: 1.25;
+  --qwanyx-leading-snug: 1.375;
+  --qwanyx-leading-normal: 1.5;
+  --qwanyx-leading-relaxed: 1.625;
+  --qwanyx-leading-loose: 2;
+  
+  /* ===== Z-Index Scale ===== */
+  --qwanyx-z-dropdown: 1000;
+  --qwanyx-z-sticky: 1010;
+  --qwanyx-z-navbar: 1020;
+  --qwanyx-z-popover: 1030;
+  --qwanyx-z-modal: 1040;
+  --qwanyx-z-modal-backdrop: 1035;
+  --qwanyx-z-tooltip: 1080;
+  --qwanyx-z-notification: 1090;
+}
+
+/* ===== Theme-aware utility classes ===== */
+.theme-image {
+  filter: var(--qwanyx-image-filter);
+  opacity: var(--qwanyx-image-opacity);
+}
+
+.theme-icon {
+  filter: var(--qwanyx-icon-filter);
+}
+
+.theme-logo {
+  filter: var(--qwanyx-logo-filter);
+}
+
+/* ===== Smooth theme transitions ===== */
+* {
+  transition: background-color var(--qwanyx-transition-base),
+              border-color var(--qwanyx-transition-base),
+              color var(--qwanyx-transition-base);
+}
+
+/* Disable transitions when switching themes */
+.theme-switching * {
+  transition: none !important;
+}

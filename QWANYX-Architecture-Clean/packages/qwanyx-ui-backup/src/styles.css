@@ -1,0 +1,42 @@
+/* QWANYX UI - Core Styles */
+
+/* Import CSS Variables */
+@import './styles/qwanyx-variables.css';
+
+/* Import Animate.css for additional animations */
+@import 'animate.css';
+
+/* Base Reset - Minimal, non-invasive */
+* {
+  box-sizing: border-box;
+}
+
+/* Body defaults - Apps can override */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background-color: rgb(var(--background));
+  color: rgb(var(--text));
+}
+
+/* Ensure smooth transitions when theme changes */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid rgb(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Remove default button styles */
+button {
+  font-family: inherit;
+}
+
+/* Remove default input styles */
+input, textarea, select {
+  font-family: inherit;
+}

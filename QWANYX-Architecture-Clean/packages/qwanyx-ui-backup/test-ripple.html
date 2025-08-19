@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ripple Test</title>
+    <style>
+        @keyframes buttonRipple {
+            from {
+                transform: scale(0);
+                opacity: 1;
+            }
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .test-button {
+            position: relative;
+            overflow: hidden;
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.6);
+            animation: buttonRipple 600ms ease-out forwards;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <button class="test-button" onclick="createRipple(event, this)">
+        Click Me for Ripple
+    </button>
+
+    <button class="test-button" style="background: transparent; color: #333; border: 1px solid #333;" onclick="createRipple(event, this, 'rgba(59, 130, 246, 0.4)')">
+        Light Background Button
+    </button>
+
+    <script>
+        function createRipple(e, button, color = 'rgba(255, 255, 255, 0.6)') {
+            const rect = button.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            const diameter = Math.max(rect.width, rect.height);
+            const radius = diameter / 2;
+            
+            const x = e.clientX - rect.left - radius;
+            const y = e.clientY - rect.top - radius;
+            
+            ripple.className = 'ripple';
+            ripple.style.width = ripple.style.height = `${diameter}px`;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            ripple.style.backgroundColor = color;
+            
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+    </script>
+</body>
+</html>
