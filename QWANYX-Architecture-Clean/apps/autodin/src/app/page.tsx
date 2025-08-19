@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { 
   Container, 
   Section, 
@@ -13,12 +13,7 @@ import {
   HeroWithFlipSection,
   SimpleFooterSection,
   ContactFormSection,
-  detailedContactFields,
-  Modal,
-  ModalHeader,
-  ModalTitle,
-  ModalBody,
-  ModalFooter
+  detailedContactFields
 } from '@qwanyx/ui'
 import { AuthModule } from '@qwanyx/auth'
 
@@ -27,7 +22,54 @@ function AppContent() {
   const [showAuth, setShowAuth] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
   const [user, setUser] = useState<any>(null)
-  const [showTestModal, setShowTestModal] = useState(false)
+  
+  // Add CSS for services grid and navbar styling
+  React.useEffect(() => {
+    const styleId = 'autodin-custom-styles';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.innerHTML = `
+        .services-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 30px;
+        }
+        @media (max-width: 1024px) {
+          .services-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 640px) {
+          .services-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+        
+        /* Navbar brand colors */
+        nav h1, nav h2, nav h3 {
+          color: #E67E22 !important;
+        }
+        
+        /* Navbar buttons */
+        nav button {
+          border-color: #E67E22 !important;
+        }
+        
+        nav button:hover {
+          background-color: #E67E22 !important;
+          color: white !important;
+        }
+        
+        /* Primary button in navbar */
+        nav button[data-variant="default"] {
+          background-color: #E67E22 !important;
+          border-color: #E67E22 !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, [])
   
   // Configuration des champs pour le formulaire d'enregistrement
   const registerFields = [
@@ -110,10 +152,6 @@ function AppContent() {
   useEffect(() => {
     console.log('Auth state changed:', { showAuth, authMode })
   }, [showAuth, authMode])
-  
-  useEffect(() => {
-    console.log('TEST MODAL STATE CHANGED:', showTestModal)
-  }, [showTestModal])
   
   // Check for existing session on mount
   useEffect(() => {
@@ -235,29 +273,16 @@ function AppContent() {
         secondaryAction={!user ? {
           label: "S'inscrire",
           onClick: () => {
-            console.log('Register clicked')
+            console.log('Register clicked - setting mode to register')
             setAuthMode('register')
-            setShowAuth(true)
+            // Use setTimeout to ensure state update happens before opening modal
+            setTimeout(() => setShowAuth(true), 0)
           },
           variant: 'outline' as const
         } : undefined}
       />
       
       <main>
-        {/* Test button for modal */}
-        <div style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000 }}>
-          <Button 
-            onClick={() => {
-              console.log('Test button clicked, current state:', showTestModal);
-              setShowTestModal(true);
-              console.log('State should be true now');
-            }}
-            style={{ backgroundColor: 'red' }}
-          >
-            Test Modal (State: {showTestModal ? 'TRUE' : 'FALSE'})
-          </Button>
-        </div>
-
         <HeroWithFlipSection
           title="La Marketplace #1 des Pièces Auto"
           subtitle="Autodin Belgium"
@@ -279,54 +304,108 @@ function AppContent() {
           flipInterval={3000}
           flipPosition="right"
           flipSize="md"
-          backgroundImage="https://images.unsplash.com/photo-1490902931801-d6f80ca94fe4?w=1920&h=800&fit=crop"
+          backgroundImage="/images/elena-mozhvilo-lVGr-HFxAfE-unsplash.jpg"
           overlayOpacity={0.7}
+          parallax="slow"
         />
         
         <Container>
           <div id="services"></div>
           <Section spacing="2xl" gap="xl">
-            <Heading as="h2" size="5xl" align="center" style={{ color: '#E67E22' }}>
-              Nos Services
-            </Heading>
-            <Grid cols={3} gap="xl">
-              <ServiceCard
-                icon="search"
-                title="Recherche Avancée"
-                description="Trouvez exactement la pièce dont vous avez besoin parmi des milliers d'annonces"
-                iconColor="#E67E22"
-              />
-              <ServiceCard
-                icon="directions_car"
-                title="Toutes Marques"
-                description="Pièces pour toutes les marques de véhicules : BMW, Mercedes, Audi, Volkswagen..."
-                iconColor="#E67E22"
-              />
-              <ServiceCard
-                icon="verified"
-                title="Qualité Garantie"
-                description="Toutes nos pièces sont vérifiées et contrôlées avant la mise en vente"
-                iconColor="#E67E22"
-              />
-              <ServiceCard
-                icon="local_shipping"
-                title="Livraison Rapide"
-                description="Livraison dans toute la Belgique en 24-48h avec suivi en temps réel"
-                iconColor="#E67E22"
-              />
-              <ServiceCard
-                icon="savings"
-                title="Meilleurs Prix"
-                description="Économisez jusqu'à 70% par rapport aux pièces neuves"
-                iconColor="#E67E22"
-              />
-              <ServiceCard
-                icon="security"
-                title="Paiement Sécurisé"
-                description="Transactions sécurisées avec protection acheteur et vendeur"
-                iconColor="#E67E22"
-              />
-            </Grid>
+            <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+              <h2 style={{ color: '#2C3E50', marginBottom: '1rem', fontSize: '3.5rem', fontWeight: 'bold' }}>
+                Nos Services
+              </h2>
+              <p style={{ color: '#7f8c8d', fontSize: '1.125rem' }}>
+                Découvrez comment Autodin facilite votre recherche et vos transactions
+              </p>
+            </div>
+            <div className="services-grid">
+              <div onClick={() => {
+                if (!user) {
+                  setAuthMode('login')
+                  setShowAuth(true)
+                } else {
+                  window.location.href = '/dashboard'
+                }
+              }} style={{ cursor: 'pointer' }}>
+                <ServiceCard
+                  icon="search"
+                  title="Recherche rapide"
+                  description="Trouvez instantanément parmi plus de 50 000 pièces disponibles en stock."
+                />
+              </div>
+              <div onClick={() => {
+                if (!user) {
+                  setAuthMode('login')
+                  setShowAuth(true)
+                } else {
+                  window.location.href = '/dashboard'
+                }
+              }} style={{ cursor: 'pointer' }}>
+                <ServiceCard
+                  icon="chat"
+                  title="Faire une demande"
+                  description="Diffusez facilement vos besoins spécifiques. Notre réseau vous répond rapidement."
+                />
+              </div>
+              <div onClick={() => {
+                if (!user) {
+                  setAuthMode('login')
+                  setShowAuth(true)
+                } else {
+                  window.location.href = '/dashboard'
+                }
+              }} style={{ cursor: 'pointer' }}>
+                <ServiceCard
+                  icon="directions_car"
+                  title="Proposer un véhicule"
+                  description="Valorisez vos véhicules endommagés ou destinés aux pièces auprès d'acheteurs qualifiés."
+                />
+              </div>
+              <div onClick={() => {
+                if (!user) {
+                  setAuthMode('login')
+                  setShowAuth(true)
+                } else {
+                  window.location.href = '/dashboard'
+                }
+              }} style={{ cursor: 'pointer' }}>
+                <ServiceCard
+                  icon="sell"
+                  title="Véhicules d'occasion"
+                  description="Découvrez notre sélection de véhicules d'occasion vérifiés par des vendeurs de confiance."
+                />
+              </div>
+              <div onClick={() => {
+                if (!user) {
+                  setAuthMode('register')
+                  setShowAuth(true)
+                } else {
+                  window.location.href = '/dashboard'
+                }
+              }} style={{ cursor: 'pointer' }}>
+                <ServiceCard
+                  icon="handshake"
+                  title="Devenir partenaire"
+                  description="Rejoignez notre réseau et accédez à des milliers d'acheteurs potentiels."
+                />
+              </div>
+              <div onClick={() => {
+                if (!user) {
+                  setAuthMode('login')
+                  setShowAuth(true)
+                } else {
+                  window.location.href = '/dashboard'
+                }
+              }} style={{ cursor: 'pointer' }}>
+                <ServiceCard
+                  icon="local_shipping"
+                  title="Livraison rapide"
+                  description="Expédition sous 24-48h avec nos partenaires transporteurs de confiance."
+                />
+              </div>
+            </div>
           </Section>
         </Container>
         
@@ -335,9 +414,9 @@ function AppContent() {
             title="Contactez-nous"
             subtitle="Une question ? Besoin d'aide ? Notre équipe est là pour vous"
             fields={detailedContactFields}
-            backgroundImage="https://images.unsplash.com/photo-1486754735734-325b5831c3ad?w=1920&h=800&fit=crop"
+            backgroundImage="/images/elena-mozhvilo-lVGr-HFxAfE-unsplash.jpg"
             overlayOpacity={0.8}
-            parallax="normal"
+            parallax="slow"
             onSubmit={async (data) => {
               console.log('Form submitted:', data)
               alert('Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.')
@@ -374,8 +453,9 @@ function AppContent() {
       />
       
       {/* Auth Modal */}
-      {console.log('Rendering AuthModule with isOpen:', showAuth)}
+      {console.log('Rendering AuthModule with isOpen:', showAuth, 'mode:', authMode)}
       <AuthModule
+        key={`auth-${authMode}-${showAuth}`}
         workspace="autodin"
         apiUrl="http://localhost:5002"
         locale="fr"
@@ -402,45 +482,6 @@ function AppContent() {
         onError={(error) => console.error('Auth error:', error)}
       />
 
-      {/* Test Modal - SUPER SIMPLE */}
-      {showTestModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 99999
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '2rem',
-            borderRadius: '8px',
-            maxWidth: '500px',
-            width: '90%'
-          }}>
-            <h2>Test Modal (Direct HTML)</h2>
-            <p>Si vous voyez ça, le problème vient du composant Modal!</p>
-            <button 
-              onClick={() => setShowTestModal(false)}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Fermer
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

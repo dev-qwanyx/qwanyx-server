@@ -15,7 +15,26 @@ export default function RootLayout({
   // Note: html and body tags are REQUIRED by Next.js framework
   // This is the ONLY place where we must use native HTML
   return (
-    <html lang="fr">
+    <html lang="fr" style={{
+      '--primary': '230, 126, 34',
+      '--secondary': '52, 73, 94',
+      '--accent': '243, 156, 18',
+      '--success': '39, 174, 96',
+      '--warning': '241, 196, 15',
+      '--error': '231, 76, 60',
+      '--info': '52, 152, 219',
+      '--background': '249, 250, 251',
+      '--foreground': '44, 62, 80',
+      '--card': '255, 255, 255',
+      '--card-foreground': '44, 62, 80',
+      '--border': '229, 231, 235',
+      '--input': '255, 255, 255',
+      '--ring': '230, 126, 34',
+      '--text': '44, 62, 80',
+      '--text-primary': '44, 62, 80',
+      '--text-secondary': '71, 85, 105',
+      '--text-muted': '148, 163, 184'
+    } as React.CSSProperties}>
       <body style={{ margin: 0, padding: 0 }}>
         <Providers>
           {children}

@@ -79,14 +79,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
       case 'filled':
         return {
           backgroundColor: 'rgb(var(--surface))',
-          border: '2px solid transparent',
+          border: '1px solid transparent',
           boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.05)'
         };
       case 'ghost':
         return {
           backgroundColor: 'transparent',
           border: 'none',
-          borderBottom: '2px solid rgb(var(--border))',
+          borderBottom: '1px solid rgb(var(--border))',
           borderRadius: '0',
           paddingLeft: '0',
           paddingRight: '0'
@@ -94,7 +94,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({
       default: // 'default'
         return {
           backgroundColor: 'rgb(var(--background))',
-          border: '2px solid rgb(var(--border))',
+          border: '1px solid rgb(var(--border))',
           boxShadow: 'var(--shadow-sm)'
         };
     }
@@ -302,14 +302,14 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({
       case 'filled':
         return {
           backgroundColor: 'rgb(var(--surface))',
-          border: '2px solid transparent',
+          border: '1px solid transparent',
           boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.05)'
         };
       case 'ghost':
         return {
           backgroundColor: 'transparent',
           border: 'none',
-          borderBottom: '2px solid rgb(var(--border))',
+          borderBottom: '1px solid rgb(var(--border))',
           borderRadius: '0',
           paddingLeft: '0',
           paddingRight: '0'
@@ -317,7 +317,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({
       default: // 'default'
         return {
           backgroundColor: 'rgb(var(--background))',
-          border: '2px solid rgb(var(--border))',
+          border: '1px solid rgb(var(--border))',
           boxShadow: 'var(--shadow-sm)'
         };
     }

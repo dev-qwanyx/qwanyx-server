@@ -28,6 +28,7 @@ export interface HeroWithFlipSectionProps {
   variant?: 'default' | 'centered' | 'compact'
   flipPosition?: 'left' | 'right'
   flipSize?: 'sm' | 'md' | 'lg' | 'xl'
+  parallax?: boolean | 'fixed' | 'slow' | 'normal' | 'fast'
 }
 
 export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
@@ -45,9 +46,12 @@ export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
   overlayOpacity = 0.7,
   variant = 'default',
   flipPosition = 'right',
-  flipSize = 'md'
+  flipSize = 'md',
+  parallax = false
 }) => {
   const [isResponsive, setIsResponsive] = useState(false)
+  const [scrollOffset, setScrollOffset] = useState(0)
+  const sectionRef = React.useRef<HTMLElement>(null)
   
   useEffect(() => {
     const checkResponsive = () => {
@@ -59,21 +63,60 @@ export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
     
     return () => window.removeEventListener('resize', checkResponsive)
   }, [])
+
+  useEffect(() => {
+    if (parallax && backgroundImage) {
+      const handleScroll = () => {
+        if (sectionRef.current) {
+          const rect = sectionRef.current.getBoundingClientRect()
+          // Only apply parallax when scrolling past the element
+          const offset = Math.max(0, -rect.top)
+          setScrollOffset(offset)
+        }
+      }
+      
+      handleScroll() // Initial calculation
+      window.addEventListener('scroll', handleScroll)
+      return () => window.removeEventListener('scroll', handleScroll)
+    }
+  }, [parallax, backgroundImage])
   
+  // Calculate parallax speed based on option
+  const getParallaxSpeed = () => {
+    if (!parallax) return 0
+    if (parallax === true || parallax === 'normal') return 0.5
+    if (parallax === 'slow') return 0.3
+    if (parallax === 'fast') return 0.7
+    if (parallax === 'fixed') return 0
+    return 0.5
+  }
+  
+  const parallaxSpeed = getParallaxSpeed()
+  const parallaxOffset = scrollOffset * parallaxSpeed
+
   const sectionStyle: React.CSSProperties = {
     position: 'relative',
     minHeight: variant === 'compact' ? '500px' : '600px',
     paddingTop: '100px', // Account for fixed navbar with more space
     display: 'flex',
     alignItems: 'center',
-    overflow: 'hidden',
-    ...(backgroundImage && {
-      backgroundImage: `url(${backgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
-    })
+    overflow: 'hidden'
   }
+
+  const backgroundStyle: React.CSSProperties = backgroundImage ? {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    transform: parallax && parallax !== 'fixed' ? `translateY(${parallaxOffset}px)` : 'none',
+    willChange: parallax ? 'transform' : 'auto',
+    zIndex: 0
+  } : {}
 
   const overlayStyle: React.CSSProperties = {
     position: 'absolute',
@@ -118,7 +161,8 @@ export const HeroWithFlipSection: React.FC<HeroWithFlipSectionProps> = ({
   }
 
   return (
-    <section id={id} style={sectionStyle}>
+    <section id={id} ref={sectionRef} style={sectionStyle}>
+      {backgroundImage && <div style={backgroundStyle} />}
       {backgroundImage && backgroundOverlay && <div style={overlayStyle} />}
       
       <div style={contentContainerStyle}>

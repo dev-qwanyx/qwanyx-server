@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Input } from '../components/Input'
 import { Textarea } from '../components/Input'
 import { Button } from '../components/Button'
@@ -66,8 +66,28 @@ export const ContactFormSection: React.FC<ContactFormSectionProps> = ({
   parallax = 'none',
   className = ''
 }) => {
+  console.log('ContactFormSection RENDERED - backgroundImage:', backgroundImage, 'overlayOpacity:', overlayOpacity)
   const [formData, setFormData] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [scrollOffset, setScrollOffset] = useState(0)
+  const sectionRef = React.useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (parallax !== 'none' && parallax !== 'fixed' && backgroundImage) {
+      const handleScroll = () => {
+        if (sectionRef.current) {
+          const rect = sectionRef.current.getBoundingClientRect()
+          // Only apply parallax when scrolling past the element
+          const offset = Math.max(0, -rect.top)
+          setScrollOffset(offset)
+        }
+      }
+      
+      handleScroll() // Initial calculation
+      window.addEventListener('scroll', handleScroll)
+      return () => window.removeEventListener('scroll', handleScroll)
+    }
+  }, [parallax, backgroundImage])
 
   const handleInputChange = (name: string, value: string) => {
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -150,26 +170,67 @@ export const ContactFormSection: React.FC<ContactFormSectionProps> = ({
     }
   }
 
+  // Calculate parallax speed
+  const getParallaxSpeed = () => {
+    if (parallax === 'none' || !parallax) return 0
+    if (parallax === 'slow') return 0.3
+    if (parallax === 'normal') return 0.5
+    if (parallax === 'fast') return 0.7
+    if (parallax === 'fixed') return 0
+    return 0.5
+  }
+  
+  const parallaxSpeed = getParallaxSpeed()
+  const parallaxOffset = scrollOffset * parallaxSpeed
+
+  // Debug
+  console.log('ContactFormSection - backgroundImage:', backgroundImage)
+  console.log('ContactFormSection - overlayOpacity:', overlayOpacity)
+
   // Simple section with optional background
   return (
     <section 
+      ref={sectionRef}
       className={`qwanyx-relative qwanyx-overflow-hidden qwanyx-flex qwanyx-items-center qwanyx-justify-center ${className}`}
       style={{
         paddingTop: '2rem', 
         paddingBottom: '3.4rem',
-        ...(backgroundImage ? {
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: parallax === 'fixed' ? 'fixed' : 'scroll'
-        } : {})
+        position: 'relative',
+        overflow: 'hidden'
       }}
     >
+      {/* Parallax Background */}
+      {backgroundImage && (
+        <div style={{
+          position: 'absolute',
+          top: '-20%',
+          left: 0,
+          right: 0,
+          bottom: '-20%',
+          height: '140%',
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          transform: parallax !== 'none' && parallax !== 'fixed' ? `translateY(${parallaxOffset}px)` : 'none',
+          backgroundAttachment: parallax === 'fixed' ? 'fixed' : 'scroll',
+          willChange: parallax !== 'none' ? 'transform' : 'auto',
+          zIndex: 0
+        }} />
+      )}
+      
       {/* Overlay */}
       {backgroundImage && (
         <div 
-          className="qwanyx-absolute qwanyx-inset-0 qwanyx-bg-black"
-          style={{ opacity: overlayOpacity }}
+          style={{ 
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})`,
+            zIndex: 1 
+          }}
         />
       )}
       

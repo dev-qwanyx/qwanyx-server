@@ -38,6 +38,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
     
     // Clear theme mode storage to prevent dark mode
     localStorage.setItem('qwanyx-theme-mode', 'light')
+    
+    // Set CSS variables for the theme colors
+    root.style.setProperty('--qwanyx-primary', '230, 126, 34') // #E67E22 in RGB
+    root.style.setProperty('--qwanyx-secondary', '52, 73, 94') // #34495E in RGB
+    root.style.setProperty('--qwanyx-accent', '243, 156, 18') // #F39C12 in RGB
+    root.style.setProperty('--qwanyx-success', '39, 174, 96') // #27AE60 in RGB
+    root.style.setProperty('--qwanyx-warning', '241, 196, 15') // #F1C40F in RGB
+    root.style.setProperty('--qwanyx-error', '231, 76, 60') // #E74C3C in RGB
+    root.style.setProperty('--qwanyx-info', '52, 152, 219') // #3498DB in RGB
   }, [])
   
   return (
