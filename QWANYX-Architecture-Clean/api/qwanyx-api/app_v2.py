@@ -196,7 +196,14 @@ def register():
             'email': email,
             'created_at': datetime.now(timezone.utc),
             'is_active': True,
-            'auth_method': 'code'
+            'auth_method': 'code',
+            'last_login': None,  # Will be set on first login
+            'activity': [{
+                'type': 'registration',
+                'timestamp': datetime.now(timezone.utc),
+                'ip': request.remote_addr,
+                'user_agent': request.headers.get('User-Agent', 'Unknown')
+            }]
         }
         
         # Add any additional fields from metadata
@@ -304,12 +311,37 @@ def verify_code():
                 'email': email,
                 'created_at': datetime.now(timezone.utc),
                 'is_active': True,
-                'auth_method': 'code'
+                'auth_method': 'code',
+                'last_login': datetime.now(timezone.utc),
+                'activity': [{
+                    'type': 'login',
+                    'timestamp': datetime.now(timezone.utc),
+                    'ip': request.remote_addr,
+                    'user_agent': request.headers.get('User-Agent', 'Unknown')
+                }]
             }
             result = workspace_db.users.insert_one(user)
             user_id = str(result.inserted_id)
         else:
             user_id = str(user['_id'])
+            # Update last login and add to activity
+            workspace_db.users.update_one(
+                {'_id': user['_id']},
+                {
+                    '$set': {'last_login': datetime.now(timezone.utc)},
+                    '$push': {
+                        'activity': {
+                            '$each': [{
+                                'type': 'login',
+                                'timestamp': datetime.now(timezone.utc),
+                                'ip': request.remote_addr,
+                                'user_agent': request.headers.get('User-Agent', 'Unknown')
+                            }],
+                            '$slice': -100  # Keep only last 100 activities
+                        }
+                    }
+                }
+            )
         
         # Create token (include workspace in token)
         access_token = create_access_token(

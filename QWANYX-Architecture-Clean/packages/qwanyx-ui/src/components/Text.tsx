@@ -113,68 +113,58 @@ export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(({
   className = '',
   style
 }, ref) => {
-  const sizeClasses = {
-    'xs': 'text-xs',
-    'sm': 'text-sm',
-    'base': 'text-base',
-    'lg': 'text-lg',
-    'xl': 'text-xl',
-    '2xl': 'text-2xl',
-    '3xl': 'text-3xl'
+  const sizeMap = {
+    'xs': '0.75rem',
+    'sm': '0.875rem',
+    'base': '1rem',
+    'lg': '1.125rem',
+    'xl': '1.25rem',
+    '2xl': '1.5rem',
+    '3xl': '1.875rem'
   };
   
-  const weightClasses = {
-    light: 'font-light',
-    normal: 'font-normal',
-    medium: 'font-medium',
-    semibold: 'font-semibold',
-    bold: 'font-bold'
+  const weightMap = {
+    light: '300',
+    normal: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700'
   };
   
-  const colorClasses = {
-    primary: 'text-text-primary',
-    secondary: 'text-text-secondary',
-    muted: 'text-text-muted',
-    accent: 'text-accent',
-    success: 'text-success',
-    warning: 'text-warning',
-    error: 'text-error',
-    info: 'text-info'
+  const colorMap = {
+    primary: 'rgb(var(--qwanyx-foreground))',
+    secondary: 'rgb(var(--qwanyx-foreground) / 0.7)',
+    muted: 'rgb(var(--qwanyx-foreground) / 0.5)',
+    accent: 'rgb(var(--qwanyx-primary))',
+    success: 'rgb(var(--qwanyx-success))',
+    warning: 'rgb(var(--qwanyx-warning))',
+    error: 'rgb(var(--qwanyx-error))',
+    info: 'rgb(var(--qwanyx-info))'
   };
   
-  const alignClasses = {
-    left: 'text-left',
-    center: 'text-center',
-    right: 'text-right',
-    justify: 'text-justify'
+  const textStyle: React.CSSProperties = {
+    fontSize: sizeMap[size],
+    fontWeight: weightMap[weight],
+    color: colorMap[color],
+    textAlign: align,
+    fontStyle: italic ? 'italic' : 'normal',
+    textDecoration: underline ? 'underline' : lineThrough ? 'line-through' : 'none',
+    ...style
   };
   
-  const decorationClasses = [
-    italic && 'italic',
-    underline && 'underline',
-    lineThrough && 'line-through'
-  ].filter(Boolean).join(' ');
-  
-  const combinedClassName = [
-    sizeClasses[size],
-    weightClasses[weight],
-    colorClasses[color],
-    alignClasses[align],
-    decorationClasses,
-    className
-  ].filter(Boolean).join(' ');
+  const combinedClassName = className;
   
   // Handle label element
   if (Component === 'label') {
     return (
-      <label ref={ref as any} className={combinedClassName} style={style}>
+      <label ref={ref as any} className={combinedClassName} style={textStyle}>
         {children}
       </label>
     );
   }
   
   return (
-    <Component ref={ref as any} className={combinedClassName} style={style}>
+    <Component ref={ref as any} className={combinedClassName} style={textStyle}>
       {children}
     </Component>
   );

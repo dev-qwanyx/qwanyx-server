@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import { 
   Container, Text, Card, CardContent, CardHeader, CardTitle, 
   Grid, Button, Badge, Input, SimpleSelect, Modal, ModalHeader, 
-  ModalTitle, ModalBody, ModalFooter, Form, FormField, Avatar, Flex,
-  UserProfile 
+  ModalTitle, ModalBody, ModalFooter, Form, Avatar, Flex,
+  UserProfile, Icon
 } from '@qwanyx/ui'
 
 interface User {
@@ -13,10 +13,17 @@ interface User {
   email: string
   firstName?: string
   lastName?: string
-  role: 'owner' | 'admin' | 'member' | 'viewer' | 'guest'
+  role: 'administrateur' | 'particulier' | 'professionnel' | 'partenaire' | 'editeur'
   status: 'active' | 'blocked' | 'suspended' | 'deleted'
   createdAt: string
   lastLogin?: string
+  activity?: Array<{
+    type: string
+    timestamp: string
+    ip?: string
+    user_agent?: string
+    [key: string]: any // Pour les futures propriétés (annonces, etc.)
+  }>
   stats: {
     totalListings: number
     totalSales: number
@@ -36,10 +43,16 @@ export default function UsersContent() {
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [currentUserRole, setCurrentUserRole] = useState<string>('particulier')
 
   // Fetch real users from API
   useEffect(() => {
     fetchUsers()
+    // Get current user's role
+    const userEmail = localStorage.getItem('autodin_user_email')
+    if (userEmail) {
+      // Will be set when users are loaded
+    }
   }, [])
 
   const fetchUsers = async () => {
@@ -70,25 +83,52 @@ export default function UsersContent() {
         const usersArray = Array.isArray(data) ? data : (data.users || [])
         console.log('Users array:', usersArray)
         
-        const transformedUsers = usersArray.map((u: any) => ({
-          id: u._id?.$oid || u._id || u.id,
-          email: u.email,
-          firstName: u.first_name || u.firstName || u.name?.split(' ')[0] || '',
-          lastName: u.last_name || u.lastName || u.name?.split(' ').slice(1).join(' ') || '',
-          role: u.role || 'member',
-          status: u.is_active ? 'active' : (u.status || 'inactive'),
-          createdAt: u.created_at?.$date || u.created_at || u.createdAt || new Date().toISOString(),
-          lastLogin: u.last_login || u.lastLogin,
-          stats: {
-            totalListings: u.stats?.totalListings || 0,
-            totalSales: u.stats?.totalSales || 0,
-            totalRevenue: u.stats?.totalRevenue || 0,
-            rating: u.stats?.rating || 0
+        const transformedUsers = usersArray.map((u: any) => {
+          // Format dates
+          const formatDate = (date: any) => {
+            if (!date) return null
+            const d = date.$date ? new Date(date.$date) : new Date(date)
+            if (isNaN(d.getTime())) return null
+            return d.toLocaleDateString('fr-FR', { 
+              day: '2-digit', 
+              month: '2-digit', 
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
           }
-        }))
+          
+          return {
+            id: u._id?.$oid || u._id || u.id,
+            email: u.email,
+            firstName: u.first_name || u.firstName || u.name?.split(' ')[0] || '',
+            lastName: u.last_name || u.lastName || u.name?.split(' ').slice(1).join(' ') || '',
+            role: u.role || 'particulier',
+            status: u.is_active ? 'active' : (u.status || 'inactive'),
+            createdAt: formatDate(u.created_at || u.createdAt) || 'Inconnue',
+            lastLogin: formatDate(u.last_login || u.lastLogin),
+            activity: u.activity || [],
+            stats: {
+              totalListings: u.stats?.totalListings || 0,
+              totalSales: u.stats?.totalSales || 0,
+              totalRevenue: u.stats?.totalRevenue || 0,
+              rating: u.stats?.rating || 0
+            }
+          }
+        })
         
         setUsers(transformedUsers)
         setFilteredUsers(transformedUsers)
+        
+        // Find current user's role
+        const userEmail = localStorage.getItem('autodin_user_email')
+        if (userEmail) {
+          const currentUser = transformedUsers.find(u => u.email === userEmail)
+          if (currentUser) {
+            setCurrentUserRole(currentUser.role)
+            console.log('Current user role:', currentUser.role)
+          }
+        }
       } else {
         // Fallback to mock data if API fails
         loadMockData()
@@ -244,42 +284,74 @@ export default function UsersContent() {
   }
 
   const handleChangeRole = async (userId: string, newRole: string) => {
+    // Optimistic update - change immediately in UI
+    setUsers(prev => prev.map(u => 
+      u.id === userId 
+        ? { ...u, role: newRole as User['role'] }
+        : u
+    ))
+    setFilteredUsers(prev => prev.map(u => 
+      u.id === userId 
+        ? { ...u, role: newRole as User['role'] }
+        : u
+    ))
+
+    // Then send to database in background
     try {
       const token = localStorage.getItem('autodin_token')
+      const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
       
-      const response = await fetch(`http://localhost:5002/api/users/${userId}/role`, {
+      console.log('Updating role for user:', userId, 'to:', newRole)
+      
+      const response = await fetch(`http://localhost:5002/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Workspace': workspace
         },
         body: JSON.stringify({ role: newRole })
       })
 
-      if (response.ok) {
-        setUsers(prev => prev.map(u => 
-          u.id === userId 
-            ? { ...u, role: newRole as User['role'] }
-            : u
-        ))
+      if (!response.ok) {
+        // If failed, rollback the change (optional - you said it's ok if it doesn't match)
+        console.error('Failed to update role in database:', response.status)
+        // Not reverting since user said "c'est pas grave si ça n'a pas vraiment matché"
+      } else {
+        console.log('Role updated successfully in database')
       }
     } catch (error) {
-      console.error('Error updating user role:', error)
-      // Fallback to local update
-      setUsers(prev => prev.map(u => 
-        u.id === userId 
-          ? { ...u, role: newRole as User['role'] }
-          : u
-      ))
+      console.error('Error updating user role in database:', error)
+      // Not reverting since user said "c'est pas grave si ça n'a pas vraiment matché"
     }
+  }
+
+  const getRoleOptions = () => {
+    const baseOptions = [
+      { value: 'particulier', label: 'Particulier' },
+      { value: 'professionnel', label: 'Professionnel' },
+      { value: 'partenaire', label: 'Partenaire' },
+      { value: 'editeur', label: 'Éditeur' }
+    ]
+    
+    // Only show Administrateur option if current user is an admin
+    if (currentUserRole === 'administrateur') {
+      return [
+        { value: 'administrateur', label: 'Administrateur' },
+        ...baseOptions
+      ]
+    }
+    
+    return baseOptions
   }
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'owner': return 'error'
-      case 'admin': return 'warning'
-      case 'member': return 'primary'
-      case 'viewer': return 'secondary'
+      case 'administrateur': return 'error'
+      case 'professionnel': return 'warning'
+      case 'partenaire': return 'success'
+      case 'editeur': return 'info'
+      case 'particulier': return 'primary'
       default: return 'default'
     }
   }
@@ -357,23 +429,25 @@ export default function UsersContent() {
             <SimpleSelect
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-            >
-              <option value="all">Tous les rôles</option>
-              <option value="owner">Propriétaire</option>
-              <option value="admin">Administrateur</option>
-              <option value="member">Membre</option>
-              <option value="viewer">Observateur</option>
-              <option value="guest">Invité</option>
-            </SimpleSelect>
+              options={[
+                { value: 'all', label: 'Tous les rôles' },
+                ...(currentUserRole === 'administrateur' ? [{ value: 'administrateur', label: 'Administrateur' }] : []),
+                { value: 'particulier', label: 'Particulier' },
+                { value: 'professionnel', label: 'Professionnel' },
+                { value: 'partenaire', label: 'Partenaire' },
+                { value: 'editeur', label: 'Éditeur' }
+              ]}
+            />
             <SimpleSelect
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="all">Tous les statuts</option>
-              <option value="active">Actif</option>
-              <option value="blocked">Bloqué</option>
-              <option value="suspended">Suspendu</option>
-            </SimpleSelect>
+              options={[
+                { value: 'all', label: 'Tous les statuts' },
+                { value: 'active', label: 'Actif' },
+                { value: 'blocked', label: 'Bloqué' },
+                { value: 'suspended', label: 'Suspendu' }
+              ]}
+            />
             <Button 
               variant="primary"
               onClick={() => setShowAddModal(true)}
@@ -413,7 +487,7 @@ export default function UsersContent() {
                     <Text size="sm" weight="semibold">Note</Text>
                   </th>
                   <th style={{ padding: '1rem', textAlign: 'center' }}>
-                    <Text size="sm" weight="semibold">Actions</Text>
+                    <Text size="sm" weight="semibold"></Text>
                   </th>
                 </tr>
               </thead>
@@ -445,18 +519,12 @@ export default function UsersContent() {
                     </td>
                     <td style={{ padding: '1rem' }}>
                       <SimpleSelect
-                        value={user.role}
+                        value={user.role || 'particulier'}
                         onChange={(e) => handleChangeRole(user.id, e.target.value)}
-                        size="sm"
-                        style={{ minWidth: '120px' }}
-                        disabled={user.role === 'owner'}
-                      >
-                        <option value="owner">Propriétaire</option>
-                        <option value="admin">Admin</option>
-                        <option value="member">Membre</option>
-                        <option value="viewer">Observateur</option>
-                        <option value="guest">Invité</option>
-                      </SimpleSelect>
+                        selectSize="sm"
+                        options={getRoleOptions()}
+                        style={{ minWidth: '140px' }}
+                      />
                     </td>
                     <td style={{ padding: '1rem' }}>
                       <Badge color={getStatusBadgeColor(user.status)}>
@@ -481,38 +549,21 @@ export default function UsersContent() {
                         ⭐ {user.stats.rating || '-'}
                       </Badge>
                     </td>
-                    <td style={{ padding: '1rem' }}>
-                      <Flex gap="sm" justify="center">
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => {
-                            setSelectedUser(user)
-                            setShowEditModal(true)
-                          }}
-                        >
-                          Voir
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant={user.status === 'blocked' ? 'success' : 'warning'}
-                          onClick={() => handleBlockUser(user)}
-                          disabled={user.role === 'owner'}
-                        >
-                          {user.status === 'blocked' ? 'Débloquer' : 'Bloquer'}
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="error"
-                          onClick={() => {
-                            setSelectedUser(user)
-                            setShowDeleteModal(true)
-                          }}
-                          disabled={user.role === 'owner'}
-                        >
-                          Supprimer
-                        </Button>
-                      </Flex>
+                    <td style={{ padding: '1rem', textAlign: 'center' }}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUser(user)
+                          setShowEditModal(true)
+                        }}
+                        style={{ 
+                          padding: '0.5rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Icon name="Eye" size="sm" />
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -532,34 +583,47 @@ export default function UsersContent() {
             e.preventDefault()
             setShowAddModal(false)
           }}>
-            <FormField
-              label="Email"
-              name="email"
-              type="email"
-              required
-              placeholder="utilisateur@example.com"
-            />
-            <FormField
-              label="Prénom"
-              name="firstName"
-              required
-              placeholder="Jean"
-            />
-            <FormField
-              label="Nom"
-              name="lastName"
-              required
-              placeholder="Dupont"
-            />
+            <div style={{ marginBottom: '1rem' }}>
+              <Text size="sm" style={{ marginBottom: '0.5rem', display: 'block' }}>
+                Email
+              </Text>
+              <Input
+                name="email"
+                type="email"
+                required
+                placeholder="utilisateur@example.com"
+              />
+            </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <Text size="sm" style={{ marginBottom: '0.5rem', display: 'block' }}>
+                Prénom
+              </Text>
+              <Input
+                name="firstName"
+                required
+                placeholder="Jean"
+              />
+            </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <Text size="sm" style={{ marginBottom: '0.5rem', display: 'block' }}>
+                Nom
+              </Text>
+              <Input
+                name="lastName"
+                required
+                placeholder="Dupont"
+              />
+            </div>
             <div style={{ marginBottom: '1rem' }}>
               <Text size="sm" style={{ marginBottom: '0.5rem', display: 'block' }}>
                 Rôle
               </Text>
-              <SimpleSelect name="role" required>
-                <option value="member">Membre</option>
-                <option value="admin">Administrateur</option>
-                <option value="viewer">Observateur</option>
-              </SimpleSelect>
+              <SimpleSelect 
+                name="role" 
+                required
+                options={getRoleOptions()}
+                defaultValue="particulier"
+              />
             </div>
           </Form>
         </ModalBody>
@@ -579,52 +643,95 @@ export default function UsersContent() {
             <ModalTitle>Détails de l'utilisateur</ModalTitle>
           </ModalHeader>
           <ModalBody>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <Flex align="center" gap="md">
-                <Avatar 
-                  name={`${selectedUser.firstName} ${selectedUser.lastName}`}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div>
+                <UserProfile
+                  user={{
+                    name: `${selectedUser.firstName || ''} ${selectedUser.lastName || ''}`.trim() || selectedUser.email,
+                    email: selectedUser.email
+                  }}
                   size="lg"
+                  showEmail={true}
+                  orientation="horizontal"
                 />
-                <div>
-                  <Text size="lg" weight="bold">
-                    {selectedUser.firstName} {selectedUser.lastName}
-                  </Text>
-                  <Text size="sm" color="secondary">{selectedUser.email}</Text>
+                <div style={{ marginTop: '0.5rem', marginLeft: '3.5rem' }}>
                   <Badge color={getRoleBadgeColor(selectedUser.role)}>
                     {selectedUser.role}
                   </Badge>
                 </div>
-              </Flex>
+              </div>
               
-              <Card>
-                <CardContent>
-                  <Grid cols={2} style={{ gap: '1rem' }}>
-                    <div>
-                      <Text size="xs" color="secondary">Membre depuis</Text>
-                      <Text size="sm">{selectedUser.createdAt}</Text>
-                    </div>
-                    <div>
-                      <Text size="xs" color="secondary">Dernière connexion</Text>
-                      <Text size="sm">{selectedUser.lastLogin || 'Jamais'}</Text>
-                    </div>
-                    <div>
-                      <Text size="xs" color="secondary">Total des ventes</Text>
-                      <Text size="sm" weight="bold">€{selectedUser.stats.totalRevenue}</Text>
-                    </div>
-                    <div>
-                      <Text size="xs" color="secondary">Note moyenne</Text>
-                      <Text size="sm">⭐ {selectedUser.stats.rating || '-'}/5</Text>
-                    </div>
-                  </Grid>
-                </CardContent>
-              </Card>
+              <Grid cols={2} style={{ gap: '1.5rem' }}>
+                <div>
+                  <Text size="xs" weight="bold" style={{ marginBottom: '0.25rem' }}>
+                    Membre depuis
+                  </Text>
+                  <Text size="sm" color="secondary">{selectedUser.createdAt}</Text>
+                </div>
+                <div>
+                  <Text size="xs" weight="bold" style={{ marginBottom: '0.25rem' }}>
+                    Dernière connexion
+                  </Text>
+                  <Text size="sm" color="secondary">{selectedUser.lastLogin || 'Jamais'}</Text>
+                </div>
+                <div>
+                  <Text size="xs" weight="bold" style={{ marginBottom: '0.25rem' }}>
+                    Total des ventes
+                  </Text>
+                  <Text size="sm" color="secondary">€{selectedUser.stats.totalRevenue}</Text>
+                </div>
+                <div>
+                  <Text size="xs" weight="bold" style={{ marginBottom: '0.25rem' }}>
+                    Note moyenne
+                  </Text>
+                  <Text size="sm" color="secondary">⭐ {selectedUser.stats.rating || '-'}/5</Text>
+                </div>
+                <div>
+                  <Text size="xs" weight="bold" style={{ marginBottom: '0.25rem' }}>
+                    Annonces publiées
+                  </Text>
+                  <Text size="sm" color="secondary">{selectedUser.stats.totalListings}</Text>
+                </div>
+                <div>
+                  <Text size="xs" weight="bold" style={{ marginBottom: '0.25rem' }}>
+                    Nombre de ventes
+                  </Text>
+                  <Text size="sm" color="secondary">{selectedUser.stats.totalSales}</Text>
+                </div>
+              </Grid>
+              
+              <div style={{ 
+                paddingTop: '1rem', 
+                borderTop: '1px solid rgb(var(--qwanyx-border))',
+                display: 'flex',
+                gap: '0.75rem',
+                justifyContent: 'flex-end'
+              }}>
+                <Button
+                  variant={selectedUser.status === 'blocked' ? 'success' : 'warning'}
+                  onClick={() => {
+                    handleBlockUser(selectedUser)
+                    setShowEditModal(false)
+                  }}
+                  disabled={selectedUser.role === 'administrateur' && currentUserRole !== 'administrateur'}
+                >
+                  <Icon name={selectedUser.status === 'blocked' ? 'Unlock' : 'Lock'} size="sm" />
+                  {selectedUser.status === 'blocked' ? 'Débloquer' : 'Bloquer'}
+                </Button>
+                <Button
+                  variant="error"
+                  onClick={() => {
+                    setShowEditModal(false)
+                    setShowDeleteModal(true)
+                  }}
+                  disabled={selectedUser.role === 'administrateur' && currentUserRole !== 'administrateur'}
+                >
+                  <Icon name="Trash" size="sm" />
+                  Supprimer
+                </Button>
+              </div>
             </div>
           </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setShowEditModal(false)}>
-              Fermer
-            </Button>
-          </ModalFooter>
         </Modal>
       )}
 
