@@ -378,6 +378,8 @@ export interface RadioProps {
   rules?: RegisterOptions;
   className?: string;
   size?: 'sm' | 'md' | 'lg';
+  checked?: boolean;
+  onChange?: (value: string | number) => void;
 }
 
 export const Radio: React.FC<RadioProps> = ({
@@ -387,9 +389,19 @@ export const Radio: React.FC<RadioProps> = ({
   disabled = false,
   rules,
   className = '',
-  size = 'md'
+  size = 'md',
+  checked,
+  onChange
 }) => {
-  const { register } = useFormContext();
+  // Try to get form context, but don't fail if it doesn't exist
+  let register = null;
+  try {
+    const formContext = useFormContext();
+    register = formContext?.register;
+  } catch (e) {
+    // No form context, will use standalone mode
+  }
+  
   const { size: formSize } = useContext(FormStyleContext);
   const actualSize = size || formSize || 'md';
 
@@ -405,24 +417,54 @@ export const Radio: React.FC<RadioProps> = ({
     lg: 'text-lg'
   };
 
+  // Handle change for standalone mode
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange && e.target.checked) {
+      onChange(value);
+    }
+  };
+
   return (
     <label className={`inline-flex items-center gap-2 cursor-pointer ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className}`}>
-      <input
-        type="radio"
-        {...register(name, rules)}
-        value={value}
-        disabled={disabled}
-        className={`
-          ${sizeClasses[actualSize]}
-          border-gray-300 
-          text-blue-600 
-          focus:ring-0 
-          focus:outline-none
-          disabled:opacity-50
-          disabled:cursor-not-allowed
-          cursor-pointer
-        `}
-      />
+      {register && name ? (
+        // Form mode: use register
+        <input
+          type="radio"
+          {...register(name, rules)}
+          value={value}
+          disabled={disabled}
+          className={`
+            ${sizeClasses[actualSize]}
+            border-gray-300 
+            text-blue-600 
+            focus:ring-0 
+            focus:outline-none
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+            cursor-pointer
+          `}
+        />
+      ) : (
+        // Standalone mode: use checked and onChange
+        <input
+          type="radio"
+          name={name}
+          checked={checked}
+          onChange={handleChange}
+          value={value}
+          disabled={disabled}
+          className={`
+            ${sizeClasses[actualSize]}
+            border-gray-300 
+            text-blue-600 
+            focus:ring-0 
+            focus:outline-none
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+            cursor-pointer
+          `}
+        />
+      )}
       {label && (
         <span className={`${textSizeClasses[actualSize]} select-none`}>
           {label}

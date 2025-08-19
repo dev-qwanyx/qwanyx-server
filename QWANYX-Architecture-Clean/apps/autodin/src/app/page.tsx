@@ -29,6 +29,81 @@ function AppContent() {
   const [user, setUser] = useState<any>(null)
   const [showTestModal, setShowTestModal] = useState(false)
   
+  // Configuration des champs pour le formulaire d'enregistrement
+  const registerFields = [
+    {
+      name: 'firstName',
+      label: 'Prénom',
+      type: 'text' as const,
+      placeholder: 'Votre prénom',
+      required: true
+    },
+    {
+      name: 'lastName',
+      label: 'Nom',
+      type: 'text' as const,
+      placeholder: 'Votre nom',
+      required: true
+    },
+    {
+      name: 'phone',
+      label: 'Téléphone',
+      type: 'tel' as const,
+      placeholder: '+32 123 45 67 89',
+      required: false,
+      validation: 'phone' as const
+    },
+    {
+      name: 'accountType',
+      label: 'Type de compte',
+      type: 'radio' as const,
+      required: true,
+      defaultValue: 'particulier',
+      options: [
+        { value: 'particulier', label: 'Particulier' },
+        { value: 'professionnel', label: 'Professionnel' }
+      ]
+    },
+    {
+      name: 'proTypes',
+      label: "Type d'activité",
+      type: 'checkbox' as const,
+      showIf: (formData: any) => formData.accountType === 'professionnel',
+      helperText: 'Sélectionnez toutes les activités qui vous concernent',
+      options: [
+        { value: 'garagiste', label: 'Garagiste' },
+        { value: 'fournisseur', label: 'Fournisseur de pièces' },
+        { value: 'carrossier', label: 'Carrossier' }
+      ]
+    },
+    {
+      name: 'companyName',
+      label: "Nom de l'entreprise",
+      type: 'text' as const,
+      placeholder: 'Nom de votre entreprise',
+      showIf: (formData: any) => formData.accountType === 'professionnel',
+      required: false
+    },
+    {
+      name: 'vatNumber',
+      label: 'Numéro de TVA',
+      type: 'text' as const,
+      placeholder: 'BE0123456789',
+      helperText: 'Format: BE0123456789',
+      showIf: (formData: any) => formData.accountType === 'professionnel',
+      validation: 'vat' as const
+    },
+    {
+      name: 'email',
+      label: 'Email',
+      type: 'email' as const,
+      placeholder: 'Entrez votre email',
+      required: true,
+      validation: 'email' as const,
+      autoComplete: 'email'
+    }
+  ]
+  
   // Debug
   useEffect(() => {
     console.log('Auth state changed:', { showAuth, authMode })
@@ -308,6 +383,13 @@ function AppContent() {
         rememberMe={true}
         logo="/images/logo.png"
         primaryColor="#E67E22"
+        registerFields={registerFields}
+        buttonText={{
+          register: 'Créer mon compte',
+          login: 'Se connecter',
+          switchToLogin: 'Déjà un compte ? Se connecter',
+          switchToRegister: "Pas encore de compte ? S'inscrire"
+        }}
         isOpen={showAuth}
         onClose={() => {
           console.log('AuthModule onClose called')

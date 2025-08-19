@@ -3,7 +3,10 @@ import {
   Modal, 
   Button, 
   Input, 
-  Checkbox, 
+  Checkbox,
+  Radio,
+  RadioGroup,
+  SimpleSelect,
   Text, 
   Heading, 
   OTPInput,
@@ -15,11 +18,11 @@ import { getTranslation, Locale } from './translations'
 export interface AuthField {
   name: string
   label: string
-  type?: 'text' | 'email' | 'tel' | 'url' | 'password' | 'select' | 'checkbox'
+  type?: 'text' | 'email' | 'tel' | 'url' | 'password' | 'select' | 'checkbox' | 'radio'
   placeholder?: string
   required?: boolean
   validation?: 'email' | 'phone' | 'linkedin' | 'vat' | 'url' | RegExp | ((value: string) => boolean | string)
-  options?: Array<{ value: string; label: string }> // For select type
+  options?: Array<{ value: string; label: string }> // For select and radio types
   showIf?: string | ((formData: any) => boolean) // Conditional display
   defaultValue?: any
   helperText?: string
@@ -435,30 +438,62 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
           />
         )
         
+      case 'radio':
+        return (
+          <div key={field.name} style={{ marginBottom: '1rem' }}>
+            <Text size="sm" weight="medium" style={{ marginBottom: '0.5rem', display: 'block' }}>
+              {field.label} {field.required && '*'}
+            </Text>
+            <RadioGroup
+              name={field.name}
+              value={formData[field.name] || field.defaultValue || ''}
+              onChange={(value: string) => handleFieldChange(field, value)}
+              orientation="horizontal"
+            >
+              {field.options?.map(opt => (
+                <Radio 
+                  key={opt.value}
+                  name={field.name}
+                  value={opt.value}
+                  label={opt.label}
+                  disabled={loading}
+                />
+              ))}
+            </RadioGroup>
+            {field.helperText && (
+              <Text size="xs" color="secondary" style={{ marginTop: '0.25rem' }}>
+                {field.helperText}
+              </Text>
+            )}
+            {errors[field.name] && (
+              <Text size="xs" color="error" style={{ marginTop: '0.25rem' }}>
+                {errors[field.name]}
+              </Text>
+            )}
+          </div>
+        )
+        
       case 'select':
         return (
           <div key={field.name} style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem' }}>
+            <Text size="sm" weight="medium" style={{ marginBottom: '0.25rem', display: 'block' }}>
               {field.label} {field.required && '*'}
-            </label>
-            <select
+            </Text>
+            <SimpleSelect
               {...commonProps}
               value={formData[field.name] || ''}
               onChange={(e) => handleFieldChange(field, e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                borderRadius: '0.25rem',
-                border: '1px solid rgb(var(--qwanyx-border))'
-              }}
-            >
-              <option value="">Sélectionner...</option>
-              {field.options?.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+              options={field.options || []}
+              placeholder="Sélectionner..."
+              fullWidth={true}
+            />
+            {field.helperText && (
+              <Text size="xs" color="secondary" style={{ marginTop: '0.25rem' }}>
+                {field.helperText}
+              </Text>
+            )}
             {errors[field.name] && (
-              <Text style={{ color: 'rgb(var(--qwanyx-destructive))', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+              <Text size="xs" color="error" style={{ marginTop: '0.25rem' }}>
                 {errors[field.name]}
               </Text>
             )}
@@ -469,9 +504,9 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
         return (
           <div key={field.name} style={{ marginBottom: '1rem' }}>
             {field.label && (
-              <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem', fontWeight: '500' }}>
+              <Text size="sm" weight="medium" style={{ marginBottom: '0.25rem', display: 'block' }}>
                 {field.label} {field.required && '*'}
-              </label>
+              </Text>
             )}
             <Input
               {...commonProps}
@@ -480,12 +515,12 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange(field, e.target.value)}
             />
             {field.helperText && (
-              <Text style={{ fontSize: '0.75rem', color: 'rgb(var(--qwanyx-text-secondary))', marginTop: '0.25rem' }}>
+              <Text size="xs" color="secondary" style={{ marginTop: '0.25rem' }}>
                 {field.helperText}
               </Text>
             )}
             {errors[field.name] && (
-              <Text style={{ color: 'rgb(var(--qwanyx-destructive))', fontSize: '0.75rem', marginTop: '0.25rem' }}>
+              <Text size="xs" color="error" style={{ marginTop: '0.25rem' }}>
                 {errors[field.name]}
               </Text>
             )}
