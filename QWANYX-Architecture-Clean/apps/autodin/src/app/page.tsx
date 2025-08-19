@@ -457,7 +457,7 @@ function AppContent() {
       <AuthModule
         key={`auth-${authMode}-${showAuth}`}
         workspace="autodin"
-        apiUrl="http://localhost:5002"
+        apiUrl="http://135.181.72.183:5002"
         locale="fr"
         initialMode={authMode}
         allowModeSwitch={true}
