@@ -1,39 +1,36 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
   Button,
   Input,
-  Badge,
-  Avatar,
   Text,
   Heading,
-  Grid,
   Flex,
   Modal,
   ModalHeader,
   ModalTitle,
   ModalBody,
   ModalFooter,
-  SimpleSelect,
+  Icon,
+  Tooltip,
+  Switch,
+  UserProfile,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
 } from '@qwanyx/ui'
 
 interface DigitalHuman {
   _id?: string
   email: string
   name: string
+  firstName: string
   type: 'DH'
   system: 'THOT'
-  role: 'support' | 'commercial' | 'assistant' | 'rh' | 'info' | 'custom'
   workspace: string
   active: boolean
   created: Date
-  personality?: {
-    tone: 'formal' | 'friendly' | 'casual' | 'professional'
-    responseStyle: 'concise' | 'detailed' | 'balanced'
-  }
   stats?: {
     emailsProcessed: number
     avgResponseTime: number
@@ -42,308 +39,844 @@ interface DigitalHuman {
 }
 
 export const DigitalHumansPage: React.FC = () => {
-  const [digitalHumans, setDigitalHumans] = useState<DigitalHuman[]>([
-    // Données de démonstration
-    {
-      _id: '1',
-      email: 'support@autodin.com',
-      name: 'Support Autodin',
-      type: 'DH',
-      system: 'THOT',
-      role: 'support',
-      workspace: 'autodin',
-      active: true,
-      created: new Date('2024-08-01'),
-      personality: {
-        tone: 'friendly',
-        responseStyle: 'balanced'
-      },
-      stats: {
-        emailsProcessed: 1234,
-        avgResponseTime: 120,
-        satisfactionRate: 92
-      }
-    },
-    {
-      _id: '2',
-      email: 'commercial@autodin.com',
-      name: 'Commercial Autodin',
-      type: 'DH',
-      system: 'THOT',
-      role: 'commercial',
-      workspace: 'autodin',
-      active: true,
-      created: new Date('2024-08-15'),
-      personality: {
-        tone: 'professional',
-        responseStyle: 'detailed'
-      },
-      stats: {
-        emailsProcessed: 567,
-        avgResponseTime: 180,
-        satisfactionRate: 88
-      }
-    }
-  ])
+  const [digitalHumans, setDigitalHumans] = useState<DigitalHuman[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [currentUserRole, setCurrentUserRole] = useState<string>('particulier')
+  const [expandedDH, setExpandedDH] = useState<string | null>(null)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingDH, setEditingDH] = useState<DigitalHuman | null>(null)
   const [formData, setFormData] = useState({
     email: '',
     name: '',
-    role: 'support' as DigitalHuman['role'],
-    tone: 'professional' as NonNullable<DigitalHuman['personality']>['tone'],
-    responseStyle: 'balanced' as NonNullable<DigitalHuman['personality']>['responseStyle']
+    firstName: ''
   })
 
-  const roleColors: Record<string, string> = {
-    support: 'info',
-    commercial: 'success',
-    assistant: 'warning',
-    rh: 'secondary',
-    info: 'primary',
-    custom: 'subtle'
+  const API_URL = 'http://135.181.72.183:5002'
+  const WORKSPACE = 'autodin'
+
+  // Convert email to collection name format
+  const emailToCollectionName = (email: string) => {
+    return `${email.replace('@', '-').replace(/\./g, '-')}-memory`
   }
 
-  const roleLabels: Record<string, string> = {
-    support: 'Support Client',
-    commercial: 'Commercial',
-    assistant: 'Assistant',
-    rh: 'Ressources Humaines',
-    info: 'Information',
-    custom: 'Personnalisé'
+  // Fetch Digital Humans from database
+  useEffect(() => {
+    fetchDigitalHumans()
+    // Get current user role
+    const storedUser = localStorage.getItem('autodin_user')
+    if (storedUser) {
+      const user = JSON.parse(storedUser)
+      // Fetch users to get the current role
+      fetch(`${API_URL}/api/workspaces/${WORKSPACE}/users`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(users => {
+        const currentUser = users.find((u: any) => u.email === user.email)
+        if (currentUser && currentUser.role) {
+          setCurrentUserRole(currentUser.role)
+          console.log('Current user role in Digital Team:', currentUser.role)
+        }
+      })
+      .catch(err => console.error('Error fetching user role:', err))
+    }
+  }, [])
+
+  const fetchDigitalHumans = async () => {
+    try {
+      setLoading(true)
+      // Fetch users with type: 'DH' from the workspace
+      const response = await fetch(`${API_URL}/api/workspaces/${WORKSPACE}/users?type=DH`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch Digital Humans')
+      }
+      
+      const data = await response.json()
+      setDigitalHumans(data.map((dh: any) => ({
+        ...dh,
+        _id: dh._id || dh.id,
+        created: new Date(dh.created_at || dh.created),
+        stats: dh.stats || {
+          emailsProcessed: 0,
+          avgResponseTime: 0,
+          satisfactionRate: 0
+        }
+      })))
+    } catch (err) {
+      console.error('Error fetching Digital Humans:', err)
+      setError('Erreur lors du chargement des Digital Humans')
+    } finally {
+      setLoading(false)
+    }
   }
+
 
   const handleCreateDH = () => {
     setEditingDH(null)
     setFormData({
       email: '',
       name: '',
-      role: 'support',
-      tone: 'professional',
-      responseStyle: 'balanced'
+      firstName: ''
     })
     setIsModalOpen(true)
   }
 
   const handleEditDH = (dh: DigitalHuman) => {
-    setEditingDH(dh)
-    setFormData({
-      email: dh.email,
-      name: dh.name,
-      role: dh.role,
-      tone: dh.personality?.tone || 'professional',
-      responseStyle: dh.personality?.responseStyle || 'balanced'
-    })
-    setIsModalOpen(true)
-  }
-
-  const handleSaveDH = () => {
-    if (editingDH) {
-      // Mise à jour
-      setDigitalHumans(prev => prev.map(dh => 
-        dh._id === editingDH._id 
-          ? {
-              ...dh,
-              ...formData,
-              personality: {
-                tone: formData.tone,
-                responseStyle: formData.responseStyle
-              }
-            }
-          : dh
-      ))
+    // Toggle expansion - if already expanded, collapse it
+    if (expandedDH === dh._id) {
+      setExpandedDH(null)
     } else {
-      // Création
-      const newDH: DigitalHuman = {
-        _id: Date.now().toString(),
-        email: formData.email,
-        name: formData.name,
-        type: 'DH',
-        system: 'THOT',
-        role: formData.role,
-        workspace: 'autodin',
-        active: true,
-        created: new Date(),
-        personality: {
-          tone: formData.tone,
-          responseStyle: formData.responseStyle
-        },
-        stats: {
-          emailsProcessed: 0,
-          avgResponseTime: 0,
-          satisfactionRate: 0
+      setExpandedDH(dh._id || null)
+    }
+  }
+
+  const handleSaveDH = async () => {
+    try {
+      if (editingDH) {
+        // Update existing DH
+        const response = await fetch(`${API_URL}/api/workspaces/${WORKSPACE}/users/${editingDH._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            name: formData.name,
+            firstName: formData.firstName
+          })
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to update Digital Human')
         }
+        
+        // Refresh list
+        await fetchDigitalHumans()
+      } else {
+        // Create new DH using the register endpoint
+        const response = await fetch(`${API_URL}/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            workspace: WORKSPACE,
+            metadata: {
+              name: formData.name,
+              firstName: formData.firstName,
+              first_name: formData.firstName,
+              last_name: formData.name,
+              type: 'DH',
+              system: 'THOT',
+              active: true,
+              permissions: [
+                'email:read',
+                'email:send',
+                'memory:read',
+                'memory:write'
+              ]
+            }
+          })
+        })
+        
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.error || 'Failed to create Digital Human')
+        }
+        
+        await response.json()
+        
+        // Create memory collection for the DH
+        // The collection name will be: dh_email-with-dashes
+        const collectionName = emailToCollectionName(formData.email)
+        // TODO: We need to create an API endpoint to create this collection
+        console.log(`Need to create collection: ${WORKSPACE}.${collectionName}`)
+        
+        // Refresh list
+        await fetchDigitalHumans()
       }
-      setDigitalHumans(prev => [...prev, newDH])
+      
+      setIsModalOpen(false)
+    } catch (err: any) {
+      console.error('Error saving Digital Human:', err)
+      alert(err.message || 'Erreur lors de la sauvegarde')
     }
-    setIsModalOpen(false)
   }
 
-  const handleDeleteDH = (id: string) => {
+  const handleDeleteDH = async (id: string) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce Digital Human?')) {
-      setDigitalHumans(prev => prev.filter(dh => dh._id !== id))
+      try {
+        const dh = digitalHumans.find(d => d._id === id)
+        if (!dh) return
+        
+        // Delete user
+        const response = await fetch(`${API_URL}/api/workspaces/${WORKSPACE}/users/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to delete Digital Human')
+        }
+        
+        // Delete memory collection
+        await fetch(`${API_URL}/api/workspaces/${WORKSPACE}/dh/${dh.email}/memory`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        // Refresh list
+        await fetchDigitalHumans()
+      } catch (err) {
+        console.error('Error deleting Digital Human:', err)
+        alert('Erreur lors de la suppression')
+      }
     }
   }
 
-  const handleToggleActive = (id: string) => {
-    setDigitalHumans(prev => prev.map(dh => 
-      dh._id === id ? { ...dh, active: !dh.active } : dh
-    ))
+  const handleToggleActive = async (id: string) => {
+    try {
+      const dh = digitalHumans.find(d => d._id === id)
+      if (!dh) return
+      
+      const response = await fetch(`${API_URL}/api/workspaces/${WORKSPACE}/users/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          active: !dh.active
+        })
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to toggle Digital Human status')
+      }
+      
+      // Refresh list
+      await fetchDigitalHumans()
+    } catch (err) {
+      console.error('Error toggling Digital Human status:', err)
+      alert('Erreur lors du changement de statut')
+    }
+  }
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+        <Text size="lg">Chargement des Digital Humans...</Text>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div style={{ textAlign: 'center', padding: '3rem' }}>
+        <Text size="lg" style={{ color: 'var(--qwanyx-text-danger)' }}>{error}</Text>
+        <Button onClick={fetchDigitalHumans} style={{ marginTop: '1rem' }}>Réessayer</Button>
+      </div>
+    )
   }
 
   return (
-    <div>
-      <div style={{ marginBottom: '2rem' }}>
-        <Flex justify="between" align="center">
-          <div>
-            <Heading size="2xl">Digital Humans</Heading>
-            <Text style={{ marginTop: '0.5rem', color: 'var(--qwanyx-text-secondary)' }}>
-              Gérez vos agents intelligents basés sur le système THOT
-            </Text>
-          </div>
-          <Button onClick={handleCreateDH} variant="primary">
-            <Flex align="center" gap="sm">
-              <span>+</span>
-              <span>Créer un DH</span>
-            </Flex>
-          </Button>
-        </Flex>
+    <div style={{ paddingTop: '0px' }}>
+      <div style={{ marginBottom: '0.5rem' }}>
+        <div>
+          <Heading size="2xl">Digital Team</Heading>
+          <Text style={{ marginTop: '0.5rem', color: 'var(--qwanyx-text-secondary)' }}>
+            Gérez votre équipe digitale
+          </Text>
+        </div>
       </div>
 
       {/* Statistiques globales */}
-      <Grid cols={4} gap="lg" style={{ marginBottom: '2rem' }}>
-        <Card>
-          <CardContent>
-            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>Total DH</Text>
-            <Heading size="2xl">{digitalHumans.length}</Heading>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>Actifs</Text>
-            <Heading size="2xl">{digitalHumans.filter(dh => dh.active).length}</Heading>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>Emails traités</Text>
-            <Heading size="2xl">
-              {digitalHumans.reduce((acc, dh) => acc + (dh.stats?.emailsProcessed || 0), 0)}
-            </Heading>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>Satisfaction moy.</Text>
-            <Heading size="2xl">
-              {Math.round(
+      <Flex gap="xl" style={{ marginTop: '0px', marginBottom: '0.5rem' }}>
+        <Text size="sm">
+          <strong>Total DH:</strong> {digitalHumans.length}
+        </Text>
+        <Text size="sm">
+          <strong>Actifs:</strong> {digitalHumans.filter(dh => dh.active).length}
+        </Text>
+        <Text size="sm">
+          <strong>Emails traités:</strong> {digitalHumans.length > 0 
+            ? digitalHumans.reduce((acc, dh) => acc + (dh.stats?.emailsProcessed || 0), 0)
+            : 0
+          }
+        </Text>
+        <Text size="sm">
+          <strong>Satisfaction moy.:</strong> {digitalHumans.length > 0
+            ? Math.round(
                 digitalHumans.reduce((acc, dh) => acc + (dh.stats?.satisfactionRate || 0), 0) / 
-                digitalHumans.length || 0
-              )}%
-            </Heading>
-          </CardContent>
-        </Card>
-      </Grid>
+                digitalHumans.length
+              )
+            : 0
+          }%
+        </Text>
+      </Flex>
 
-      {/* Liste des Digital Humans */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Digital Humans actifs</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {digitalHumans.map(dh => (
-              <Card key={dh._id} style={{ padding: '1rem' }}>
-                <Flex justify="between" align="center">
-                  <Flex align="center" gap="lg">
-                    <Avatar
-                      src={`https://api.dicebear.com/7.x/bottts/svg?seed=${dh.email}`}
-                      alt={dh.name}
-                      size="lg"
-                    />
-                    <div>
-                      <Flex align="center" gap="md">
-                        <Heading size="lg">{dh.name}</Heading>
-                        <Badge variant={dh.active ? 'solid' : 'subtle'}>
-                          {dh.active ? 'Actif' : 'Inactif'}
-                        </Badge>
-                        <Badge variant={roleColors[dh.role] as any}>
-                          {roleLabels[dh.role]}
-                        </Badge>
-                      </Flex>
-                      <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
-                        {dh.email}
-                      </Text>
-                      <Flex gap="lg" style={{ marginTop: '0.5rem' }}>
-                        <Text size="sm">
-                          <strong>Emails:</strong> {dh.stats?.emailsProcessed || 0}
-                        </Text>
-                        <Text size="sm">
-                          <strong>Temps réponse:</strong> {dh.stats?.avgResponseTime || 0}s
-                        </Text>
-                        <Text size="sm">
-                          <strong>Satisfaction:</strong> {dh.stats?.satisfactionRate || 0}%
-                        </Text>
-                        <Text size="sm">
-                          <strong>Créé le:</strong> {new Date(dh.created).toLocaleDateString()}
-                        </Text>
-                      </Flex>
-                    </div>
-                  </Flex>
-                  
-                  <Flex gap="sm">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleToggleActive(dh._id!)}
-                    >
-                      {dh.active ? 'Désactiver' : 'Activer'}
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleEditDH(dh)}
-                    >
-                      Modifier
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleDeleteDH(dh._id!)}
-                      style={{ color: 'var(--qwanyx-text-danger)' }}
-                    >
-                      Supprimer
-                    </Button>
-                  </Flex>
+      {/* Liste des Digital Humans avec tabs */}
+      <Tabs defaultValue="active" fullWidth style={{ marginTop: '0px' }}>
+        <TabsList fullWidth>
+          <TabsTrigger value="active">
+            Actifs ({digitalHumans.filter(dh => dh.active).length})
+          </TabsTrigger>
+          <TabsTrigger value="inactive">
+            Inactifs ({digitalHumans.filter(dh => !dh.active).length})
+          </TabsTrigger>
+          <TabsTrigger value="all">
+            Tous ({digitalHumans.length})
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="active">
+          {/* Bouton ajouter sous les tabs */}
+          {currentUserRole === 'superuser' && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
+              <Button onClick={handleCreateDH} variant="ghost">
+                <Flex align="center" gap="sm">
+                  <span>+</span>
+                  <span>Ajouter un membre</span>
                 </Flex>
-              </Card>
-            ))}
-          </div>
-
-          {digitalHumans.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '3rem' }}>
-              <Text size="lg" style={{ color: 'var(--qwanyx-text-secondary)' }}>
-                Aucun Digital Human créé
-              </Text>
-              <Text size="sm" style={{ marginTop: '0.5rem', color: 'var(--qwanyx-text-secondary)' }}>
-                Créez votre premier agent intelligent pour commencer
-              </Text>
+              </Button>
             </div>
           )}
-        </CardContent>
-      </Card>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {digitalHumans.filter(dh => dh.active).map(dh => (
+              <Card key={dh._id} style={{ padding: '20px', backgroundColor: 'rgb(248, 248, 248)', border: '1px solid rgb(229, 231, 235)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <UserProfile
+                      user={{
+                        name: `${dh.firstName} ${dh.name}`,
+                        email: dh.email,
+                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${dh.firstName}${dh.name}`
+                      }}
+                      size="lg"
+                      showEmail={true}
+                    />
+                    <Flex gap="lg" style={{ paddingLeft: '56px' }}>
+                      <Text size="sm">
+                        <strong>Emails:</strong> {dh.stats?.emailsProcessed || 0}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Temps réponse:</strong> {dh.stats?.avgResponseTime || 0}s
+                      </Text>
+                      <Text size="sm">
+                        <strong>Satisfaction:</strong> {dh.stats?.satisfactionRate || 0}%
+                      </Text>
+                      <Text size="sm">
+                        <strong>Créé le:</strong> {new Date(dh.created).toLocaleDateString()}
+                      </Text>
+                    </Flex>
+                  </div>
+                  
+                  <Flex gap="md" align="center">
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Modifier">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleEditDH(dh)}
+                          style={{ padding: '0.5rem' }}
+                        >
+                          <Icon name="Edit" size="md" />
+                        </Button>
+                      </Tooltip>
+                    )}
+                    
+                    <Tooltip content={dh.active ? 'Désactiver' : 'Activer'}>
+                      <Switch
+                        checked={dh.active}
+                        onChange={() => handleToggleActive(dh._id!)}
+                      />
+                    </Tooltip>
+                    
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Supprimer">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleDeleteDH(dh._id!)}
+                          style={{ 
+                          padding: '0.5rem',
+                          color: 'var(--qwanyx-text-danger)' 
+                        }}
+                      >
+                        <Icon name="Delete" size="md" />
+                      </Button>
+                    </Tooltip>
+                    )}
+                  </Flex>
+                </div>
+                
+                {/* Tabs d'édition - affichés seulement si cette carte est étendue */}
+                {expandedDH === dh._id && (
+                  <div style={{ marginTop: '20px', borderTop: '1px solid rgb(229, 231, 235)', paddingTop: '20px' }}>
+                    <Tabs defaultValue="personality" fullWidth>
+                      <TabsList fullWidth>
+                        <TabsTrigger value="personality">Personnalité</TabsTrigger>
+                        <TabsTrigger value="roles">Rôles</TabsTrigger>
+                        <TabsTrigger value="jobs">Métiers</TabsTrigger>
+                        <TabsTrigger value="process">Process</TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="personality">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Personnalité</Heading>
+                          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              • Trait principal: Professionnel et courtois<br/>
+                              • Style de communication: Formel avec une touche personnelle<br/>
+                              • Ton: Chaleureux mais respectueux<br/>
+                              • Approche: Solution-oriented
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="roles">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Rôles</Heading>
+                          <Text>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              • Agent de support client<br/>
+                              • Assistant commercial<br/>
+                              • Conseiller technique<br/>
+                              • Gestionnaire de réclamations
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="jobs">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Métiers</Heading>
+                          <Text>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              • Automobile - Vente de pièces détachées<br/>
+                              • Service après-vente<br/>
+                              • Expertise technique mécanique<br/>
+                              • Conseil en réparation
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="process">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Process</Heading>
+                          <Text>Sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              1. Réception et analyse de l'email<br/>
+                              2. Identification du type de demande<br/>
+                              3. Recherche dans la base de connaissances<br/>
+                              4. Formulation de la réponse personnalisée<br/>
+                              5. Validation et envoi
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                )}
+              </Card>
+            ))}
+            {digitalHumans.filter(dh => dh.active).length === 0 && (
+              <div style={{ textAlign: 'center', padding: '3rem' }}>
+                <Text size="lg" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                  Aucun membre actif
+                </Text>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="inactive">
+          {/* Bouton ajouter sous les tabs */}
+          {currentUserRole === 'superuser' && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
+              <Button onClick={handleCreateDH} variant="ghost">
+                <Flex align="center" gap="sm">
+                  <span>+</span>
+                  <span>Ajouter un membre</span>
+                </Flex>
+              </Button>
+            </div>
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {digitalHumans.filter(dh => !dh.active).map(dh => (
+              <Card key={dh._id} style={{ padding: '20px', backgroundColor: 'rgb(248, 248, 248)', border: '1px solid rgb(229, 231, 235)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <UserProfile
+                      user={{
+                        name: `${dh.firstName} ${dh.name}`,
+                        email: dh.email,
+                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${dh.firstName}${dh.name}`
+                      }}
+                      size="lg"
+                      showEmail={true}
+                    />
+                    <Flex gap="lg" style={{ paddingLeft: '56px' }}>
+                      <Text size="sm">
+                        <strong>Emails:</strong> {dh.stats?.emailsProcessed || 0}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Temps réponse:</strong> {dh.stats?.avgResponseTime || 0}s
+                      </Text>
+                      <Text size="sm">
+                        <strong>Satisfaction:</strong> {dh.stats?.satisfactionRate || 0}%
+                      </Text>
+                      <Text size="sm">
+                        <strong>Créé le:</strong> {new Date(dh.created).toLocaleDateString()}
+                      </Text>
+                    </Flex>
+                  </div>
+                  
+                  <Flex gap="md" align="center">
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Modifier">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleEditDH(dh)}
+                          style={{ padding: '0.5rem' }}
+                        >
+                          <Icon name="Edit" size="md" />
+                        </Button>
+                      </Tooltip>
+                    )}
+                    
+                    <Tooltip content={dh.active ? 'Désactiver' : 'Activer'}>
+                      <Switch
+                        checked={dh.active}
+                        onChange={() => handleToggleActive(dh._id!)}
+                      />
+                    </Tooltip>
+                    
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Supprimer">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleDeleteDH(dh._id!)}
+                          style={{ 
+                          padding: '0.5rem',
+                          color: 'var(--qwanyx-text-danger)' 
+                        }}
+                      >
+                        <Icon name="Delete" size="md" />
+                      </Button>
+                    </Tooltip>
+                    )}
+                  </Flex>
+                </div>
+                
+                {/* Tabs d'édition - affichés seulement si cette carte est étendue */}
+                {expandedDH === dh._id && (
+                  <div style={{ marginTop: '20px', borderTop: '1px solid rgb(229, 231, 235)', paddingTop: '20px' }}>
+                    <Tabs defaultValue="personality" fullWidth>
+                      <TabsList fullWidth>
+                        <TabsTrigger value="personality">Personnalité</TabsTrigger>
+                        <TabsTrigger value="roles">Rôles</TabsTrigger>
+                        <TabsTrigger value="jobs">Métiers</TabsTrigger>
+                        <TabsTrigger value="process">Process</TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="personality">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Personnalité</Heading>
+                          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              • Trait principal: Professionnel et courtois<br/>
+                              • Style de communication: Formel avec une touche personnelle<br/>
+                              • Ton: Chaleureux mais respectueux<br/>
+                              • Approche: Solution-oriented
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="roles">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Rôles</Heading>
+                          <Text>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              • Agent de support client<br/>
+                              • Assistant commercial<br/>
+                              • Conseiller technique<br/>
+                              • Gestionnaire de réclamations
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="jobs">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Métiers</Heading>
+                          <Text>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              • Automobile - Vente de pièces détachées<br/>
+                              • Service après-vente<br/>
+                              • Expertise technique mécanique<br/>
+                              • Conseil en réparation
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="process">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Process</Heading>
+                          <Text>Sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              1. Réception et analyse de l'email<br/>
+                              2. Identification du type de demande<br/>
+                              3. Recherche dans la base de connaissances<br/>
+                              4. Formulation de la réponse personnalisée<br/>
+                              5. Validation et envoi
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                )}
+              </Card>
+            ))}
+            {digitalHumans.filter(dh => !dh.active).length === 0 && (
+              <div style={{ textAlign: 'center', padding: '3rem' }}>
+                <Text size="lg" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                  Aucun membre inactif
+                </Text>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="all">
+          {/* Bouton ajouter sous les tabs */}
+          {currentUserRole === 'superuser' && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
+              <Button onClick={handleCreateDH} variant="ghost">
+                <Flex align="center" gap="sm">
+                  <span>+</span>
+                  <span>Ajouter un membre</span>
+                </Flex>
+              </Button>
+            </div>
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {digitalHumans.map(dh => (
+              <Card key={dh._id} style={{ padding: '20px', backgroundColor: 'rgb(248, 248, 248)', border: '1px solid rgb(229, 231, 235)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <UserProfile
+                      user={{
+                        name: `${dh.firstName} ${dh.name}`,
+                        email: dh.email,
+                        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${dh.firstName}${dh.name}`
+                      }}
+                      size="lg"
+                      showEmail={true}
+                    />
+                    <Flex gap="lg" style={{ paddingLeft: '56px' }}>
+                      <Text size="sm">
+                        <strong>Emails:</strong> {dh.stats?.emailsProcessed || 0}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Temps réponse:</strong> {dh.stats?.avgResponseTime || 0}s
+                      </Text>
+                      <Text size="sm">
+                        <strong>Satisfaction:</strong> {dh.stats?.satisfactionRate || 0}%
+                      </Text>
+                      <Text size="sm">
+                        <strong>Créé le:</strong> {new Date(dh.created).toLocaleDateString()}
+                      </Text>
+                    </Flex>
+                  </div>
+                  
+                  <Flex gap="md" align="center">
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Modifier">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleEditDH(dh)}
+                          style={{ padding: '0.5rem' }}
+                        >
+                          <Icon name="Edit" size="md" />
+                        </Button>
+                      </Tooltip>
+                    )}
+                    
+                    <Tooltip content={dh.active ? 'Désactiver' : 'Activer'}>
+                      <Switch
+                        checked={dh.active}
+                        onChange={() => handleToggleActive(dh._id!)}
+                      />
+                    </Tooltip>
+                    
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Supprimer">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleDeleteDH(dh._id!)}
+                          style={{ 
+                          padding: '0.5rem',
+                          color: 'var(--qwanyx-text-danger)' 
+                        }}
+                      >
+                        <Icon name="Delete" size="md" />
+                      </Button>
+                    </Tooltip>
+                    )}
+                  </Flex>
+                </div>
+                
+                {/* Tabs d'édition - affichés seulement si cette carte est étendue */}
+                {expandedDH === dh._id && (
+                  <div style={{ marginTop: '20px', borderTop: '1px solid rgb(229, 231, 235)', paddingTop: '20px' }}>
+                    <Tabs defaultValue="personality" fullWidth>
+                      <TabsList fullWidth>
+                        <TabsTrigger value="personality">Personnalité</TabsTrigger>
+                        <TabsTrigger value="roles">Rôles</TabsTrigger>
+                        <TabsTrigger value="jobs">Métiers</TabsTrigger>
+                        <TabsTrigger value="process">Process</TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="personality">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Personnalité</Heading>
+                          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              • Trait principal: Professionnel et courtois<br/>
+                              • Style de communication: Formel avec une touche personnelle<br/>
+                              • Ton: Chaleureux mais respectueux<br/>
+                              • Approche: Solution-oriented
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="roles">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Rôles</Heading>
+                          <Text>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              • Agent de support client<br/>
+                              • Assistant commercial<br/>
+                              • Conseiller technique<br/>
+                              • Gestionnaire de réclamations
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="jobs">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Métiers</Heading>
+                          <Text>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              • Automobile - Vente de pièces détachées<br/>
+                              • Service après-vente<br/>
+                              • Expertise technique mécanique<br/>
+                              • Conseil en réparation
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="process">
+                        <div style={{ padding: '20px' }}>
+                          <Heading size="lg" style={{ marginBottom: '10px' }}>Process</Heading>
+                          <Text>Sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</Text>
+                          <div style={{ marginTop: '15px' }}>
+                            <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                              1. Réception et analyse de l'email<br/>
+                              2. Identification du type de demande<br/>
+                              3. Recherche dans la base de connaissances<br/>
+                              4. Formulation de la réponse personnalisée<br/>
+                              5. Validation et envoi
+                            </Text>
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                )}
+              </Card>
+            ))}
+            {digitalHumans.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '3rem' }}>
+                <Text size="lg" style={{ color: 'var(--qwanyx-text-secondary)' }}>
+                  Aucun membre dans l'équipe
+                </Text>
+                <Button onClick={handleCreateDH} variant="primary" style={{ marginTop: '1rem' }}>
+                  Créer votre premier membre
+                </Button>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Modal de création/édition */}
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <ModalHeader>
             <ModalTitle>
-              {editingDH ? 'Modifier le Digital Human' : 'Créer un Digital Human'}
+              {editingDH ? 'Modifier le membre' : 'Ajouter un membre'}
             </ModalTitle>
           </ModalHeader>
           <ModalBody>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <Text className="qwanyx-mb-2">Nom</Text>
+                <Input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Nom de famille"
+                />
+              </div>
+              
+              <div>
+                <Text className="qwanyx-mb-2">Prénom</Text>
+                <Input
+                  type="text"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  placeholder="Prénom"
+                />
+              </div>
+              
               <div>
                 <Text className="qwanyx-mb-2">Email</Text>
                 <Input
@@ -351,59 +884,6 @@ export const DigitalHumansPage: React.FC = () => {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="agent@autodin.com"
-                />
-              </div>
-              
-              <div>
-                <Text className="qwanyx-mb-2">Nom</Text>
-                <Input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Nom du Digital Human"
-                />
-              </div>
-
-              <div>
-                <Text className="qwanyx-mb-2">Rôle</Text>
-                <SimpleSelect
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value as DigitalHuman['role'] })}
-                  options={[
-                    { value: 'support', label: 'Support Client' },
-                    { value: 'commercial', label: 'Commercial' },
-                    { value: 'assistant', label: 'Assistant' },
-                    { value: 'rh', label: 'Ressources Humaines' },
-                    { value: 'info', label: 'Information' },
-                    { value: 'custom', label: 'Personnalisé' }
-                  ]}
-                />
-              </div>
-
-              <div>
-                <Text className="qwanyx-mb-2">Ton</Text>
-                <SimpleSelect
-                  value={formData.tone}
-                  onChange={(e) => setFormData({ ...formData, tone: e.target.value as NonNullable<DigitalHuman['personality']>['tone'] })}
-                  options={[
-                    { value: 'formal', label: 'Formel' },
-                    { value: 'friendly', label: 'Amical' },
-                    { value: 'casual', label: 'Décontracté' },
-                    { value: 'professional', label: 'Professionnel' }
-                  ]}
-                />
-              </div>
-
-              <div>
-                <Text className="qwanyx-mb-2">Style de réponse</Text>
-                <SimpleSelect
-                  value={formData.responseStyle}
-                  onChange={(e) => setFormData({ ...formData, responseStyle: e.target.value as NonNullable<DigitalHuman['personality']>['responseStyle'] })}
-                  options={[
-                    { value: 'concise', label: 'Concis' },
-                    { value: 'detailed', label: 'Détaillé' },
-                    { value: 'balanced', label: 'Équilibré' }
-                  ]}
                 />
               </div>
             </div>

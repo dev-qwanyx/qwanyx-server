@@ -228,6 +228,9 @@ export type { DashboardLayoutProps } from './components/DashboardLayout';
 export { Icon, Icons } from './components/Icon';
 export type { IconProps } from './components/Icon';
 
+export { Tooltip } from './components/atoms/Tooltip';
+export type { TooltipProps } from './components/atoms/Tooltip';
+
 // Spinner
 export { Spinner, SpinnerWithText } from './components/Spinner';
 export type { SpinnerProps, SpinnerWithTextProps } from './components/Spinner';

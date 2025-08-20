@@ -120,9 +120,9 @@ export const ConfigurationPage: React.FC = () => {
   return (
     <div>
       <div style={{ marginBottom: '2rem' }}>
-        <Heading size="2xl">Configuration THOT</Heading>
+        <Heading size="2xl">Configuration Digital Team</Heading>
         <Text style={{ marginTop: '0.5rem', color: 'var(--qwanyx-text-secondary)' }}>
-          Configurez votre répondeur automatique intelligent
+          Configurez votre équipe d'agents intelligents
         </Text>
       </div>
 
@@ -399,7 +399,7 @@ export const ConfigurationPage: React.FC = () => {
               <div className="qwanyx-space-y-4">
                 <div>
                   <label className="qwanyx-flex qwanyx-items-center qwanyx-justify-between">
-                    <Text>THOT activé</Text>
+                    <Text>Digital Team activé</Text>
                     <Switch
                       checked={config.enabled}
                       onChange={(checked) => updateConfig({ enabled: checked })}
@@ -518,7 +518,7 @@ export const ConfigurationPage: React.FC = () => {
                 )}
 
                 <Text size="sm" style={{ color: 'var(--qwanyx-text-secondary)' }}>
-                  THOT ne répondra automatiquement que pendant ces heures
+                  La Digital Team ne répondra automatiquement que pendant ces heures
                 </Text>
               </div>
             </CardContent>

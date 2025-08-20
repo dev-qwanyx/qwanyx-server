@@ -26,6 +26,7 @@ export default function RootLayout({
       '--background': '249, 250, 251',
       '--foreground': '44, 62, 80',
       '--card': '255, 255, 255',
+      '--qwanyx-card': '255, 200, 200',
       '--card-foreground': '44, 62, 80',
       '--border': '229, 231, 235',
       '--input': '255, 255, 255',

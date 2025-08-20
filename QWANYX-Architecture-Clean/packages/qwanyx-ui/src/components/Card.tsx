@@ -178,8 +178,8 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(({
     <div
       ref={ref}
       style={{
-        ...baseStyles,
         ...getVariantStyles(),
+        ...baseStyles,
         ...getAnimationTransform(),
       }}
       onMouseEnter={handleMouseEnterInternal}

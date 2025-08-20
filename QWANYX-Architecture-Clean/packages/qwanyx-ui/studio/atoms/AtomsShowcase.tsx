@@ -41,7 +41,7 @@ import {
   // Alert component
   Alert,
   // Divider,
-  // Tooltip,
+  Tooltip,
 } from '../../src';
 
 export const AtomsShowcase: React.FC = () => {
@@ -797,11 +797,11 @@ export const AtomsShowcase: React.FC = () => {
                   <div>
                     <Text weight="semibold" className="qwanyx-mb-3">Sizes</Text>
                     <Flex gap="lg" align="center" wrap="wrap">
-                      <Switch size="xs" label="Extra Small" />
-                      <Switch size="sm" label="Small" />
-                      <Switch size="md" label="Medium" />
-                      <Switch size="lg" label="Large" />
-                      <Switch size="xl" label="Extra Large" />
+                      <Switch size="xs" label="Extra Small" defaultChecked />
+                      <Switch size="sm" label="Small" defaultChecked />
+                      <Switch size="md" label="Medium" defaultChecked />
+                      <Switch size="lg" label="Large" defaultChecked />
+                      <Switch size="xl" label="Extra Large" defaultChecked />
                     </Flex>
                   </div>
                   <div>
@@ -838,14 +838,160 @@ export const AtomsShowcase: React.FC = () => {
                 </div>
               </div>
 
-              {/* Tooltip Section (will be added) */}
-              <div className="qwanyx-opacity-50">
-                <Heading as="h3" className="qwanyx-mb-4">Tooltip (Coming Soon)</Heading>
+              {/* Tooltip Section */}
+              <div>
+                <Heading as="h3" className="qwanyx-mb-4">Tooltip</Heading>
                 <Text color="muted" className="qwanyx-mb-6">
-                  Status: <Badge color="warning" size="sm">In Development</Badge>
+                  Status: <Badge color="success" size="sm">Ready</Badge> • 
+                  Used in: Help text, Hints, Information overlays
                 </Text>
-                <div className="qwanyx-p-8 qwanyx-border-2 qwanyx-border-dashed qwanyx-rounded-lg qwanyx-text-center">
-                  <Text color="muted">Tooltip component will appear here once implemented</Text>
+                <div className="qwanyx-space-y-6">
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Positions</Text>
+                    <Flex gap="xl" wrap="wrap" align="center" justify="center">
+                      <Tooltip content="This is a top tooltip" position="top">
+                        <Button variant="outline">Hover Top</Button>
+                      </Tooltip>
+                      <Tooltip content="This is a bottom tooltip" position="bottom">
+                        <Button variant="outline">Hover Bottom</Button>
+                      </Tooltip>
+                      <Tooltip content="This is a left tooltip" position="left">
+                        <Button variant="outline">Hover Left</Button>
+                      </Tooltip>
+                      <Tooltip content="This is a right tooltip" position="right">
+                        <Button variant="outline">Hover Right</Button>
+                      </Tooltip>
+                    </Flex>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">With Icons</Text>
+                    <Flex gap="xl" wrap="wrap" align="center" justify="center">
+                      <Tooltip content="Information tooltip" icon="Info">
+                        <Button variant="ghost">ℹ️ Info</Button>
+                      </Tooltip>
+                      <Tooltip content="Warning message" icon="AlertTriangle" position="bottom">
+                        <Button variant="ghost" color="warning">⚠️ Warning</Button>
+                      </Tooltip>
+                      <Tooltip content="Success! Operation completed" icon="Check" position="right">
+                        <Button variant="ghost" color="success">✅ Success</Button>
+                      </Tooltip>
+                      <Tooltip content="Help is available here" icon="HelpCircle" position="left">
+                        <Button variant="ghost">❓ Help</Button>
+                      </Tooltip>
+                    </Flex>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Different Triggers</Text>
+                    <Flex gap="xl" wrap="wrap" align="center">
+                      <Tooltip content="Quick hover (200ms delay)" delay={200}>
+                        <Badge color="primary" size="lg">Default Delay</Badge>
+                      </Tooltip>
+                      <Tooltip content="Instant tooltip (0ms delay)" delay={0}>
+                        <Badge color="info" size="lg">Instant</Badge>
+                      </Tooltip>
+                      <Tooltip content="Slow tooltip (500ms delay)" delay={500}>
+                        <Badge color="secondary" size="lg">Slow Delay</Badge>
+                      </Tooltip>
+                    </Flex>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Real-world Examples</Text>
+                    <div className="qwanyx-space-y-4">
+                      <Flex gap="md" wrap="wrap" align="center">
+                        <Tooltip content="Edit this item">
+                          <Button variant="ghost" size="sm">
+                            <Icon name="Edit" size="sm" />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip content="Delete this item" position="bottom">
+                          <Button variant="ghost" size="sm" color="error">
+                            <Icon name="Trash" size="sm" />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip content="Share with others">
+                          <Button variant="ghost" size="sm">
+                            <Icon name="Share2" size="sm" />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip content="Download file">
+                          <Button variant="ghost" size="sm">
+                            <Icon name="Download" size="sm" />
+                          </Button>
+                        </Tooltip>
+                      </Flex>
+
+                      <Card>
+                        <CardContent>
+                          <Flex justify="between" align="center">
+                            <Text>Settings Option</Text>
+                            <Tooltip content="This setting controls the visibility of your profile to other users">
+                              <Icon name="HelpCircle" size="sm" color="muted" />
+                            </Tooltip>
+                          </Flex>
+                        </CardContent>
+                      </Card>
+
+                      <div>
+                        <Text size="sm" className="qwanyx-mb-2">Form Field with Help</Text>
+                        <Flex gap="sm" align="center">
+                          <Input placeholder="Enter your API key" />
+                          <Tooltip content="You can find your API key in the settings page under 'Developer Options'" position="left">
+                            <Icon name="Info" size="sm" color="info" />
+                          </Tooltip>
+                        </Flex>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Complex Content</Text>
+                    <Flex gap="xl" wrap="wrap">
+                      <Tooltip content="Click to view more details about this user" position="top">
+                        <Avatar size="lg" src="https://i.pravatar.cc/150?img=8" />
+                      </Tooltip>
+                      <Tooltip content="Premium feature - Upgrade to access" position="bottom" icon="Lock">
+                        <Button disabled>Premium Feature 🔒</Button>
+                      </Tooltip>
+                      <Tooltip content="Keyboard shortcut: Ctrl+S" position="right">
+                        <Button variant="outline">
+                          <Icon name="Save" size="sm" /> Save
+                        </Button>
+                      </Tooltip>
+                    </Flex>
+                  </div>
+
+                  <div>
+                    <Text weight="semibold" className="qwanyx-mb-4">Features</Text>
+                    <Grid cols={2} gap="sm">
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Smart Positioning</Text>
+                          <Text size="xs" color="muted">Auto-adjusts near edges</Text>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Customizable Delay</Text>
+                          <Text size="xs" color="muted">Control when tooltip appears</Text>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Icon Support</Text>
+                          <Text size="xs" color="muted">Add icons for context</Text>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent>
+                          <Text size="sm" weight="semibold">✅ Accessible</Text>
+                          <Text size="xs" color="muted">ARIA compliant</Text>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </div>
                 </div>
               </div>
 
@@ -961,11 +1107,11 @@ export const AtomsShowcase: React.FC = () => {
                   <CardContent>
                     <Heading as="h4" size="md">🚧 In Development (5)</Heading>
                     <div className="qwanyx-mt-3 qwanyx-space-y-1">
-                      <Text size="sm">• Spinner</Text>
-                      <Text size="sm">• Switch</Text>
+                      <Text size="sm">• Spinner ✅</Text>
+                      <Text size="sm">• Switch ✅</Text>
                       <Text size="sm">• Divider</Text>
-                      <Text size="sm">• Tooltip</Text>
-                      <Text size="sm">• Progress</Text>
+                      <Text size="sm">• Tooltip ✅</Text>
+                      <Text size="sm">• Progress ✅</Text>
                     </div>
                   </CardContent>
                 </Card>
@@ -974,10 +1120,10 @@ export const AtomsShowcase: React.FC = () => {
                   <CardContent>
                     <Heading as="h4" size="md">📊 Progress</Heading>
                     <div className="qwanyx-mt-3">
-                      <Text size="lg" weight="bold">64%</Text>
-                      <Text size="sm" color="muted">9 of 14 atoms completed</Text>
+                      <Text size="lg" weight="bold">93%</Text>
+                      <Text size="sm" color="muted">13 of 14 atoms completed</Text>
                       <div className="qwanyx-mt-2 qwanyx-h-2 qwanyx-bg-gray-200 qwanyx-rounded-full">
-                        <div className="qwanyx-h-full qwanyx-bg-success qwanyx-rounded-full" style={{ width: '64%' }} />
+                        <div className="qwanyx-h-full qwanyx-bg-success qwanyx-rounded-full" style={{ width: '93%' }} />
                       </div>
                     </div>
                   </CardContent>

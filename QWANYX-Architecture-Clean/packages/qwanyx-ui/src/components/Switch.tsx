@@ -111,22 +111,19 @@ export const Switch: React.FC<SwitchProps> = ({
     xl: { width: '28px', height: '28px' },
   };
 
+  // Formula: track_width - thumb_width - 10px (constant compensation)
+  // For unchecked: -6px to allow thumb to extend beyond left edge
   const thumbTranslate = {
-    xs: isChecked ? '14px' : '2px',
-    sm: isChecked ? '18px' : '2px',
-    md: isChecked ? '22px' : '2px',
-    lg: isChecked ? '30px' : '2px',
-    xl: isChecked ? '34px' : '2px',
+    xs: isChecked ? '6px' : '-6px',    // 24 - 8 - 10 = 6px ✓
+    sm: isChecked ? '10px' : '-6px',   // 32 - 12 - 10 = 10px
+    md: isChecked ? '14px' : '-6px',   // 44 - 20 - 10 = 14px ✓
+    lg: isChecked ? '22px' : '-6px',   // 56 - 24 - 10 = 22px
+    xl: isChecked ? '26px' : '-6px',   // 64 - 28 - 10 = 26px
   };
 
-  const bgColors = {
-    primary: 'rgb(59 130 246)',
-    secondary: 'rgb(168 85 247)',
-    accent: 'rgb(34 197 94)',
-    success: 'rgb(34 197 94)',
-    warning: 'rgb(250 204 21)',
-    error: 'rgb(239 68 68)',
-    info: 'rgb(59 130 246)',
+  // Use CSS variables from theme like Tabs does
+  const getBackgroundColor = (color: string) => {
+    return `rgb(var(--qwanyx-${color}, var(--${color})))`;
   };
 
   const switchElement = (
@@ -144,7 +141,7 @@ export const Switch: React.FC<SwitchProps> = ({
           position: 'relative',
           display: 'inline-flex',
           ...trackSizes[size],
-          backgroundColor: isChecked ? bgColors[color] : 'rgb(209 213 219)',
+          backgroundColor: isChecked ? getBackgroundColor(color) : 'rgb(var(--qwanyx-border, 209 213 219))',
           borderRadius: '9999px',
           border: '2px solid transparent',
           cursor: disabled ? 'not-allowed' : 'pointer',

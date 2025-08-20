@@ -13,7 +13,7 @@ interface User {
   email: string
   firstName?: string
   lastName?: string
-  role: 'administrateur' | 'particulier' | 'professionnel' | 'partenaire' | 'editeur'
+  role: 'superuser' | 'admin' | 'administrateur' | 'particulier' | 'professionnel' | 'partenaire' | 'editeur'
   status: 'active' | 'blocked' | 'suspended' | 'deleted'
   createdAt: string
   lastLogin?: string
@@ -64,7 +64,7 @@ export default function UsersContent() {
       console.log('Fetching users with token:', token ? 'Present' : 'Missing')
       console.log('Using workspace:', workspace)
       
-      const response = await fetch('http://135.181.72.183:5002/users', {
+      const response = await fetch('http://135.181.72.183:5002/api/workspaces/autodin/users', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -83,7 +83,10 @@ export default function UsersContent() {
         const usersArray = Array.isArray(data) ? data : (data.users || [])
         console.log('Users array:', usersArray)
         
-        const transformedUsers = usersArray.map((u: any) => {
+        // Filter out DH users first
+        const regularUsers = usersArray.filter((u: any) => u.type !== 'DH')
+        
+        const transformedUsers = regularUsers.map((u: any) => {
           // Format dates
           const formatDate = (date: any) => {
             if (!date) return null
@@ -121,12 +124,16 @@ export default function UsersContent() {
         setFilteredUsers(transformedUsers)
         
         // Find current user's role
-        const userEmail = localStorage.getItem('autodin_user_email')
-        if (userEmail) {
-          const currentUser = transformedUsers.find((u: any) => u.email === userEmail)
-          if (currentUser) {
+        const storedUser = localStorage.getItem('autodin_user')
+        if (storedUser) {
+          const user = JSON.parse(storedUser)
+          const userEmail = user.email
+          console.log('Looking for user with email:', userEmail)
+          const currentUser = usersArray.find((u: any) => u.email === userEmail)
+          console.log('Found user in list:', currentUser)
+          if (currentUser && currentUser.role) {
             setCurrentUserRole(currentUser.role)
-            console.log('Current user role:', currentUser.role)
+            console.log('Current user role in UsersContent:', currentUser.role)
           }
         }
       } else {
@@ -303,7 +310,7 @@ export default function UsersContent() {
       
       console.log('Updating role for user:', userId, 'to:', newRole)
       
-      const response = await fetch(`http://135.181.72.183:5002/users/${userId}`, {
+      const response = await fetch(`http://135.181.72.183:5002/api/workspaces/autodin/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -327,31 +334,49 @@ export default function UsersContent() {
   }
 
   const getRoleOptions = () => {
-    const baseOptions = [
+    // Superuser can assign all roles
+    if (currentUserRole === 'superuser') {
+      return [
+        { value: 'superuser', label: 'Super User' },
+        { value: 'admin', label: 'Admin' },
+        { value: 'administrateur', label: 'Administrateur' },
+        { value: 'particulier', label: 'Particulier' },
+        { value: 'professionnel', label: 'Professionnel' },
+        { value: 'partenaire', label: 'Partenaire' },
+        { value: 'editeur', label: 'Éditeur' }
+      ]
+    }
+    
+    // Admin can assign admin and below
+    if (currentUserRole === 'admin') {
+      return [
+        { value: 'admin', label: 'Admin' },
+        { value: 'administrateur', label: 'Administrateur' },
+        { value: 'particulier', label: 'Particulier' },
+        { value: 'professionnel', label: 'Professionnel' },
+        { value: 'partenaire', label: 'Partenaire' },
+        { value: 'editeur', label: 'Éditeur' }
+      ]
+    }
+    
+    // Others can only assign basic roles
+    return [
       { value: 'particulier', label: 'Particulier' },
       { value: 'professionnel', label: 'Professionnel' },
       { value: 'partenaire', label: 'Partenaire' },
       { value: 'editeur', label: 'Éditeur' }
     ]
-    
-    // Only show Administrateur option if current user is an admin
-    if (currentUserRole === 'administrateur') {
-      return [
-        { value: 'administrateur', label: 'Administrateur' },
-        ...baseOptions
-      ]
-    }
-    
-    return baseOptions
   }
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'administrateur': return 'error'
-      case 'professionnel': return 'warning'
+      case 'superuser': return 'error'
+      case 'admin': return 'error'
+      case 'administrateur': return 'warning'
+      case 'professionnel': return 'info'
       case 'partenaire': return 'success'
-      case 'editeur': return 'info'
-      case 'particulier': return 'primary'
+      case 'editeur': return 'primary'
+      case 'particulier': return 'secondary'
       default: return 'default'
     }
   }
@@ -431,7 +456,9 @@ export default function UsersContent() {
               onChange={(e) => setRoleFilter(e.target.value)}
               options={[
                 { value: 'all', label: 'Tous les rôles' },
-                ...(currentUserRole === 'administrateur' ? [{ value: 'administrateur', label: 'Administrateur' }] : []),
+                { value: 'superuser', label: 'Super User' },
+                { value: 'admin', label: 'Admin' },
+                { value: 'administrateur', label: 'Administrateur' },
                 { value: 'particulier', label: 'Particulier' },
                 { value: 'professionnel', label: 'Professionnel' },
                 { value: 'partenaire', label: 'Partenaire' },
@@ -524,6 +551,7 @@ export default function UsersContent() {
                         selectSize="sm"
                         options={getRoleOptions()}
                         style={{ minWidth: '140px' }}
+                        disabled={user.role === 'superuser' && currentUserRole !== 'superuser'}
                       />
                     </td>
                     <td style={{ padding: '1rem' }}>
@@ -713,7 +741,7 @@ export default function UsersContent() {
                     handleBlockUser(selectedUser)
                     setShowEditModal(false)
                   }}
-                  disabled={selectedUser.role === 'administrateur' && currentUserRole !== 'administrateur'}
+                  disabled={selectedUser.role === 'superuser' && currentUserRole !== 'superuser'}
                 >
                   <Icon name={selectedUser.status === 'blocked' ? 'Unlock' : 'Lock'} size="sm" />
                   {selectedUser.status === 'blocked' ? 'Débloquer' : 'Bloquer'}
@@ -724,7 +752,7 @@ export default function UsersContent() {
                     setShowEditModal(false)
                     setShowDeleteModal(true)
                   }}
-                  disabled={selectedUser.role === 'administrateur' && currentUserRole !== 'administrateur'}
+                  disabled={selectedUser.role === 'superuser' && currentUserRole !== 'superuser'}
                 >
                   <Icon name="Trash" size="sm" />
                   Supprimer

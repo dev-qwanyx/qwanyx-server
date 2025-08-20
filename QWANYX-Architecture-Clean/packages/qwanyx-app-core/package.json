@@ -23,6 +23,7 @@
     "@qwanyx/ui": "file:../qwanyx-ui",
     "@qwanyx/auth": "file:../qwanyx-auth",
     "@qwanyx/dashboard-v2": "file:../qwanyx-dashboard-v2",
+    "@qwanyx/thot": "file:../qwanyx-thot",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

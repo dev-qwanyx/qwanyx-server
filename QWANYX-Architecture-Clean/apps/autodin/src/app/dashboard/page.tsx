@@ -11,6 +11,9 @@ import UsersContent from './UsersContent'
 export default function DashboardPage() {
   const router = useRouter()
   const [currentView, setCurrentView] = useState('overview')
+  const [userCount, setUserCount] = useState<number | null>(0)
+  const [dhCount, setDhCount] = useState<number | null>(0)
+  const [currentUserRole, setCurrentUserRole] = useState<string>('particulier')
   
   // Get user directly from localStorage - no loading state needed
   const storedUser = typeof window !== 'undefined' ? localStorage.getItem('autodin_user') : null
@@ -20,9 +23,11 @@ export default function DashboardPage() {
   const [user] = useState<any>(storedUser ? JSON.parse(storedUser) : null)
 
   useEffect(() => {
+    console.log('Dashboard useEffect triggered')
     // Check if user is logged in
     if (!storedUser || !storedToken || !tokenExpiry) {
       // Not logged in, redirect to home
+      console.log('No auth, redirecting')
       router.push('/')
       return
     }
@@ -30,12 +35,64 @@ export default function DashboardPage() {
     const expiryTime = parseInt(tokenExpiry)
     if (expiryTime <= Date.now()) {
       // Token expired, redirect to home
+      console.log('Token expired, redirecting')
       localStorage.removeItem('autodin_user')
       localStorage.removeItem('autodin_token')
       localStorage.removeItem('autodin_token_expiry')
       router.push('/')
+      return
     }
-  }, [router, storedUser, storedToken, tokenExpiry])
+    
+    // Fetch user count
+    const fetchUserCount = async () => {
+      try {
+        const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
+        console.log('Fetching user count...')
+        const response = await fetch('http://135.181.72.183:5002/api/workspaces/autodin/users', {
+          headers: {
+            'Authorization': `Bearer ${storedToken}`,
+            'Content-Type': 'application/json',
+            'X-Workspace': workspace
+          }
+        })
+        
+        console.log('Response status:', response.status)
+        
+        if (response.ok) {
+          const data = await response.json()
+          console.log('Users data:', data)
+          const usersArray = Array.isArray(data) ? data : (data.users || [])
+          // Filter out DH users
+          const regularUsers = usersArray.filter((u: any) => u.type !== 'DH')
+          const dhUsers = usersArray.filter((u: any) => u.type === 'DH')
+          console.log('Regular users count:', regularUsers.length)
+          console.log('Digital Humans count:', dhUsers.length)
+          setUserCount(regularUsers.length)
+          setDhCount(dhUsers.length)
+          
+          // Find current user's role
+          const userEmail = user?.email
+          if (userEmail) {
+            const currentUser = usersArray.find((u: any) => u.email === userEmail)
+            if (currentUser) {
+              setCurrentUserRole(currentUser.role || 'particulier')
+              console.log('Current user role:', currentUser.role)
+            }
+          }
+        } else {
+          console.error('Failed to fetch users:', response.status)
+          // Set a default value
+          setUserCount(0)
+        }
+      } catch (error) {
+        console.error('Error fetching user count:', error)
+        // Set a default value
+        setUserCount(0)
+      }
+    }
+    
+    fetchUserCount()
+  }, [router, storedUser, storedToken, tokenExpiry, user])
 
   const handleLogout = () => {
     localStorage.removeItem('autodin_user')
@@ -121,7 +178,7 @@ export default function DashboardPage() {
         workspace: 'autodin'
       }} />
     ),
-    'thot-digital-humans': (
+    'thot': (
       <DigitalHumansPage />
     ),
     'thot-configuration': (
@@ -222,29 +279,39 @@ export default function DashboardPage() {
     )
   }
 
-  // Dashboard configuration for Autodin - Simplified with only left sidebar
-  const dashboardConfig: DashboardConfig = createMarketplaceDashboard({
-    title: 'Autodin',
-    primaryColor: '#E67E22',
-    user: user ? {
-      id: user.id || user._id || '1',
-      name: user.firstName || user.email,
-      email: user.email,
-      role: user.role || 'Vendeur',
-      avatar: user.avatar
-    } : undefined,
-    sidebarItems: [
+  // Build sidebar items based on user role
+  const buildSidebarItems = () => {
+    console.log('Building sidebar with role:', currentUserRole)
+    const items = [
       {
         id: 'overview',
         label: 'Vue d\'ensemble',
         icon: 'Dashboard'
-      },
-      {
+      }
+    ]
+    
+    // Users menu only for admin and superuser
+    if (currentUserRole === 'admin' || currentUserRole === 'superuser') {
+      items.push({
         id: 'users',
         label: 'Utilisateurs',
         icon: 'People',
-        badge: '5'
-      },
+        badge: userCount !== null ? userCount.toString() : undefined
+      })
+    }
+    
+    // Digital Team only for admin and superuser
+    if (currentUserRole === 'admin' || currentUserRole === 'superuser') {
+      items.push({
+        id: 'thot',
+        label: 'Digital Team',
+        icon: 'SmartToy',
+        badge: dhCount !== null ? dhCount.toString() : undefined
+      })
+    }
+    
+    // Continue with other items that everyone can see
+    items.push(
       {
         id: 'listings',
         label: 'Mes annonces',
@@ -270,38 +337,6 @@ export default function DashboardPage() {
         label: 'Messages',
         icon: 'Mail',
         badge: '12'
-      },
-      {
-        id: 'thot',
-        label: 'THOT - Répondeur IA',
-        icon: 'SmartToy',
-        badge: 'NEW',
-        children: [
-          {
-            id: 'thot-digital-humans',
-            label: 'Digital Humans'
-          },
-          {
-            id: 'thot-configuration',
-            label: 'Configuration'
-          },
-          {
-            id: 'thot-templates',
-            label: 'Templates'
-          },
-          {
-            id: 'thot-prompts',
-            label: 'Prompts AI'
-          },
-          {
-            id: 'thot-inbox',
-            label: 'Boîte de réception'
-          },
-          {
-            id: 'thot-logs',
-            label: 'Logs'
-          }
-        ]
       },
       {
         id: 'analytics',
@@ -332,7 +367,23 @@ export default function DashboardPage() {
           }
         ]
       }
-    ],
+    )
+    
+    return items
+  }
+
+  // Dashboard configuration for Autodin - Simplified with only left sidebar
+  const dashboardConfig: DashboardConfig = createMarketplaceDashboard({
+    title: 'Autodin',
+    primaryColor: '#E67E22',
+    user: user ? {
+      id: user.id || user._id || '1',
+      name: user.firstName || user.email,
+      email: user.email,
+      role: user.role || 'Vendeur',
+      avatar: user.avatar
+    } : undefined,
+    sidebarItems: buildSidebarItems(),
     sidebarFooter: (
       <div style={{ textAlign: 'center', opacity: 0.7 }}>
         <Text size="xs">© 2024 Autodin</Text>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { LandingPage } from '../../src/pages/LandingPage'
-import { DashboardPage } from '../../src/pages/DashboardPage'
-import { MarketplacePage } from '../../src/pages/MarketplacePage'
+// Pages not implemented yet
+// import { LandingPage } from '../../src/pages/LandingPage'
+// import { DashboardPage } from '../../src/pages/DashboardPage'
+// import { MarketplacePage } from '../../src/pages/MarketplacePage'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../src/components/Tabs'
 import { Container } from '../../src/components/Container'
 import { Heading, Text } from '../../src/components/Text'
@@ -115,9 +116,10 @@ export const PageShowcase: React.FC = () => {
           ✕
         </button>
         <div style={{ minHeight: '100vh' }}>
-          {showFullPage === 'landing' && <LandingPage />}
-          {showFullPage === 'dashboard' && <DashboardPage />}
-          {showFullPage === 'marketplace' && <MarketplacePage />}
+          {/* Pages not implemented yet */}
+          {showFullPage === 'landing' && <div>LandingPage not implemented</div>}
+          {showFullPage === 'dashboard' && <div>DashboardPage not implemented</div>}
+          {showFullPage === 'marketplace' && <div>MarketplacePage not implemented</div>}
         </div>
       </div>
     )

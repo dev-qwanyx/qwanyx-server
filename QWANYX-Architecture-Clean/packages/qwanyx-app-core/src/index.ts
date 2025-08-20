@@ -37,6 +37,26 @@ export type {
   DashboardActivity
 } from '@qwanyx/dashboard-v2';
 
+// Re-export THOT functionality
+export {
+  ThotProvider,
+  useThotContext,
+  ThotNavigation,
+  ConfigurationPage as ThotConfigurationPage,
+  TemplatesPage as ThotTemplatesPage,
+  PromptsPage as ThotPromptsPage,
+  InboxPage as ThotInboxPage,
+  LogsPage as ThotLogsPage,
+} from '@qwanyx/thot';
+export type {
+  ThotConfig,
+  EmailTemplate,
+  AiPrompt,
+  InboxEmail,
+  ResponseLog,
+  ThotContextValue,
+} from '@qwanyx/thot';
+
 // Export app-specific orchestrations
 export { AppProvider } from './providers/AppProvider';
 export { createApp } from './utils/createApp';

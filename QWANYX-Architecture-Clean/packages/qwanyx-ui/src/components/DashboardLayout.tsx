@@ -39,7 +39,7 @@ const HolyGrailLayoutDashboard: React.FC<DashboardLayoutProps> = ({
 
   const layoutStyles: React.CSSProperties = {
     minHeight: '100vh',
-    backgroundColor: 'rgb(var(--qwanyx-background))',
+    backgroundColor: '#ffffff',
     ...style
   }
 
@@ -56,7 +56,7 @@ const HolyGrailLayoutDashboard: React.FC<DashboardLayoutProps> = ({
   const contentStyles: React.CSSProperties = {
     flex: 1,
     width: '100%',
-    padding: '30px 30px 0 30px',
+    padding: '0px 30px 0 30px',
     maxWidth: contentMaxWidth !== false ? 
       (typeof contentMaxWidth === 'number' ? `${contentMaxWidth}px` : contentMaxWidth) : 
       undefined,
