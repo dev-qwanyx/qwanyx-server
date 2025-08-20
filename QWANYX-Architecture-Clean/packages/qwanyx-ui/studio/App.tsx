@@ -13,13 +13,14 @@ import { AtomsShowcase } from './atoms/AtomsShowcase';
 import { MoleculesShowcase } from './molecules/MoleculesShowcase';
 import { LayoutGallery } from './LayoutGallery';
 import { DashboardShowcase } from './dashboard/DashboardShowcase';
+import CanvasShowcase from './canvas/CanvasShowcase';
 import { Container, Section, Heading, Text, Button } from '../src';
 import { NavigationBar } from '../src/components/NavigationBar';
 import { AuthModal, AuthStatus } from '../src/components/Auth';
 import { Favicon } from '../src/components/Favicon';
 
 function StudioApp() {
-  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates' | 'parallax' | 'pages' | 'sections' | 'misc' | 'test' | 'icons' | 'atoms' | 'molecules' | 'organisms' | 'layouts'>('showcase');
+  const [currentView, setCurrentView] = useState<'showcase' | 'editor' | 'templates' | 'parallax' | 'pages' | 'sections' | 'misc' | 'test' | 'icons' | 'atoms' | 'molecules' | 'organisms' | 'layouts' | 'canvas'>('showcase');
   const [showAuth, setShowAuth] = useState(false);
   const { workspace, user, login, logout } = useWorkspace();
   
@@ -71,6 +72,11 @@ function StudioApp() {
               label: '🎯 Dashboard',
               active: currentView === 'dashboard',
               onClick: () => setCurrentView('dashboard')
+            },
+            {
+              label: '🔀 Canvas',
+              active: currentView === 'canvas',
+              onClick: () => setCurrentView('canvas')
             },
             {
               label: 'Icons',
@@ -131,6 +137,7 @@ function StudioApp() {
           )}
           {currentView === 'layouts' && <LayoutGallery />}
           {currentView === 'dashboard' && <DashboardShowcase />}
+          {currentView === 'canvas' && <CanvasShowcase />}
           {currentView === 'icons' && <IconLibraryPage />}
           {currentView === 'editor' && <ThemeEditor />}
           {currentView === 'parallax' && <ParallaxShowcase />}

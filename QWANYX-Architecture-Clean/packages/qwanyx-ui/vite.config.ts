@@ -15,6 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@qwanyx/canvas': path.resolve(__dirname, '../qwanyx-canvas/src/index.ts'),
     },
   },
   server: {

@@ -1,98 +1,114 @@
 #!/bin/bash
-# COMMANDES POUR DÉPLOIEMENT (webhook + services)
-# Exécuté automatiquement par le webhook OU manuellement via SSH
+# COMMANDES POUR DÉPLOIEMENT QWANYX ARCHITECTURE
+# Exécuté automatiquement par le webhook après push sur GitHub
 
-echo "🚀 PUSH REÇU - DÉPLOIEMENT EN COURS"
+echo "🚀 DÉPLOIEMENT QWANYX - NOUVELLE ARCHITECTURE"
 echo "============================================"
 echo "Date: $(date)"
 echo ""
 
-cd /opt/qwanyx/apps/qwanyx-server
+# Navigation vers le dossier principal
+cd /opt/qwanyx/QWANYX-Architecture-Clean || exit 1
 
-# ========== DÉPLOIEMENT AUTODIN UI NEXT.JS ==========
-if [ -d "autodin-ui-next" ]; then
-    echo "📦 Déploiement de Autodin UI Next.js..."
-    echo "--------------------------------------------"
-    
-    # Build et link qwanyx-ui
-    echo "📦 Build de qwanyx-ui..."
-    cd qwanyx-ui
-    npm install
-    npm run build
-    npm link
-    echo "✅ qwanyx-ui prêt"
-    
-    # Setup autodin-ui-next
-    echo ""
-    echo "📦 Setup de autodin-ui-next..."
-    cd ../autodin-ui-next
-    npm install
-    npm link @qwanyx/ui
-    echo "✅ Dépendances installées"
-    
-    # Build de production
-    echo ""
-    echo "🔨 Build de production..."
-    npm run build
-    echo "✅ Build terminé"
-    
-    # Redémarrage avec PM2
-    echo ""
-    echo "🔄 Redémarrage du service..."
-    pm2 stop autodin-ui 2>/dev/null || true
-    pm2 delete autodin-ui 2>/dev/null || true
-    PORT=4000 pm2 start npm --name "autodin-ui" -- start
-    pm2 save
-    
-    echo "✅ Autodin UI Next.js déployé sur port 4000"
-    cd /opt/qwanyx/apps/qwanyx-server
-fi
+# ========== BUILD DES PACKAGES ==========
+echo "📦 BUILD DES PACKAGES MONOREPO"
+echo "--------------------------------------------"
 
-# ========== SERVICES PYTHON (anciens) ==========
+# Build qwanyx-ui
+echo "🎨 Build @qwanyx/ui..."
+cd packages/qwanyx-ui
+npm install
+npm run build
+echo "✅ @qwanyx/ui prêt"
+
+# Build qwanyx-thot
 echo ""
-echo "⏹️  Arrêt des anciens services Python..."
-pkill -f "python3.*app_bulma.py" || true
+echo "🤖 Build @qwanyx/thot..."
+cd ../qwanyx-thot
+npm install
+npm run build
+echo "✅ @qwanyx/thot prêt"
+
+# Build autres packages si nécessaire
+echo ""
+echo "📦 Build autres packages..."
+cd ../qwanyx-dashboard-v2
+npm install
+npm run build
+echo "✅ @qwanyx/dashboard-v2 prêt"
+
+cd ../qwanyx-app-core
+npm install
+npm run build
+echo "✅ @qwanyx/app-core prêt"
+
+# ========== DÉPLOIEMENT AUTODIN NEXT.JS ==========
+echo ""
+echo "🚗 DÉPLOIEMENT AUTODIN NEXT.JS"
+echo "--------------------------------------------"
+
+cd /opt/qwanyx/QWANYX-Architecture-Clean/apps/autodin
+
+# Installation des dépendances
+echo "📦 Installation des dépendances..."
+npm install
+
+# Build de production
+echo "🔨 Build de production..."
+npm run build
+
+# Redémarrage avec PM2
+echo "🔄 Redémarrage du service..."
+pm2 stop autodin-next 2>/dev/null || true
+pm2 delete autodin-next 2>/dev/null || true
+PORT=3002 pm2 start npm --name "autodin-next" -- start
+pm2 save
+
+echo "✅ Autodin Next.js déployé sur port 3002"
+
+# ========== API PYTHON (toujours active) ==========
+echo ""
+echo "🐍 VÉRIFICATION API PYTHON"
+echo "--------------------------------------------"
+
+# Arrêt de l'ancienne API si nécessaire
 pkill -f "python3.*app_v2.py" || true
 sleep 2
 
-# API QWANYX (MongoDB)
-echo "▶️  API QWANYX..."
+# Redémarrage de l'API
 cd /opt/qwanyx/apps/qwanyx-server/qwanyx-api
 nohup python3 app_v2.py > /tmp/qwanyx-api.log 2>&1 &
 sleep 3
 
-# Autodin Flask (ancien - port 8090)
-echo "▶️  Autodin Flask (ancien)..."
-cd /opt/qwanyx/apps/qwanyx-server/autodin/frontend
-nohup python3 app_bulma.py > /tmp/autodin.log 2>&1 &
-sleep 2
+echo "✅ API Python redémarrée sur port 5002"
 
-# Belgicomics Flask
-echo "▶️  Belgicomics..."
-cd /opt/qwanyx/apps/qwanyx-server/belgicomics/frontend
-nohup python3 app_bulma.py > /tmp/belgicomics.log 2>&1 &
-sleep 2
-
-# ========== VÉRIFICATION ==========
+# ========== VÉRIFICATION DES SERVICES ==========
 echo ""
-echo "✅ Vérification des services..."
+echo "✅ VÉRIFICATION DES SERVICES"
 echo "--------------------------------------------"
-curl -s -o /dev/null -w "API QWANYX (5002): %{http_code}\n" http://localhost:5002/health || echo "API QWANYX: ERREUR"
-curl -s -o /dev/null -w "Autodin Next.js (4000): %{http_code}\n" http://localhost:4000 || echo "Autodin Next.js: Non déployé"
-curl -s -o /dev/null -w "Autodin Flask (8090): %{http_code}\n" http://localhost:8090 || echo "Autodin Flask: ERREUR"
-curl -s -o /dev/null -w "Belgicomics (8091): %{http_code}\n" http://localhost:8091 || echo "Belgicomics: ERREUR"
+sleep 5
 
+# Test des endpoints
+curl -s -o /dev/null -w "Autodin Next.js (3002): %{http_code}\n" http://localhost:3002 || echo "❌ Autodin Next.js: ERREUR"
+curl -s -o /dev/null -w "API QWANYX (5002): %{http_code}\n" http://localhost:5002/health || echo "❌ API QWANYX: ERREUR"
+
+# ========== RÉSUMÉ ==========
 echo ""
 echo "🎉 DÉPLOIEMENT TERMINÉ"
 echo "============================================"
+echo ""
 echo "📝 Logs disponibles:"
-echo "  - PM2: pm2 logs autodin-ui"
-echo "  - /tmp/qwanyx-api.log"
-echo "  - /tmp/autodin.log"
-echo "  - /tmp/belgicomics.log"
+echo "  - PM2: pm2 logs autodin-next"
+echo "  - API: /tmp/qwanyx-api.log"
 echo ""
 echo "🌐 URLs publiques:"
-echo "  - http://135.181.72.183:4000 (Autodin Next.js)"
-echo "  - http://135.181.72.183:8090 (Autodin Flask ancien)"
-echo "  - http://135.181.72.183:8091 (Belgicomics)"
-echo "  - http://135.181.72.183:5002 (API)"
+echo "  - http://135.181.72.183:3002 (Autodin Next.js)"
+echo "  - http://135.181.72.183:5002 (API QWANYX)"
+echo ""
+echo "💡 Commandes utiles:"
+echo "  - pm2 status           # Voir l'état des services"
+echo "  - pm2 logs autodin-next # Voir les logs en temps réel"
+echo "  - pm2 restart autodin-next # Redémarrer si nécessaire"
+echo ""
+echo "============================================"
+date
