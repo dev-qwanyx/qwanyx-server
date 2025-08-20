@@ -1,5 +1,48 @@
 # QWANYX Architecture - Claude AI Development Instructions
 
+## 🔴 CURRENT STATUS - August 20, 2024
+
+### ✅ WORKING PRODUCTION DEPLOYMENT
+- **Next.js App**: http://135.181.72.183:3002 (FAST, WORKING)
+- **Python API**: http://135.181.72.183:5002 (WORKING)
+- **Dashboard**: Fully functional with real database connection
+- **Authentication**: Working with passwordless system
+
+### 📅 THIS WEEK - DEMO PRIORITY (Deadline: Sunday)
+**DO NOT CHANGE INFRASTRUCTURE - FOCUS ON FEATURES**
+- System is deployed and working
+- Demo preparation is priority
+- No server changes until after demo
+
+### 📋 NEXT WEEK TASKS (After Demo)
+
+#### 1. Smart Deployment (DEPLOYMENT_DECISIONS.md)
+- Update COMMANDS.sh to only rebuild changed components
+- Currently rebuilds everything (wasteful but working)
+- Implement change detection for selective rebuilding
+
+#### 2. Server Cleanup (SERVER_CLEANUP_PLAN.md)
+- Remove old Flask services (ports 8090, 8091)
+- Remove federation services (unused)
+- Clean duplicate/experimental directories
+- Keep only: Next.js (3002), API (5002), MongoDB, Webhook (9999)
+
+### 🏗️ CURRENT ARCHITECTURE
+```
+Production Server (135.181.72.183):
+├── Next.js Autodin (port 3002) ← KEEP
+├── Python API (port 5002) ← KEEP
+├── Flask Autodin (port 8090) ← TO REMOVE
+├── Flask Belgicomics (port 8091) ← TO REMOVE
+├── Federation services ← TO REMOVE
+└── Webhook (port 9999) ← KEEP
+```
+
+### 🚀 DEPLOYMENT METHOD
+- Git push → GitHub webhook → Server pulls → Builds on server → PM2 restart
+- Works but inefficient (rebuilds everything)
+- To optimize next week with smart rebuilding
+
 ## 🚨 CRITICAL: ZERO-TOLERANCE RULES
 
 ### 1. TypeScript - NEVER Bypass Errors
@@ -59,19 +102,137 @@ const Component = () => (
 - Every bypass creates a security vulnerability
 - If it's not done right, it's not done
 
+## 🏗️ QWANYX Architecture Hierarchy
+
+### 🔺 CRITICAL: The Sacred Import Chain
+**ABSOLUTE RULE - THIS IS THE FOUNDATION OF QWANYX:**
+
+```
+Apps → @qwanyx/app-core → Business Packages → @qwanyx/ui
+```
+
+**FORBIDDEN:**
+- ❌ Apps importing from @qwanyx/ui directly
+- ❌ Apps importing from business packages directly  
+- ❌ Business packages importing from apps
+- ❌ Circular dependencies at any level
+
+**REQUIRED:**
+- ✅ Apps ONLY import from @qwanyx/app-core
+- ✅ @qwanyx/app-core orchestrates ALL packages
+- ✅ Business packages use @qwanyx/ui components
+- ✅ @qwanyx/ui contains ONLY visual components
+
+### 🎯 Abstraction Layers
+
+```
+┌─────────────────────────────────────────────────┐
+│                    APPS                         │
+│  (Autodin, Belgicomics, Personal-CASH)         │
+│  - Import ONLY from @qwanyx/app-core           │
+│  - Never touch @qwanyx/ui directly             │
+│  - Request business features, not components    │
+└────────────────────┬────────────────────────────┘
+                     │ ONLY imports from
+                     ▼
+┌─────────────────────────────────────────────────┐
+│            @qwanyx/app-core                     │
+│  - Central orchestrator                         │
+│  - Re-exports everything apps need              │
+│  - Composes business packages                   │
+│  - Manages workspace context                    │
+└────────────────────┬────────────────────────────┘
+                     │ Orchestrates
+                     ▼
+┌─────────────────────────────────────────────────┐
+│          BUSINESS PACKAGES                      │
+│  (@qwanyx/auth, @qwanyx/marketplace,           │
+│   @qwanyx/dashboard, @qwanyx/forms)            │
+│  - Domain-specific logic                        │
+│  - API integrations                             │
+│  - Workspace-aware (multi-tenancy)              │
+│  - Compose UI components into features          │
+└────────────────────┬────────────────────────────┘
+                     │ Composes from
+                     ▼
+┌─────────────────────────────────────────────────┐
+│              @qwanyx/ui                         │
+│  ATOMS: Button, Input, Text, Icon               │
+│  MOLECULES: FormField, Card, UserProfile        │
+│  ORGANISMS: Header, Dashboard, DataTable        │
+│  - Pure visual components                       │
+│  - Zero business logic                          │
+│  - Props-only API (no CSS)                      │
+│  - Style Grammar system                         │
+└─────────────────────────────────────────────────┘
+```
+
+### 📐 Atomic Design System (@qwanyx/ui)
+
+**ATOMS** (Basic building blocks)
+- Button, Input, Text, Icon, Label, Badge
+- Single responsibility
+- No composition
+- Pure presentation
+
+**MOLECULES** (Composed atoms)
+- FormField (Label + Input + Error)
+- Card (Container + Title + Content)
+- UserProfile (Avatar + Text + Badge)
+- Simple combinations
+
+**ORGANISMS** (Complex components)
+- Header (Logo + Nav + UserProfile)
+- Dashboard (Sidebar + Content + Header)
+- DataTable (Search + Table + Pagination)
+- Business-ready but logic-free
+
+**TEMPLATES** (Layout patterns)
+- DashboardTemplate
+- AuthTemplate
+- MarketplaceTemplate
+- Full page structures
+
+**PAGES** (Complete views)
+- Assembled in apps using app-core
+- Never in @qwanyx/ui
+
+### 🔄 The Workspace System
+
+**Purpose:** Unified multi-tenant data experience across all apps
+
+```typescript
+// Every business package is workspace-aware
+const { currentWorkspace } = useWorkspace();
+
+// API calls automatically scoped
+api.get('/users'); // Actually: /workspaces/{workspace}/users
+
+// Database seamlessly partitioned
+db.collection('products'); // Actually: workspace_autodin.products
+```
+
+**Benefits:**
+- One codebase, multiple clients
+- Data isolation by default
+- Seamless tenant switching
+- Unified auth across workspaces
+
 ## 🏗️ QWANYX Project Structure
 
 ```
 QWANYX-Architecture-Clean/
 ├── packages/               # Shared NPM packages (monorepo)
-│   ├── qwanyx-ui/         # Atomic design components
-│   ├── qwanyx-auth/       # Authentication module
-│   ├── qwanyx-dashboard/  # Dashboard components
-│   └── qwanyx-user-management/  # User CRUD
+│   ├── qwanyx-ui/         # Atomic design components (atoms/molecules/organisms)
+│   ├── qwanyx-app-core/   # Central orchestrator - THE ONLY IMPORT FOR APPS
+│   ├── qwanyx-auth/       # Authentication business logic
+│   ├── qwanyx-dashboard/  # Dashboard business features
+│   ├── qwanyx-marketplace/# E-commerce business logic
+│   └── qwanyx-forms/      # Form management with validation
 ├── apps/                   # Frontend applications
-│   ├── qwanyx-app-template/  # Template for new apps
-│   ├── autodin/           # Next.js marketplace app
-│   └── [new-app]/         # Clone template to create
+│   ├── autodin/           # ONLY imports from @qwanyx/app-core
+│   ├── belgicomics/       # ONLY imports from @qwanyx/app-core
+│   └── personal-cash/     # ONLY imports from @qwanyx/app-core
 ├── api/                    # Backend services
 │   └── qwanyx-api/        # Flask REST API (Python)
 └── docs/                   # Documentation
@@ -118,6 +279,82 @@ npm install @qwanyx/marketplace  # for e-commerce
 npm install @qwanyx/education    # for learning platform
 ```
 
+## 🎨 Component Philosophy & Style System
+
+### Component API Design - Props Only, No CSS
+**ABSOLUTE RULE:** Components consume ONLY semantic props, never CSS classes or style objects.
+
+```typescript
+// ❌ FORBIDDEN - Never expose style props
+<Button className="bg-blue-500" style={{padding: '10px'}} />
+
+// ✅ REQUIRED - Semantic props only
+<Button variant="primary" size="lg" />
+```
+
+### The Style Grammar System
+Components use a mini CSS-like grammar for expressive styling through props:
+
+```typescript
+// Color with opacity and effects
+<Container color="primary/50/frost-md" />
+// → Primary color at 50% opacity with medium frost effect
+
+// Spacing with directional control
+<Section padding="lg/x-sm" />
+// → Large vertical padding, small horizontal
+
+// Complex borders
+<Card border="2/error/dashed/top-bottom" />
+// → 2px dashed error-colored border on top and bottom
+```
+
+**Grammar Benefits:**
+- Type-safe through TypeScript
+- Concise and readable
+- Maps to CSS variables
+- Theme-aware automatically
+
+### CSS Variables Architecture
+All styling ultimately resolves to CSS variables that cascade through the DOM:
+
+```css
+/* App sets theme variables */
+:root {
+  --qwanyx-primary: 230, 126, 34;  /* Autodin orange */
+  --qwanyx-spacing-md: 1.5rem;     /* Custom spacing */
+}
+
+/* Components reference variables */
+.button {
+  background: rgb(var(--qwanyx-primary));
+  padding: var(--qwanyx-spacing-md);
+}
+```
+
+**The Chain:**
+1. App defines CSS variables for theming
+2. Components props use grammar syntax
+3. Grammar parser converts to inline styles
+4. Styles reference CSS variables
+5. Result: Complete visual transformation without touching component code
+
+### Example: Building a Business Feature
+
+```typescript
+// ❌ WRONG - App using UI components directly
+import { Button, Input, Card } from '@qwanyx/ui';  // FORBIDDEN!
+
+// ✅ CORRECT - App requests business features
+import { UserRegistrationForm } from '@qwanyx/app-core';
+
+// The app doesn't care HOW it's built, just WHAT it does
+<UserRegistrationForm 
+  onSuccess={handleUserCreated}
+  workspace="autodin"
+/>
+```
+
 ## 🎨 Atomic Design Requirements
 
 ### Component Structure (MANDATORY)
@@ -134,8 +371,13 @@ Every component MUST have:
 ```typescript
 // Component.tsx
 export interface ComponentProps {
-  className?: string;  // Always optional
-  // ... typed props
+  // Semantic props only
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary';
+  // Style grammar props
+  color?: string;  // "primary/50/frost-md"
+  padding?: string; // "lg/x-sm"
+  // NEVER className or style props
 }
 
 // Component.test.tsx
@@ -470,6 +712,7 @@ await secureStorage.setItem('authToken', token);
 - **Package Development:** `/PACKAGE_DEVELOPMENT_GUIDE.md`
 - **Security Standards:** `/SECURITY_STANDARDS.md`
 - **Atomic Design:** `/packages/qwanyx-ui/ATOMIC_DESIGN.md`
+- **🚗 AUTODIN REBUILD PLAN:** `/AUTODIN_REBUILD_PLAN.md` - Current active task
 
 ---
 
@@ -482,3 +725,37 @@ await secureStorage.setItem('authToken', token);
 - When in doubt, make it a package
 
 **YOUR PRIME DIRECTIVE:** Build code so reliable, secure, and maintainable that it could be certified for critical infrastructure use.
+
+## 🎯 Quick Reference - Architecture Summary
+
+### The Sacred Import Chain
+```
+Apps → @qwanyx/app-core → Business Packages → @qwanyx/ui
+```
+
+### Never Break These Rules
+1. **Apps NEVER import from @qwanyx/ui** - Only from @qwanyx/app-core
+2. **No native HTML elements** - Always use QWANYX components
+3. **Props only, no CSS** - Components use semantic props + style grammar
+4. **TypeScript errors = STOP** - Never use `as any` to bypass
+5. **Validate everything** - Zod schemas on all user input
+
+### Component Hierarchy
+- **@qwanyx/ui**: Pure visual (atoms → molecules → organisms)
+- **Business Packages**: Domain logic + API (@qwanyx/auth, @qwanyx/marketplace)
+- **@qwanyx/app-core**: Central orchestrator that combines everything
+- **Apps**: Only consume from app-core, never direct package imports
+
+### Style System
+- Components use **props** like `size="lg"` and `variant="primary"`
+- **Style Grammar** for advanced: `color="primary/50/frost-md"`
+- All styles resolve to **CSS variables** that apps can override
+- Result: One component, infinite themes
+
+### Workspace System
+- All packages are **multi-tenant aware**
+- API calls automatically scoped to workspace
+- Database seamlessly partitioned
+- One codebase serves multiple clients
+
+**When in doubt:** Follow the chain, use semantic props, validate everything.
