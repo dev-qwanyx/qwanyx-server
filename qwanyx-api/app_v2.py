@@ -393,6 +393,149 @@ def update_user_profile(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Digital Humans management endpoints
+@app.route('/api/workspaces/<workspace_code>/users', methods=['GET'])
+def list_workspace_users(workspace_code):
+    """List users in a workspace, optionally filtered by type"""
+    try:
+        workspace_db = workspace_service.get_workspace_db(workspace_code)
+        if workspace_db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+        
+        # Get query parameters
+        user_type = request.args.get('type')
+        
+        # Build query
+        query = {}
+        if user_type:
+            query['type'] = user_type
+        
+        # Find users
+        users = list(workspace_db.users.find(query))
+        
+        # Convert ObjectId to string
+        for user in users:
+            user['_id'] = str(user['_id'])
+            if 'created_at' in user:
+                user['created_at'] = user['created_at'].isoformat()
+            if 'updated_at' in user:
+                user['updated_at'] = user['updated_at'].isoformat()
+        
+        return jsonify(users), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/workspaces/<workspace_code>/users', methods=['POST'])
+def create_workspace_user(workspace_code):
+    """Create a user in a workspace (alternative to /auth/register)"""
+    try:
+        workspace_db = workspace_service.get_workspace_db(workspace_code)
+        if workspace_db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+        
+        data = request.get_json()
+        
+        # Check if user already exists
+        email = data.get('email')
+        if not email:
+            return jsonify({'error': 'Email required'}), 400
+            
+        existing_user = workspace_db.users.find_one({'email': email})
+        if existing_user:
+            return jsonify({'error': 'User already exists'}), 409
+        
+        # Create user
+        user = {
+            'email': email,
+            'created_at': datetime.utcnow(),
+            'is_active': True,
+            **data  # Include all other fields
+        }
+        
+        result = workspace_db.users.insert_one(user)
+        user['_id'] = str(result.inserted_id)
+        
+        # If it's a DH, create memory collection
+        if data.get('type') == 'DH':
+            collection_name = email.replace('@', '-').replace('.', '-') + '-memory'
+            # Collection is created automatically when first document is inserted
+            # Initialize with a config document
+            workspace_db[collection_name].insert_one({
+                'type': 'config',
+                'created_at': datetime.utcnow(),
+                'dh_email': email
+            })
+        
+        return jsonify(user), 201
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/workspaces/<workspace_code>/users/<user_id>', methods=['DELETE'])
+def delete_workspace_user(workspace_code, user_id):
+    """Delete a user from a workspace"""
+    try:
+        workspace_db = workspace_service.get_workspace_db(workspace_code)
+        if workspace_db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+        
+        # Find user first to get email (for DH collection cleanup)
+        user = workspace_db.users.find_one({'_id': ObjectId(user_id)})
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        # Delete user
+        result = workspace_db.users.delete_one({'_id': ObjectId(user_id)})
+        
+        if result.deleted_count == 0:
+            return jsonify({'error': 'Failed to delete user'}), 500
+        
+        # If it's a DH, drop the memory collection
+        if user.get('type') == 'DH':
+            collection_name = user['email'].replace('@', '-').replace('.', '-') + '-memory'
+            workspace_db[collection_name].drop()
+        
+        return jsonify({'message': 'User deleted successfully'}), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/workspaces/<workspace_code>/users/<user_id>', methods=['PUT'])  
+def update_workspace_user(workspace_code, user_id):
+    """Update a user in a workspace"""
+    try:
+        workspace_db = workspace_service.get_workspace_db(workspace_code)
+        if workspace_db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+        
+        data = request.get_json()
+        
+        # Remove fields that shouldn't be updated
+        data.pop('_id', None)
+        data.pop('created_at', None)
+        
+        # Add updated timestamp
+        data['updated_at'] = datetime.utcnow()
+        
+        # Update user
+        result = workspace_db.users.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': data}
+        )
+        
+        if result.modified_count == 0:
+            return jsonify({'error': 'User not found or no changes made'}), 404
+        
+        # Return updated user
+        updated_user = workspace_db.users.find_one({'_id': ObjectId(user_id)})
+        updated_user['_id'] = str(updated_user['_id'])
+        
+        return jsonify(updated_user), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # Contact management (updated for workspaces)
 @app.route('/contacts', methods=['POST'])
 def create_contact():
