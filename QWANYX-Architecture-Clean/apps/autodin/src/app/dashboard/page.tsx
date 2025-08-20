@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Dashboard, createMarketplaceDashboard } from '@qwanyx/dashboard-v2'
 import type { DashboardConfig, DashboardStat, DashboardActivity } from '@qwanyx/dashboard-v2'
 import { Container, Text, Card, CardContent, Grid, Button, Badge } from '@qwanyx/ui'
+import { ThotManagement, DigitalHumansPage } from '@qwanyx/thot'
 import UsersContent from './UsersContent'
 
 export default function DashboardPage() {
@@ -113,6 +114,45 @@ export default function DashboardPage() {
   const customContent = {
     'users': (
       <UsersContent />
+    ),
+    'thot': (
+      <ThotManagement config={{
+        apiUrl: 'http://135.181.72.183:5002/api',
+        workspace: 'autodin'
+      }} />
+    ),
+    'thot-digital-humans': (
+      <DigitalHumansPage />
+    ),
+    'thot-configuration': (
+      <ThotManagement config={{
+        apiUrl: 'http://135.181.72.183:5002/api',
+        workspace: 'autodin'
+      }} />
+    ),
+    'thot-templates': (
+      <ThotManagement config={{
+        apiUrl: 'http://135.181.72.183:5002/api',
+        workspace: 'autodin'
+      }} />
+    ),
+    'thot-prompts': (
+      <ThotManagement config={{
+        apiUrl: 'http://135.181.72.183:5002/api',
+        workspace: 'autodin'
+      }} />
+    ),
+    'thot-inbox': (
+      <ThotManagement config={{
+        apiUrl: 'http://135.181.72.183:5002/api',
+        workspace: 'autodin'
+      }} />
+    ),
+    'thot-logs': (
+      <ThotManagement config={{
+        apiUrl: 'http://135.181.72.183:5002/api',
+        workspace: 'autodin'
+      }} />
     ),
     'listings': (
       <Container>
@@ -230,6 +270,38 @@ export default function DashboardPage() {
         label: 'Messages',
         icon: 'Mail',
         badge: '12'
+      },
+      {
+        id: 'thot',
+        label: 'THOT - Répondeur IA',
+        icon: 'SmartToy',
+        badge: 'NEW',
+        children: [
+          {
+            id: 'thot-digital-humans',
+            label: 'Digital Humans'
+          },
+          {
+            id: 'thot-configuration',
+            label: 'Configuration'
+          },
+          {
+            id: 'thot-templates',
+            label: 'Templates'
+          },
+          {
+            id: 'thot-prompts',
+            label: 'Prompts AI'
+          },
+          {
+            id: 'thot-inbox',
+            label: 'Boîte de réception'
+          },
+          {
+            id: 'thot-logs',
+            label: 'Logs'
+          }
+        ]
       },
       {
         id: 'analytics',
