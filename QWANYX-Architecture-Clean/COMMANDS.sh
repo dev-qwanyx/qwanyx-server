@@ -1,62 +1,114 @@
 #!/bin/bash
+# COMMANDES POUR DÉPLOIEMENT QWANYX ARCHITECTURE
+# Exécuté automatiquement par le webhook après push sur GitHub
 
-# QWANYX Server Deployment Script
-# This script is executed automatically after git pull
+echo "🚀 DÉPLOIEMENT QWANYX - NOUVELLE ARCHITECTURE"
+echo "============================================"
+echo "Date: $(date)"
+echo ""
 
-echo "🚀 Starting deployment..."
+# Navigation vers le dossier principal
+cd /opt/qwanyx/QWANYX-Architecture-Clean || exit 1
 
-# Kill old processes
-echo "Stopping old services..."
-pkill -f "python3.*autodin" || true
-pkill -f "node.*autodin" || true
+# ========== BUILD DES PACKAGES ==========
+echo "📦 BUILD DES PACKAGES MONOREPO"
+echo "--------------------------------------------"
+
+# Build qwanyx-ui
+echo "🎨 Build @qwanyx/ui..."
+cd packages/qwanyx-ui
+npm install
+npm run build
+echo "✅ @qwanyx/ui prêt"
+
+# Build qwanyx-thot
+echo ""
+echo "🤖 Build @qwanyx/thot..."
+cd ../qwanyx-thot
+npm install
+npm run build
+echo "✅ @qwanyx/thot prêt"
+
+# Build autres packages si nécessaire
+echo ""
+echo "📦 Build autres packages..."
+cd ../qwanyx-dashboard-v2
+npm install
+npm run build
+echo "✅ @qwanyx/dashboard-v2 prêt"
+
+cd ../qwanyx-app-core
+npm install
+npm run build
+echo "✅ @qwanyx/app-core prêt"
+
+# ========== DÉPLOIEMENT AUTODIN NEXT.JS ==========
+echo ""
+echo "🚗 DÉPLOIEMENT AUTODIN NEXT.JS"
+echo "--------------------------------------------"
+
+cd /opt/qwanyx/QWANYX-Architecture-Clean/apps/autodin
+
+# Installation des dépendances
+echo "📦 Installation des dépendances..."
+npm install
+
+# Build de production
+echo "🔨 Build de production..."
+npm run build
+
+# Redémarrage avec PM2
+echo "🔄 Redémarrage du service..."
+pm2 stop autodin-next 2>/dev/null || true
 pm2 delete autodin-next 2>/dev/null || true
+PORT=3002 pm2 start npm --name "autodin-next" -- start
+pm2 save
 
-# Navigate to project directory
-cd /opt/qwanyx/apps/qwanyx-server
+echo "✅ Autodin Next.js déployé sur port 3002"
 
-# Pull latest changes (already done by webhook)
-echo "Code already updated by webhook"
+# ========== API PYTHON (toujours active) ==========
+echo ""
+echo "🐍 VÉRIFICATION API PYTHON"
+echo "--------------------------------------------"
 
-# Check if Autodin Next.js exists
-if [ -d "apps/autodin/.next" ]; then
-    echo "📦 Found pre-built Autodin Next.js..."
-    cd apps/autodin
-    
-    # Install production dependencies only
-    npm install --production
-    
-    # Start Autodin with PM2 on port 8090
-    echo "🚀 Starting Autodin Next.js on port 8090..."
-    PORT=8090 pm2 start npm --name "autodin-next" -- start
-    pm2 save
-else
-    echo "⚠️ No pre-built Next.js found. Building from source..."
-    cd apps/autodin
-    npm install
-    npm run build
-    PORT=8090 pm2 start npm --name "autodin-next" -- start
-    pm2 save
-fi
+# Arrêt de l'ancienne API si nécessaire
+pkill -f "python3.*app_v2.py" || true
+sleep 2
 
-# Keep Belgicomics Flask running
-echo "🚀 Restarting Belgicomics Flask..."
-pkill -f "python3.*belgicomics" || true
-cd /opt/qwanyx/apps/qwanyx-server/belgicomics/frontend
-nohup python3 app_bulma.py > /tmp/belgicomics.log 2>&1 &
-
-# Keep API running
-echo "🚀 Restarting QWANYX API..."
-pkill -f "python3.*app_v2" || true
-cd /opt/qwanyx/apps/qwanyx-server/api/qwanyx-api
+# Redémarrage de l'API
+cd /opt/qwanyx/apps/qwanyx-server/qwanyx-api
 nohup python3 app_v2.py > /tmp/qwanyx-api.log 2>&1 &
+sleep 3
 
-# Wait for services to start
+echo "✅ API Python redémarrée sur port 5002"
+
+# ========== VÉRIFICATION DES SERVICES ==========
+echo ""
+echo "✅ VÉRIFICATION DES SERVICES"
+echo "--------------------------------------------"
 sleep 5
 
-# Check services status
-echo "✅ Checking services..."
-curl -s -o /dev/null -w "Autodin Next.js: %{http_code}\n" http://localhost:8090
-curl -s -o /dev/null -w "Belgicomics: %{http_code}\n" http://localhost:8091
-curl -s -o /dev/null -w "QWANYX API: %{http_code}\n" http://localhost:5002
+# Test des endpoints
+curl -s -o /dev/null -w "Autodin Next.js (3002): %{http_code}\n" http://localhost:3002 || echo "❌ Autodin Next.js: ERREUR"
+curl -s -o /dev/null -w "API QWANYX (5002): %{http_code}\n" http://localhost:5002/health || echo "❌ API QWANYX: ERREUR"
 
-echo "🎉 Deployment complete!"
+# ========== RÉSUMÉ ==========
+echo ""
+echo "🎉 DÉPLOIEMENT TERMINÉ"
+echo "============================================"
+echo ""
+echo "📝 Logs disponibles:"
+echo "  - PM2: pm2 logs autodin-next"
+echo "  - API: /tmp/qwanyx-api.log"
+echo ""
+echo "🌐 URLs publiques:"
+echo "  - http://135.181.72.183:3002 (Autodin Next.js)"
+echo "  - http://135.181.72.183:5002 (API QWANYX)"
+echo ""
+echo "💡 Commandes utiles:"
+echo "  - pm2 status           # Voir l'état des services"
+echo "  - pm2 logs autodin-next # Voir les logs en temps réel"
+echo "  - pm2 restart autodin-next # Redémarrer si nécessaire"
+echo ""
+echo "============================================"
+date
