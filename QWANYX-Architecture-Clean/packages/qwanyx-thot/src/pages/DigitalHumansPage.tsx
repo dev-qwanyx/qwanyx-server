@@ -20,6 +20,7 @@ import {
   TabsTrigger,
   TabsContent,
 } from '@qwanyx/ui'
+import { getApiUrl } from '../config/api.config'
 
 interface DigitalHuman {
   _id?: string
@@ -42,7 +43,7 @@ export const DigitalHumansPage: React.FC = () => {
   const [digitalHumans, setDigitalHumans] = useState<DigitalHuman[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [currentUserRole, setCurrentUserRole] = useState<string>('particulier')
+  const [_currentUserRole, setCurrentUserRole] = useState<string>('particulier')
   const [expandedDH] = useState<string | null>(null)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -53,7 +54,7 @@ export const DigitalHumansPage: React.FC = () => {
     firstName: ''
   })
 
-  const API_URL = 'http://localhost:5002'
+  const API_URL = getApiUrl()
   const WORKSPACE = 'autodin'
 
   // Convert email to collection name format

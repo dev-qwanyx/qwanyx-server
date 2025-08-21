@@ -7,6 +7,7 @@ import type { DashboardConfig, DashboardStat, DashboardActivity } from '@qwanyx/
 import { Container, Text, Card, CardContent, Grid, Button, Badge } from '@qwanyx/ui'
 import { ThotManagement, DigitalHumansPage } from '@qwanyx/thot'
 import UsersContent from './UsersContent'
+import { getApiUrl } from '@/config/api.config'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -57,7 +58,7 @@ export default function DashboardPage() {
       try {
         const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
         console.log('Fetching user count...')
-        const response = await fetch('http://localhost:5002/users', {
+        const response = await fetch(getApiUrl('/users'), {
           headers: {
             'Authorization': `Bearer ${storedToken}`,
             'Content-Type': 'application/json',

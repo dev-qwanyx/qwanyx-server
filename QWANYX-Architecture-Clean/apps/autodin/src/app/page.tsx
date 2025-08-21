@@ -16,6 +16,7 @@ import {
   detailedContactFields
 } from '@qwanyx/ui'
 import { AuthModule } from '@qwanyx/auth'
+import { getApiUrl } from '@/config/api.config'
 
 function AppContent() {
   const [activeSection, setActiveSection] = useState<string>('details')
@@ -457,7 +458,7 @@ function AppContent() {
       <AuthModule
         key={`auth-${authMode}-${showAuth}`}
         workspace="autodin"
-        apiUrl="http://localhost:5002"
+        apiUrl={getApiUrl()}
         locale="fr"
         initialMode={authMode}
         allowModeSwitch={true}

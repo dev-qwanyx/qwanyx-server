@@ -7,6 +7,7 @@ import {
   ModalTitle, ModalBody, ModalFooter, Form, Avatar, Flex,
   UserProfile, Icon
 } from '@qwanyx/ui'
+import { getApiUrl } from '@/config/api.config'
 
 interface User {
   id: string
@@ -64,7 +65,7 @@ export default function UsersContent() {
       console.log('Fetching users with token:', token ? 'Present' : 'Missing')
       console.log('Using workspace:', workspace)
       
-      const response = await fetch('http://localhost:5002/users', {
+      const response = await fetch(getApiUrl('/users'), {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
