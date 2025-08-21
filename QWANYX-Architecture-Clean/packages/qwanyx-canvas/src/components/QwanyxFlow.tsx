@@ -44,6 +44,7 @@ export interface QwanyxFlowProps {
   height?: string | number;
   showToolbar?: boolean;
   readOnly?: boolean;
+  showControls?: boolean;
 }
 
 export const QwanyxFlow: React.FC<QwanyxFlowProps> = ({
@@ -55,6 +56,7 @@ export const QwanyxFlow: React.FC<QwanyxFlowProps> = ({
   height = '600px',
   showToolbar = true,
   readOnly = false,
+  showControls = true,
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -198,7 +200,7 @@ export const QwanyxFlow: React.FC<QwanyxFlowProps> = ({
         defaultEdgeOptions={{ type: 'smart' }}
         fitView
         fitViewOptions={{ padding: 0.2 }}
-        attributionPosition="bottom-left"
+        proOptions={{ hideAttribution: true }}
       >
         <Background 
           variant={BackgroundVariant.Dots} 
@@ -206,7 +208,7 @@ export const QwanyxFlow: React.FC<QwanyxFlowProps> = ({
           size={1}
           color="#e5e7eb"
         />
-        <Controls />
+        {showControls && <Controls />}
       </ReactFlow>
     </div>
   );

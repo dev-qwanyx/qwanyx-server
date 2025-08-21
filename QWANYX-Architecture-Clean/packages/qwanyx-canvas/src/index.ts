@@ -12,6 +12,10 @@ export type { QwanyxIconNodeData } from './components/nodes/QwanyxIconNode';
 // Edge components
 export { SmartEdge } from './components/edges/SmartEdge';
 
+// Modal components
+export { FlowModal } from './components/FlowModal';
+export type { FlowModalProps } from './components/FlowModal';
+
 // Toolbar
 export { QwanyxToolbar } from './components/QwanyxToolbar';
 

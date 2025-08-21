@@ -16,8 +16,9 @@
     "clean": "rm -rf dist node_modules"
   },
   "dependencies": {
-    "@qwanyx/ui": "file:../qwanyx-ui",
     "@qwanyx/canvas": "file:../qwanyx-canvas",
+    "@qwanyx/ui": "file:../qwanyx-ui",
+    "bson": "^6.10.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.19.0",

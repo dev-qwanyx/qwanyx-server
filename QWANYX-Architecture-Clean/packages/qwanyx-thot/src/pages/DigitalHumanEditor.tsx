@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react'
+import { ObjectId } from 'bson'
 import { 
   Flex, 
   Text, 
@@ -28,6 +29,25 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
   // const [selectedNode] = useState<any>(null) // Will be used for node properties
   const [isSaving, setIsSaving] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  
+  // Generate consistent ObjectIds for the demo
+  const nodeIds = {
+    emailReceived: new ObjectId().toHexString(),
+    analyze: new ObjectId().toHexString(),
+    respond: new ObjectId().toHexString(),
+    // Internal flow nodes for "Analyze"
+    extractText: new ObjectId().toHexString(),
+    sentiment: new ObjectId().toHexString(),
+    categorize: new ObjectId().toHexString()
+  }
+  
+  const edgeIds = {
+    emailToAnalyze: new ObjectId().toHexString(),
+    analyzeToRespond: new ObjectId().toHexString(),
+    // Internal flow edges
+    extractToSentiment: new ObjectId().toHexString(),
+    sentimentToCateg: new ObjectId().toHexString()
+  }
 
   const handleSave = useCallback(async () => {
     setIsSaving(true)
@@ -392,7 +412,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
           <QwanyxFlowStandalone
             initialNodes={[
               {
-                id: '1',
+                id: nodeIds.emailReceived,
                 type: 'icon',
                 position: { x: 350, y: 100 },
                 data: { 
@@ -403,18 +423,67 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                 }
               },
               {
-                id: '2',
+                id: nodeIds.analyze,
                 type: 'icon',
                 position: { x: 350, y: 280 },
                 data: { 
                   label: 'Analyser', 
                   icon: 'Analytics',
                   description: 'Analyse du contenu avec IA',
-                  color: 'accent'
+                  color: 'accent',
+                  // This node has an internal flow
+                  internalFlow: {
+                    nodes: [
+                      {
+                        id: nodeIds.extractText,
+                        type: 'icon',
+                        position: { x: 200, y: 100 },
+                        data: {
+                          label: 'Extract Text',
+                          icon: 'TextSnippet',
+                          color: 'primary'
+                        }
+                      },
+                      {
+                        id: nodeIds.sentiment,
+                        type: 'icon',
+                        position: { x: 200, y: 250 },
+                        data: {
+                          label: 'Sentiment',
+                          icon: 'Mood',
+                          color: 'warning'
+                        }
+                      },
+                      {
+                        id: nodeIds.categorize,
+                        type: 'icon',
+                        position: { x: 200, y: 400 },
+                        data: {
+                          label: 'Categorize',
+                          icon: 'Category',
+                          color: 'success'
+                        }
+                      }
+                    ],
+                    edges: [
+                      { 
+                        id: edgeIds.extractToSentiment,
+                        source: nodeIds.extractText,
+                        target: nodeIds.sentiment,
+                        type: 'smart'
+                      },
+                      { 
+                        id: edgeIds.sentimentToCateg,
+                        source: nodeIds.sentiment,
+                        target: nodeIds.categorize,
+                        type: 'smart'
+                      }
+                    ]
+                  }
                 }
               },
               {
-                id: '3',
+                id: nodeIds.respond,
                 type: 'icon',
                 position: { x: 350, y: 460 },
                 data: { 
@@ -426,11 +495,22 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               }
             ]}
             initialEdges={[
-              { id: 'e1-2', source: '1', target: '2', type: 'smart' },
-              { id: 'e2-3', source: '2', target: '3', type: 'smart' }
+              { 
+                id: edgeIds.emailToAnalyze,
+                source: nodeIds.emailReceived,
+                target: nodeIds.analyze,
+                type: 'smart'
+              },
+              { 
+                id: edgeIds.analyzeToRespond,
+                source: nodeIds.analyze,
+                target: nodeIds.respond,
+                type: 'smart'
+              }
             ]}
             height="100%"
             showToolbar={false}
+            showControls={false}
           />
         </div>
 

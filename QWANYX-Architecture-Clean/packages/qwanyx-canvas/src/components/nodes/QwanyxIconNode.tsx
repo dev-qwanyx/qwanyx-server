@@ -1,36 +1,65 @@
 import React, { useState } from 'react'
-import { Handle, Position, NodeProps } from 'reactflow'
+import { Handle, Position, NodeProps, Node, Edge } from 'reactflow'
 import { Icon, Text, Tooltip } from '@qwanyx/ui'
+import { FlowModal } from '../FlowModal'
 
 export interface QwanyxIconNodeData {
   label: string
   icon: string
   description?: string
   color?: string
+  // Internal flow data
+  internalFlow?: {
+    nodes: Node[]
+    edges: Edge[]
+  }
+  // Reference to memory flow (if extracted)
+  flowRef?: string
+  isMemory?: boolean
 }
 
 export const QwanyxIconNode: React.FC<NodeProps<QwanyxIconNodeData>> = ({ 
+  id,
   data, 
   selected,
   dragging
 }) => {
   const [isDragging, setIsDragging] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsModalOpen(true)
+  }
+  
+  const handleToggleMemory = () => {
+    // TODO: Implement memory extraction/embedding logic
+    console.log('Toggle memory status for node:', id)
+  }
+  
+  const handleSaveFlow = (nodes: Node[], edges: Edge[]) => {
+    // TODO: Save the internal flow
+    console.log('Save flow for node:', id, { nodes, edges })
+    setIsModalOpen(false)
+  }
   
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '4px',
-        padding: '6px',
-        cursor: 'pointer',
-        position: 'relative'
-      }}
-      onMouseDown={() => setIsDragging(true)}
-      onMouseUp={() => setIsDragging(false)}
-      onMouseLeave={() => setIsDragging(false)}
-    >
+    <>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '4px',
+          padding: '6px',
+          cursor: 'pointer',
+          position: 'relative'
+        }}
+        onMouseDown={() => setIsDragging(true)}
+        onMouseUp={() => setIsDragging(false)}
+        onMouseLeave={() => setIsDragging(false)}
+        onDoubleClick={handleDoubleClick}
+      >
       {/* All handles at center of icon (32px from top of icon + 6px padding = 38px) */}
       {/* Top handles */}
       <Handle
@@ -240,5 +269,19 @@ export const QwanyxIconNode: React.FC<NodeProps<QwanyxIconNodeData>> = ({
         {data.label}
       </Text>
     </div>
+    
+    {/* Flow expansion modal */}
+    <FlowModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      nodeId={id}
+      nodeLabel={data.label}
+      initialNodes={data.internalFlow?.nodes || []}
+      initialEdges={data.internalFlow?.edges || []}
+      isMemory={data.isMemory || false}
+      onToggleMemory={handleToggleMemory}
+      onSave={handleSaveFlow}
+    />
+    </>
   )
 }

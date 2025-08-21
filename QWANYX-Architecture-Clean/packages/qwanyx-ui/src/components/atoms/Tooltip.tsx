@@ -1,4 +1,19 @@
 import React, { useState } from 'react'
+import {
+  useFloating,
+  autoUpdate,
+  offset,
+  flip,
+  shift,
+  useHover,
+  useFocus,
+  useDismiss,
+  useRole,
+  useInteractions,
+  FloatingPortal,
+  arrow,
+  FloatingArrow
+} from '@floating-ui/react'
 import { Icon } from '../Icon'
 
 export interface TooltipProps {
@@ -16,114 +31,84 @@ export const Tooltip: React.FC<TooltipProps> = ({
   icon,
   delay = 200 
 }) => {
-  const [isVisible, setIsVisible] = useState(false)
-  const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const arrowRef = React.useRef(null)
 
-  const handleMouseEnter = () => {
-    const id = setTimeout(() => {
-      setIsVisible(true)
-    }, delay)
-    setTimeoutId(id)
-  }
+  const { refs, floatingStyles, context } = useFloating({
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    placement: position,
+    whileElementsMounted: autoUpdate,
+    middleware: [
+      offset(10),
+      flip({
+        fallbackAxisSideDirection: 'start',
+        crossAxis: true
+      }),
+      shift({ padding: 5 }),
+      arrow({
+        element: arrowRef,
+      })
+    ],
+  })
 
-  const handleMouseLeave = () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId)
+  const hover = useHover(context, {
+    delay: {
+      open: delay,
+      close: 0
     }
-    setIsVisible(false)
-  }
+  })
+  const focus = useFocus(context)
+  const dismiss = useDismiss(context)
+  const role = useRole(context, { role: 'tooltip' })
 
-  const positionStyles = {
-    top: {
-      bottom: '100%',
-      left: '50%',
-      transform: 'translateX(-50%) translateY(-8px)',
-    },
-    bottom: {
-      top: '100%',
-      left: '50%',
-      transform: 'translateX(-50%) translateY(8px)',
-    },
-    left: {
-      right: '100%',
-      top: '50%',
-      transform: 'translateY(-50%) translateX(-8px)',
-    },
-    right: {
-      left: '100%',
-      top: '50%',
-      transform: 'translateY(-50%) translateX(8px)',
-    },
-  }
-
-  const arrowStyles = {
-    top: {
-      top: '100%',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      borderColor: 'rgba(0, 0, 0, 0.9) transparent transparent transparent',
-    },
-    bottom: {
-      bottom: '100%',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      borderColor: 'transparent transparent rgba(0, 0, 0, 0.9) transparent',
-    },
-    left: {
-      left: '100%',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      borderColor: 'transparent transparent transparent rgba(0, 0, 0, 0.9)',
-    },
-    right: {
-      right: '100%',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      borderColor: 'transparent rgba(0, 0, 0, 0.9) transparent transparent',
-    },
-  }
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    hover,
+    focus,
+    dismiss,
+    role,
+  ])
 
   return (
-    <div 
-      style={{ position: 'relative', display: 'inline-block' }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      {children}
-      {isVisible && (
-        <div
-          style={{
-            position: 'absolute',
-            ...positionStyles[position],
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            color: 'white',
-            padding: '6px 12px',
-            borderRadius: '4px',
-            fontSize: '14px',
-            whiteSpace: 'nowrap',
-            zIndex: 1000,
-            pointerEvents: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            opacity: 1,
-            transition: 'opacity 0.2s ease-in-out',
-          }}
-        >
-          {icon && <Icon name={icon} size="sm" style={{ fontSize: '16px' }} />}
-          {content}
+    <>
+      <div 
+        ref={refs.setReference} 
+        {...getReferenceProps()}
+        style={{ display: 'inline-block' }}
+      >
+        {children}
+      </div>
+      {isOpen && (
+        <FloatingPortal>
           <div
+            ref={refs.setFloating}
             style={{
-              position: 'absolute',
-              width: 0,
-              height: 0,
-              borderStyle: 'solid',
-              borderWidth: '4px',
-              ...arrowStyles[position],
+              ...floatingStyles,
+              backgroundColor: 'rgba(0, 0, 0, 0.9)',
+              color: 'white',
+              padding: '6px 12px',
+              borderRadius: '4px',
+              fontSize: '14px',
+              whiteSpace: 'nowrap',
+              zIndex: 10000,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
-          />
-        </div>
+            {...getFloatingProps()}
+          >
+            {icon && <Icon name={icon} size="sm" style={{ fontSize: '16px' }} />}
+            {content}
+            <FloatingArrow 
+              ref={arrowRef} 
+              context={context}
+              fill="rgba(0, 0, 0, 0.9)"
+              width={10}
+              height={5}
+            />
+          </div>
+        </FloatingPortal>
       )}
-    </div>
+    </>
   )
 }
