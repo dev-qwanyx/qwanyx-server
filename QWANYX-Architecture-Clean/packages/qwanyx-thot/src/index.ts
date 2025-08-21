@@ -15,6 +15,7 @@ export { PromptsPage } from './pages/PromptsPage'
 export { InboxPage } from './pages/InboxPage'
 export { LogsPage } from './pages/LogsPage'
 export { DigitalHumansPage } from './pages/DigitalHumansPage'
+export { DigitalHumanEditor } from './pages/DigitalHumanEditor'
 
 // Types
 export type {

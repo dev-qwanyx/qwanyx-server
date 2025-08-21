@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Dashboard, createMarketplaceDashboard } from '@qwanyx/dashboard-v2'
 import type { DashboardConfig, DashboardStat, DashboardActivity } from '@qwanyx/dashboard-v2'
 import { Container, Text, Card, CardContent, Grid, Button, Badge } from '@qwanyx/ui'
@@ -10,7 +10,9 @@ import UsersContent from './UsersContent'
 
 export default function DashboardPage() {
   const router = useRouter()
-  const [currentView, setCurrentView] = useState('overview')
+  const searchParams = useSearchParams()
+  const tabFromUrl = searchParams.get('tab')
+  const [currentView, setCurrentView] = useState(tabFromUrl || 'overview')
   const [userCount, setUserCount] = useState<number | null>(0)
   const [dhCount, setDhCount] = useState<number | null>(0)
   const [currentUserRole, setCurrentUserRole] = useState<string>('particulier')
@@ -21,6 +23,13 @@ export default function DashboardPage() {
   const tokenExpiry = typeof window !== 'undefined' ? localStorage.getItem('autodin_token_expiry') : null
   
   const [user] = useState<any>(storedUser ? JSON.parse(storedUser) : null)
+
+  // Update currentView when URL changes
+  useEffect(() => {
+    if (tabFromUrl) {
+      setCurrentView(tabFromUrl)
+    }
+  }, [tabFromUrl])
 
   useEffect(() => {
     console.log('Dashboard useEffect triggered')

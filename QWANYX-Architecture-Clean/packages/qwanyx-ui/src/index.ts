@@ -103,6 +103,9 @@ export type { LogoProps } from './components/Logo';
 export { SearchBar } from './components/SearchBar';
 export type { SearchBarProps } from './components/SearchBar';
 
+export { Collapsible } from './components/Collapsible';
+export type { CollapsibleProps } from './components/Collapsible';
+
 export { NavigationBar } from './components/NavigationBar';
 export type { NavigationBarProps, NavItem } from './components/NavigationBar';
 

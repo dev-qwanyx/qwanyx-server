@@ -43,7 +43,7 @@ export const DigitalHumansPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentUserRole, setCurrentUserRole] = useState<string>('particulier')
-  const [expandedDH, setExpandedDH] = useState<string | null>(null)
+  const [expandedDH] = useState<string | null>(null)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingDH, setEditingDH] = useState<DigitalHuman | null>(null)
@@ -131,12 +131,8 @@ export const DigitalHumansPage: React.FC = () => {
   }
 
   const handleEditDH = (dh: DigitalHuman) => {
-    // Toggle expansion - if already expanded, collapse it
-    if (expandedDH === dh._id) {
-      setExpandedDH(null)
-    } else {
-      setExpandedDH(dh._id || null)
-    }
+    // Open full-screen editor instead of inline editing
+    window.location.href = `/digital-human-editor?id=${dh._id}&name=${encodeURIComponent(dh.name)}&email=${encodeURIComponent(dh.email)}`
   }
 
   const handleSaveDH = async () => {
