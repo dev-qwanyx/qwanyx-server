@@ -12,6 +12,7 @@ from services import WorkspaceService, DHService, AppService
 # Import routes
 from routes import workspaces_bp, init_services as init_route_services
 from routes.dh_flow_routes import dh_flow_bp
+from routes.dh_process_routes import dh_process_bp
 
 load_dotenv()
 
@@ -52,6 +53,7 @@ init_route_services(workspace_service, app_service, dh_service)
 # Register blueprints
 app.register_blueprint(workspaces_bp)
 app.register_blueprint(dh_flow_bp)
+app.register_blueprint(dh_process_bp)
 
 # Import email functions from original app
 from bson import ObjectId

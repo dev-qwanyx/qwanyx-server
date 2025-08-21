@@ -1,0 +1,56 @@
+{
+  "name": "Demo Email Flow",
+  "description": "Basic email processing flow with analysis and response",
+  "version": "1.0.0",
+  "created": "2024-01-01T00:00:00.000Z",
+  "nodes": [
+    {
+      "_id": "demo_email_received",
+      "type": "icon",
+      "x": 350,
+      "y": 100,
+      "data": {
+        "label": "Email reçu",
+        "icon": "Email",
+        "description": "Déclencheur: Reception d'un nouvel email",
+        "color": "primary"
+      }
+    },
+    {
+      "_id": "demo_analyze",
+      "type": "icon",
+      "x": 350,
+      "y": 280,
+      "data": {
+        "label": "Analyser",
+        "icon": "Analytics",
+        "description": "Analyse du contenu avec IA",
+        "color": "success"
+      }
+    },
+    {
+      "_id": "demo_respond",
+      "type": "icon",
+      "x": 350,
+      "y": 460,
+      "data": {
+        "label": "Répondre",
+        "icon": "Send",
+        "description": "Génère et envoie une réponse",
+        "color": "warning"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "_id": "demo_edge_1",
+      "source": "demo_email_received",
+      "target": "demo_analyze"
+    },
+    {
+      "_id": "demo_edge_2",
+      "source": "demo_analyze",
+      "target": "demo_respond"
+    }
+  ]
+}

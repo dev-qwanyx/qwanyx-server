@@ -101,12 +101,14 @@ export interface LogEntry {
 
 // Node categories for organization
 export enum NodeCategory {
+  CONTROL = 'control',
   TRIGGER = 'trigger',
   ACTION = 'action',
   LOGIC = 'logic',
   MEMORY = 'memory',
   INTEGRATION = 'integration',
-  AI = 'ai'
+  AI = 'ai',
+  DATA = 'data'
 }
 
 // Node definition for registry

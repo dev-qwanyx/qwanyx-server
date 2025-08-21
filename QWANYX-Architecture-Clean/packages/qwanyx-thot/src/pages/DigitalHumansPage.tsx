@@ -131,8 +131,11 @@ export const DigitalHumansPage: React.FC = () => {
   }
 
   const handleEditDH = (dh: DigitalHuman) => {
-    // Open full-screen editor instead of inline editing
-    window.location.href = `/digital-human-editor?id=${dh._id}&name=${encodeURIComponent(dh.name)}&email=${encodeURIComponent(dh.email)}`
+    // Store the complete DH data in sessionStorage
+    sessionStorage.setItem('editing_dh', JSON.stringify(dh))
+    
+    // Open full-screen editor - only need the ID in URL for reference
+    window.location.href = `/digital-human-editor?id=${dh._id}`
   }
 
   const handleSaveDH = async () => {

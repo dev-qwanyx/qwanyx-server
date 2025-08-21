@@ -48,6 +48,8 @@ interface QFlowProps {
   onEdgesChange?: (edges: QEdge[]) => void
   width?: string | number
   height?: string | number
+  nodeRenderer?: (node: QNode, context?: any) => React.ReactNode
+  context?: any  // DH context (dhId, dhName, dhEmail, etc.)
 }
 
 // Edge Component
@@ -143,7 +145,9 @@ export const QFlow: React.FC<QFlowProps> = ({
   onNodesChange,
   onEdgesChange,
   width = '100%',
-  height = '100%'
+  height = '100%',
+  nodeRenderer,
+  context
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [nodes, setNodes] = useState(initialNodes)
@@ -372,7 +376,9 @@ export const QFlow: React.FC<QFlowProps> = ({
               }}
               onMouseDown={(e) => handleNodeMouseDown(e, nodeId)}
           >
-            {node.type === 'icon' && (
+            {nodeRenderer ? (
+              nodeRenderer(node, context)
+            ) : node.type === 'icon' ? (
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -437,7 +443,7 @@ export const QFlow: React.FC<QFlowProps> = ({
                   {node.data.label}
                 </span>
               </div>
-            )}
+            ) : null}
           </div>
           ) : null
         })}

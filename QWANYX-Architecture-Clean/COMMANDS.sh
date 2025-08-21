@@ -10,6 +10,21 @@ echo ""
 # Navigation vers le dossier principal
 cd /opt/qwanyx/QWANYX-Architecture-Clean || exit 1
 
+# ========== GIT PULL AVEC RESET ==========
+echo "📥 MISE À JOUR DU CODE DEPUIS GITHUB"
+echo "--------------------------------------------"
+
+# Reset dur pour s'assurer que le serveur est propre
+echo "🧹 Nettoyage des changements locaux..."
+git reset --hard HEAD
+
+# Pull des derniers changements
+echo "📥 Récupération des derniers changements..."
+git pull origin main
+
+echo "✅ Code mis à jour (serveur synchronisé avec GitHub)"
+echo ""
+
 # ========== BUILD DES PACKAGES ==========
 echo "📦 BUILD DES PACKAGES MONOREPO"
 echo "--------------------------------------------"
@@ -75,8 +90,8 @@ echo "--------------------------------------------"
 pkill -f "python3.*app_v2.py" || true
 sleep 2
 
-# Redémarrage de l'API
-cd /opt/qwanyx/apps/qwanyx-server/qwanyx-api
+# Redémarrage de l'API (dans le bon dossier de la nouvelle architecture)
+cd /opt/qwanyx/QWANYX-Architecture-Clean/api/qwanyx-api
 nohup python3 app_v2.py > /tmp/qwanyx-api.log 2>&1 &
 sleep 3
 
