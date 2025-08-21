@@ -19,6 +19,7 @@ import { QwanyxStepNode } from './nodes/QwanyxStepNode';
 import { QwanyxDecisionNode } from './nodes/QwanyxDecisionNode';
 import { QwanyxActorNode } from './nodes/QwanyxActorNode';
 import { QwanyxIconNode } from './nodes/QwanyxIconNode';
+import { SmartEdge } from './edges/SmartEdge';
 import { QwanyxToolbar } from './QwanyxToolbar';
 
 // Define custom node types
@@ -27,6 +28,11 @@ const nodeTypes = {
   decision: QwanyxDecisionNode,
   actor: QwanyxActorNode,
   icon: QwanyxIconNode,
+};
+
+// Define custom edge types
+const edgeTypes = {
+  smart: SmartEdge,
 };
 
 export interface QwanyxFlowProps {
@@ -188,6 +194,8 @@ export const QwanyxFlow: React.FC<QwanyxFlowProps> = ({
         onConnect={onConnect}
         onInit={setReactFlowInstance}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        defaultEdgeOptions={{ type: 'smart' }}
         fitView
         fitViewOptions={{ padding: 0.2 }}
         attributionPosition="bottom-left"

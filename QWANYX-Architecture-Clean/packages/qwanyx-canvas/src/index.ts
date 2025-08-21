@@ -9,6 +9,9 @@ export { QwanyxActorNode } from './components/nodes/QwanyxActorNode';
 export { QwanyxIconNode } from './components/nodes/QwanyxIconNode';
 export type { QwanyxIconNodeData } from './components/nodes/QwanyxIconNode';
 
+// Edge components
+export { SmartEdge } from './components/edges/SmartEdge';
+
 // Toolbar
 export { QwanyxToolbar } from './components/QwanyxToolbar';
 

@@ -394,7 +394,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               {
                 id: '1',
                 type: 'icon',
-                position: { x: 250, y: 100 },
+                position: { x: 350, y: 100 },
                 data: { 
                   label: 'Email reçu', 
                   icon: 'Email',
@@ -405,7 +405,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               {
                 id: '2',
                 type: 'icon',
-                position: { x: 250, y: 200 },
+                position: { x: 350, y: 280 },
                 data: { 
                   label: 'Analyser', 
                   icon: 'Analytics',
@@ -416,7 +416,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               {
                 id: '3',
                 type: 'icon',
-                position: { x: 250, y: 300 },
+                position: { x: 350, y: 460 },
                 data: { 
                   label: 'Répondre', 
                   icon: 'Send',
@@ -426,8 +426,8 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               }
             ]}
             initialEdges={[
-              { id: 'e1-2', source: '1', target: '2' },
-              { id: 'e2-3', source: '2', target: '3' }
+              { id: 'e1-2', source: '1', target: '2', type: 'smart' },
+              { id: 'e2-3', source: '2', target: '3', type: 'smart' }
             ]}
             height="100%"
             showToolbar={false}
