@@ -6,6 +6,8 @@ export type { QwanyxFlowProps } from './components/QwanyxFlow';
 export { QwanyxStepNode } from './components/nodes/QwanyxStepNode';
 export { QwanyxDecisionNode } from './components/nodes/QwanyxDecisionNode';
 export { QwanyxActorNode } from './components/nodes/QwanyxActorNode';
+export { QwanyxIconNode } from './components/nodes/QwanyxIconNode';
+export type { QwanyxIconNodeData } from './components/nodes/QwanyxIconNode';
 
 // Toolbar
 export { QwanyxToolbar } from './components/QwanyxToolbar';

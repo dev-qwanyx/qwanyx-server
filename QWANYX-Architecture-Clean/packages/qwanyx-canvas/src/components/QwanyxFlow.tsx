@@ -18,6 +18,7 @@ import { Card, Button, Flex, Icon, Text } from '@qwanyx/ui';
 import { QwanyxStepNode } from './nodes/QwanyxStepNode';
 import { QwanyxDecisionNode } from './nodes/QwanyxDecisionNode';
 import { QwanyxActorNode } from './nodes/QwanyxActorNode';
+import { QwanyxIconNode } from './nodes/QwanyxIconNode';
 import { QwanyxToolbar } from './QwanyxToolbar';
 
 // Define custom node types
@@ -25,6 +26,7 @@ const nodeTypes = {
   step: QwanyxStepNode,
   decision: QwanyxDecisionNode,
   actor: QwanyxActorNode,
+  icon: QwanyxIconNode,
 };
 
 export interface QwanyxFlowProps {

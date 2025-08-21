@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {
-  Container,
   Card,
   CardHeader,
   CardTitle,
@@ -110,11 +109,7 @@ export const ConfigurationPage: React.FC = () => {
   }
 
   if (!config) {
-    return (
-      <Container>
-        <Text>Loading configuration...</Text>
-      </Container>
-    )
+    return null
   }
   
   return (

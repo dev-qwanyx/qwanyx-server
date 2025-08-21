@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
 export interface IconProps {
   name: string
@@ -200,19 +200,8 @@ const iconNameMap: Record<string, string> = {
   'Palette': 'palette'
 }
 
-// Ensure Material Symbols fonts are loaded
-const ensureFontsLoaded = () => {
-  if (typeof document === 'undefined') return
-  
-  const linkId = 'qwanyx-material-symbols-font'
-  if (!document.getElementById(linkId)) {
-    const link = document.createElement('link')
-    link.id = linkId
-    link.rel = 'stylesheet'
-    link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap'
-    document.head.appendChild(link)
-  }
-}
+// Font is now loaded at app level in layout.tsx
+// No need to load it here
 
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -225,9 +214,6 @@ export const Icon: React.FC<IconProps> = ({
   onClick,
   spin = false
 }) => {
-  useEffect(() => {
-    ensureFontsLoaded()
-  }, [])
   // Convert icon name to Material Symbols name
   const symbolName = iconNameMap[name] || name
     .replace(/([a-z])([A-Z])/g, '$1_$2')
@@ -274,7 +260,7 @@ export const Icon: React.FC<IconProps> = ({
   }
   
   const iconStyle = {
-    fontFamily: fontFamily[variant],
+    fontFamily: `${fontFamily[variant]}, 'Material Symbols Outlined'`,
     fontWeight: fontWeights[weight],
     fontSize: sizes[size].fontSize,
     width: sizes[size].width,
@@ -291,6 +277,8 @@ export const Icon: React.FC<IconProps> = ({
     userSelect: 'none' as const,
     transition: 'color 200ms ease, transform 200ms ease',
     animation: spin ? 'spin 1s linear infinite' : undefined,
+    fontFeatureSettings: '"liga"',
+    WebkitFontSmoothing: 'antialiased',
     ...style
   }
   
@@ -310,6 +298,14 @@ export const Icon: React.FC<IconProps> = ({
     }
   }
   
+  // Material Symbols requires the class name to work
+  const materialClass = {
+    'outlined': 'material-symbols-outlined',
+    'filled': 'material-symbols-filled',
+    'rounded': 'material-symbols-rounded',
+    'sharp': 'material-symbols-sharp'
+  }[variant]
+
   return (
     <span 
       style={iconStyle}
@@ -317,7 +313,7 @@ export const Icon: React.FC<IconProps> = ({
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       aria-label={name}
-      className={className}
+      className={`${materialClass} ${className || ''}`}
     >
       {symbolName}
     </span>

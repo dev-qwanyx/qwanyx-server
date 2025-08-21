@@ -9,7 +9,8 @@ import {
   Badge,
   UserProfile,
   SearchBar,
-  Collapsible
+  Collapsible,
+  Tooltip
 } from '@qwanyx/ui'
 import { QwanyxFlowStandalone } from '@qwanyx/canvas'
 
@@ -95,24 +96,38 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
 
         {/* Right side - Actions */}
         <Flex align="center" gap="sm">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => console.log('Test process')}
-          >
-            <Icon name="PlayArrow" size="sm" />
-            Tester
-          </Button>
+          <Tooltip content="Tester le workflow">
+            <Button 
+              variant="ghost" 
+              size="md"
+              onClick={() => console.log('Test process')}
+              style={{
+                padding: '12px',
+                minWidth: 'auto',
+                width: '48px',
+                height: '48px'
+              }}
+            >
+              <Icon name="PlayArrow" size="md" />
+            </Button>
+          </Tooltip>
           
-          <Button 
-            variant="primary" 
-            size="sm"
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            <Icon name="Save" size="sm" />
-            {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
-          </Button>
+          <Tooltip content="Sauvegarder le workflow">
+            <Button 
+              variant="ghost" 
+              size="md"
+              onClick={handleSave}
+              disabled={isSaving}
+              style={{
+                padding: '12px',
+                minWidth: 'auto',
+                width: '48px',
+                height: '48px'
+              }}
+            >
+              <Icon name="Save" size="md" />
+            </Button>
+          </Tooltip>
         </Flex>
       </div>
 
@@ -375,8 +390,45 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
           backgroundColor: '#fafafa'
         }}>
           <QwanyxFlowStandalone
-            initialNodes={[]}
-            initialEdges={[]}
+            initialNodes={[
+              {
+                id: '1',
+                type: 'icon',
+                position: { x: 250, y: 100 },
+                data: { 
+                  label: 'Email reçu', 
+                  icon: 'Email',
+                  description: 'Déclencheur: Reception d\'un nouvel email',
+                  color: 'primary'
+                }
+              },
+              {
+                id: '2',
+                type: 'icon',
+                position: { x: 250, y: 200 },
+                data: { 
+                  label: 'Analyser', 
+                  icon: 'Analytics',
+                  description: 'Analyse du contenu avec IA',
+                  color: 'accent'
+                }
+              },
+              {
+                id: '3',
+                type: 'icon',
+                position: { x: 250, y: 300 },
+                data: { 
+                  label: 'Répondre', 
+                  icon: 'Send',
+                  description: 'Envoyer une réponse automatique',
+                  color: 'success'
+                }
+              }
+            ]}
+            initialEdges={[
+              { id: 'e1-2', source: '1', target: '2' },
+              { id: 'e2-3', source: '2', target: '3' }
+            ]}
             height="100%"
             showToolbar={false}
           />
@@ -546,29 +598,6 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
             </div>
           </div>
           
-          {/* Bottom Actions */}
-          <div style={{ 
-            padding: '12px', 
-            borderTop: '1px solid var(--qwanyx-border)' 
-          }}>
-            <Button 
-              fullWidth 
-              variant="primary" 
-              size="sm"
-              onClick={handleSave}
-              disabled={isSaving}
-            >
-              <Icon name="Save" size="sm" />
-              {isSaving ? 'Saving...' : 'Save Current Flow'}
-            </Button>
-            <Text size="sm" style={{ fontSize: '12px', 
-              marginTop: '8px', 
-              textAlign: 'center',
-              color: 'var(--qwanyx-text-secondary)' 
-            }}>
-              Last saved: Never
-            </Text>
-          </div>
         </div>
       </div>
     </div>

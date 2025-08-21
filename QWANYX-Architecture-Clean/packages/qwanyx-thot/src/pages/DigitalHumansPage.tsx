@@ -272,11 +272,7 @@ export const DigitalHumansPage: React.FC = () => {
   }
 
   if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
-        <Text size="lg">Chargement des Digital Humans...</Text>
-      </div>
-    )
+    return null
   }
 
   if (error) {
