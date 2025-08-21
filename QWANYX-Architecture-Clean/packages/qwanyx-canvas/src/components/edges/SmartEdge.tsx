@@ -12,6 +12,10 @@ export const SmartEdge: React.FC<EdgeProps> = ({
   style = {},
   markerEnd,
 }) => {
+  // Adjust connection points to icon center
+  // Since handles are at 50%, 50% of node, we need to find the actual icon center
+  // The icon is 64px with 6px padding, so it's offset from the node center
+  
   // Calculate the angle between source and target
   const dx = targetX - sourceX;
   const dy = targetY - sourceY;

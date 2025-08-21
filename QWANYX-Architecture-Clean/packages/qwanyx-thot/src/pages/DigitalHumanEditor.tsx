@@ -13,7 +13,7 @@ import {
   Collapsible,
   Tooltip
 } from '@qwanyx/ui'
-import { QwanyxFlowStandalone } from '@qwanyx/canvas'
+import { QFlow, QNode, QEdge } from '@qwanyx/canvas'
 
 interface DigitalHumanEditorProps {
   dhId?: string
@@ -31,23 +31,24 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
   const [searchQuery, setSearchQuery] = useState('')
   
   // Generate consistent ObjectIds for the demo
-  const nodeIds = {
-    emailReceived: new ObjectId().toHexString(),
-    analyze: new ObjectId().toHexString(),
-    respond: new ObjectId().toHexString(),
+  // Using useMemo to ensure they don't regenerate on every render
+  const nodeIds = React.useMemo(() => ({
+    emailReceived: new ObjectId(),
+    analyze: new ObjectId(),
+    respond: new ObjectId(),
     // Internal flow nodes for "Analyze"
-    extractText: new ObjectId().toHexString(),
-    sentiment: new ObjectId().toHexString(),
-    categorize: new ObjectId().toHexString()
-  }
+    extractText: new ObjectId(),
+    sentiment: new ObjectId(),
+    categorize: new ObjectId()
+  }), [])
   
-  const edgeIds = {
-    emailToAnalyze: new ObjectId().toHexString(),
-    analyzeToRespond: new ObjectId().toHexString(),
+  const edgeIds = React.useMemo(() => ({
+    emailToAnalyze: new ObjectId(),
+    analyzeToRespond: new ObjectId(),
     // Internal flow edges
-    extractToSentiment: new ObjectId().toHexString(),
-    sentimentToCateg: new ObjectId().toHexString()
-  }
+    extractToSentiment: new ObjectId(),
+    sentimentToCateg: new ObjectId()
+  }), [])
 
   const handleSave = useCallback(async () => {
     setIsSaving(true)
@@ -62,6 +63,82 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
     // Navigate directly to DH list (thot tab)
     window.location.href = '/dashboard?tab=thot'
   }
+  
+  // Create stable nodes and edges arrays
+  // Convert ObjectIds to strings for React prop passing
+  const demoNodes = React.useMemo(() => {
+    const nodes = [
+      {
+        ['_id']: nodeIds.emailReceived.toHexString(),
+        type: 'icon' as const,
+        x: 350,
+        y: 100,
+        data: { 
+          label: 'Email reçu', 
+          icon: 'Email',
+          description: 'Déclencheur: Reception d\'un nouvel email',
+          color: 'primary'
+        }
+      },
+      {
+        ['_id']: nodeIds.analyze.toHexString(),
+        type: 'icon' as const,
+        x: 350,
+        y: 280,
+        data: { 
+          label: 'Analyser', 
+          icon: 'Analytics',
+          description: 'Analyse du contenu avec IA',
+          color: 'success'
+        }
+      },
+      {
+        ['_id']: nodeIds.respond.toHexString(),
+        type: 'icon' as const,
+        x: 350,
+        y: 460,
+        data: { 
+          label: 'Répondre', 
+          icon: 'Send',
+          description: 'Envoyer une réponse automatique',
+          color: 'success'
+        }
+      }
+    ]
+    console.log('Created nodes with _id:', nodes[0]._id)
+    return nodes
+  }, [nodeIds])
+  
+  const demoEdges = React.useMemo(() => [
+    { 
+      ['_id']: edgeIds.emailToAnalyze.toHexString(),
+      s: nodeIds.emailReceived.toHexString(),
+      t: nodeIds.analyze.toHexString(),
+      ty: 'data' as const,
+      w: 0.8,
+      st: {
+        c: '#666',
+        th: 2,
+        p: 'solid' as const
+      }
+    },
+    { 
+      ['_id']: edgeIds.analyzeToRespond.toHexString(),
+      s: nodeIds.analyze.toHexString(),
+      t: nodeIds.respond.toHexString(),
+      ty: 'control' as const,
+      w: 0.9,
+      st: {
+        c: '#666',
+        th: 2,
+        p: 'solid' as const,
+        a: true
+      },
+      m: {
+        l: 'After analysis'
+      }
+    }
+  ], [nodeIds, edgeIds])
 
   return (
     <div style={{
@@ -409,108 +486,10 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
           position: 'relative',
           backgroundColor: '#fafafa'
         }}>
-          <QwanyxFlowStandalone
-            initialNodes={[
-              {
-                id: nodeIds.emailReceived,
-                type: 'icon',
-                position: { x: 350, y: 100 },
-                data: { 
-                  label: 'Email reçu', 
-                  icon: 'Email',
-                  description: 'Déclencheur: Reception d\'un nouvel email',
-                  color: 'primary'
-                }
-              },
-              {
-                id: nodeIds.analyze,
-                type: 'icon',
-                position: { x: 350, y: 280 },
-                data: { 
-                  label: 'Analyser', 
-                  icon: 'Analytics',
-                  description: 'Analyse du contenu avec IA',
-                  color: 'accent',
-                  // This node has an internal flow
-                  internalFlow: {
-                    nodes: [
-                      {
-                        id: nodeIds.extractText,
-                        type: 'icon',
-                        position: { x: 200, y: 100 },
-                        data: {
-                          label: 'Extract Text',
-                          icon: 'TextSnippet',
-                          color: 'primary'
-                        }
-                      },
-                      {
-                        id: nodeIds.sentiment,
-                        type: 'icon',
-                        position: { x: 200, y: 250 },
-                        data: {
-                          label: 'Sentiment',
-                          icon: 'Mood',
-                          color: 'warning'
-                        }
-                      },
-                      {
-                        id: nodeIds.categorize,
-                        type: 'icon',
-                        position: { x: 200, y: 400 },
-                        data: {
-                          label: 'Categorize',
-                          icon: 'Category',
-                          color: 'success'
-                        }
-                      }
-                    ],
-                    edges: [
-                      { 
-                        id: edgeIds.extractToSentiment,
-                        source: nodeIds.extractText,
-                        target: nodeIds.sentiment,
-                        type: 'smart'
-                      },
-                      { 
-                        id: edgeIds.sentimentToCateg,
-                        source: nodeIds.sentiment,
-                        target: nodeIds.categorize,
-                        type: 'smart'
-                      }
-                    ]
-                  }
-                }
-              },
-              {
-                id: nodeIds.respond,
-                type: 'icon',
-                position: { x: 350, y: 460 },
-                data: { 
-                  label: 'Répondre', 
-                  icon: 'Send',
-                  description: 'Envoyer une réponse automatique',
-                  color: 'success'
-                }
-              }
-            ]}
-            initialEdges={[
-              { 
-                id: edgeIds.emailToAnalyze,
-                source: nodeIds.emailReceived,
-                target: nodeIds.analyze,
-                type: 'smart'
-              },
-              { 
-                id: edgeIds.analyzeToRespond,
-                source: nodeIds.analyze,
-                target: nodeIds.respond,
-                type: 'smart'
-              }
-            ]}
-            height="100%"
-            showToolbar={false}
-            showControls={false}
+          {console.log('Passing to QFlow:', { nodes: demoNodes, edges: demoEdges })}
+          <QFlow
+            nodes={demoNodes}
+            edges={demoEdges}
           />
         </div>
 

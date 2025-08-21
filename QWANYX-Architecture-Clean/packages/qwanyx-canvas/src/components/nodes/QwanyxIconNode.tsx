@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Handle, Position, NodeProps, Node, Edge } from 'reactflow'
+import { Handle, Position, NodeProps, Node, Edge, internalsSymbol } from 'reactflow'
 import { Icon, Text, Tooltip } from '@qwanyx/ui'
 import { FlowModal } from '../FlowModal'
 
@@ -60,80 +60,57 @@ export const QwanyxIconNode: React.FC<NodeProps<QwanyxIconNodeData>> = ({
         onMouseLeave={() => setIsDragging(false)}
         onDoubleClick={handleDoubleClick}
       >
-      {/* All handles at center of icon (32px from top of icon + 6px padding = 38px) */}
-      {/* Top handles */}
-      <Handle
-        type="target"
-        position={Position.Top}
-        id="top"
-        style={{
-          position: 'absolute',
-          top: '38px', // Center of 64px icon
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '10px',
-          height: '10px',
-          background: 'transparent',
-          border: 'none',
-          zIndex: 10
-        }}
-      />
-      
-      {/* Bottom handles */}
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="bottom"
-        style={{
-          position: 'absolute',
-          top: '38px', // Center of 64px icon
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '10px',
-          height: '10px',
-          background: 'transparent',
-          border: 'none',
-          zIndex: 10
-        }}
-      />
-      
-      {/* Left handles */}
+      {/* Handles at icon center - simple approach */}
       <Handle
         type="target"
         position={Position.Left}
-        id="left"
         style={{
-          position: 'absolute',
-          top: '38px', // Center of 64px icon
-          left: '50%',
-          transform: 'translateY(-50%)',
-          width: '10px',
-          height: '10px',
           background: 'transparent',
           border: 'none',
-          zIndex: 10
+          width: '1px',
+          height: '1px',
+          top: '38px', // Center of icon
+          left: '0'
         }}
       />
-      
-      {/* Right handles */}
       <Handle
         type="source"
         position={Position.Right}
-        id="right"
         style={{
-          position: 'absolute',
-          top: '38px', // Center of 64px icon
-          left: '50%',
-          transform: 'translateY(-50%)',
-          width: '10px',
-          height: '10px',
           background: 'transparent',
           border: 'none',
-          zIndex: 10
+          width: '1px',
+          height: '1px',
+          top: '38px', // Center of icon
+          right: '0'
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Top}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          width: '1px',
+          height: '1px',
+          top: '0',
+          left: '50%'
+        }}
+      />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          width: '1px',
+          height: '1px',
+          bottom: '0',
+          left: '50%'
         }}
       />
 
-      {/* Icon with frost effect background */}
+      {/* Icon container */}
       {!isDragging && !dragging ? (
         <Tooltip content={data.description || data.label}>
           <div

@@ -2,6 +2,10 @@
 export { QwanyxFlow, QwanyxFlowStandalone } from './components/QwanyxFlow';
 export type { QwanyxFlowProps } from './components/QwanyxFlow';
 
+// New QFlow component (our custom implementation)
+export { QFlow } from './components/QFlow';
+export type { QNode, QEdge } from './components/QFlow';
+
 // Node components
 export { QwanyxStepNode } from './components/nodes/QwanyxStepNode';
 export { QwanyxDecisionNode } from './components/nodes/QwanyxDecisionNode';

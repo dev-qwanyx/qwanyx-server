@@ -20,7 +20,9 @@ import { QwanyxDecisionNode } from './nodes/QwanyxDecisionNode';
 import { QwanyxActorNode } from './nodes/QwanyxActorNode';
 import { QwanyxIconNode } from './nodes/QwanyxIconNode';
 import { SmartEdge } from './edges/SmartEdge';
+import { HiddenEdge } from './edges/HiddenEdge';
 import { QwanyxToolbar } from './QwanyxToolbar';
+import { CustomEdgeRenderer } from './CustomEdgeRenderer';
 
 // Define custom node types
 const nodeTypes = {
@@ -33,6 +35,7 @@ const nodeTypes = {
 // Define custom edge types
 const edgeTypes = {
   smart: SmartEdge,
+  hidden: HiddenEdge,
 };
 
 export interface QwanyxFlowProps {
@@ -45,6 +48,7 @@ export interface QwanyxFlowProps {
   showToolbar?: boolean;
   readOnly?: boolean;
   showControls?: boolean;
+  useCustomEdges?: boolean;
 }
 
 export const QwanyxFlow: React.FC<QwanyxFlowProps> = ({
@@ -57,6 +61,7 @@ export const QwanyxFlow: React.FC<QwanyxFlowProps> = ({
   showToolbar = true,
   readOnly = false,
   showControls = true,
+  useCustomEdges = false,
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -190,14 +195,17 @@ export const QwanyxFlow: React.FC<QwanyxFlowProps> = ({
       
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={useCustomEdges ? edges.map(e => ({ ...e, type: 'hidden' })) : edges}
         onNodesChange={!readOnly ? onNodesChange : undefined}
         onEdgesChange={!readOnly ? onEdgesChange : undefined}
         onConnect={onConnect}
         onInit={setReactFlowInstance}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
-        defaultEdgeOptions={{ type: 'smart' }}
+        defaultEdgeOptions={{ type: useCustomEdges ? 'hidden' : 'smart' }}
+        elementsSelectable={!readOnly}
+        nodesConnectable={!useCustomEdges}
+        edgesUpdatable={!useCustomEdges}
         fitView
         fitViewOptions={{ padding: 0.2 }}
         proOptions={{ hideAttribution: true }}
@@ -209,6 +217,7 @@ export const QwanyxFlow: React.FC<QwanyxFlowProps> = ({
           color="#e5e7eb"
         />
         {showControls && <Controls />}
+        {useCustomEdges && <CustomEdgeRenderer />}
       </ReactFlow>
     </div>
   );
