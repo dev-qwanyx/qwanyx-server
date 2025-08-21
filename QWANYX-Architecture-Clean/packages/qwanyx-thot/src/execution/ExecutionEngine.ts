@@ -1,23 +1,19 @@
 // Execution Engine - runs flows for Digital Humans
 import { 
   ExecutionContext, 
-  INode, 
   Flow, 
-  Edge, 
   NodeResult,
   MemoryService,
   ApiService,
   LogService,
   LogEntry
 } from './types'
-import { NodeRegistry } from './NodeRegistry'
 
 export class ExecutionEngine {
-  private registry: NodeRegistry
   private activeExecutions: Map<string, ExecutionState> = new Map()
   
   constructor() {
-    this.registry = NodeRegistry.getInstance()
+    // Registry will be used when needed
   }
   
   // Execute a flow from a trigger

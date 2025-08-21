@@ -191,13 +191,15 @@ export class ResponseNode extends BaseNode {
     // For now, mock the sending
     await this.log(context, 'info', 'Sending email', {
       to: email?.from,
-      subject: `Re: ${email?.subject || 'Your inquiry'}`
+      subject: `Re: ${email?.subject || 'Your inquiry'}`,
+      body: text
     })
     
     return {
       sent: true,
       to: email?.from,
       subject: `Re: ${email?.subject || 'Your inquiry'}`,
+      body: text,
       timestamp: new Date()
     }
   }

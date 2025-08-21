@@ -103,7 +103,10 @@ export class NodeRegistry {
         position: data.position,
         data: data.data,
         execute: async () => ({ success: true }),
-        validate: () => ({ valid: true })
+        validate: () => ({ valid: true }),
+        getInputSchema: () => undefined,
+        getOutputSchema: () => undefined,
+        getConfigSchema: () => undefined
       }),
       defaultData: {
         host: '',

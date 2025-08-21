@@ -57,7 +57,7 @@ export default function DashboardPage() {
       try {
         const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
         console.log('Fetching user count...')
-        const response = await fetch('http://135.181.72.183:5002/api/workspaces/autodin/users', {
+        const response = await fetch('http://localhost:5002/users', {
           headers: {
             'Authorization': `Bearer ${storedToken}`,
             'Content-Type': 'application/json',
@@ -299,25 +299,21 @@ export default function DashboardPage() {
       }
     ]
     
-    // Users menu only for admin and superuser
-    if (currentUserRole === 'admin' || currentUserRole === 'superuser') {
-      items.push({
-        id: 'users',
-        label: 'Utilisateurs',
-        icon: 'People',
-        badge: userCount !== null ? userCount.toString() : undefined
-      })
-    }
+    // Users menu - available to everyone for now
+    items.push({
+      id: 'users',
+      label: 'Utilisateurs',
+      icon: 'People',
+      badge: userCount !== null ? userCount.toString() : undefined
+    })
     
-    // Digital Team only for admin and superuser
-    if (currentUserRole === 'admin' || currentUserRole === 'superuser') {
-      items.push({
-        id: 'thot',
-        label: 'Digital Team',
-        icon: 'SmartToy',
-        badge: dhCount !== null ? dhCount.toString() : undefined
-      })
-    }
+    // Digital Team - available to everyone for now
+    items.push({
+      id: 'thot',
+      label: 'Digital Team',
+      icon: 'SmartToy',
+      badge: dhCount !== null ? dhCount.toString() : undefined
+    })
     
     // Continue with other items that everyone can see
     items.push(

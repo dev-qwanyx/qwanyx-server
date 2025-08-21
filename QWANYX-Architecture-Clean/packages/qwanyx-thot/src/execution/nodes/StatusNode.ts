@@ -5,7 +5,8 @@ export class StatusNode extends BaseNode {
   static nodeType = 'status';
   type = 'status';
   
-  async execute(context: ExecutionContext): Promise<NodeResult> {
+  async execute(_context: ExecutionContext): Promise<NodeResult> {
+    // context is used via parent class methods (this.log, this.getMemory)
     this.log('Checking DH status');
     
     // Simple alive check

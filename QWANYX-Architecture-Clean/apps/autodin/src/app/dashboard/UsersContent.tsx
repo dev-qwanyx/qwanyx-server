@@ -64,7 +64,7 @@ export default function UsersContent() {
       console.log('Fetching users with token:', token ? 'Present' : 'Missing')
       console.log('Using workspace:', workspace)
       
-      const response = await fetch('http://135.181.72.183:5002/api/workspaces/autodin/users', {
+      const response = await fetch('http://localhost:5002/users', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -235,7 +235,7 @@ export default function UsersContent() {
       const token = localStorage.getItem('autodin_token')
       const newStatus = user.status === 'blocked' ? 'active' : 'blocked'
       
-      const response = await fetch(`http://135.181.72.183:5002/api/users/${user.id}/status`, {
+      const response = await fetch(`http://localhost:5002/api/users/${user.id}/status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -268,7 +268,7 @@ export default function UsersContent() {
     try {
       const token = localStorage.getItem('autodin_token')
       
-      const response = await fetch(`http://135.181.72.183:5002/api/users/${selectedUser.id}`, {
+      const response = await fetch(`http://localhost:5002/api/users/${selectedUser.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -310,7 +310,7 @@ export default function UsersContent() {
       
       console.log('Updating role for user:', userId, 'to:', newRole)
       
-      const response = await fetch(`http://135.181.72.183:5002/api/workspaces/autodin/users/${userId}`, {
+      const response = await fetch(`http://localhost:5002/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

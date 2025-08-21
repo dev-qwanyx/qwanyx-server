@@ -1,4 +1,5 @@
 import { INode, ExecutionContext, NodeResult, ValidationResult } from './types';
+import { z } from 'zod';
 
 export abstract class BaseNode implements INode {
   id: string;
@@ -25,6 +26,19 @@ export abstract class BaseNode implements INode {
   
   validate(): ValidationResult {
     return { valid: true };
+  }
+  
+  // Schema methods
+  getInputSchema(): z.ZodSchema | undefined {
+    return undefined;
+  }
+  
+  getOutputSchema(): z.ZodSchema | undefined {
+    return undefined;
+  }
+  
+  getConfigSchema(): z.ZodSchema | undefined {
+    return undefined;
   }
   
   // Helper methods for node implementations

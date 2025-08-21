@@ -39,9 +39,9 @@ export interface INode {
   validate?(): ValidationResult
   
   // Metadata
-  getInputSchema?(): z.ZodSchema
-  getOutputSchema?(): z.ZodSchema
-  getConfigSchema?(): z.ZodSchema
+  getInputSchema(): z.ZodSchema | undefined
+  getOutputSchema(): z.ZodSchema | undefined
+  getConfigSchema(): z.ZodSchema | undefined
 }
 
 // Result from node execution

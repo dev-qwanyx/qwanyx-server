@@ -357,7 +357,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               if (!token || !dhContext?.dhFullData) return
               
               try {
-                const API_URL = 'http://135.181.72.183:5002'
+                const API_URL = 'http://localhost:5002'
                 const endpoint = checked ? 'start' : 'stop'
                 
                 // Call API to start/stop DH
