@@ -105,7 +105,6 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
         }
       }
     ]
-    console.log('Created nodes with _id:', nodes[0]._id)
     return nodes
   }, [nodeIds])
   
@@ -486,7 +485,6 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
           position: 'relative',
           backgroundColor: '#fafafa'
         }}>
-          {console.log('Passing to QFlow:', { nodes: demoNodes, edges: demoEdges })}
           <QFlow
             nodes={demoNodes}
             edges={demoEdges}
