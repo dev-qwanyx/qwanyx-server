@@ -107,12 +107,12 @@ const Edge = memo<EdgeProps>(({ edge, source, target, getIdString }) => {
         onMouseLeave={() => setIsHovered(false)}
       />
       
-      {/* Visible edge */}
+      {/* Visible edge - simple with opacity */}
       <path
         d={path}
         stroke={edge.st?.c || '#666'}
         strokeWidth={isHovered ? 3 : (edge.st?.th || 2)}
-        strokeOpacity={isHovered ? 0.8 : 0.5}
+        strokeOpacity={isHovered ? 0.7 : 0.4}
         strokeDasharray={edge.st?.p === 'dashed' ? '5,5' : edge.st?.p === 'dotted' ? '2,2' : undefined}
         fill="none"
         style={{
@@ -417,6 +417,8 @@ export const QFlow: React.FC<QFlowProps> = ({
                   color: '#2C3E50',
                   maxWidth: '80px',
                   textAlign: 'center',
+                  position: 'relative',
+                  zIndex: 10,
                   textShadow: `
                     0 0 3px rgba(255, 255, 255, 1),
                     0 0 6px rgba(255, 255, 255, 1),
