@@ -483,6 +483,37 @@ export const QFlow: React.FC<QFlowProps> = ({
         }
       }
 
+      // Ctrl+L - link selected nodes (first is source, rest are targets)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+        e.preventDefault()
+        if (selectedNodeIds.size >= 2) {
+          const nodeIdsArray = Array.from(selectedNodeIds)
+          const sourceId = nodeIdsArray[0] // First selected is source
+          const targetIds = nodeIdsArray.slice(1) // Rest are targets
+          
+          // Create edges from source to each target
+          const newEdges: QEdge[] = targetIds.map(targetId => ({
+            _id: new ObjectId(),
+            s: sourceId,
+            t: targetId,
+            ty: 'data' as const,
+            w: 1,
+            m: {
+              l: 'Connected'
+            }
+          }))
+          
+          // Add new edges to existing ones
+          const updatedEdges = [...edges, ...newEdges]
+          saveToHistory(nodes, updatedEdges)
+          setEdges(updatedEdges)
+          onEdgesChange?.(updatedEdges)
+          
+          // Clear selection after linking
+          setSelectedNodeIds(new Set())
+        }
+      }
+      
       // Escape - deselect
       if (e.key === 'Escape') {
         setSelectedNodeIds(new Set())
