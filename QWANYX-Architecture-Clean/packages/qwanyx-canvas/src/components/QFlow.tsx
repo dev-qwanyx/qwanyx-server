@@ -67,9 +67,11 @@ interface EdgeProps {
   source: QNode
   target: QNode
   getIdString: (id: any) => string
+  isSelected: boolean
+  onClick: (e: React.MouseEvent) => void
 }
 
-const Edge = memo<EdgeProps>(({ edge, source, target, getIdString }) => {
+const Edge = memo<EdgeProps>(({ edge, source, target, getIdString, isSelected, onClick }) => {
   const [isHovered, setIsHovered] = useState(false)
   
   // Calculate path - nodes are already centered due to transform
@@ -111,23 +113,28 @@ const Edge = memo<EdgeProps>(({ edge, source, target, getIdString }) => {
       <path
         d={path}
         stroke="transparent"
-        strokeWidth={10}
+        strokeWidth={20}
         fill="none"
         style={{ cursor: 'pointer' }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onMouseDown={(e) => {
+          e.stopPropagation()
+          onClick(e)
+        }}
       />
       
-      {/* Visible edge - simple with opacity */}
+      {/* Visible edge - black when selected */}
       <path
         d={path}
-        stroke={edge.st?.c || '#666'}
-        strokeWidth={isHovered ? 3 : (edge.st?.th || 2)}
-        strokeOpacity={isHovered ? 0.7 : 0.4}
+        stroke={isSelected ? '#000000' : (edge.st?.c || '#666')}
+        strokeWidth={isSelected ? 3 : (isHovered ? 3 : (edge.st?.th || 2))}
+        strokeOpacity={isSelected ? 1 : (isHovered ? 0.7 : 0.4)}
         strokeDasharray={edge.st?.p === 'dashed' ? '5,5' : edge.st?.p === 'dotted' ? '2,2' : undefined}
         fill="none"
         style={{
-          filter: isHovered ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : undefined
+          filter: isHovered ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : undefined,
+          pointerEvents: 'none'  // Let the invisible path handle clicks
         }}
       />
       
@@ -169,7 +176,7 @@ export const QFlow: React.FC<QFlowProps> = ({
   const [nodes, setNodes] = useState(initialNodes)
   const [edges, setEdges] = useState(initialEdges)
   const [selectedNodeIds, setSelectedNodeIds] = useState<Set<string>>(new Set())
-  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null)
+  const [selectedEdgeIds, setSelectedEdgeIds] = useState<Set<string>>(new Set())
   const [copiedNode, setCopiedNode] = useState<QNode | null>(null)
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
@@ -178,6 +185,11 @@ export const QFlow: React.FC<QFlowProps> = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [panStart, setPanStart] = useState({ x: 0, y: 0 })
   const [renderTrigger, setRenderTrigger] = useState(0)
+  
+  // Selection rectangle state
+  const [isSelecting, setIsSelecting] = useState(false)
+  const [selectionRect, setSelectionRect] = useState({ x: 0, y: 0, width: 0, height: 0 })
+  const [selectionStart, setSelectionStart] = useState({ x: 0, y: 0 })
   
   // Save state
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
@@ -430,15 +442,23 @@ export const QFlow: React.FC<QFlowProps> = ({
         return
       }
 
-      // Delete key - delete selected nodes or edge
+      // Delete key - delete selected nodes AND edges
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (selectedNodeIds.size > 0) {
-          // Save state before deletion
+        if (selectedNodeIds.size > 0 || selectedEdgeIds.size > 0) {
+          // Delete selected nodes
           const newNodes = nodes.filter(n => !selectedNodeIds.has(getIdString(n._id)))
-          const newEdges = edges.filter(e => 
-            !selectedNodeIds.has(getIdString(e.s)) && 
-            !selectedNodeIds.has(getIdString(e.t))
-          )
+          
+          // Delete selected edges AND edges connected to deleted nodes
+          const newEdges = edges.filter(e => {
+            const edgeId = getIdString(e._id)
+            const sourceId = getIdString(e.s)
+            const targetId = getIdString(e.t)
+            
+            // Remove if edge is selected OR if its source/target is deleted
+            return !selectedEdgeIds.has(edgeId) && 
+                   !selectedNodeIds.has(sourceId) && 
+                   !selectedNodeIds.has(targetId)
+          })
           
           saveToHistory(newNodes, newEdges)
           setNodes(newNodes)
@@ -446,12 +466,7 @@ export const QFlow: React.FC<QFlowProps> = ({
           onNodesChange?.(newNodes)
           onEdgesChange?.(newEdges)
           setSelectedNodeIds(new Set())
-        } else if (selectedEdgeId) {
-          const newEdges = edges.filter(e => getIdString(e._id) !== selectedEdgeId)
-          saveToHistory(nodes, newEdges)
-          setEdges(newEdges)
-          onEdgesChange?.(newEdges)
-          setSelectedEdgeId(null)
+          setSelectedEdgeIds(new Set())
         }
       }
 
@@ -517,13 +532,13 @@ export const QFlow: React.FC<QFlowProps> = ({
       // Escape - deselect
       if (e.key === 'Escape') {
         setSelectedNodeIds(new Set())
-        setSelectedEdgeId(null)
+        setSelectedEdgeIds(new Set())
       }
     }
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [selectedNodeIds, selectedEdgeId, copiedNode, nodes, edges, onNodesChange, onEdgesChange, undo, redo, saveToHistory, handleSave])
+  }, [selectedNodeIds, selectedEdgeIds, copiedNode, nodes, edges, onNodesChange, onEdgesChange, undo, redo, saveToHistory, handleSave])
 
   // Handle zoom with mouse wheel
   const handleWheel = useCallback((e: React.WheelEvent) => {
@@ -541,22 +556,49 @@ export const QFlow: React.FC<QFlowProps> = ({
                      (target.parentElement?.parentElement === containerRef.current && target.tagName === 'svg')
     
     if (isCanvas) {
-      // Deselect all nodes when clicking on canvas
-      setSelectedNodeIds(new Set())
-      
-      // Start panning
-      setIsPanning(true)
-      setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y })
+      if (e.shiftKey) {
+        // Start selection rectangle with Shift+drag
+        const rect = containerRef.current?.getBoundingClientRect()
+        if (rect) {
+          const startX = (e.clientX - rect.left - pan.x) / zoom
+          const startY = (e.clientY - rect.top - pan.y) / zoom
+          setIsSelecting(true)
+          setSelectionStart({ x: startX, y: startY })
+          setSelectionRect({ x: startX, y: startY, width: 0, height: 0 })
+        }
+      } else {
+        // Regular drag - pan the canvas
+        setIsPanning(true)
+        setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y })
+        
+        // Clear selection if not holding shift
+        setSelectedNodeIds(new Set())
+        setSelectedEdgeIds(new Set())
+      }
     }
   }, [pan])
 
-  // Handle panning
+  // Handle panning and selection
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (isPanning) {
       setPan({
         x: e.clientX - panStart.x,
         y: e.clientY - panStart.y
       })
+    } else if (isSelecting) {
+      // Update selection rectangle
+      const rect = containerRef.current?.getBoundingClientRect()
+      if (rect) {
+        const currentX = (e.clientX - rect.left - pan.x) / zoom
+        const currentY = (e.clientY - rect.top - pan.y) / zoom
+        
+        const x = Math.min(selectionStart.x, currentX)
+        const y = Math.min(selectionStart.y, currentY)
+        const width = Math.abs(currentX - selectionStart.x)
+        const height = Math.abs(currentY - selectionStart.y)
+        
+        setSelectionRect({ x, y, width, height })
+      }
     } else if (draggedNode) {
       const node = nodes.find(n => {
         const nId = n._id || (n as any).id
@@ -577,10 +619,41 @@ export const QFlow: React.FC<QFlowProps> = ({
         // Don't call onNodesChange during drag - we'll do it on mouse up
       }
     }
-  }, [isPanning, panStart, draggedNode, nodes, pan, zoom, dragOffset, getIdString])
+  }, [isPanning, panStart, isSelecting, selectionStart, draggedNode, nodes, pan, zoom, dragOffset, getIdString])
 
-  // Stop panning or dragging
+  // Stop panning, dragging, or selecting
   const handleMouseUp = useCallback(() => {
+    // If we were selecting, find items in rectangle
+    if (isSelecting) {
+      const rect = selectionRect
+      
+      // Find nodes in selection rectangle
+      const selectedNodes = new Set<string>()
+      nodes.forEach(node => {
+        const nodeX = node.x
+        const nodeY = node.y
+        
+        // Check if node center is within rectangle
+        if (nodeX >= rect.x && nodeX <= rect.x + rect.width &&
+            nodeY >= rect.y && nodeY <= rect.y + rect.height) {
+          selectedNodes.add(getIdString(node._id))
+        }
+      })
+      
+      // Update selection
+      setSelectedNodeIds(prev => {
+        // If we found any nodes, add them to the existing selection
+        if (selectedNodes.size > 0) {
+          // Add to existing selection
+          return new Set([...prev, ...selectedNodes])
+        }
+        return prev
+      })
+      
+      setIsSelecting(false)
+      setSelectionRect({ x: 0, y: 0, width: 0, height: 0 })
+    }
+    
     // If we were dragging a node, save to history and notify parent
     if (draggedNode) {
       isDragging.current = false
@@ -589,7 +662,7 @@ export const QFlow: React.FC<QFlowProps> = ({
     }
     setIsPanning(false)
     setDraggedNode(null)
-  }, [draggedNode, nodes, edges, saveToHistory, onNodesChange])
+  }, [isSelecting, selectionRect, selectionStart, draggedNode, nodes, edges, saveToHistory, onNodesChange, getIdString])
 
   // Start dragging a node
   const handleNodeMouseDown = useCallback((e: React.MouseEvent, nodeId: string | ObjectId) => {
@@ -621,11 +694,12 @@ export const QFlow: React.FC<QFlowProps> = ({
           return newSet
         })
       } else {
-        // Regular click: Select only this node
+        // Regular click: Select only this node (clear edges)
         setSelectedNodeIds(new Set([nodeIdStr]))
+        setSelectedEdgeIds(new Set())  // Clear edges on regular click
       }
       
-      setSelectedEdgeId(null)
+      // Mixed selection allowed with modifiers
       
       // Start dragging only if not using modifiers
       if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
@@ -736,7 +810,7 @@ export const QFlow: React.FC<QFlowProps> = ({
             left: 0,
             width: '100%',
             height: '100%',
-            pointerEvents: 'none',
+            pointerEvents: 'auto',  // Enable pointer events for edge selection
             overflow: 'visible'
           }}
         >
@@ -765,6 +839,36 @@ export const QFlow: React.FC<QFlowProps> = ({
                 source={source}
                 target={target}
                 getIdString={getIdString}
+                isSelected={selectedEdgeIds.has(getIdString(edgeId))}
+                onClick={(e: React.MouseEvent) => {
+                  const edgeIdStr = getIdString(edgeId)
+                  
+                  if (e.shiftKey) {
+                    // Shift+click: Add to selection
+                    setSelectedEdgeIds(prev => {
+                      const newSet = new Set(prev)
+                      newSet.add(edgeIdStr)
+                      return newSet
+                    })
+                  } else if (e.ctrlKey || e.metaKey) {
+                    // Ctrl/Cmd+click: Toggle selection
+                    setSelectedEdgeIds(prev => {
+                      const newSet = new Set(prev)
+                      if (newSet.has(edgeIdStr)) {
+                        newSet.delete(edgeIdStr)
+                      } else {
+                        newSet.add(edgeIdStr)
+                      }
+                      return newSet
+                    })
+                  } else {
+                    // Regular click: Select only this edge (clear nodes)
+                    setSelectedEdgeIds(new Set([edgeIdStr]))
+                    setSelectedNodeIds(new Set())  // Clear nodes on regular click
+                  }
+                  
+                  // Mixed selection allowed with modifiers
+                }}
               />
             )
           })}
@@ -993,6 +1097,21 @@ export const QFlow: React.FC<QFlowProps> = ({
           ) : null
         })}
       </div>
+
+      {/* Selection rectangle */}
+      {isSelecting && (
+        <div style={{
+          position: 'absolute',
+          left: `${selectionRect.x * zoom + pan.x}px`,
+          top: `${selectionRect.y * zoom + pan.y}px`,
+          width: `${selectionRect.width * zoom}px`,
+          height: `${selectionRect.height * zoom}px`,
+          border: '1px dashed rgba(0, 0, 0, 0.5)',
+          backgroundColor: 'rgba(100, 149, 237, 0.1)',
+          pointerEvents: 'none',
+          zIndex: 9999
+        }} />
+      )}
 
       {/* Zoom controls */}
       <div style={{
