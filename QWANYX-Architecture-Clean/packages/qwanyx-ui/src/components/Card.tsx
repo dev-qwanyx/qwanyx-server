@@ -72,12 +72,12 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(({
     switch (variant) {
       case 'glass':
         return {
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: blur ? 'blur(10px)' : 'none',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backgroundColor: 'rgba(var(--qwanyx-card), 0.7)',  // Theme card color with transparency
+          backdropFilter: blur ? 'blur(10px) saturate(1.5)' : 'none',
+          border: '1px solid rgba(var(--qwanyx-border), 0.3)',
           boxShadow: isHovered 
-            ? '0 8px 32px rgba(31, 38, 135, 0.37)'
-            : '0 4px 16px rgba(31, 38, 135, 0.2)',
+            ? '0 8px 32px rgba(0, 0, 0, 0.12)'
+            : '0 4px 16px rgba(0, 0, 0, 0.08)',
         };
         
       case 'gradient':

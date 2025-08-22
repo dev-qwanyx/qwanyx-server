@@ -302,21 +302,31 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
           avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${dhName || 'DH'}`,
           isRunning: false
         } : {}),
-        // Add SMTP config data
-        ...(nodeType === 'smtp-config' ? {
-          nodeType: 'smtp',
+        // Add Mail config data (SMTP & IMAP)
+        ...(nodeType === 'mail-config' ? {
+          nodeType: 'mail-config',
           color: 'error',
           icon: 'MailOutline',
-          label: 'SMTP Config',
-          smtp: {
-            email: dhEmail || '',
-            server: 'smtp.gmail.com',
-            port: 587,
-            password: ''
+          label: 'Mail Config',
+          mailConfig: {
+            smtp: {
+              email: dhEmail || '',
+              server: 'mail.qwanyx.com',
+              port: 587,
+              password: '',
+              secure: true
+            },
+            imap: {
+              email: dhEmail || '',
+              server: 'mail.qwanyx.com',
+              port: 993,
+              password: '',
+              secure: true
+            }
           }
         } : {}),
         // For other nodes, just store the nodeType
-        ...(!['start-stop', 'smtp-config'].includes(nodeType) ? { 
+        ...(!['start-stop', 'mail-config'].includes(nodeType) ? { 
           nodeType: nodeType 
         } : {})
       }

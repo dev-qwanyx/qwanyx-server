@@ -89,12 +89,12 @@ export class NodeRegistry {
       }
     })
     
-    // SMTP Config
+    // Mail Config (SMTP & IMAP)
     this.register({
-      type: 'smtp-config',
+      type: 'mail-config',
       category: NodeCategory.INTEGRATION,
-      name: 'SMTP Config',
-      description: 'Configure SMTP email sending',
+      name: 'Mail Config',
+      description: 'Configure SMTP and IMAP email settings',
       icon: 'MailOutline',
       color: 'error',  // Will show red gradient
       factory: (data) => ({
@@ -103,8 +103,8 @@ export class NodeRegistry {
         position: data.position,
         data: {
           ...data.data,
-          nodeType: 'smtp',  // This triggers SMTP form in expanded view
-          label: 'SMTP Config',
+          nodeType: 'mail-config',  // This triggers Mail Config form in expanded view
+          label: 'Mail Config',
           icon: 'MailOutline',
           color: 'error'
         },
@@ -115,17 +115,94 @@ export class NodeRegistry {
         getConfigSchema: () => undefined
       }),
       defaultData: {
-        nodeType: 'smtp',
-        label: 'SMTP Config', 
+        nodeType: 'mail-config',
+        label: 'Mail Config', 
         icon: 'MailOutline',
         color: 'error',
-        smtp: {
-          host: 'smtp.gmail.com',
-          port: 587,
-          secure: false,
-          email: '',
-          password: ''
+        mailConfig: {
+          smtp: {
+            email: '',
+            server: 'mail.qwanyx.com',
+            port: 587,
+            password: '',
+            secure: true
+          },
+          imap: {
+            email: '',
+            server: 'mail.qwanyx.com',
+            port: 993,
+            password: '',
+            secure: true
+          }
         }
+      }
+    })
+    
+    // Mail Listener - Simple trigger node
+    this.register({
+      type: 'mail-listener',
+      category: NodeCategory.TRIGGER,
+      name: 'Mail Listener',
+      description: 'Triggers when email arrives',
+      icon: 'Mail',
+      color: 'primary',
+      factory: (data) => ({
+        id: data.id,
+        type: 'icon',
+        position: data.position,
+        data: {
+          ...data.data,
+          nodeType: 'mail-listener',
+          label: 'Mail Listener',
+          icon: 'Mail',
+          color: 'primary'
+        },
+        execute: async () => ({ success: true }),
+        validate: () => ({ valid: true }),
+        getInputSchema: () => undefined,
+        getOutputSchema: () => undefined,
+        getConfigSchema: () => undefined
+      }),
+      defaultData: {
+        nodeType: 'mail-listener',
+        label: 'Mail Listener',
+        icon: 'Mail',
+        color: 'primary'
+      }
+    })
+    
+    // Note Node - For adding notes and comments to flows
+    this.register({
+      type: 'note',
+      category: NodeCategory.DATA,
+      name: 'Note',
+      description: 'Add notes and comments to your flow',
+      icon: 'Edit',
+      color: 'warning',
+      factory: (data) => ({
+        id: data.id,
+        type: 'icon',
+        position: data.position,
+        data: {
+          ...data.data,
+          nodeType: 'note',
+          label: data.data?.title || 'Note',
+          icon: 'Edit',
+          color: 'warning'
+        },
+        execute: async () => ({ success: true }),
+        validate: () => ({ valid: true }),
+        getInputSchema: () => undefined,
+        getOutputSchema: () => undefined,
+        getConfigSchema: () => undefined
+      }),
+      defaultData: {
+        nodeType: 'note',
+        title: 'Note',
+        brief: '',  // This is the actual note content
+        label: 'Note',
+        icon: 'Edit',
+        color: 'warning'
       }
     })
     

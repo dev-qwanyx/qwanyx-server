@@ -2,7 +2,9 @@ import React, { useState, useRef, useCallback, useEffect, memo } from 'react'
 import { Icon, Modal, Button, Card, Container, Flex, Text } from '@qwanyx/ui'
 import { ObjectId } from 'bson'
 import { DhMainSwitch } from './DhMainSwitch'
-import { SmtpConfig, SmtpConfigData } from './SmtpConfig'
+import { MailConfig, MailConfigData } from './MailConfig'
+import { NoteNode } from './NoteNode'
+import './QFlow.css'
 
 export interface QNode {
   _id: string | ObjectId  // Accept both for flexibility
@@ -600,6 +602,7 @@ export const QFlow: React.FC<QFlowProps> = ({
     <>
       <div 
         ref={containerRef}
+        className="qflow-container"
         tabIndex={0}  // Make focusable to capture keyboard events
         style={{
           width,
@@ -737,10 +740,10 @@ export const QFlow: React.FC<QFlowProps> = ({
             ) : node.data?.nodeType === 'start-stop' ? (
               // Render DhMainSwitch for start-stop nodes
               <DhMainSwitch
-                dhId={context?.dhId || context?.dhFullData?._id || ''}
-                dhName={context?.dhName || context?.dhFullData?.name || ''}
-                dhFirstName={context?.dhFirstName || context?.dhFullData?.firstName || ''}
-                dhEmail={context?.dhEmail || context?.dhFullData?.email || ''}
+                dhId={context?.dhFullData?._id || ''}
+                dhName={context?.dhFullData?.name || ''}
+                dhFirstName={context?.dhFullData?.firstName || ''}
+                dhEmail={context?.dhFullData?.email || ''}
                 initialState={node.data.isRunning || false}
                 onStateChange={(isRunning) => {
                   // Update node data
@@ -801,7 +804,13 @@ export const QFlow: React.FC<QFlowProps> = ({
                       borderRadius: '16px 16px 0 0',
                       pointerEvents: 'none'
                     }} />
-                    <Icon name={node.data.icon || 'Circle'} size="2xl" style={{ color: 'white', position: 'relative', zIndex: 1 }} />
+                    {node.data.icon && node.data.icon.length <= 2 ? (
+                      <Text size="xl" weight="bold" style={{ color: 'white', position: 'relative', zIndex: 1, fontSize: '24px' }}>
+                        {node.data.icon.toUpperCase()}
+                      </Text>
+                    ) : (
+                      <Icon name={node.data.icon || 'Circle'} size="2xl" style={{ color: 'white', position: 'relative', zIndex: 1 }} />
+                    )}
                   </div>
                   <span style={{
                     fontSize: '12px',
@@ -862,24 +871,41 @@ export const QFlow: React.FC<QFlowProps> = ({
                       }}
                     >
                     {/* Render appropriate component based on node type */}
-                    {node.data.nodeType === 'smtp' ? (
-                      // SMTP Configuration Component
-                      <SmtpConfig
+                    {node.data.nodeType === 'mail-config' ? (
+                      // Mail Configuration Component (SMTP & IMAP)
+                      <MailConfig
                         compact={true}
-                        dhEmail={context?.dhEmail}
-                        initialConfig={node.data.smtp}
+                        dhEmail={context?.dhFullData?.email || ''}
+                        initialConfig={node.data.mailConfig}
                         onSave={(config) => {
                           // Update node data with new config
                           const currentNodeId = node._id || (node as any).id
                           const newNodes = nodes.map(n => {
                             const nId = n._id || (n as any).id
                             return (nId && getIdString(nId) === getIdString(currentNodeId))
-                              ? { ...n, data: { ...n.data, smtp: config } }
+                              ? { ...n, data: { ...n.data, mailConfig: config } }
                               : n
                           })
                           setNodes(newNodes)
                           onNodesChange?.(newNodes)
-                          console.log('SMTP config saved for node:', nodeIdStr)
+                          console.log('Mail config saved for node:', nodeIdStr)
+                        }}
+                      />
+                    ) : node.data.nodeType === 'note' ? (
+                      // Note Node Component
+                      <NoteNode
+                        nodeId={nodeIdStr || ''}
+                        initialData={node.data}
+                        onChange={(data) => {
+                          const currentNodeId = node._id || (node as any).id
+                          const newNodes = nodes.map(n => {
+                            const nId = n._id || (n as any).id
+                            return (nId && getIdString(nId) === getIdString(currentNodeId))
+                              ? { ...n, data: { ...n.data, ...data } }
+                              : n
+                          })
+                          setNodes(newNodes)
+                          onNodesChange?.(newNodes)
                         }}
                       />
                     ) : (
@@ -890,7 +916,7 @@ export const QFlow: React.FC<QFlowProps> = ({
                             <Text weight="semibold">Type:</Text> {node.data.nodeType || node.type}
                           </Text>
                           <Text size="xs">
-                            <Text weight="semibold">ID:</Text> {nodeIdStr?.slice(-8)}
+                            <Text weight="semibold">ID:</Text> {nodeIdStr}
                           </Text>
                           {node.data.description && (
                             <Text size="xs">

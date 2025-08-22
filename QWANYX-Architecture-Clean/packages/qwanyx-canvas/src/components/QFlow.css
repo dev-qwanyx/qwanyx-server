@@ -1,0 +1,12 @@
+/* QFlow-specific theme overrides */
+.qflow-container {
+  --qwanyx-card: 255 0 0 !important;  /* RED color for testing (RGB values) */
+  --qwanyx-border: 200 0 0 !important;   /* Darker red for borders */
+  --qwanyx-background: 255 0 0 !important;  /* Also try background */
+}
+
+/* Apply to all children as well */
+.qflow-container * {
+  --qwanyx-card: 255 0 0 !important;
+  --qwanyx-border: 200 0 0 !important;
+}
