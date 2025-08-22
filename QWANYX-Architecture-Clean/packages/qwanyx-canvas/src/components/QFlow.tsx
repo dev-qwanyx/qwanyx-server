@@ -528,6 +528,178 @@ export const QFlow: React.FC<QFlowProps> = ({
           setSelectedNodeIds(new Set())
         }
       }
+
+      // Ctrl+C - Copy selected nodes and edges
+      if ((e.ctrlKey || e.metaKey) && e.key === 'c' && !e.shiftKey) {
+        e.preventDefault()
+        if (selectedNodeIds.size > 0 || selectedEdgeIds.size > 0) {
+          // Get selected nodes
+          const selectedNodes = nodes.filter(n => selectedNodeIds.has(getIdString(n._id)))
+          
+          // Get selected edges (only edges between selected nodes)
+          const selectedEdges = edges.filter(edge => {
+            const edgeIdStr = getIdString(edge._id)
+            const sourceIdStr = getIdString(edge.s)
+            const targetIdStr = getIdString(edge.t)
+            
+            // Include edge if it's selected OR if both its nodes are selected
+            return selectedEdgeIds.has(edgeIdStr) || 
+                   (selectedNodeIds.has(sourceIdStr) && selectedNodeIds.has(targetIdStr))
+          })
+          
+          // Store in clipboard with old IDs for mapping
+          const clipboardData = {
+            nodes: selectedNodes,
+            edges: selectedEdges,
+            timestamp: Date.now()
+          }
+          
+          // Store in localStorage (since we can't access system clipboard directly)
+          localStorage.setItem('qflow-clipboard', JSON.stringify(clipboardData))
+          console.log('Copied', selectedNodes.length, 'nodes and', selectedEdges.length, 'edges')
+        }
+      }
+
+      // Ctrl+X - Cut selected nodes and edges
+      if ((e.ctrlKey || e.metaKey) && e.key === 'x' && !e.shiftKey) {
+        e.preventDefault()
+        if (selectedNodeIds.size > 0 || selectedEdgeIds.size > 0) {
+          // First copy to clipboard
+          const selectedNodes = nodes.filter(n => selectedNodeIds.has(getIdString(n._id)))
+          const selectedEdges = edges.filter(edge => {
+            const edgeIdStr = getIdString(edge._id)
+            const sourceIdStr = getIdString(edge.s)
+            const targetIdStr = getIdString(edge.t)
+            
+            return selectedEdgeIds.has(edgeIdStr) || 
+                   (selectedNodeIds.has(sourceIdStr) && selectedNodeIds.has(targetIdStr))
+          })
+          
+          const clipboardData = {
+            nodes: selectedNodes,
+            edges: selectedEdges,
+            timestamp: Date.now()
+          }
+          localStorage.setItem('qflow-clipboard', JSON.stringify(clipboardData))
+          
+          // Then delete the selected items
+          const newNodes = nodes.filter(n => !selectedNodeIds.has(getIdString(n._id)))
+          const newEdges = edges.filter(edge => {
+            const edgeIdStr = getIdString(edge._id)
+            const sourceIdStr = getIdString(edge.s)
+            const targetIdStr = getIdString(edge.t)
+            
+            // Remove edge if it's selected or if any of its nodes are deleted
+            return !selectedEdgeIds.has(edgeIdStr) && 
+                   !selectedNodeIds.has(sourceIdStr) && 
+                   !selectedNodeIds.has(targetIdStr)
+          })
+          
+          saveToHistory(newNodes, newEdges)
+          setNodes(newNodes)
+          setEdges(newEdges)
+          onNodesChange?.(newNodes)
+          onEdgesChange?.(newEdges)
+          setSelectedNodeIds(new Set())
+          setSelectedEdgeIds(new Set())
+          
+          console.log('Cut', selectedNodes.length, 'nodes and', selectedEdges.length, 'edges')
+        }
+      }
+
+      // Ctrl+V - Paste (centered in viewport)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'v' && !e.shiftKey) {
+        e.preventDefault()
+        const clipboardStr = localStorage.getItem('qflow-clipboard')
+        if (clipboardStr) {
+          try {
+            const clipboardData = JSON.parse(clipboardStr)
+            if (clipboardData.nodes && clipboardData.nodes.length > 0) {
+              // Calculate center of copied nodes
+              const copiedBounds = {
+                minX: Math.min(...clipboardData.nodes.map((n: QNode) => n.x)),
+                maxX: Math.max(...clipboardData.nodes.map((n: QNode) => n.x)),
+                minY: Math.min(...clipboardData.nodes.map((n: QNode) => n.y)),
+                maxY: Math.max(...clipboardData.nodes.map((n: QNode) => n.y))
+              }
+              const copiedCenter = {
+                x: (copiedBounds.minX + copiedBounds.maxX) / 2,
+                y: (copiedBounds.minY + copiedBounds.maxY) / 2
+              }
+              
+              // Calculate viewport center
+              const container = containerRef.current
+              if (container) {
+                const viewportCenter = {
+                  x: (container.clientWidth / 2 - pan.x) / zoom,
+                  y: (container.clientHeight / 2 - pan.y) / zoom
+                }
+                
+                // Calculate offset to center pasted content in viewport
+                const pasteOffset = {
+                  x: viewportCenter.x - copiedCenter.x,
+                  y: viewportCenter.y - copiedCenter.y
+                }
+                
+                // Create ID mapping for nodes (old ID -> new ID)
+                const idMap = new Map<string, string>()
+                
+                // Create new nodes with new IDs and offset positions
+                const newNodes: QNode[] = clipboardData.nodes.map((node: QNode) => {
+                  const oldId = getIdString(node._id)
+                  const newId = new ObjectId()
+                  idMap.set(oldId, getIdString(newId))
+                  
+                  return {
+                    ...node,
+                    _id: newId,
+                    x: node.x + pasteOffset.x,
+                    y: node.y + pasteOffset.y
+                  }
+                })
+                
+                // Create new edges with mapped IDs
+                const newEdges: QEdge[] = []
+                if (clipboardData.edges) {
+                  clipboardData.edges.forEach((edge: QEdge) => {
+                    const newSourceId = idMap.get(getIdString(edge.s))
+                    const newTargetId = idMap.get(getIdString(edge.t))
+                    
+                    // Only create edge if both nodes exist in the paste
+                    if (newSourceId && newTargetId) {
+                      newEdges.push({
+                        ...edge,
+                        _id: new ObjectId(),
+                        s: newSourceId,
+                        t: newTargetId
+                      })
+                    }
+                  })
+                }
+                
+                // Add to existing nodes and edges
+                const updatedNodes = [...nodes, ...newNodes]
+                const updatedEdges = [...edges, ...newEdges]
+                
+                saveToHistory(updatedNodes, updatedEdges)
+                setNodes(updatedNodes)
+                setEdges(updatedEdges)
+                onNodesChange?.(updatedNodes)
+                onEdgesChange?.(updatedEdges)
+                
+                // Select the pasted nodes
+                const pastedNodeIds = new Set(newNodes.map(n => getIdString(n._id)))
+                setSelectedNodeIds(pastedNodeIds)
+                setSelectedEdgeIds(new Set())
+                
+                console.log('Pasted', newNodes.length, 'nodes and', newEdges.length, 'edges at viewport center')
+              }
+            }
+          } catch (error) {
+            console.error('Failed to paste:', error)
+          }
+        }
+      }
       
       // Escape - deselect
       if (e.key === 'Escape') {
@@ -600,26 +772,49 @@ export const QFlow: React.FC<QFlowProps> = ({
         setSelectionRect({ x, y, width, height })
       }
     } else if (draggedNode) {
-      const node = nodes.find(n => {
+      // Calculate the movement delta
+      const currentNode = nodes.find(n => {
         const nId = n._id || (n as any).id
         return nId && getIdString(nId) === draggedNode
       })
-      if (node) {
+      
+      if (currentNode) {
+        const newX = (e.clientX - pan.x - dragOffset.x) / zoom
+        const newY = (e.clientY - pan.y - dragOffset.y) / zoom
+        const deltaX = newX - currentNode.x
+        const deltaY = newY - currentNode.y
+        
+        // Check if the dragged node is part of the selection
+        const isDraggedNodeSelected = selectedNodeIds.has(draggedNode)
+        
+        // Move all selected nodes together if dragged node is selected
+        // Otherwise just move the single node
         const newNodes = nodes.map(n => {
           const nId = n._id || (n as any).id
-          return (nId && getIdString(nId) === draggedNode)
-            ? {
-                ...n,
-                x: (e.clientX - pan.x - dragOffset.x) / zoom,
-                y: (e.clientY - pan.y - dragOffset.y) / zoom
-              }
-            : n
+          const nodeIdStr = getIdString(nId)
+          
+          if (isDraggedNodeSelected && selectedNodeIds.has(nodeIdStr)) {
+            // Move all selected nodes by the same delta
+            return {
+              ...n,
+              x: n.x + deltaX,
+              y: n.y + deltaY
+            }
+          } else if (nodeIdStr === draggedNode) {
+            // Just move the single dragged node
+            return {
+              ...n,
+              x: newX,
+              y: newY
+            }
+          }
+          return n
         })
         setNodes(newNodes)
         // Don't call onNodesChange during drag - we'll do it on mouse up
       }
     }
-  }, [isPanning, panStart, isSelecting, selectionStart, draggedNode, nodes, pan, zoom, dragOffset, getIdString])
+  }, [isPanning, panStart, isSelecting, selectionStart, draggedNode, nodes, pan, zoom, dragOffset, getIdString, selectedNodeIds])
 
   // Stop panning, dragging, or selecting
   const handleMouseUp = useCallback(() => {
@@ -694,15 +889,158 @@ export const QFlow: React.FC<QFlowProps> = ({
           return newSet
         })
       } else {
-        // Regular click: Select only this node (clear edges)
-        setSelectedNodeIds(new Set([nodeIdStr]))
-        setSelectedEdgeIds(new Set())  // Clear edges on regular click
+        // Regular click
+        // If clicking on an already selected node, keep the selection for group dragging
+        // Otherwise, select only this node
+        if (!selectedNodeIds.has(nodeIdStr)) {
+          setSelectedNodeIds(new Set([nodeIdStr]))
+          setSelectedEdgeIds(new Set())  // Clear edges on regular click
+        }
       }
       
       // Mixed selection allowed with modifiers
       
-      // Start dragging only if not using modifiers
-      if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
+      // Handle Shift+Alt+drag for linked copy (duplicate + connect)
+      if (e.altKey && e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        // Duplicate selected nodes (or just this node if not selected) - ignore edges
+        const nodesToDuplicate = selectedNodeIds.has(nodeIdStr) 
+          ? nodes.filter(n => selectedNodeIds.has(getIdString(n._id)))
+          : [node]
+        
+        // Create ID mapping for duplicates
+        const idMap = new Map<string, string>()
+        
+        // Create duplicated nodes with new IDs at same position
+        const duplicatedNodes: QNode[] = nodesToDuplicate.map(n => {
+          const oldId = getIdString(n._id)
+          const newId = new ObjectId()
+          idMap.set(oldId, getIdString(newId))
+          
+          return {
+            ...n,
+            _id: newId,
+            x: n.x,  // Keep same position initially
+            y: n.y
+          }
+        })
+        
+        // Duplicate edges between duplicated nodes
+        const duplicatedEdges: QEdge[] = []
+        edges.forEach(edge => {
+          const newSourceId = idMap.get(getIdString(edge.s))
+          const newTargetId = idMap.get(getIdString(edge.t))
+          
+          // Only duplicate edge if both nodes were duplicated
+          if (newSourceId && newTargetId) {
+            duplicatedEdges.push({
+              ...edge,
+              _id: new ObjectId(),
+              s: newSourceId,
+              t: newTargetId
+            })
+          }
+        })
+        
+        // Create linking edges from originals to copies
+        const linkingEdges: QEdge[] = nodesToDuplicate.map(originalNode => {
+          const originalId = getIdString(originalNode._id)
+          const copyId = idMap.get(originalId)!
+          
+          return {
+            _id: new ObjectId(),
+            s: originalId,
+            t: copyId,
+            ty: 'data' as const,
+            w: 1,
+            m: {
+              l: 'Connected'
+            }
+          }
+        })
+        
+        // Add duplicates and linking edges to the canvas
+        const newNodes = [...nodes, ...duplicatedNodes]
+        const newEdges = [...edges, ...duplicatedEdges, ...linkingEdges]
+        setNodes(newNodes)
+        setEdges(newEdges)
+        
+        // Select the duplicated nodes
+        const duplicatedNodeIds = new Set(duplicatedNodes.map(n => getIdString(n._id)))
+        setSelectedNodeIds(duplicatedNodeIds)
+        setSelectedEdgeIds(new Set())
+        
+        // Start dragging the duplicates
+        const duplicatedDragNode = idMap.get(nodeIdStr) || nodeIdStr
+        isDragging.current = true
+        setDraggedNode(duplicatedDragNode)
+        setDragOffset({
+          x: e.clientX - pan.x - node.x * zoom,
+          y: e.clientY - pan.y - node.y * zoom
+        })
+      }
+      // Handle Alt+drag for regular duplication (no linking)
+      else if (e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        // Duplicate selected nodes (or just this node if not selected)
+        const nodesToDuplicate = selectedNodeIds.has(nodeIdStr) 
+          ? nodes.filter(n => selectedNodeIds.has(getIdString(n._id)))
+          : [node]
+        
+        // Create ID mapping for duplicates
+        const idMap = new Map<string, string>()
+        
+        // Create duplicated nodes with new IDs at same position
+        const duplicatedNodes: QNode[] = nodesToDuplicate.map(n => {
+          const oldId = getIdString(n._id)
+          const newId = new ObjectId()
+          idMap.set(oldId, getIdString(newId))
+          
+          return {
+            ...n,
+            _id: newId,
+            x: n.x,  // Keep same position initially
+            y: n.y
+          }
+        })
+        
+        // Duplicate edges between duplicated nodes
+        const duplicatedEdges: QEdge[] = []
+        edges.forEach(edge => {
+          const newSourceId = idMap.get(getIdString(edge.s))
+          const newTargetId = idMap.get(getIdString(edge.t))
+          
+          // Only duplicate edge if both nodes were duplicated
+          if (newSourceId && newTargetId) {
+            duplicatedEdges.push({
+              ...edge,
+              _id: new ObjectId(),
+              s: newSourceId,
+              t: newTargetId
+            })
+          }
+        })
+        
+        // Add duplicates to the canvas
+        const newNodes = [...nodes, ...duplicatedNodes]
+        const newEdges = [...edges, ...duplicatedEdges]
+        setNodes(newNodes)
+        setEdges(newEdges)
+        
+        // Select the duplicated nodes
+        const duplicatedNodeIds = new Set(duplicatedNodes.map(n => getIdString(n._id)))
+        setSelectedNodeIds(duplicatedNodeIds)
+        setSelectedEdgeIds(new Set())
+        
+        // Start dragging the duplicates
+        const duplicatedDragNode = idMap.get(nodeIdStr) || nodeIdStr
+        isDragging.current = true
+        setDraggedNode(duplicatedDragNode)
+        setDragOffset({
+          x: e.clientX - pan.x - node.x * zoom,
+          y: e.clientY - pan.y - node.y * zoom
+        })
+      }
+      // Start normal dragging only if not using modifiers
+      else if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
         isDragging.current = true
         setDraggedNode(nodeIdStr)
         setDragOffset({
@@ -711,7 +1049,7 @@ export const QFlow: React.FC<QFlowProps> = ({
         })
       }
     }
-  }, [nodes, pan, zoom, objectIdEquals, getIdString])
+  }, [nodes, edges, pan, zoom, objectIdEquals, getIdString, selectedNodeIds])
   
   // Handle double-click on nodes - universal expand/collapse
   const handleNodeDoubleClick = useCallback((e: React.MouseEvent, nodeId: string | ObjectId) => {
