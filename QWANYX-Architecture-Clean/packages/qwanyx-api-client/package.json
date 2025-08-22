@@ -1,0 +1,26 @@
+{
+  "name": "@qwanyx/api-client",
+  "version": "0.1.0",
+  "description": "Centralized API client for QWANYX services",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "tsup": "^7.2.0",
+    "typescript": "^5.3.2"
+  }
+}

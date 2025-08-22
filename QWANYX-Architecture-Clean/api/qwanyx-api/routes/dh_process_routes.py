@@ -1,7 +1,7 @@
 # Digital Human Process Management Routes
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from functools import wraps
-import jwt
 import os
 from datetime import datetime
 from bson import ObjectId
@@ -11,29 +11,8 @@ import time
 # Create blueprint
 dh_process_bp = Blueprint('dh_process', __name__)
 
-# JWT Secret
-JWT_SECRET = os.environ.get('JWT_SECRET', 'qwanyx-secret-key-2024')
-
 # In-memory storage for running DH processes (in production, use Redis or database)
 running_dhs = {}
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token:
-            return jsonify({'message': 'Token is missing'}), 401
-        try:
-            if token.startswith('Bearer '):
-                token = token[7:]
-            data = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-            request.user = data
-        except jwt.ExpiredSignatureError:
-            return jsonify({'message': 'Token has expired'}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({'message': 'Token is invalid'}), 401
-        return f(*args, **kwargs)
-    return decorated
 
 class DHProcess:
     """Simple DH process that runs in a thread"""
@@ -95,18 +74,39 @@ class DHProcess:
         }
 
 @dh_process_bp.route('/api/dh/<dh_id>/start', methods=['POST'])
-@token_required
+@jwt_required()
 def start_dh(dh_id):
     """Start a Digital Human process"""
     try:
-        from app_v2 import mongo_client
-        workspace = request.user.get('workspace', 'default')
-        db = mongo_client[f'qwanyx_{workspace}']
+        from app_v2 import mongo_client, workspace_service
+        claims = get_jwt()
+        workspace = claims.get('workspace', 'default')
+        
+        # Use workspace service to get the correct database
+        db = workspace_service.get_workspace_db(workspace)
+        if db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+            
+        db_name = workspace  # Direct workspace name, not qwanyx_ prefix
+        print(f"[DH START] Looking in database: {db_name}, collection: users")
+        print(f"[DH START] Workspace from JWT: {workspace}")
         
         # Get DH to verify it exists
-        dh = db.users.find_one({'_id': ObjectId(dh_id), 'type': 'DH'})
+        # Convert string ID to ObjectId for MongoDB query
+        try:
+            dh_object_id = ObjectId(dh_id)
+            print(f"[DH START] Searching for DH with ObjectId: {dh_object_id}")
+            dh = db.users.find_one({'_id': dh_object_id, 'type': 'DH'})
+        except Exception as e:
+            print(f"Error converting ID to ObjectId: {e}")
+            return jsonify({'error': f'Invalid DH ID format: {dh_id}'}), 400
+        
         if not dh:
-            return jsonify({'error': 'Digital Human not found'}), 404
+            # Debug: Let's see what DH users exist
+            all_dhs = list(db.users.find({'type': 'DH'}))
+            print(f"Looking for DH with ID: {dh_id} (ObjectId: {dh_object_id})")
+            print(f"Available DH users: {[str(dh.get('_id')) for dh in all_dhs]}")
+            return jsonify({'error': 'Digital Human not found', 'searched_id': dh_id}), 404
         
         # Check if already running
         if dh_id in running_dhs and running_dhs[dh_id].running:
@@ -144,16 +144,31 @@ def start_dh(dh_id):
         return jsonify({'error': str(e)}), 500
 
 @dh_process_bp.route('/api/dh/<dh_id>/stop', methods=['POST'])
-@token_required
+@jwt_required()
 def stop_dh(dh_id):
     """Stop a Digital Human process"""
     try:
-        from app_v2 import mongo_client
-        workspace = request.user.get('workspace', 'default')
-        db = mongo_client[f'qwanyx_{workspace}']
+        from app_v2 import mongo_client, workspace_service
+        claims = get_jwt()
+        workspace = claims.get('workspace', 'default')
+        
+        # Use workspace service to get the correct database
+        db = workspace_service.get_workspace_db(workspace)
+        if db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
+            
+        db_name = workspace  # Direct workspace name, not qwanyx_ prefix
+        print(f"[DH STOP] Looking in database: {db_name}, collection: users")
+        print(f"[DH STOP] Workspace from JWT: {workspace}")
         
         # Get DH to verify it exists
-        dh = db.users.find_one({'_id': ObjectId(dh_id), 'type': 'DH'})
+        try:
+            dh_object_id = ObjectId(dh_id)
+            print(f"[DH STOP] Searching for DH with ObjectId: {dh_object_id}")
+            dh = db.users.find_one({'_id': dh_object_id, 'type': 'DH'})
+        except Exception as e:
+            print(f"Error converting ID to ObjectId: {e}")
+            return jsonify({'error': f'Invalid DH ID format: {dh_id}'}), 400
         if not dh:
             return jsonify({'error': 'Digital Human not found'}), 404
         
@@ -193,13 +208,18 @@ def stop_dh(dh_id):
         return jsonify({'error': str(e)}), 500
 
 @dh_process_bp.route('/api/dh/<dh_id>/status', methods=['GET'])
-@token_required
+@jwt_required()
 def get_dh_status(dh_id):
     """Get Digital Human process status"""
     try:
-        from app_v2 import mongo_client
-        workspace = request.user.get('workspace', 'default')
-        db = mongo_client[f'qwanyx_{workspace}']
+        from app_v2 import mongo_client, workspace_service
+        claims = get_jwt()
+        workspace = claims.get('workspace', 'default')
+        
+        # Use workspace service to get the correct database
+        db = workspace_service.get_workspace_db(workspace)
+        if db is None:
+            return jsonify({'error': 'Workspace not found'}), 404
         
         # Get DH to verify it exists
         dh = db.users.find_one({'_id': ObjectId(dh_id), 'type': 'DH'})
@@ -222,11 +242,12 @@ def get_dh_status(dh_id):
         return jsonify({'error': str(e)}), 500
 
 @dh_process_bp.route('/api/dh/running', methods=['GET'])
-@token_required
+@jwt_required()
 def get_running_dhs():
     """Get all running Digital Humans"""
     try:
-        workspace = request.user.get('workspace', 'default')
+        claims = get_jwt()
+        workspace = claims.get('workspace', 'default')
         
         running_list = []
         for dh_id, process in running_dhs.items():

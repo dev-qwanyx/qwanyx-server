@@ -1,7 +1,7 @@
 // API Configuration for THOT package
 // This should match the main app configuration
 
-const USE_LOCAL = false  // <-- CHANGE THIS TO MATCH apps/autodin/src/config/api.config.ts
+const USE_LOCAL = true  // <-- CHANGE THIS TO MATCH apps/autodin/src/config/api.config.ts
 
 export const API_CONFIG = {
   API_URL: USE_LOCAL 

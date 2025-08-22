@@ -1,7 +1,7 @@
 {
   "name": "@qwanyx/canvas",
   "version": "0.1.0",
-  "description": "Visual workflow editor for QWANYX using ReactFlow",
+  "description": "Visual workflow editor for QWANYX with proprietary QFlow engine",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -17,10 +17,10 @@
   },
   "dependencies": {
     "@qwanyx/ui": "file:../qwanyx-ui",
+    "@qwanyx/api-client": "file:../qwanyx-api-client",
     "bson": "^6.10.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "reactflow": "^11.11.4",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect, memo } from 'react'
 import { Icon } from '@qwanyx/ui'
 import { ObjectId } from 'bson'
+import { DhMainSwitch } from './DhMainSwitch'
 
 export interface QNode {
   _id: string | ObjectId  // Accept both for flexibility
@@ -12,6 +13,9 @@ export interface QNode {
     icon?: string
     color?: string
     description?: string
+    nodeType?: string  // For special node types like 'start-stop'
+    isRunning?: boolean  // For start-stop nodes
+    [key: string]: any  // Allow additional properties
   }
 }
 
@@ -152,6 +156,9 @@ export const QFlow: React.FC<QFlowProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const [nodes, setNodes] = useState(initialNodes)
   const [edges, setEdges] = useState(initialEdges)
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null)
+  const [copiedNode, setCopiedNode] = useState<QNode | null>(null)
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const [isPanning, setIsPanning] = useState(false)
@@ -225,6 +232,79 @@ export const QFlow: React.FC<QFlowProps> = ({
     return () => clearTimeout(timer)
   }, [])
 
+  // Handle keyboard events
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle if QFlow container is focused
+      if (!containerRef.current?.contains(document.activeElement)) return
+
+      // Delete key - delete selected node or edge
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (selectedNodeId) {
+          setNodes(prev => {
+            const updated = prev.filter(n => getIdString(n._id) !== selectedNodeId)
+            onNodesChange?.(updated)
+            return updated
+          })
+          // Also remove edges connected to this node
+          setEdges(prev => {
+            const updated = prev.filter(e => 
+              getIdString(e.s) !== selectedNodeId && 
+              getIdString(e.t) !== selectedNodeId
+            )
+            onEdgesChange?.(updated)
+            return updated
+          })
+          setSelectedNodeId(null)
+        } else if (selectedEdgeId) {
+          setEdges(prev => {
+            const updated = prev.filter(e => getIdString(e._id) !== selectedEdgeId)
+            onEdgesChange?.(updated)
+            return updated
+          })
+          setSelectedEdgeId(null)
+        }
+      }
+
+      // Ctrl+C - copy selected node
+      if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        if (selectedNodeId) {
+          const node = nodes.find(n => getIdString(n._id) === selectedNodeId)
+          if (node) {
+            setCopiedNode(node)
+          }
+        }
+      }
+
+      // Ctrl+V - paste copied node
+      if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+        if (copiedNode) {
+          const newNode: QNode = {
+            ...copiedNode,
+            _id: new ObjectId().toHexString(),
+            x: copiedNode.x + 50,
+            y: copiedNode.y + 50
+          }
+          setNodes(prev => {
+            const updated = [...prev, newNode]
+            onNodesChange?.(updated)
+            return updated
+          })
+          setSelectedNodeId(getIdString(newNode._id))
+        }
+      }
+
+      // Escape - deselect
+      if (e.key === 'Escape') {
+        setSelectedNodeId(null)
+        setSelectedEdgeId(null)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [selectedNodeId, selectedEdgeId, copiedNode, nodes, onNodesChange, onEdgesChange])
+
   // Handle zoom with mouse wheel
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault()
@@ -283,6 +363,11 @@ export const QFlow: React.FC<QFlowProps> = ({
       return nId && nodeId && objectIdEquals(nId, nodeId)
     })
     if (node) {
+      // Select the node
+      setSelectedNodeId(getIdString(nodeId))
+      setSelectedEdgeId(null)
+      
+      // Start dragging
       setDraggedNode(getIdString(nodeId))
       setDragOffset({
         x: e.clientX - pan.x - node.x * zoom,
@@ -294,6 +379,7 @@ export const QFlow: React.FC<QFlowProps> = ({
   return (
     <div 
       ref={containerRef}
+      tabIndex={0}  // Make focusable to capture keyboard events
       style={{
         width,
         height,
@@ -301,7 +387,8 @@ export const QFlow: React.FC<QFlowProps> = ({
         position: 'relative',
         cursor: isPanning ? 'grabbing' : 'grab',
         background: 'linear-gradient(to right, #f0f0f0 1px, transparent 1px), linear-gradient(to bottom, #f0f0f0 1px, transparent 1px)',
-        backgroundSize: '20px 20px'
+        backgroundSize: '20px 20px',
+        outline: 'none'  // Remove focus outline
       }}
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
@@ -372,12 +459,39 @@ export const QFlow: React.FC<QFlowProps> = ({
                 left: `${node.x}px`,
                 top: `${node.y}px`,
                 cursor: 'move',
-                userSelect: 'none'
+                userSelect: 'none',
+                border: selectedNodeId === getIdString(nodeId) ? '2px solid #4299e1' : 'none',
+                borderRadius: '8px',
+                padding: selectedNodeId === getIdString(nodeId) ? '2px' : '4px',
+                margin: selectedNodeId === getIdString(nodeId) ? '-2px' : '0'
               }}
               onMouseDown={(e) => handleNodeMouseDown(e, nodeId)}
           >
             {nodeRenderer ? (
               nodeRenderer(node, context)
+            ) : node.data?.nodeType === 'start-stop' ? (
+              // Render DhMainSwitch for start-stop nodes
+              <DhMainSwitch
+                dhId={context?.dhId || context?.dhFullData?._id || ''}
+                dhName={context?.dhName || context?.dhFullData?.name || ''}
+                dhFirstName={context?.dhFirstName || context?.dhFullData?.firstName || ''}
+                dhEmail={context?.dhEmail || context?.dhFullData?.email || ''}
+                initialState={node.data.isRunning || false}
+                onStateChange={(isRunning) => {
+                  // Update node data
+                  const currentNodeId = node._id || (node as any).id
+                  const newNodes = nodes.map(n => {
+                    const nId = n._id || (n as any).id
+                    return (nId && getIdString(nId) === getIdString(currentNodeId))
+                      ? { ...n, data: { ...n.data, isRunning } }
+                      : n
+                  })
+                  setNodes(newNodes)
+                  onNodesChange?.(newNodes)
+                }}
+                showProfile={true}
+                size="md"
+              />
             ) : node.type === 'icon' ? (
               <div style={{
                 display: 'flex',

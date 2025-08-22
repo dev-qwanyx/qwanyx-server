@@ -236,11 +236,12 @@ export default function UsersContent() {
       const token = localStorage.getItem('autodin_token')
       const newStatus = user.status === 'blocked' ? 'active' : 'blocked'
       
-      const response = await fetch(`http://localhost:5002/api/users/${user.id}/status`, {
+      const response = await fetch(getApiUrl(`/users/${user.id}`), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Workspace': localStorage.getItem('autodin_workspace') || 'autodin'
         },
         body: JSON.stringify({ status: newStatus })
       })
@@ -311,7 +312,7 @@ export default function UsersContent() {
       
       console.log('Updating role for user:', userId, 'to:', newRole)
       
-      const response = await fetch(`http://localhost:5002/users/${userId}`, {
+      const response = await fetch(getApiUrl(`/users/${userId}`), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -496,7 +496,7 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
             </Text>
             <RadioGroup
               name={field.name}
-              value={formData[field.name] || field.defaultValue || ''}
+              value={formData[field.name] || ''}
               onChange={(value: string) => handleFieldChange(field, value)}
               orientation="horizontal"
             >

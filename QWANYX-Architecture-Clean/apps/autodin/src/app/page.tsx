@@ -110,7 +110,7 @@ function AppContent() {
       label: 'Type de compte',
       type: 'radio' as const,
       required: true,
-      defaultValue: 'particulier',
+      // No defaultValue - force user to choose
       options: [
         { value: 'particulier', label: 'Particulier' },
         { value: 'professionnel', label: 'Professionnel' }

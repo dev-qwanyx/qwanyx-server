@@ -488,7 +488,7 @@ def update_user(user_id):
         update_fields = {}
         allowed_fields = [
             'email', 'firstName', 'lastName', 'name', 'role', 'status',
-            'phone', 'department', 'jobTitle', 'avatar'
+            'phone', 'department', 'jobTitle', 'avatar', 'active'
         ]
         
         for field in allowed_fields:

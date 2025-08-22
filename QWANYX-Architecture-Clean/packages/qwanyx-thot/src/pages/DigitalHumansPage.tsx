@@ -43,7 +43,7 @@ export const DigitalHumansPage: React.FC = () => {
   const [digitalHumans, setDigitalHumans] = useState<DigitalHuman[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [_currentUserRole, setCurrentUserRole] = useState<string>('particulier')
+  const [currentUserRole, setCurrentUserRole] = useState<string>('particulier')
   const [expandedDH] = useState<string | null>(null)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -54,7 +54,6 @@ export const DigitalHumansPage: React.FC = () => {
     firstName: ''
   })
 
-  const API_URL = getApiUrl()
   const WORKSPACE = 'autodin'
 
   // Convert email to collection name format
@@ -71,7 +70,7 @@ export const DigitalHumansPage: React.FC = () => {
       const user = JSON.parse(storedUser)
       const token = localStorage.getItem('autodin_token')
       // Fetch users to get the current role
-      fetch(`${API_URL}/users`, {
+      fetch(getApiUrl('/users'), {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -96,7 +95,7 @@ export const DigitalHumansPage: React.FC = () => {
       setError(null)
       const token = localStorage.getItem('autodin_token')
       // Fetch all users and filter for type: 'DH' on client side
-      const response = await fetch(`${API_URL}/users`, {
+      const response = await fetch(getApiUrl('/users'), {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -154,7 +153,7 @@ export const DigitalHumansPage: React.FC = () => {
     try {
       if (editingDH) {
         // Update existing DH
-        const response = await fetch(`${API_URL}/users/${editingDH._id}`, {
+        const response = await fetch(getApiUrl(`/users/${editingDH._id}`), {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -174,7 +173,7 @@ export const DigitalHumansPage: React.FC = () => {
         await fetchDigitalHumans()
       } else {
         // Create new DH using the register endpoint
-        const response = await fetch(`${API_URL}/auth/register`, {
+        const response = await fetch(getApiUrl('/auth/register'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -231,7 +230,7 @@ export const DigitalHumansPage: React.FC = () => {
         if (!dh) return
         
         // Delete user
-        const response = await fetch(`${API_URL}/users/${id}`, {
+        const response = await fetch(getApiUrl(`/users/${id}`), {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -243,7 +242,7 @@ export const DigitalHumansPage: React.FC = () => {
         }
         
         // Delete memory collection
-        await fetch(`${API_URL}/api/workspaces/${WORKSPACE}/dh/${dh.email}/memory`, {
+        await fetch(getApiUrl(`/api/workspaces/${WORKSPACE}/dh/${dh.email}/memory`), {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -264,18 +263,55 @@ export const DigitalHumansPage: React.FC = () => {
       const dh = digitalHumans.find(d => d._id === id)
       if (!dh) return
       
-      const response = await fetch(`${API_URL}/api/workspaces/${WORKSPACE}/users/${id}`, {
+      const token = localStorage.getItem('autodin_token')
+      const newActiveStatus = !dh.active
+      
+      console.log(`Toggling DH ${id} active status to:`, newActiveStatus)
+      
+      // First update the active status in the database
+      const updateResponse = await fetch(getApiUrl(`/users/${id}`), {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'X-Workspace': WORKSPACE
         },
         body: JSON.stringify({
-          active: !dh.active
+          active: newActiveStatus
         })
       })
       
-      if (!response.ok) {
-        throw new Error('Failed to toggle Digital Human status')
+      if (!updateResponse.ok) {
+        const error = await updateResponse.text()
+        console.error('Failed to update DH active status:', error)
+        throw new Error('Failed to update Digital Human status')
+      }
+      
+      // Then start or stop the actual process
+      const action = newActiveStatus ? 'start' : 'stop'
+      const processResponse = await fetch(getApiUrl(`/api/dh/${id}/${action}`), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (!processResponse.ok) {
+        const error = await processResponse.text()
+        console.error(`Failed to ${action} DH process:`, error)
+        // Don't throw here - the status was updated even if process failed
+        alert(`Status updated but failed to ${action} process: ${error}`)
+      } else {
+        const result = await processResponse.json()
+        console.log(`DH process ${action} result:`, result)
+        
+        // Show success message
+        if (newActiveStatus) {
+          console.log(`✅ DH Process started: ${result.message}`)
+        } else {
+          console.log(`⏹️ DH Process stopped: ${result.message}`)
+        }
       }
       
       // Refresh list
@@ -351,14 +387,16 @@ export const DigitalHumansPage: React.FC = () => {
 
         <TabsContent value="active">
           {/* Bouton ajouter sous les tabs */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
-            <Button onClick={handleCreateDH} variant="ghost">
-              <Flex align="center" gap="sm">
-                <span>+</span>
-                <span>Ajouter un membre</span>
-              </Flex>
-            </Button>
-          </div>
+          {currentUserRole === 'superuser' && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
+              <Button onClick={handleCreateDH} variant="ghost">
+                <Flex align="center" gap="sm">
+                  <span>+</span>
+                  <span>Ajouter un membre</span>
+                </Flex>
+              </Button>
+            </div>
+          )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {digitalHumans.filter(dh => dh.active).map(dh => (
               <Card key={dh._id} style={{ padding: '20px', backgroundColor: 'rgb(248, 248, 248)', border: '1px solid rgb(229, 231, 235)' }}>
@@ -390,16 +428,18 @@ export const DigitalHumansPage: React.FC = () => {
                   </div>
                   
                   <Flex gap="md" align="center">
-                    <Tooltip content="Modifier">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        onClick={() => handleEditDH(dh)}
-                        style={{ padding: '0.5rem' }}
-                      >
-                        <Icon name="Edit" size="md" />
-                      </Button>
-                    </Tooltip>
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Modifier">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleEditDH(dh)}
+                          style={{ padding: '0.5rem' }}
+                        >
+                          <Icon name="Edit" size="md" />
+                        </Button>
+                      </Tooltip>
+                    )}
                     
                     <Tooltip content={dh.active ? 'Désactiver' : 'Activer'}>
                       <Switch
@@ -408,19 +448,21 @@ export const DigitalHumansPage: React.FC = () => {
                       />
                     </Tooltip>
                     
-                    <Tooltip content="Supprimer">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        onClick={() => handleDeleteDH(dh._id!)}
-                        style={{ 
-                        padding: '0.5rem',
-                        color: 'var(--qwanyx-text-danger)' 
-                      }}
-                    >
-                      <Icon name="Delete" size="md" />
-                    </Button>
-                  </Tooltip>
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Supprimer">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleDeleteDH(dh._id!)}
+                          style={{ 
+                          padding: '0.5rem',
+                          color: 'var(--qwanyx-text-danger)' 
+                        }}
+                      >
+                        <Icon name="Delete" size="md" />
+                      </Button>
+                    </Tooltip>
+                    )}
                   </Flex>
                 </div>
                 
@@ -512,14 +554,16 @@ export const DigitalHumansPage: React.FC = () => {
 
         <TabsContent value="inactive">
           {/* Bouton ajouter sous les tabs */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
-            <Button onClick={handleCreateDH} variant="ghost">
-              <Flex align="center" gap="sm">
-                <span>+</span>
-                <span>Ajouter un membre</span>
-              </Flex>
-            </Button>
-          </div>
+          {currentUserRole === 'superuser' && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
+              <Button onClick={handleCreateDH} variant="ghost">
+                <Flex align="center" gap="sm">
+                  <span>+</span>
+                  <span>Ajouter un membre</span>
+                </Flex>
+              </Button>
+            </div>
+          )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {digitalHumans.filter(dh => !dh.active).map(dh => (
               <Card key={dh._id} style={{ padding: '20px', backgroundColor: 'rgb(248, 248, 248)', border: '1px solid rgb(229, 231, 235)' }}>
@@ -551,16 +595,18 @@ export const DigitalHumansPage: React.FC = () => {
                   </div>
                   
                   <Flex gap="md" align="center">
-                    <Tooltip content="Modifier">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        onClick={() => handleEditDH(dh)}
-                        style={{ padding: '0.5rem' }}
-                      >
-                        <Icon name="Edit" size="md" />
-                      </Button>
-                    </Tooltip>
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Modifier">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleEditDH(dh)}
+                          style={{ padding: '0.5rem' }}
+                        >
+                          <Icon name="Edit" size="md" />
+                        </Button>
+                      </Tooltip>
+                    )}
                     
                     <Tooltip content={dh.active ? 'Désactiver' : 'Activer'}>
                       <Switch
@@ -569,19 +615,21 @@ export const DigitalHumansPage: React.FC = () => {
                       />
                     </Tooltip>
                     
-                    <Tooltip content="Supprimer">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        onClick={() => handleDeleteDH(dh._id!)}
-                        style={{ 
-                        padding: '0.5rem',
-                        color: 'var(--qwanyx-text-danger)' 
-                      }}
-                    >
-                      <Icon name="Delete" size="md" />
-                    </Button>
-                  </Tooltip>
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Supprimer">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleDeleteDH(dh._id!)}
+                          style={{ 
+                          padding: '0.5rem',
+                          color: 'var(--qwanyx-text-danger)' 
+                        }}
+                      >
+                        <Icon name="Delete" size="md" />
+                      </Button>
+                    </Tooltip>
+                    )}
                   </Flex>
                 </div>
                 
@@ -673,14 +721,16 @@ export const DigitalHumansPage: React.FC = () => {
 
         <TabsContent value="all">
           {/* Bouton ajouter sous les tabs */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
-            <Button onClick={handleCreateDH} variant="ghost">
-              <Flex align="center" gap="sm">
-                <span>+</span>
-                <span>Ajouter un membre</span>
-              </Flex>
-            </Button>
-          </div>
+          {currentUserRole === 'superuser' && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem', marginBottom: '1rem' }}>
+              <Button onClick={handleCreateDH} variant="ghost">
+                <Flex align="center" gap="sm">
+                  <span>+</span>
+                  <span>Ajouter un membre</span>
+                </Flex>
+              </Button>
+            </div>
+          )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {digitalHumans.map(dh => (
               <Card key={dh._id} style={{ padding: '20px', backgroundColor: 'rgb(248, 248, 248)', border: '1px solid rgb(229, 231, 235)' }}>
@@ -712,16 +762,18 @@ export const DigitalHumansPage: React.FC = () => {
                   </div>
                   
                   <Flex gap="md" align="center">
-                    <Tooltip content="Modifier">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        onClick={() => handleEditDH(dh)}
-                        style={{ padding: '0.5rem' }}
-                      >
-                        <Icon name="Edit" size="md" />
-                      </Button>
-                    </Tooltip>
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Modifier">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleEditDH(dh)}
+                          style={{ padding: '0.5rem' }}
+                        >
+                          <Icon name="Edit" size="md" />
+                        </Button>
+                      </Tooltip>
+                    )}
                     
                     <Tooltip content={dh.active ? 'Désactiver' : 'Activer'}>
                       <Switch
@@ -730,19 +782,21 @@ export const DigitalHumansPage: React.FC = () => {
                       />
                     </Tooltip>
                     
-                    <Tooltip content="Supprimer">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        onClick={() => handleDeleteDH(dh._id!)}
-                        style={{ 
-                        padding: '0.5rem',
-                        color: 'var(--qwanyx-text-danger)' 
-                      }}
-                    >
-                      <Icon name="Delete" size="md" />
-                    </Button>
-                  </Tooltip>
+                    {currentUserRole === 'superuser' && (
+                      <Tooltip content="Supprimer">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleDeleteDH(dh._id!)}
+                          style={{ 
+                          padding: '0.5rem',
+                          color: 'var(--qwanyx-text-danger)' 
+                        }}
+                      >
+                        <Icon name="Delete" size="md" />
+                      </Button>
+                    </Tooltip>
+                    )}
                   </Flex>
                 </div>
                 

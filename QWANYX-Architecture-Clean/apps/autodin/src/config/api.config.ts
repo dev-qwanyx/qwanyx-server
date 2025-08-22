@@ -1,7 +1,7 @@
 // API Configuration - Easy switch between local and remote
 // Change USE_LOCAL to false to use production server
 
-const USE_LOCAL = false  // <-- CHANGE THIS TO SWITCH BETWEEN LOCAL AND REMOTE
+const USE_LOCAL = true  // <-- CHANGE THIS TO SWITCH BETWEEN LOCAL AND REMOTE
 
 export const API_CONFIG = {
   // API URLs

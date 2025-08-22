@@ -8,11 +8,10 @@ import {
   Card,
   Heading,
   Badge,
-  UserProfile,
   SearchBar,
   Collapsible,
   Tooltip,
-  Switch
+  UserProfile
 } from '@qwanyx/ui'
 import { QFlow } from '@qwanyx/canvas'
 import { NodeRegistry, NodeCategory, NodeDefinition } from '../execution'
@@ -314,130 +313,6 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
     e.dataTransfer.dropEffect = 'copy'
   }
 
-  // Custom node renderer with DH context
-  const renderNode = (node: any, dhContext: any) => {
-    // Check if this is a Start/Stop node
-    if (node.data?.nodeType === 'start-stop') {
-      return (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '12px',
-          padding: '16px',
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-          border: '2px solid #e5e7eb',
-          minWidth: '180px'
-        }}>
-          {/* UserProfile with avatar - using complete DH data */}
-          <UserProfile
-            user={{
-              name: dhContext?.dhFullData ? 
-                `${dhContext.dhFullData.firstName || ''} ${dhContext.dhFullData.name || ''}`.trim() : 
-                `${dhContext?.dhFirstName || ''} ${dhContext?.dhName || 'Digital Human'}`.trim(),
-              email: dhContext?.dhFullData?.email || dhContext?.dhEmail || 'dh@qwanyx.com',
-              avatar: dhContext?.dhFullData ? 
-                `https://api.dicebear.com/7.x/avataaars/svg?seed=${dhContext.dhFullData.firstName || ''}${dhContext.dhFullData.name || ''}` :
-                `https://api.dicebear.com/7.x/avataaars/svg?seed=${dhContext?.dhFirstName || ''}${dhContext?.dhName || ''}`
-            }}
-            size="md"
-            showEmail={false}
-          />
-          
-          {/* Switch */}
-          <Switch 
-            checked={node.data.isRunning || false}
-            onChange={async (checked) => {
-              console.log('DH switched:', checked ? 'ON' : 'OFF')
-              
-              // Get auth token
-              const token = localStorage.getItem('autodin_token')
-              if (!token || !dhContext?.dhFullData) return
-              
-              try {
-                const API_URL = 'http://localhost:5002'
-                const endpoint = checked ? 'start' : 'stop'
-                
-                // Call API to start/stop DH
-                const response = await fetch(`${API_URL}/api/dh/${dhContext.dhFullData._id}/${endpoint}`, {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                  }
-                })
-                
-                if (response.ok) {
-                  const result = await response.json()
-                  console.log(`DH ${endpoint} successful:`, result)
-                  
-                  // Update node data to reflect new state
-                  dhContext.updateNodeData(node._id, { isRunning: checked })
-                } else {
-                  console.error(`Failed to ${endpoint} DH`)
-                }
-              } catch (error) {
-                console.error(`Error ${checked ? 'starting' : 'stopping'} DH:`, error)
-              }
-            }}
-            size="md"
-          />
-        </div>
-      )
-    }
-    
-    // Default icon node rendering
-    return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '4px'
-      }}>
-        <div style={{
-          width: '64px',
-          height: '64px',
-          borderRadius: '16px',
-          background: node.data.color === 'primary' ? 
-            'linear-gradient(135deg, rgba(96, 165, 250, 0.85) 0%, rgba(59, 130, 246, 0.85) 100%)' :
-            node.data.color === 'success' ?
-            'linear-gradient(135deg, rgba(74, 222, 128, 0.85) 0%, rgba(34, 197, 94, 0.85) 100%)' :
-            'linear-gradient(135deg, rgba(156, 163, 175, 0.85) 0%, rgba(107, 114, 128, 0.85) 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
-          {/* Glass reflection overlay */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '50%',
-            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%)',
-            borderRadius: '16px 16px 0 0',
-            pointerEvents: 'none'
-          }} />
-          <Icon name={node.data.icon || 'Circle'} size="2xl" style={{ color: 'white', position: 'relative', zIndex: 1 }} />
-        </div>
-        <span style={{
-          fontSize: '12px',
-          fontWeight: 600,
-          color: '#2C3E50',
-          maxWidth: '80px',
-          textAlign: 'center'
-        }}>
-          {node.data.label}
-        </span>
-      </div>
-    )
-  }
 
   return (
     <div style={{
@@ -681,7 +556,6 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
           <QFlow
             nodes={nodes}
             edges={edges}
-            nodeRenderer={renderNode}
             context={{ 
               dhId, 
               dhName, 
@@ -689,13 +563,10 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               dhEmail,
               dhFullData,
               workspace,
-              currentUser,
-              updateNodeData: (nodeId: string, data: any) => {
-                setNodes(prev => prev.map(n => 
-                  n._id === nodeId ? { ...n, data: { ...n.data, ...data } } : n
-                ))
-              }
+              currentUser
             }}
+            onNodesChange={setNodes}
+            onEdgesChange={setEdges}
           />
         </div>
 

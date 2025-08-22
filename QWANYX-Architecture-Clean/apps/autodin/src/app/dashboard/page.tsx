@@ -183,12 +183,6 @@ export default function DashboardPage() {
       <UsersContent />
     ),
     'thot': (
-      <ThotManagement config={{
-        apiUrl: 'http://135.181.72.183:5002/api',
-        workspace: 'autodin'
-      }} />
-    ),
-    'thot': (
       <DigitalHumansPage />
     ),
     'thot-configuration': (
@@ -300,21 +294,25 @@ export default function DashboardPage() {
       }
     ]
     
-    // Users menu - available to everyone for now
-    items.push({
-      id: 'users',
-      label: 'Utilisateurs',
-      icon: 'People',
-      badge: userCount !== null ? userCount.toString() : undefined
-    })
+    // Users menu - only for superuser and admin
+    if (currentUserRole === 'superuser' || currentUserRole === 'admin') {
+      items.push({
+        id: 'users',
+        label: 'Utilisateurs',
+        icon: 'People',
+        badge: userCount !== null ? userCount.toString() : undefined
+      })
+    }
     
-    // Digital Team - available to everyone for now
-    items.push({
-      id: 'thot',
-      label: 'Digital Team',
-      icon: 'SmartToy',
-      badge: dhCount !== null ? dhCount.toString() : undefined
-    })
+    // Digital Team - only for superuser and admin
+    if (currentUserRole === 'superuser' || currentUserRole === 'admin') {
+      items.push({
+        id: 'thot',
+        label: 'Digital Team',
+        icon: 'SmartToy',
+        badge: dhCount !== null ? dhCount.toString() : undefined
+      })
+    }
     
     // Continue with other items that everyone can see
     items.push(
