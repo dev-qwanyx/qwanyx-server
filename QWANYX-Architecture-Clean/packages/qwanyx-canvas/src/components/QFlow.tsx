@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect, memo } from 'react'
-import { Icon } from '@qwanyx/ui'
+import { Icon, Modal, Button } from '@qwanyx/ui'
 import { ObjectId } from 'bson'
 import { DhMainSwitch } from './DhMainSwitch'
 
@@ -50,6 +50,8 @@ interface QFlowProps {
   edges: QEdge[]
   onNodesChange?: (nodes: QNode[]) => void
   onEdgesChange?: (edges: QEdge[]) => void
+  onSave?: (nodes: QNode[], edges: QEdge[]) => Promise<void> | void
+  onUnsavedChangesChange?: (hasUnsaved: boolean) => void
   width?: string | number
   height?: string | number
   nodeRenderer?: (node: QNode, context?: any) => React.ReactNode
@@ -143,11 +145,18 @@ const Edge = memo<EdgeProps>(({ edge, source, target, getIdString }) => {
   )
 })
 
+interface HistoryState {
+  nodes: QNode[]
+  edges: QEdge[]
+}
+
 export const QFlow: React.FC<QFlowProps> = ({
   nodes: initialNodes,
   edges: initialEdges,
   onNodesChange,
   onEdgesChange,
+  onSave,
+  onUnsavedChangesChange,
   width = '100%',
   height = '100%',
   nodeRenderer,
@@ -166,6 +175,18 @@ export const QFlow: React.FC<QFlowProps> = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [panStart, setPanStart] = useState({ x: 0, y: 0 })
   const [renderTrigger, setRenderTrigger] = useState(0)
+  
+  // Save state
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const [showUnsavedWarning, setShowUnsavedWarning] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  
+  // History management for undo/redo
+  const [history, setHistory] = useState<HistoryState[]>([{ nodes: initialNodes, edges: initialEdges }])
+  const [historyIndex, setHistoryIndex] = useState(0)
+  const maxHistorySize = 50 // Limit history to prevent memory issues
+  const isInitialMount = useRef(true)
+  const isDragging = useRef(false) // Track if we're currently dragging
   
   // Helper to get string representation of ID
   const getIdString = (id: string | ObjectId | any): string => {
@@ -212,14 +233,138 @@ export const QFlow: React.FC<QFlowProps> = ({
     return str1 === str2
   }
   
+  // Track previous prop values to detect external changes
+  const prevNodesRef = useRef<QNode[]>(initialNodes)
+  const prevEdgesRef = useRef<QEdge[]>(initialEdges)
+  
+  // Function to save current state to history
+  const saveToHistory = useCallback((newNodes: QNode[], newEdges: QEdge[]) => {
+    // Check if state actually changed from the current history state
+    const currentState = history[historyIndex]
+    const stateChanged = 
+      JSON.stringify(newNodes) !== JSON.stringify(currentState.nodes) ||
+      JSON.stringify(newEdges) !== JSON.stringify(currentState.edges)
+    
+    if (!stateChanged) {
+      return // Don't save duplicate states
+    }
+    
+    // Remove any future history if we're not at the end
+    const newHistory = history.slice(0, historyIndex + 1)
+    
+    // Add new state
+    newHistory.push({ nodes: newNodes, edges: newEdges })
+    
+    // Limit history size
+    if (newHistory.length > maxHistorySize) {
+      newHistory.shift()
+    }
+    
+    setHistory(newHistory)
+    setHistoryIndex(newHistory.length - 1)
+    setHasUnsavedChanges(true) // Mark as having unsaved changes
+  }, [history, historyIndex, maxHistorySize])
+  
   // Update local state when props change
   useEffect(() => {
-    setNodes(initialNodes)
-  }, [initialNodes])
+    const nodesChanged = JSON.stringify(initialNodes) !== JSON.stringify(prevNodesRef.current)
+    const nodeCountChanged = initialNodes.length !== prevNodesRef.current.length
+    
+    if (nodesChanged) {
+      setNodes(initialNodes)
+      
+      // When nodes change from outside (like dropping a new node), save to history
+      // But NOT if we're currently dragging
+      // Force immediate save if node count changed (node added or removed)
+      if (!isInitialMount.current && !isDragging.current) {
+        if (nodeCountChanged) {
+          // Node was added or removed - save immediately
+          saveToHistory(initialNodes, edges)
+        } else {
+          // Node was just moved/updated - can save normally
+          saveToHistory(initialNodes, edges)
+        }
+      }
+      
+      prevNodesRef.current = initialNodes
+    }
+  }, [initialNodes, edges, saveToHistory])
   
   useEffect(() => {
-    setEdges(initialEdges)
-  }, [initialEdges])
+    const edgesChanged = JSON.stringify(initialEdges) !== JSON.stringify(prevEdgesRef.current)
+    
+    if (edgesChanged) {
+      setEdges(initialEdges)
+      
+      // When edges change from outside, save to history
+      if (!isInitialMount.current && !isDragging.current) {
+        // Save the new edges with current nodes
+        saveToHistory(nodes, initialEdges)
+      }
+      
+      prevEdgesRef.current = initialEdges
+    }
+  }, [initialEdges, nodes, saveToHistory])
+  
+  // Mark that initial mount is complete immediately
+  useEffect(() => {
+    // Use requestAnimationFrame to ensure DOM is ready
+    requestAnimationFrame(() => {
+      isInitialMount.current = false
+    })
+  }, [])
+  
+  // Watch for node count changes specifically (for dropped nodes)
+  useEffect(() => {
+    if (!isInitialMount.current && !isDragging.current) {
+      // If we have nodes and they're different from what's in history, save
+      const currentHistoryState = history[historyIndex]
+      if (nodes.length !== currentHistoryState.nodes.length) {
+        saveToHistory(nodes, edges)
+      }
+    }
+  }, [nodes.length]) // Only trigger when node count changes
+  
+  // Save function
+  const handleSave = useCallback(async () => {
+    if (!onSave) return
+    
+    setIsSaving(true)
+    try {
+      await onSave(nodes, edges)
+      setHasUnsavedChanges(false)
+    } catch (error) {
+      console.error('Failed to save flow:', error)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [nodes, edges, onSave])
+  
+  // Undo function
+  const undo = useCallback(() => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1
+      const state = history[newIndex]
+      setNodes(state.nodes)
+      setEdges(state.edges)
+      setHistoryIndex(newIndex)
+      onNodesChange?.(state.nodes)
+      onEdgesChange?.(state.edges)
+    }
+  }, [history, historyIndex, onNodesChange, onEdgesChange])
+  
+  // Redo function
+  const redo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      const newIndex = historyIndex + 1
+      const state = history[newIndex]
+      setNodes(state.nodes)
+      setEdges(state.edges)
+      setHistoryIndex(newIndex)
+      onNodesChange?.(state.nodes)
+      onEdgesChange?.(state.edges)
+    }
+  }, [history, historyIndex, onNodesChange, onEdgesChange])
   
   // Force initial render by simulating node movement
   useEffect(() => {
@@ -232,36 +377,74 @@ export const QFlow: React.FC<QFlowProps> = ({
     return () => clearTimeout(timer)
   }, [])
 
+  // Notify parent of unsaved changes
+  useEffect(() => {
+    onUnsavedChangesChange?.(hasUnsavedChanges)
+  }, [hasUnsavedChanges, onUnsavedChangesChange])
+
+  // Warn before leaving page with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault()
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?'
+        return e.returnValue
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [hasUnsavedChanges])
+
   // Handle keyboard events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Only handle if QFlow container is focused
       if (!containerRef.current?.contains(document.activeElement)) return
 
+      // Ctrl+S - Save
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        handleSave()
+        return
+      }
+
+      // Ctrl+Z - Undo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        undo()
+        return
+      }
+
+      // Ctrl+Shift+Z or Ctrl+Y - Redo
+      if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'z') || 
+          ((e.ctrlKey || e.metaKey) && e.key === 'y')) {
+        e.preventDefault()
+        redo()
+        return
+      }
+
       // Delete key - delete selected node or edge
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (selectedNodeId) {
-          setNodes(prev => {
-            const updated = prev.filter(n => getIdString(n._id) !== selectedNodeId)
-            onNodesChange?.(updated)
-            return updated
-          })
-          // Also remove edges connected to this node
-          setEdges(prev => {
-            const updated = prev.filter(e => 
-              getIdString(e.s) !== selectedNodeId && 
-              getIdString(e.t) !== selectedNodeId
-            )
-            onEdgesChange?.(updated)
-            return updated
-          })
+          // Save state before deletion
+          const newNodes = nodes.filter(n => getIdString(n._id) !== selectedNodeId)
+          const newEdges = edges.filter(e => 
+            getIdString(e.s) !== selectedNodeId && 
+            getIdString(e.t) !== selectedNodeId
+          )
+          
+          saveToHistory(newNodes, newEdges)
+          setNodes(newNodes)
+          setEdges(newEdges)
+          onNodesChange?.(newNodes)
+          onEdgesChange?.(newEdges)
           setSelectedNodeId(null)
         } else if (selectedEdgeId) {
-          setEdges(prev => {
-            const updated = prev.filter(e => getIdString(e._id) !== selectedEdgeId)
-            onEdgesChange?.(updated)
-            return updated
-          })
+          const newEdges = edges.filter(e => getIdString(e._id) !== selectedEdgeId)
+          saveToHistory(nodes, newEdges)
+          setEdges(newEdges)
+          onEdgesChange?.(newEdges)
           setSelectedEdgeId(null)
         }
       }
@@ -285,11 +468,10 @@ export const QFlow: React.FC<QFlowProps> = ({
             x: copiedNode.x + 50,
             y: copiedNode.y + 50
           }
-          setNodes(prev => {
-            const updated = [...prev, newNode]
-            onNodesChange?.(updated)
-            return updated
-          })
+          const newNodes = [...nodes, newNode]
+          saveToHistory(newNodes, edges)
+          setNodes(newNodes)
+          onNodesChange?.(newNodes)
           setSelectedNodeId(getIdString(newNode._id))
         }
       }
@@ -303,7 +485,7 @@ export const QFlow: React.FC<QFlowProps> = ({
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [selectedNodeId, selectedEdgeId, copiedNode, nodes, onNodesChange, onEdgesChange])
+  }, [selectedNodeId, selectedEdgeId, copiedNode, nodes, edges, onNodesChange, onEdgesChange, undo, redo, saveToHistory, handleSave])
 
   // Handle zoom with mouse wheel
   const handleWheel = useCallback((e: React.WheelEvent) => {
@@ -344,16 +526,22 @@ export const QFlow: React.FC<QFlowProps> = ({
             : n
         })
         setNodes(newNodes)
-        onNodesChange?.(newNodes)
+        // Don't call onNodesChange during drag - we'll do it on mouse up
       }
     }
-  }, [isPanning, panStart, draggedNode, nodes, pan, zoom, dragOffset, onNodesChange, getIdString])
+  }, [isPanning, panStart, draggedNode, nodes, pan, zoom, dragOffset, getIdString])
 
   // Stop panning or dragging
   const handleMouseUp = useCallback(() => {
+    // If we were dragging a node, save to history and notify parent
+    if (draggedNode) {
+      isDragging.current = false
+      onNodesChange?.(nodes) // Notify parent of the final position
+      saveToHistory(nodes, edges)
+    }
     setIsPanning(false)
     setDraggedNode(null)
-  }, [])
+  }, [draggedNode, nodes, edges, saveToHistory, onNodesChange])
 
   // Start dragging a node
   const handleNodeMouseDown = useCallback((e: React.MouseEvent, nodeId: string | ObjectId) => {
@@ -368,6 +556,7 @@ export const QFlow: React.FC<QFlowProps> = ({
       setSelectedEdgeId(null)
       
       // Start dragging
+      isDragging.current = true
       setDraggedNode(getIdString(nodeId))
       setDragOffset({
         x: e.clientX - pan.x - node.x * zoom,
@@ -377,25 +566,66 @@ export const QFlow: React.FC<QFlowProps> = ({
   }, [nodes, pan, zoom, objectIdEquals, getIdString])
 
   return (
-    <div 
-      ref={containerRef}
-      tabIndex={0}  // Make focusable to capture keyboard events
-      style={{
-        width,
-        height,
-        overflow: 'hidden',
-        position: 'relative',
-        cursor: isPanning ? 'grabbing' : 'grab',
-        background: 'linear-gradient(to right, #f0f0f0 1px, transparent 1px), linear-gradient(to bottom, #f0f0f0 1px, transparent 1px)',
-        backgroundSize: '20px 20px',
-        outline: 'none'  // Remove focus outline
-      }}
-      onWheel={handleWheel}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-    >
+    <>
+      <div 
+        ref={containerRef}
+        tabIndex={0}  // Make focusable to capture keyboard events
+        style={{
+          width,
+          height,
+          overflow: 'hidden',
+          position: 'relative',
+          cursor: isPanning ? 'grabbing' : 'grab',
+          background: 'linear-gradient(to right, #f0f0f0 1px, transparent 1px), linear-gradient(to bottom, #f0f0f0 1px, transparent 1px)',
+          backgroundSize: '20px 20px',
+          outline: 'none',  // Remove focus outline
+          boxShadow: 'inset 0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 40px rgba(0, 0, 0, 0.05)'
+        }}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      >
+        {/* Unsaved changes indicator - subtle asterisk */}
+        {hasUnsavedChanges && !isSaving && (
+          <div style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            fontSize: '24px',
+            color: 'rgba(239, 68, 68, 0.8)',
+            fontWeight: 'bold',
+            zIndex: 1000,
+            cursor: 'default',
+            userSelect: 'none'
+          }} title="Unsaved changes (Ctrl+S to save)">
+            *
+          </div>
+        )}
+        
+        {/* Saving indicator */}
+        {isSaving && (
+          <div style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            padding: '8px 16px',
+            backgroundColor: 'rgba(59, 130, 246, 0.9)',
+            color: 'white',
+            borderRadius: '6px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+          }}>
+            <Icon name="loader" size="sm" />
+            Saving...
+          </div>
+        )}
       <div 
         style={{
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
@@ -460,10 +690,10 @@ export const QFlow: React.FC<QFlowProps> = ({
                 top: `${node.y}px`,
                 cursor: 'move',
                 userSelect: 'none',
-                border: selectedNodeId === getIdString(nodeId) ? '2px solid #4299e1' : 'none',
-                borderRadius: '8px',
-                padding: selectedNodeId === getIdString(nodeId) ? '2px' : '4px',
-                margin: selectedNodeId === getIdString(nodeId) ? '-2px' : '0'
+                border: selectedNodeId === getIdString(nodeId) ? '1px dashed rgba(0, 0, 0, 0.7)' : 'none',
+                borderRadius: '4px',
+                padding: selectedNodeId === getIdString(nodeId) ? '3px' : '4px',
+                margin: selectedNodeId === getIdString(nodeId) ? '-1px' : '0'
               }}
               onMouseDown={(e) => handleNodeMouseDown(e, nodeId)}
           >
@@ -623,5 +853,6 @@ export const QFlow: React.FC<QFlowProps> = ({
         </button>
       </div>
     </div>
+    </>
   )
 }
