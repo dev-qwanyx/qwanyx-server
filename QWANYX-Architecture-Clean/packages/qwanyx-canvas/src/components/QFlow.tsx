@@ -168,7 +168,7 @@ export const QFlow: React.FC<QFlowProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const [nodes, setNodes] = useState(initialNodes)
   const [edges, setEdges] = useState(initialEdges)
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+  const [selectedNodeIds, setSelectedNodeIds] = useState<Set<string>>(new Set())
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null)
   const [copiedNode, setCopiedNode] = useState<QNode | null>(null)
   const [zoom, setZoom] = useState(1)
@@ -430,14 +430,14 @@ export const QFlow: React.FC<QFlowProps> = ({
         return
       }
 
-      // Delete key - delete selected node or edge
+      // Delete key - delete selected nodes or edge
       if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (selectedNodeId) {
+        if (selectedNodeIds.size > 0) {
           // Save state before deletion
-          const newNodes = nodes.filter(n => getIdString(n._id) !== selectedNodeId)
+          const newNodes = nodes.filter(n => !selectedNodeIds.has(getIdString(n._id)))
           const newEdges = edges.filter(e => 
-            getIdString(e.s) !== selectedNodeId && 
-            getIdString(e.t) !== selectedNodeId
+            !selectedNodeIds.has(getIdString(e.s)) && 
+            !selectedNodeIds.has(getIdString(e.t))
           )
           
           saveToHistory(newNodes, newEdges)
@@ -445,7 +445,7 @@ export const QFlow: React.FC<QFlowProps> = ({
           setEdges(newEdges)
           onNodesChange?.(newNodes)
           onEdgesChange?.(newEdges)
-          setSelectedNodeId(null)
+          setSelectedNodeIds(new Set())
         } else if (selectedEdgeId) {
           const newEdges = edges.filter(e => getIdString(e._id) !== selectedEdgeId)
           saveToHistory(nodes, newEdges)
@@ -455,10 +455,11 @@ export const QFlow: React.FC<QFlowProps> = ({
         }
       }
 
-      // Ctrl+C - copy selected node
+      // Ctrl+C - copy first selected node
       if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
-        if (selectedNodeId) {
-          const node = nodes.find(n => getIdString(n._id) === selectedNodeId)
+        if (selectedNodeIds.size > 0) {
+          const firstSelectedId = Array.from(selectedNodeIds)[0]
+          const node = nodes.find(n => getIdString(n._id) === firstSelectedId)
           if (node) {
             setCopiedNode(node)
           }
@@ -478,20 +479,20 @@ export const QFlow: React.FC<QFlowProps> = ({
           saveToHistory(newNodes, edges)
           setNodes(newNodes)
           onNodesChange?.(newNodes)
-          setSelectedNodeId(getIdString(newNode._id))
+          setSelectedNodeIds(new Set([getIdString(newNode._id)]))
         }
       }
 
       // Escape - deselect
       if (e.key === 'Escape') {
-        setSelectedNodeId(null)
+        setSelectedNodeIds(new Set())
         setSelectedEdgeId(null)
       }
     }
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [selectedNodeId, selectedEdgeId, copiedNode, nodes, edges, onNodesChange, onEdgesChange, undo, redo, saveToHistory, handleSave])
+  }, [selectedNodeIds, selectedEdgeId, copiedNode, nodes, edges, onNodesChange, onEdgesChange, undo, redo, saveToHistory, handleSave])
 
   // Handle zoom with mouse wheel
   const handleWheel = useCallback((e: React.WheelEvent) => {
@@ -509,8 +510,8 @@ export const QFlow: React.FC<QFlowProps> = ({
                      (target.parentElement?.parentElement === containerRef.current && target.tagName === 'svg')
     
     if (isCanvas) {
-      // Deselect any selected node when clicking on canvas
-      setSelectedNodeId(null)
+      // Deselect all nodes when clicking on canvas
+      setSelectedNodeIds(new Set())
       
       // Start panning
       setIsPanning(true)
@@ -567,17 +568,43 @@ export const QFlow: React.FC<QFlowProps> = ({
       return nId && nodeId && objectIdEquals(nId, nodeId)
     })
     if (node) {
-      // Select the node
-      setSelectedNodeId(getIdString(nodeId))
+      const nodeIdStr = getIdString(nodeId)
+      
+      // Handle selection based on modifiers
+      if (e.shiftKey) {
+        // Shift+click: Add to selection
+        setSelectedNodeIds(prev => {
+          const newSet = new Set(prev)
+          newSet.add(nodeIdStr)
+          return newSet
+        })
+      } else if (e.ctrlKey || e.metaKey) {
+        // Ctrl/Cmd+click: Toggle selection
+        setSelectedNodeIds(prev => {
+          const newSet = new Set(prev)
+          if (newSet.has(nodeIdStr)) {
+            newSet.delete(nodeIdStr)
+          } else {
+            newSet.add(nodeIdStr)
+          }
+          return newSet
+        })
+      } else {
+        // Regular click: Select only this node
+        setSelectedNodeIds(new Set([nodeIdStr]))
+      }
+      
       setSelectedEdgeId(null)
       
-      // Start dragging
-      isDragging.current = true
-      setDraggedNode(getIdString(nodeId))
-      setDragOffset({
-        x: e.clientX - pan.x - node.x * zoom,
-        y: e.clientY - pan.y - node.y * zoom
-      })
+      // Start dragging only if not using modifiers
+      if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        isDragging.current = true
+        setDraggedNode(nodeIdStr)
+        setDragOffset({
+          x: e.clientX - pan.x - node.x * zoom,
+          y: e.clientY - pan.y - node.y * zoom
+        })
+      }
     }
   }, [nodes, pan, zoom, objectIdEquals, getIdString])
   
@@ -727,10 +754,10 @@ export const QFlow: React.FC<QFlowProps> = ({
                 top: `${node.y - 32}px`,   // Offset by half icon height
                 cursor: 'move',
                 userSelect: 'none',
-                border: selectedNodeId === getIdString(nodeId) ? '1px dashed rgba(0, 0, 0, 0.7)' : 'none',
+                border: selectedNodeIds.has(getIdString(nodeId)) ? '1px dashed rgba(0, 0, 0, 0.7)' : 'none',
                 borderRadius: '4px',
-                padding: selectedNodeId === getIdString(nodeId) ? '3px' : '4px',
-                margin: selectedNodeId === getIdString(nodeId) ? '-1px' : '0'
+                padding: selectedNodeIds.has(getIdString(nodeId)) ? '3px' : '4px',
+                margin: selectedNodeIds.has(getIdString(nodeId)) ? '-1px' : '0'
               }}
               onMouseDown={(e) => handleNodeMouseDown(e, nodeId)}
               onDoubleClick={(e) => handleNodeDoubleClick(e, nodeId)}
