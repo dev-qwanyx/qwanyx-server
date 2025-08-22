@@ -16,6 +16,7 @@
     "clean": "rm -rf dist node_modules"
   },
   "dependencies": {
+    "@qwanyx/api-client": "file:../qwanyx-api-client",
     "@qwanyx/canvas": "file:../qwanyx-canvas",
     "@qwanyx/ui": "file:../qwanyx-ui",
     "bson": "^6.10.4",

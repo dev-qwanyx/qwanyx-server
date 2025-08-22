@@ -21,6 +21,10 @@ import {
   TabsContent,
 } from '@qwanyx/ui'
 import { getApiUrl } from '../config/api.config'
+import { DhApi } from '@qwanyx/api-client'
+
+// Create DH API instance
+const dhApi = new DhApi()
 
 interface DigitalHuman {
   _id?: string
@@ -258,60 +262,89 @@ export const DigitalHumansPage: React.FC = () => {
     }
   }
 
+  // Check actual process status for all DHs
+  const checkProcessStatuses = async () => {
+    const token = localStorage.getItem('autodin_token')
+    if (!token) return
+    
+    for (const dh of digitalHumans) {
+      if (!dh._id) continue
+      
+      try {
+        const response = await fetch(getApiUrl(`/api/dh/${dh._id}/status`), {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          const isProcessRunning = data.status?.running === true
+          
+          // Update the DH in our state if process status differs from active flag
+          if (isProcessRunning !== dh.active) {
+            console.log(`DH ${dh.email} process status (${isProcessRunning}) differs from active flag (${dh.active})`)
+            // Update local state to reflect real process status
+            setDigitalHumans(prev => prev.map(d => 
+              d._id === dh._id ? { ...d, active: isProcessRunning } : d
+            ))
+          }
+        }
+      } catch (error) {
+        console.error(`Error checking process status for ${dh.email}:`, error)
+      }
+    }
+  }
+
+  // Check process statuses after fetching DHs
+  useEffect(() => {
+    if (digitalHumans.length > 0) {
+      checkProcessStatuses()
+    }
+  }, [digitalHumans.length])
+
   const handleToggleActive = async (id: string) => {
     try {
       const dh = digitalHumans.find(d => d._id === id)
       if (!dh) return
       
+      // First check actual process status
       const token = localStorage.getItem('autodin_token')
-      const newActiveStatus = !dh.active
-      
-      console.log(`Toggling DH ${id} active status to:`, newActiveStatus)
-      
-      // First update the active status in the database
-      const updateResponse = await fetch(getApiUrl(`/users/${id}`), {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'X-Workspace': WORKSPACE
-        },
-        body: JSON.stringify({
-          active: newActiveStatus
-        })
-      })
-      
-      if (!updateResponse.ok) {
-        const error = await updateResponse.text()
-        console.error('Failed to update DH active status:', error)
-        throw new Error('Failed to update Digital Human status')
-      }
-      
-      // Then start or stop the actual process
-      const action = newActiveStatus ? 'start' : 'stop'
-      const processResponse = await fetch(getApiUrl(`/api/dh/${id}/${action}`), {
-        method: 'POST',
+      const statusResponse = await fetch(getApiUrl(`/api/dh/${id}/status`), {
+        method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       })
       
-      if (!processResponse.ok) {
-        const error = await processResponse.text()
-        console.error(`Failed to ${action} DH process:`, error)
-        // Don't throw here - the status was updated even if process failed
-        alert(`Status updated but failed to ${action} process: ${error}`)
-      } else {
-        const result = await processResponse.json()
-        console.log(`DH process ${action} result:`, result)
+      let currentlyRunning = false
+      if (statusResponse.ok) {
+        const statusData = await statusResponse.json()
+        currentlyRunning = statusData.status?.running === true
+      }
+      
+      const newActiveStatus = !currentlyRunning  // Toggle based on real process status
+      
+      console.log(`Toggling DH ${id} from ${currentlyRunning ? 'RUNNING' : 'STOPPED'} to ${newActiveStatus ? 'RUNNING' : 'STOPPED'}`)
+      
+      // Use the abstracted DhApi to toggle
+      const result = await dhApi.toggle(id, newActiveStatus)
+      
+      if (result.success) {
+        console.log('DH toggle successful:', result.data)
         
         // Show success message
         if (newActiveStatus) {
-          console.log(`✅ DH Process started: ${result.message}`)
+          console.log(`✅ DH Process started`)
         } else {
-          console.log(`⏹️ DH Process stopped: ${result.message}`)
+          console.log(`⏹️ DH Process stopped`)
         }
+      } else {
+        console.error('Failed to toggle DH:', result.error)
+        alert(`Failed to ${newActiveStatus ? 'start' : 'stop'} Digital Human: ${result.error}`)
       }
       
       // Refresh list

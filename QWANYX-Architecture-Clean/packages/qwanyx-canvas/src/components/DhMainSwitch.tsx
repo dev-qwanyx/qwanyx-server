@@ -29,9 +29,7 @@ export const DhMainSwitch: React.FC<DhMainSwitchProps> = ({
   const [isRunning, setIsRunning] = useState(initialState)
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckingStatus, setIsCheckingStatus] = useState(true) // Loading state for initial check
-  const [heartbeatCount, setHeartbeatCount] = useState(0)
-  const [lastHeartbeat, setLastHeartbeat] = useState<Date | null>(null)
-  const [isHeartbeating, setIsHeartbeating] = useState(false)
+  const [uptime, setUptime] = useState<number>(0) // Uptime in seconds
   
   // Get full DH data from sessionStorage if available
   const [dhFullData, setDhFullData] = useState<any>(null)
@@ -55,19 +53,19 @@ export const DhMainSwitch: React.FC<DhMainSwitchProps> = ({
     checkDHStatus()
   }, [dhId])
   
-  // Function to check if DH is currently running
+  // Function to check if DH process is currently running
   const checkDHStatus = async () => {
     if (!dhId) {
       setIsCheckingStatus(false)
       return
     }
     
-    console.log(`Checking status for DH ${dhId}...`)
+    console.log(`Checking process status for DH ${dhId}...`)
     setIsCheckingStatus(true)
     
     try {
-      // Call API to get all users and find our DH
-      const response = await fetch(`http://localhost:5002/users`, {
+      // Call API to check if DH process is actually running
+      const response = await fetch(`http://localhost:5002/api/dh/${dhId}/status`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('autodin_token')}`,
@@ -76,34 +74,30 @@ export const DhMainSwitch: React.FC<DhMainSwitchProps> = ({
       })
       
       if (response.ok) {
-        const users = await response.json()
-        console.log(`Got ${users.length} users, looking for DH ${dhId}`)
+        const data = await response.json()
+        console.log(`DH ${dhId} process status:`, data)
         
-        // Find our DH in the list
-        const dhUser = users.find((u: any) => u._id === dhId || u.id === dhId)
+        // Update running state based on the actual process status
+        const isProcessRunning = data.status?.running === true
+        setIsRunning(isProcessRunning)
+        console.log(`DH ${dhId} process is ${isProcessRunning ? 'RUNNING' : 'STOPPED'}`)
         
-        if (dhUser) {
-          console.log(`Found DH ${dhId}:`, dhUser)
-          
-          // Update running state based on the 'active' field
-          const isActive = dhUser.active === true
-          setIsRunning(isActive)
-          console.log(`DH ${dhId} is ${isActive ? 'ACTIVE' : 'INACTIVE'}`)
-          
-          // If running, start heartbeat counter
-          if (isActive) {
-            setHeartbeatCount(0)
-          }
+        // Store actual uptime if available
+        if (isProcessRunning && data.status?.uptime) {
+          setUptime(Math.round(data.status.uptime))
+          console.log(`DH has been running for ${Math.round(data.status.uptime)} seconds`)
         } else {
-          console.log(`DH ${dhId} not found in users list`)
-          setIsRunning(false)
+          setUptime(0)
         }
+      } else if (response.status === 404) {
+        console.log(`DH ${dhId} not found`)
+        setIsRunning(false)
       } else {
-        console.error('Failed to get users:', response.status)
+        console.error('Failed to get DH process status:', response.status)
         setIsRunning(false)
       }
     } catch (error) {
-      console.error('Error checking DH status:', error)
+      console.error('Error checking DH process status:', error)
       // Assume not running if we can't check
       setIsRunning(false)
     } finally {
@@ -111,30 +105,6 @@ export const DhMainSwitch: React.FC<DhMainSwitchProps> = ({
     }
   }
   
-  // Heartbeat simulation effect
-  useEffect(() => {
-    if (!isRunning) {
-      setHeartbeatCount(0)
-      setLastHeartbeat(null)
-      return
-    }
-    
-    // Simulate heartbeat every 2 seconds when running
-    const heartbeatInterval = setInterval(() => {
-      setHeartbeatCount(prev => prev + 1)
-      setLastHeartbeat(new Date())
-      
-      // Trigger heartbeat animation
-      setIsHeartbeating(true)
-      setTimeout(() => setIsHeartbeating(false), 300)
-    }, 2000)
-    
-    // Initial heartbeat
-    setIsHeartbeating(true)
-    setTimeout(() => setIsHeartbeating(false), 300)
-    
-    return () => clearInterval(heartbeatInterval)
-  }, [isRunning])
   
   const handleToggle = async (checked: boolean) => {
     console.log(`DH ${dhId} switched:`, checked ? 'ON' : 'OFF')
@@ -181,6 +151,15 @@ export const DhMainSwitch: React.FC<DhMainSwitchProps> = ({
     }
   }
   
+  // Format uptime for display
+  const formatUptime = (seconds: number): string => {
+    if (seconds < 60) return `${seconds}s`
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    return `${hours}h ${minutes}m`
+  }
+
   // Build display name and avatar
   const displayName = dhFullData 
     ? `${dhFullData.firstName || ''} ${dhFullData.name || ''}`.trim()
@@ -202,38 +181,11 @@ export const DhMainSwitch: React.FC<DhMainSwitchProps> = ({
       backgroundColor: showProfile ? 'white' : 'transparent',
       borderRadius: showProfile ? '12px' : '0',
       boxShadow: showProfile ? '0 4px 12px rgba(0, 0, 0, 0.1)' : 'none',
-      border: showProfile ? `2px solid ${isRunning ? '#10b981' : '#e5e7eb'}` : 'none',
+      border: showProfile ? '1px solid #e5e7eb' : 'none',
       minWidth: showProfile ? '180px' : 'auto',
       position: 'relative',
       transition: 'border-color 0.3s ease'
     }}>
-      {/* Heartbeat indicator */}
-      {isRunning && (
-        <div style={{
-          position: 'absolute',
-          top: '8px',
-          right: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px'
-        }}>
-          <div style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            backgroundColor: '#ef4444',
-            animation: isHeartbeating ? 'heartbeat 0.3s ease' : 'none',
-            boxShadow: isHeartbeating ? '0 0 8px rgba(239, 68, 68, 0.6)' : 'none'
-          }} />
-          <span style={{
-            fontSize: '10px',
-            color: '#6b7280',
-            fontFamily: 'monospace'
-          }}>
-            {heartbeatCount > 0 ? `${heartbeatCount}` : ''}
-          </span>
-        </div>
-      )}
       
       {/* UserProfile with avatar */}
       {showProfile && (
@@ -288,25 +240,20 @@ export const DhMainSwitch: React.FC<DhMainSwitchProps> = ({
         </span>
       </div>
       
-      {/* Last heartbeat time */}
-      {lastHeartbeat && isRunning && (
+      {/* Real uptime display */}
+      {isRunning && uptime > 0 && (
         <div style={{
           fontSize: '10px',
           color: '#9ca3af',
-          textAlign: 'center'
+          textAlign: 'center',
+          marginTop: '4px'
         }}>
-          Last beat: {lastHeartbeat.toLocaleTimeString()}
+          Running for {formatUptime(uptime)}
         </div>
       )}
       
-      {/* CSS Animations */}
+      {/* CSS Animation for green pulse */}
       <style>{`
-        @keyframes heartbeat {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.3); }
-          100% { transform: scale(1); }
-        }
-        
         @keyframes pulse {
           0% {
             box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);

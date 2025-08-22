@@ -96,12 +96,18 @@ export class NodeRegistry {
       name: 'SMTP Config',
       description: 'Configure SMTP email sending',
       icon: 'MailOutline',
-      color: '#FFA500',
+      color: 'error',  // Will show red gradient
       factory: (data) => ({
         id: data.id,
-        type: 'smtp-config',
+        type: 'icon',  // Use icon node type for rendering
         position: data.position,
-        data: data.data,
+        data: {
+          ...data.data,
+          nodeType: 'smtp',  // This triggers SMTP form in expanded view
+          label: 'SMTP Config',
+          icon: 'MailOutline',
+          color: 'error'
+        },
         execute: async () => ({ success: true }),
         validate: () => ({ valid: true }),
         getInputSchema: () => undefined,
@@ -109,11 +115,17 @@ export class NodeRegistry {
         getConfigSchema: () => undefined
       }),
       defaultData: {
-        host: '',
-        port: 587,
-        secure: false,
-        user: '',
-        password: ''
+        nodeType: 'smtp',
+        label: 'SMTP Config', 
+        icon: 'MailOutline',
+        color: 'error',
+        smtp: {
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          email: '',
+          password: ''
+        }
       }
     })
     

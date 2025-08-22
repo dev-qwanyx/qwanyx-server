@@ -292,21 +292,38 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
       x: x,
       y: y,
       data: {
-        nodeType: nodeType,  // Store the node type for custom rendering
         label: nodeLabel,
         icon: nodeIcon,
         description: `${nodeType} node`,
         color: 'primary',
         // Add default data for start-stop nodes
         ...(nodeType === 'start-stop' ? {
+          nodeType: 'start-stop',
           avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${dhName || 'DH'}`,
           isRunning: false
+        } : {}),
+        // Add SMTP config data
+        ...(nodeType === 'smtp-config' ? {
+          nodeType: 'smtp',
+          color: 'error',
+          icon: 'MailOutline',
+          label: 'SMTP Config',
+          smtp: {
+            email: dhEmail || '',
+            server: 'smtp.gmail.com',
+            port: 587,
+            password: ''
+          }
+        } : {}),
+        // For other nodes, just store the nodeType
+        ...(!['start-stop', 'smtp-config'].includes(nodeType) ? { 
+          nodeType: nodeType 
         } : {})
       }
     }
     
     setNodes(prev => [...prev, newNode])
-  }, [])
+  }, [dhName, dhEmail])
   
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()

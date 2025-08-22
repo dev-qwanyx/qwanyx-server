@@ -1,7 +1,8 @@
 import React, { useState, useRef, useCallback, useEffect, memo } from 'react'
-import { Icon, Modal, Button } from '@qwanyx/ui'
+import { Icon, Modal, Button, Card, Container, Flex, Text } from '@qwanyx/ui'
 import { ObjectId } from 'bson'
 import { DhMainSwitch } from './DhMainSwitch'
+import { SmtpConfig, SmtpConfigData } from './SmtpConfig'
 
 export interface QNode {
   _id: string | ObjectId  // Accept both for flexibility
@@ -69,11 +70,11 @@ interface EdgeProps {
 const Edge = memo<EdgeProps>(({ edge, source, target, getIdString }) => {
   const [isHovered, setIsHovered] = useState(false)
   
-  // Calculate path
-  const sourceX = source.x + 32
-  const sourceY = source.y + 32
-  const targetX = target.x + 32
-  const targetY = target.y + 32
+  // Calculate path - nodes are already centered due to transform
+  const sourceX = source.x
+  const sourceY = source.y
+  const targetX = target.x
+  const targetY = target.y
   
   const dx = targetX - sourceX
   const dy = targetY - sourceY
@@ -180,6 +181,9 @@ export const QFlow: React.FC<QFlowProps> = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  
+  // Expanded node state - tracks which nodes are showing their config
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
   
   // History management for undo/redo
   const [history, setHistory] = useState<HistoryState[]>([{ nodes: initialNodes, edges: initialEdges }])
@@ -494,9 +498,19 @@ export const QFlow: React.FC<QFlowProps> = ({
     setZoom(prev => Math.min(Math.max(0.1, prev * delta), 3))
   }, [])
 
-  // Start panning
+  // Start panning and deselect nodes
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.target === containerRef.current || e.target === containerRef.current?.firstChild) {
+    // Check if we clicked on the canvas (not on a node)
+    const target = e.target as HTMLElement
+    const isCanvas = target === containerRef.current || 
+                     target.parentElement === containerRef.current ||
+                     (target.parentElement?.parentElement === containerRef.current && target.tagName === 'svg')
+    
+    if (isCanvas) {
+      // Deselect any selected node when clicking on canvas
+      setSelectedNodeId(null)
+      
+      // Start panning
       setIsPanning(true)
       setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y })
     }
@@ -564,6 +578,23 @@ export const QFlow: React.FC<QFlowProps> = ({
       })
     }
   }, [nodes, pan, zoom, objectIdEquals, getIdString])
+  
+  // Handle double-click on nodes - universal expand/collapse
+  const handleNodeDoubleClick = useCallback((e: React.MouseEvent, nodeId: string | ObjectId) => {
+    e.stopPropagation()
+    const nodeIdStr = getIdString(nodeId)
+    
+    // Toggle expanded state
+    setExpandedNodes(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(nodeIdStr)) {
+        newSet.delete(nodeIdStr)
+      } else {
+        newSet.add(nodeIdStr)
+      }
+      return newSet
+    })
+  }, [getIdString])
 
   return (
     <>
@@ -681,13 +712,16 @@ export const QFlow: React.FC<QFlowProps> = ({
         {/* Nodes */}
         {nodes.map((node, index) => {
           const nodeId = node._id || (node as any).id
+          const nodeIdStr = nodeId ? getIdString(nodeId) : null
+          const isExpanded = nodeIdStr ? expandedNodes.has(nodeIdStr) : false
+          
           return nodeId ? (
             <div
               key={getIdString(nodeId)}
               style={{
                 position: 'absolute',
-                left: `${node.x}px`,
-                top: `${node.y}px`,
+                left: `${node.x - 32}px`,  // Offset by half icon width
+                top: `${node.y - 32}px`,   // Offset by half icon height
                 cursor: 'move',
                 userSelect: 'none',
                 border: selectedNodeId === getIdString(nodeId) ? '1px dashed rgba(0, 0, 0, 0.7)' : 'none',
@@ -696,6 +730,7 @@ export const QFlow: React.FC<QFlowProps> = ({
                 margin: selectedNodeId === getIdString(nodeId) ? '-1px' : '0'
               }}
               onMouseDown={(e) => handleNodeMouseDown(e, nodeId)}
+              onDoubleClick={(e) => handleNodeDoubleClick(e, nodeId)}
           >
             {nodeRenderer ? (
               nodeRenderer(node, context)
@@ -724,68 +759,150 @@ export const QFlow: React.FC<QFlowProps> = ({
               />
             ) : node.type === 'icon' ? (
               <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '4px'
+                position: 'relative',
+                width: 'fit-content'
               }}>
+                {/* Icon and title - fixed position */}
                 <div style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  background: node.data.color === 'primary' ? 
-                    'linear-gradient(135deg, rgba(96, 165, 250, 0.85) 0%, rgba(59, 130, 246, 0.85) 100%)' :
-                    node.data.color === 'success' ?
-                    'linear-gradient(135deg, rgba(74, 222, 128, 0.85) 0%, rgba(34, 197, 94, 0.85) 100%)' :
-                    'linear-gradient(135deg, rgba(156, 163, 175, 0.85) 0%, rgba(107, 114, 128, 0.85) 100%)',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  backdropFilter: 'blur(1px)',
-                  WebkitBackdropFilter: 'blur(1px)',
-                  position: 'relative',
-                  overflow: 'hidden'
+                  gap: '4px'
                 }}>
-                  {/* Glass reflection overlay */}
+                  <div style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '16px',
+                    background: node.data.color === 'primary' ? 
+                      'linear-gradient(135deg, rgba(96, 165, 250, 0.85) 0%, rgba(59, 130, 246, 0.85) 100%)' :
+                      node.data.color === 'success' ?
+                      'linear-gradient(135deg, rgba(74, 222, 128, 0.85) 0%, rgba(34, 197, 94, 0.85) 100%)' :
+                      node.data.color === 'error' ?
+                      'linear-gradient(135deg, rgba(248, 113, 113, 0.85) 0%, rgba(239, 68, 68, 0.85) 100%)' :
+                      'linear-gradient(135deg, rgba(156, 163, 175, 0.85) 0%, rgba(107, 114, 128, 0.85) 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    backdropFilter: 'blur(1px)',
+                    WebkitBackdropFilter: 'blur(1px)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    {/* Glass reflection overlay */}
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '50%',
+                      background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%)',
+                      borderRadius: '16px 16px 0 0',
+                      pointerEvents: 'none'
+                    }} />
+                    <Icon name={node.data.icon || 'Circle'} size="2xl" style={{ color: 'white', position: 'relative', zIndex: 1 }} />
+                  </div>
+                  <span style={{
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: '#2C3E50',
+                    maxWidth: '80px',
+                    textAlign: 'center',
+                    position: 'relative',
+                    zIndex: 10,
+                    textShadow: `
+                      0 0 3px rgba(255, 255, 255, 1),
+                      0 0 6px rgba(255, 255, 255, 1),
+                      0 0 9px rgba(255, 255, 255, 1),
+                      0 0 12px rgba(255, 255, 255, 0.95),
+                      0 0 15px rgba(255, 255, 255, 0.9),
+                      0 0 20px rgba(255, 255, 255, 0.85),
+                      0 0 25px rgba(255, 255, 255, 0.8),
+                      0 0 30px rgba(255, 255, 255, 0.7),
+                      2px 2px 3px rgba(255, 255, 255, 1),
+                      -2px -2px 3px rgba(255, 255, 255, 1),
+                      2px -2px 3px rgba(255, 255, 255, 1),
+                      -2px 2px 3px rgba(255, 255, 255, 1)
+                    `
+                  }}>
+                    {node.data.label}
+                  </span>
+                </div>
+                
+                {/* Expandable card - positioned absolutely below icon */}
+                {isExpanded && (
                   <div style={{
                     position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: '50%',
-                    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%)',
-                    borderRadius: '16px 16px 0 0',
-                    pointerEvents: 'none'
-                  }} />
-                  <Icon name={node.data.icon || 'Circle'} size="2xl" style={{ color: 'white', position: 'relative', zIndex: 1 }} />
-                </div>
-                <span style={{
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: '#2C3E50',
-                  maxWidth: '80px',
-                  textAlign: 'center',
-                  position: 'relative',
-                  zIndex: 10,
-                  textShadow: `
-                    0 0 3px rgba(255, 255, 255, 1),
-                    0 0 6px rgba(255, 255, 255, 1),
-                    0 0 9px rgba(255, 255, 255, 1),
-                    0 0 12px rgba(255, 255, 255, 0.95),
-                    0 0 15px rgba(255, 255, 255, 0.9),
-                    0 0 20px rgba(255, 255, 255, 0.85),
-                    0 0 25px rgba(255, 255, 255, 0.8),
-                    0 0 30px rgba(255, 255, 255, 0.7),
-                    2px 2px 3px rgba(255, 255, 255, 1),
-                    -2px -2px 3px rgba(255, 255, 255, 1),
-                    2px -2px 3px rgba(255, 255, 255, 1),
-                    -2px 2px 3px rgba(255, 255, 255, 1)
-                  `
-                }}>
-                  {node.data.label}
-                </span>
+                    top: '100px',  // Below icon and label
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 1000
+                  }}
+                  onMouseDown={(e) => {
+                    // Allow dragging from the card, but not from interactive elements
+                    const target = e.target as HTMLElement
+                    const isInteractive = target.tagName === 'INPUT' || 
+                                         target.tagName === 'BUTTON' || 
+                                         target.tagName === 'TEXTAREA' ||
+                                         target.tagName === 'SELECT'
+                    
+                    if (!isInteractive) {
+                      handleNodeMouseDown(e, nodeId)
+                    }
+                  }}
+                  >
+                    <Card
+                      variant="outlined"
+                      padding="none"
+                      style={{
+                        minWidth: '250px',
+                        animation: 'slideDown 0.2s ease-out',
+                        cursor: 'move'
+                      }}
+                    >
+                    {/* Render appropriate component based on node type */}
+                    {node.data.nodeType === 'smtp' ? (
+                      // SMTP Configuration Component
+                      <SmtpConfig
+                        compact={true}
+                        dhEmail={context?.dhEmail}
+                        initialConfig={node.data.smtp}
+                        onSave={(config) => {
+                          // Update node data with new config
+                          const currentNodeId = node._id || (node as any).id
+                          const newNodes = nodes.map(n => {
+                            const nId = n._id || (n as any).id
+                            return (nId && getIdString(nId) === getIdString(currentNodeId))
+                              ? { ...n, data: { ...n.data, smtp: config } }
+                              : n
+                          })
+                          setNodes(newNodes)
+                          onNodesChange?.(newNodes)
+                          console.log('SMTP config saved for node:', nodeIdStr)
+                        }}
+                      />
+                    ) : (
+                      // Default content for other node types
+                      <Container padding="md">
+                        <Flex direction="col" gap="sm">
+                          <Text size="xs">
+                            <Text weight="semibold">Type:</Text> {node.data.nodeType || node.type}
+                          </Text>
+                          <Text size="xs">
+                            <Text weight="semibold">ID:</Text> {nodeIdStr?.slice(-8)}
+                          </Text>
+                          {node.data.description && (
+                            <Text size="xs">
+                              <Text weight="semibold">Description:</Text> {node.data.description}
+                            </Text>
+                          )}
+                        </Flex>
+                      </Container>
+                    )}
+                    </Card>
+                  </div>
+                )}
               </div>
             ) : null}
           </div>
@@ -852,6 +969,20 @@ export const QFlow: React.FC<QFlowProps> = ({
           <Icon name="Home" size="sm" />
         </button>
       </div>
+      
+      {/* CSS for expand/collapse animation */}
+      <style>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
     </>
   )
