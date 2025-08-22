@@ -701,6 +701,114 @@ export const QFlow: React.FC<QFlowProps> = ({
         }
       }
       
+      // L - Smart align selected nodes (vertical if portrait, horizontal if landscape)
+      if (e.key === 'l' && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
+        e.preventDefault()
+        if (selectedNodeIds.size >= 2) {
+          // Get selected nodes only (ignore edges)
+          const selectedNodes = nodes.filter(n => selectedNodeIds.has(getIdString(n._id)))
+          
+          if (selectedNodes.length >= 2) {
+            // Calculate bounding box of selection
+            const minX = Math.min(...selectedNodes.map(n => n.x))
+            const maxX = Math.max(...selectedNodes.map(n => n.x))
+            const minY = Math.min(...selectedNodes.map(n => n.y))
+            const maxY = Math.max(...selectedNodes.map(n => n.y))
+            
+            const width = maxX - minX
+            const height = maxY - minY
+            
+            // Determine aspect ratio (portrait vs landscape)
+            const isPortrait = height > width
+            
+            const alignedNodes = nodes.map(node => {
+              const nodeIdStr = getIdString(node._id)
+              if (selectedNodeIds.has(nodeIdStr)) {
+                if (isPortrait) {
+                  // Align vertically - center all nodes horizontally
+                  const centerX = (minX + maxX) / 2
+                  return { ...node, x: centerX }
+                } else {
+                  // Align horizontally - center all nodes vertically
+                  const centerY = (minY + maxY) / 2
+                  return { ...node, y: centerY }
+                }
+              }
+              return node
+            })
+            
+            saveToHistory(alignedNodes, edges)
+            setNodes(alignedNodes)
+            onNodesChange?.(alignedNodes)
+            
+            console.log(`Aligned ${selectedNodes.length} nodes ${isPortrait ? 'vertically' : 'horizontally'}`)
+          }
+        }
+      }
+      
+      // D - Smart distribute selected nodes (vertical if portrait, horizontal if landscape)
+      if (e.key === 'd' && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey) {
+        e.preventDefault()
+        if (selectedNodeIds.size >= 3) {  // Need at least 3 nodes to distribute
+          // Get selected nodes only (ignore edges)
+          const selectedNodes = nodes.filter(n => selectedNodeIds.has(getIdString(n._id)))
+          
+          if (selectedNodes.length >= 3) {
+            // Calculate bounding box of selection
+            const minX = Math.min(...selectedNodes.map(n => n.x))
+            const maxX = Math.max(...selectedNodes.map(n => n.x))
+            const minY = Math.min(...selectedNodes.map(n => n.y))
+            const maxY = Math.max(...selectedNodes.map(n => n.y))
+            
+            const width = maxX - minX
+            const height = maxY - minY
+            
+            // Determine aspect ratio (portrait vs landscape)
+            const isPortrait = height > width
+            
+            let distributedNodes: QNode[]
+            
+            if (isPortrait) {
+              // Distribute vertically - sort by Y position
+              const sortedNodes = [...selectedNodes].sort((a, b) => a.y - b.y)
+              const spacing = (maxY - minY) / (sortedNodes.length - 1)
+              
+              distributedNodes = nodes.map(node => {
+                const nodeIdStr = getIdString(node._id)
+                const index = sortedNodes.findIndex(n => getIdString(n._id) === nodeIdStr)
+                
+                if (index !== -1) {
+                  // Distribute evenly along Y axis
+                  return { ...node, y: minY + (spacing * index) }
+                }
+                return node
+              })
+            } else {
+              // Distribute horizontally - sort by X position
+              const sortedNodes = [...selectedNodes].sort((a, b) => a.x - b.x)
+              const spacing = (maxX - minX) / (sortedNodes.length - 1)
+              
+              distributedNodes = nodes.map(node => {
+                const nodeIdStr = getIdString(node._id)
+                const index = sortedNodes.findIndex(n => getIdString(n._id) === nodeIdStr)
+                
+                if (index !== -1) {
+                  // Distribute evenly along X axis
+                  return { ...node, x: minX + (spacing * index) }
+                }
+                return node
+              })
+            }
+            
+            saveToHistory(distributedNodes, edges)
+            setNodes(distributedNodes)
+            onNodesChange?.(distributedNodes)
+            
+            console.log(`Distributed ${selectedNodes.length} nodes ${isPortrait ? 'vertically' : 'horizontally'}`)
+          }
+        }
+      }
+      
       // Escape - deselect
       if (e.key === 'Escape') {
         setSelectedNodeIds(new Set())
@@ -710,7 +818,7 @@ export const QFlow: React.FC<QFlowProps> = ({
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [selectedNodeIds, selectedEdgeIds, copiedNode, nodes, edges, onNodesChange, onEdgesChange, undo, redo, saveToHistory, handleSave])
+  }, [selectedNodeIds, selectedEdgeIds, copiedNode, nodes, edges, onNodesChange, onEdgesChange, undo, redo, saveToHistory, handleSave, getIdString, zoom, pan, containerRef])
 
   // Handle zoom with mouse wheel
   const handleWheel = useCallback((e: React.WheelEvent) => {
