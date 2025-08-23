@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { ObjectId } from 'bson'
 import { 
   Flex, 
@@ -30,6 +30,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
   dhFirstName = '',
   dhEmail = 'dh@qwanyx.com' 
 }) => {
+  console.log('🧠 DigitalHumanEditor mounted with:', { dhId, dhEmail })
   // const [selectedNode] = useState<any>(null) // Will be used for node properties
   const [isSaving, setIsSaving] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -46,6 +47,75 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
   const [workspace, setWorkspace] = useState('autodin')
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [dhFullData, setDhFullData] = useState<any>(null)
+  
+  // WebSocket connection to brain
+  const wsRef = useRef<WebSocket | null>(null)
+  const [_brainConnected, setBrainConnected] = useState(false)
+  
+  // Connect to brain on mount
+  useEffect(() => {
+    // Get DH email to use as brain ID
+    const brainId = dhEmail?.replace('@', '-').replace('.', '-') || 'stephen-qwanyx-com'
+    
+    console.log('Connecting to brain:', brainId)
+    
+    // Connect to brain server
+    const ws = new WebSocket('ws://localhost:3003/neural')
+    wsRef.current = ws
+    
+    ws.onopen = () => {
+      console.log('Connected to brain server')
+      setBrainConnected(true)
+      
+      // Send connect message with brain ID
+      ws.send(JSON.stringify({
+        type: 'connect',
+        brainId: brainId
+      }))
+    }
+    
+    ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data)
+        // Only log important messages, not continuous stream messages
+        if (message.type !== 'stream') {
+          console.log('Brain message:', message)
+        }
+        
+        // Handle event messages
+        if (message.type === 'event' && message.payload) {
+          const { event: eventType, nodes: brainNodes, edges: brainEdges } = message.payload
+          
+          if (eventType === 'state' && brainNodes && brainEdges) {
+            console.log('Loading brain state:', brainNodes.length, 'nodes,', brainEdges.length, 'edges')
+            setNodes(brainNodes)
+            setEdges(brainEdges)
+          } else if (eventType === 'connected') {
+            console.log('Connected to brain server:', message.payload.message)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to parse brain message:', err)
+      }
+    }
+    
+    ws.onerror = (error) => {
+      console.error('Brain connection error:', error)
+      setBrainConnected(false)
+    }
+    
+    ws.onclose = () => {
+      console.log('Disconnected from brain')
+      setBrainConnected(false)
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close()
+      }
+    }
+  }, []) // Run once on mount, not dependent on dhEmail
   
   // Load available node types
   useEffect(() => {
@@ -185,6 +255,33 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
     // Navigate directly to DH list (thot tab)
     window.location.href = '/dashboard?tab=thot'
   }
+  
+  // Reset brain memory to clean state
+  const handleResetMemory = useCallback(() => {
+    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+      console.error('WebSocket not connected')
+      return
+    }
+    
+    const confirmReset = window.confirm('Are you sure you want to reset the brain memory? This will clear all nodes and edges.')
+    if (!confirmReset) return
+    
+    console.log('Resetting brain memory...')
+    
+    // Send reset command to brain
+    wsRef.current.send(JSON.stringify({
+      type: 'command',
+      brainId: dhEmail?.replace('@', '-').replace('.', '-'),
+      payload: {
+        type: 'reset-memory'
+      }
+    }))
+    
+    // Clear local state
+    setNodes([])
+    setEdges([])
+    console.log('Brain memory reset to clean state')
+  }, [dhEmail])
   
   // Download flow as JSON file
   const handleDownload = () => {
@@ -594,6 +691,23 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               }}
             >
               <Icon name="Save" size="md" />
+            </Button>
+          </Tooltip>
+          
+          <Tooltip content="Reset brain memory (clear all)">
+            <Button 
+              variant="ghost" 
+              size="md"
+              onClick={handleResetMemory}
+              style={{
+                padding: '12px',
+                minWidth: 'auto',
+                width: '48px',
+                height: '48px',
+                color: 'var(--qwanyx-error)'
+              }}
+            >
+              <Icon name="RefreshCw" size="md" />
             </Button>
           </Tooltip>
         </Flex>
