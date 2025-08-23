@@ -1,6 +1,324 @@
-{
-    "message": "Flow saved successfully for DH 68a78f51f6ce4441e8752af1",
-    "modified": 1,
-    "success": true,
-    "upserted": null
-}
+main-app.js?v=1755935314805:1825 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+index.mjs:12699 Warning: forwardRef render functions accept exactly two parameters: props and ref. Did you forget to use the ref parameter?
+window.console.error @ app-index.js:33
+console.error @ hydration-error-info.js:63
+printWarning @ react.development.js:204
+error @ react.development.js:178
+forwardRef @ react.development.js:2292
+eval @ index.mjs:12699
+(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs @ layout.js:83
+options.factory @ webpack.js?v=1755935314805:715
+__webpack_require__ @ webpack.js?v=1755935314805:37
+fn @ webpack.js?v=1755935314805:371
+eval @ providers.tsx:8
+(app-pages-browser)/./src/app/providers.tsx @ layout.js:39
+options.factory @ webpack.js?v=1755935314805:715
+__webpack_require__ @ webpack.js?v=1755935314805:37
+fn @ webpack.js?v=1755935314805:371
+Promise.then
+eval @ next-flight-client-entry-loader.js?modules=%7B%22request%22%3A%22E%3A%5C%5CqwanyxDev%5C%5CQWANYX-Architecture%5C%5CQWANYX-Architecture-Clean%5C%5Capps%5C%5Cautodin%5C%5Csrc%5C%5Capp%5C%5Cproviders.tsx%22%2C%22ids%22%3A%5B%22Providers%22%5D%7D&modules=%7B%22request%22%3A%22E%3A%5C%5CqwanyxDev%5C%5CQWANYX-Architecture%5C%5CQWANYX-Architecture-Clean%5C%5Cpackages%5C%5Cqwanyx-ui%5C%5Cdist%5C%5Cui.css%22%2C%22ids%22%3A%5B%5D%7D&server=false!:1
+(app-pages-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-client-entry-loader.js?modules=%7B%22request%22%3A%22E%3A%5C%5CqwanyxDev%5C%5CQWANYX-Architecture%5C%5CQWANYX-Architecture-Clean%5C%5Capps%5C%5Cautodin%5C%5Csrc%5C%5Capp%5C%5Cproviders.tsx%22%2C%22ids%22%3A%5B%22Providers%22%5D%7D&modules=%7B%22request%22%3A%22E%3A%5C%5CqwanyxDev%5C%5CQWANYX-Architecture%5C%5CQWANYX-Architecture-Clean%5C%5Cpackages%5C%5Cqwanyx-ui%5C%5Cdist%5C%5Cui.css%22%2C%22ids%22%3A%5B%5D%7D&server=false! @ layout.js:17
+options.factory @ webpack.js?v=1755935314805:715
+__webpack_require__ @ webpack.js?v=1755935314805:37
+__webpack_exec__ @ layout.js:89
+(anonymous) @ layout.js:90
+__webpack_require__.O @ webpack.js?v=1755935314805:86
+webpackJsonpCallback @ webpack.js?v=1755935314805:1397
+(anonymous) @ main-app.js?v=1755935314805:9
+config.ts:44 🔌 API Client: LOCAL - http://localhost:5002
+page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:17 Parsed DH data: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:17 Parsed DH data: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+page.tsx:30 DH Editor props: {dhId: '68a78f51f6ce4441e8752af1', dhName: 'Souverains', dhFirstName: 'Stephen', dhEmail: 'stephen@qwanyx.com'}
+page.tsx:31 DH Data from sessionStorage: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+page.tsx:30 DH Editor props: {dhId: '68a78f51f6ce4441e8752af1', dhName: 'Souverains', dhFirstName: 'Stephen', dhEmail: 'stephen@qwanyx.com'}
+page.tsx:31 DH Data from sessionStorage: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+app-index.js:33 Warning: Prop `src` did not match. Server: "https://api.dicebear.com/7.x/avataaars/svg?seed=Digital Human" Client: "https://api.dicebear.com/7.x/avataaars/svg?seed=StephenSouverains"
+    at img
+    at div
+    at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:11376:16)
+    at div
+    at mv (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:15182:17)
+    at div
+    at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:10373:21)
+    at div
+    at div
+    at DigitalHumanEditor (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-thot/dist/index.mjs:5846:11)
+    at DigitalHumanEditorPage (webpack-internal:///(app-pages-browser)/./src/app/digital-human-editor/page.tsx:17:90)
+    at ClientPageRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/client-page.js:14:11)
+    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)
+    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
+    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
+    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:349:11)
+    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at OuterLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:370:11)
+    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)
+    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
+    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
+    at NotFoundErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:349:11)
+    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at OuterLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:370:11)
+    at Ue (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-auth/dist/index.mjs:696:21)
+    at zC (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:1110:21)
+    at $C (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:7647:21)
+    at Providers (webpack-internal:///(app-pages-browser)/./src/app/providers.tsx:39:11)
+    at body
+    at html
+    at RootLayout (Server)
+    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
+    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
+    at NotFoundErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at DevRootNotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/dev-root-not-found-boundary.js:33:11)
+    at ReactDevOverlay (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/ReactDevOverlay.js:87:9)
+    at HotReload (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:321:11)
+    at Router (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:207:11)
+    at ErrorBoundaryHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:113:9)
+    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
+    at AppRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:585:13)
+    at ServerRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:112:27)
+    at Root (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:117:11)
+window.console.error @ app-index.js:33
+console.error @ hydration-error-info.js:63
+printWarning @ react-dom.development.js:94
+error @ react-dom.development.js:68
+warnForPropDifference @ react-dom.development.js:32715
+hydrateSanitizedAttribute @ react-dom.development.js:34541
+diffHydratedGenericElement @ react-dom.development.js:34733
+diffHydratedProperties @ react-dom.development.js:35113
+hydrateInstance @ react-dom.development.js:36127
+prepareToHydrateHostInstance @ react-dom.development.js:7246
+completeWork @ react-dom.development.js:19769
+completeUnitOfWork @ react-dom.development.js:25963
+performUnitOfWork @ react-dom.development.js:25759
+workLoopConcurrent @ react-dom.development.js:25734
+renderRootConcurrent @ react-dom.development.js:25690
+performConcurrentWorkOnRoot @ react-dom.development.js:24504
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+app-index.js:33 Warning: An error occurred during hydration. The server HTML was replaced with client content in <#document>.
+window.console.error @ app-index.js:33
+console.error @ hydration-error-info.js:63
+printWarning @ react-dom.development.js:94
+error @ react-dom.development.js:68
+errorHydratingContainer @ react-dom.development.js:36301
+recoverFromConcurrentError @ react-dom.development.js:24593
+performConcurrentWorkOnRoot @ react-dom.development.js:24542
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:17 Parsed DH data: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:17 Parsed DH data: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+page.tsx:30 DH Editor props: {dhId: '68a78f51f6ce4441e8752af1', dhName: 'Souverains', dhFirstName: 'Stephen', dhEmail: 'stephen@qwanyx.com'}
+page.tsx:31 DH Data from sessionStorage: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+page.tsx:30 DH Editor props: {dhId: '68a78f51f6ce4441e8752af1', dhName: 'Souverains', dhFirstName: 'Stephen', dhEmail: 'stephen@qwanyx.com'}
+page.tsx:31 DH Data from sessionStorage: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at checkForUnmatchedText (react-dom.development.js:32797:11)
+    at diffHydratedProperties (react-dom.development.js:35055:9)
+    at hydrateInstance (react-dom.development.js:36127:3)
+    at prepareToHydrateHostInstance (react-dom.development.js:7246:3)
+    at completeWork (react-dom.development.js:19769:13)
+    at completeUnitOfWork (react-dom.development.js:25963:14)
+    at performUnitOfWork (react-dom.development.js:25759:5)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+checkForUnmatchedText @ react-dom.development.js:32797
+diffHydratedProperties @ react-dom.development.js:35055
+hydrateInstance @ react-dom.development.js:36127
+prepareToHydrateHostInstance @ react-dom.development.js:7246
+completeWork @ react-dom.development.js:19769
+completeUnitOfWork @ react-dom.development.js:25963
+performUnitOfWork @ react-dom.development.js:25759
+workLoopConcurrent @ react-dom.development.js:25734
+renderRootConcurrent @ react-dom.development.js:25690
+performConcurrentWorkOnRoot @ react-dom.development.js:24504
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at checkForUnmatchedText (react-dom.development.js:32797:11)
+    at diffHydratedProperties (react-dom.development.js:35055:9)
+    at hydrateInstance (react-dom.development.js:36127:3)
+    at prepareToHydrateHostInstance (react-dom.development.js:7246:3)
+    at completeWork (react-dom.development.js:19769:13)
+    at completeUnitOfWork (react-dom.development.js:25963:14)
+    at performUnitOfWork (react-dom.development.js:25759:5)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+checkForUnmatchedText @ react-dom.development.js:32797
+diffHydratedProperties @ react-dom.development.js:35055
+hydrateInstance @ react-dom.development.js:36127
+prepareToHydrateHostInstance @ react-dom.development.js:7246
+completeWork @ react-dom.development.js:19769
+completeUnitOfWork @ react-dom.development.js:25963
+performUnitOfWork @ react-dom.development.js:25759
+workLoopConcurrent @ react-dom.development.js:25734
+renderRootConcurrent @ react-dom.development.js:25690
+performConcurrentWorkOnRoot @ react-dom.development.js:24504
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at checkForUnmatchedText (react-dom.development.js:32797:11)
+    at diffHydratedProperties (react-dom.development.js:35055:9)
+    at hydrateInstance (react-dom.development.js:36127:3)
+    at prepareToHydrateHostInstance (react-dom.development.js:7246:3)
+    at completeWork (react-dom.development.js:19769:13)
+    at completeUnitOfWork (react-dom.development.js:25963:14)
+    at performUnitOfWork (react-dom.development.js:25759:5)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+checkForUnmatchedText @ react-dom.development.js:32797
+diffHydratedProperties @ react-dom.development.js:35055
+hydrateInstance @ react-dom.development.js:36127
+prepareToHydrateHostInstance @ react-dom.development.js:7246
+completeWork @ react-dom.development.js:19769
+completeUnitOfWork @ react-dom.development.js:25963
+performUnitOfWork @ react-dom.development.js:25759
+workLoopConcurrent @ react-dom.development.js:25734
+renderRootConcurrent @ react-dom.development.js:25690
+performConcurrentWorkOnRoot @ react-dom.development.js:24504
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at checkForUnmatchedText (react-dom.development.js:32797:11)
+    at diffHydratedProperties (react-dom.development.js:35055:9)
+    at hydrateInstance (react-dom.development.js:36127:3)
+    at prepareToHydrateHostInstance (react-dom.development.js:7246:3)
+    at completeWork (react-dom.development.js:19769:13)
+    at completeUnitOfWork (react-dom.development.js:25963:14)
+    at performUnitOfWork (react-dom.development.js:25759:5)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+checkForUnmatchedText @ react-dom.development.js:32797
+diffHydratedProperties @ react-dom.development.js:35055
+hydrateInstance @ react-dom.development.js:36127
+prepareToHydrateHostInstance @ react-dom.development.js:7246
+completeWork @ react-dom.development.js:19769
+completeUnitOfWork @ react-dom.development.js:25963
+performUnitOfWork @ react-dom.development.js:25759
+workLoopConcurrent @ react-dom.development.js:25734
+renderRootConcurrent @ react-dom.development.js:25690
+performConcurrentWorkOnRoot @ react-dom.development.js:24504
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at checkForUnmatchedText (react-dom.development.js:32797:11)
+    at diffHydratedProperties (react-dom.development.js:35055:9)
+    at hydrateInstance (react-dom.development.js:36127:3)
+    at prepareToHydrateHostInstance (react-dom.development.js:7246:3)
+    at completeWork (react-dom.development.js:19769:13)
+    at completeUnitOfWork (react-dom.development.js:25963:14)
+    at performUnitOfWork (react-dom.development.js:25759:5)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+checkForUnmatchedText @ react-dom.development.js:32797
+diffHydratedProperties @ react-dom.development.js:35055
+hydrateInstance @ react-dom.development.js:36127
+prepareToHydrateHostInstance @ react-dom.development.js:7246
+completeWork @ react-dom.development.js:19769
+completeUnitOfWork @ react-dom.development.js:25963
+performUnitOfWork @ react-dom.development.js:25759
+workLoopConcurrent @ react-dom.development.js:25734
+renderRootConcurrent @ react-dom.development.js:25690
+performConcurrentWorkOnRoot @ react-dom.development.js:24504
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at checkForUnmatchedText (react-dom.development.js:32797:11)
+    at diffHydratedProperties (react-dom.development.js:35055:9)
+    at hydrateInstance (react-dom.development.js:36127:3)
+    at prepareToHydrateHostInstance (react-dom.development.js:7246:3)
+    at completeWork (react-dom.development.js:19769:13)
+    at completeUnitOfWork (react-dom.development.js:25963:14)
+    at performUnitOfWork (react-dom.development.js:25759:5)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+checkForUnmatchedText @ react-dom.development.js:32797
+diffHydratedProperties @ react-dom.development.js:35055
+hydrateInstance @ react-dom.development.js:36127
+prepareToHydrateHostInstance @ react-dom.development.js:7246
+completeWork @ react-dom.development.js:19769
+completeUnitOfWork @ react-dom.development.js:25963
+performUnitOfWork @ react-dom.development.js:25759
+workLoopConcurrent @ react-dom.development.js:25734
+renderRootConcurrent @ react-dom.development.js:25690
+performConcurrentWorkOnRoot @ react-dom.development.js:24504
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+react-dom.development.js:16571 Uncaught Error: There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root will switch to client rendering.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at updateHostRoot (react-dom.development.js:16571:57)
+    at beginWork$1 (react-dom.development.js:18486:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopSync (react-dom.development.js:25464:5)
+    at renderRootSync (react-dom.development.js:25419:7)
+    at recoverFromConcurrentError (react-dom.development.js:24597:20)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24542:26)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+updateHostRoot @ react-dom.development.js:16571
+beginWork$1 @ react-dom.development.js:18486
+beginWork @ react-dom.development.js:26927
+performUnitOfWork @ react-dom.development.js:25748
+workLoopSync @ react-dom.development.js:25464
+renderRootSync @ react-dom.development.js:25419
+recoverFromConcurrentError @ react-dom.development.js:24597
+performConcurrentWorkOnRoot @ react-dom.development.js:24542
+workLoop @ scheduler.development.js:256
+flushWork @ scheduler.development.js:225
+performWorkUntilDeadline @ scheduler.development.js:534
+DigitalHumanEditor.tsx:158 Loaded DH from session: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+DigitalHumanEditor.tsx:158 Loaded DH from session: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+DigitalHumanEditor.tsx:193 Loaded existing flow: root
+DigitalHumanEditor.tsx:193 Loaded existing flow: root

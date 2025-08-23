@@ -14,96 +14,8 @@ import {
 } from '@qwanyx/ui'
 import { QFlow } from '@qwanyx/canvas'
 import { NodeRegistry, NodeCategory, NodeDefinition } from '../execution'
+import { Breadcrumb } from '../components/Breadcrumb'
 
-// Breadcrumb component - will be moved to @qwanyx/ui later
-interface BreadcrumbItem {
-  label: string
-  href?: string
-  onClick?: () => void
-  active?: boolean
-}
-
-interface BreadcrumbProps {
-  items: BreadcrumbItem[]
-  separator?: string | React.ReactNode
-  size?: 'sm' | 'md' | 'lg'
-  style?: React.CSSProperties
-}
-
-const Breadcrumb: React.FC<BreadcrumbProps> = ({
-  items,
-  separator = '/',
-  size = 'sm',
-  style
-}) => {
-  const fontSize = size === 'sm' ? '13px' : size === 'md' ? '14px' : '16px'
-  const padding = size === 'sm' ? '4px 8px' : size === 'md' ? '6px 10px' : '8px 12px'
-  const textSize = size === 'md' ? 'base' : size // 'sm' and 'lg' are valid, but 'md' needs to be 'base'
-  
-  return (
-    <Flex align="center" gap="sm" style={style}>
-      {items.map((item, index) => (
-        <React.Fragment key={index}>
-          {index > 0 && (
-            <Text 
-              size={textSize as any} 
-              style={{ 
-                color: 'var(--qwanyx-text-tertiary)',
-                margin: '0 4px'
-              }}
-            >
-              {separator}
-            </Text>
-          )}
-          
-          {item.active ? (
-            <Text 
-              size={textSize as any} 
-              weight="semibold" 
-              style={{ 
-                color: 'var(--qwanyx-primary)',
-                fontSize
-              }}
-            >
-              {item.label}
-            </Text>
-          ) : item.href ? (
-            <Button
-              variant="ghost"
-              size={size}
-              onClick={() => {
-                if (item.onClick) {
-                  item.onClick()
-                } else if (item.href) {
-                  window.location.href = item.href
-                }
-              }}
-              style={{ 
-                padding,
-                fontSize,
-                color: 'var(--qwanyx-text-secondary)',
-                minWidth: 'auto',
-                height: 'auto'
-              }}
-            >
-              {item.label}
-            </Button>
-          ) : (
-            <Text 
-              size={textSize as any} 
-              style={{ 
-                color: 'var(--qwanyx-text-secondary)',
-                fontSize
-              }}
-            >
-              {item.label}
-            </Text>
-          )}
-        </React.Fragment>
-      ))}
-    </Flex>
-  )
-}
 
 interface DigitalHumanEditorProps {
   dhId?: string
@@ -165,7 +77,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
       if (!dhId || !dhEmail) return
       
       try {
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem('autodin_token')
         const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
         
         // Pull flow from memory using new endpoint
@@ -230,14 +142,16 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
       // Prepare data for push endpoint
       const pushData = {
         dh_email: dhEmail,
-        dh_id: dhId,
+        dh_id: currentFlowId || dhId,  // Save to CURRENT flow, not always root!
         flow_title: currentFlowTitle,
         nodes: nodes,
         edges: edges
       }
       
+      console.log('Saving flow:', currentFlowTitle, 'with ID:', currentFlowId || dhId)
+      
       // Get auth token from localStorage
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem('autodin_token')
       const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
       
       // Push to memory API
@@ -533,12 +447,16 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               },
               { 
                 label: dhFirstName ? `${dhFirstName} ${dhName}` : dhName || 'DH',
-                onClick: currentFlowId !== dhId ? async () => {
-                  // Navigate back to root flow - simple pull by ID
+                onClick: async () => {
+                  // Always allow clicking to go back to root
                   console.log('Navigating back to root flow')
-                  await handleSave() // Save current flow first
                   
-                  const token = localStorage.getItem('token')
+                  // Only save if we're not already at root
+                  if (currentFlowId !== dhId) {
+                    await handleSave() // Save current flow first
+                  }
+                  
+                  const token = localStorage.getItem('autodin_token')
                   const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
                   
                   // Pull the root flow
@@ -563,7 +481,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                     setCurrentFlowId(dhId)
                     setFlowStack([])  // Clear the stack when going to root
                   }
-                } : undefined  // No onClick if already at root
+                }
               },
               ..._flowStack.map((flow, index) => ({
                 label: flow.title,
@@ -572,7 +490,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                   console.log(`Navigating to flow: ${flow.title} (${flow.id})`)
                   await handleSave() // Save current flow first
                   
-                  const token = localStorage.getItem('token')
+                  const token = localStorage.getItem('autodin_token')
                   const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
                   
                   // Pull the target flow
@@ -832,7 +750,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                   edges: edges
                 }
                 
-                const token = localStorage.getItem('token')
+                const token = localStorage.getItem('autodin_token')
                 const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
                 
                 const saveResponse = await fetch('http://localhost:5002/api/dh/push', {
@@ -927,7 +845,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                 edges: edges
               }
               
-              const token = localStorage.getItem('token')
+              const token = localStorage.getItem('autodin_token')
               const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
               
               const response = await fetch('http://localhost:5002/api/dh/push', {

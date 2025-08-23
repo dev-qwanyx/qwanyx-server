@@ -7,6 +7,11 @@ export { ThotMemoryService } from './services/memoryService'
 // Components
 export { ThotManagement } from './components/ThotManagement'
 export { ThotNavigation } from './components/ThotNavigation'
+export { Breadcrumb } from './components/Breadcrumb'
+export type { BreadcrumbItem, BreadcrumbProps } from './components/Breadcrumb'
+
+// Contexts
+export { DigitalHumanEditorProvider, useDigitalHumanEditor } from './contexts/DigitalHumanEditorContext'
 
 // Pages
 export { ConfigurationPage } from './pages/ConfigurationPage'
