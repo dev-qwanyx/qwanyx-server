@@ -8,6 +8,7 @@ import {
   Card,
   Heading,
   SearchBar,
+  Input,
   Collapsible,
   Tooltip,
   UserProfile
@@ -40,6 +41,8 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
   const [currentFlowTitle, setCurrentFlowTitle] = useState<string>('root')
   const [currentFlowId, setCurrentFlowId] = useState<string | undefined>(dhId)
   const [_flowStack, setFlowStack] = useState<Array<{id: string, title: string}>>([]) // Will be used for navigation breadcrumbs
+  const [isEditingTitle, setIsEditingTitle] = useState(false)
+  const [editedTitle, setEditedTitle] = useState('')
   
   // No more demo nodes by default - start with empty canvas
   
@@ -143,6 +146,77 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
     }
   }, [])
   
+  // Sync memory nodes with their subflow data
+  const syncMemoryNodes = useCallback(async (nodesToSync: any[]) => {
+    if (!nodesToSync || nodesToSync.length === 0) return nodesToSync
+    
+    const token = localStorage.getItem('autodin_token')
+    const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
+    
+    // Find all memory nodes
+    const memoryNodes = nodesToSync.filter(node => node.data?.isMemoryNode)
+    if (memoryNodes.length === 0) return nodesToSync
+    
+    console.log(`Syncing ${memoryNodes.length} memory nodes...`)
+    
+    // Fetch subflow data for each memory node
+    const syncPromises = memoryNodes.map(async (node) => {
+      const nodeIdStr = typeof node._id === 'object' ? node._id.toString() : String(node._id)
+      
+      try {
+        const response = await fetch('http://localhost:5002/api/dh/pull', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'X-Workspace': workspace
+          },
+          body: JSON.stringify({
+            dh_email: dhEmail,
+            dh_id: nodeIdStr  // Use node's ID to fetch its subflow
+          })
+        })
+        
+        if (response.ok) {
+          const subflowData = await response.json()
+          if (subflowData.exists) {
+            // Update node with subflow metadata
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                label: subflowData.title || node.data.label,  // Update label from subflow
+                nodeCount: subflowData.nodes?.length || 0,     // Add node count  
+                edgeCount: subflowData.edges?.length || 0      // Add edge count
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to sync memory node ${nodeIdStr}:`, error)
+      }
+      
+      return node // Return unchanged if sync fails
+    })
+    
+    const syncedMemoryNodes = await Promise.all(syncPromises)
+    
+    // Merge synced nodes back into the full nodes array
+    const syncedNodes = nodesToSync.map(node => {
+      if (!node.data?.isMemoryNode) return node
+      
+      const nodeIdStr = typeof node._id === 'object' ? node._id.toString() : String(node._id)
+      const syncedNode = syncedMemoryNodes.find(n => 
+        (typeof n._id === 'object' ? n._id.toString() : String(n._id)) === nodeIdStr
+      )
+      
+      return syncedNode || node
+    })
+    
+    console.log('Memory nodes synchronized')
+    return syncedNodes
+  }, [dhEmail])
+  
   // Load existing flow from DH memory
   useEffect(() => {
     const loadFlow = async () => {
@@ -169,7 +243,15 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
         if (response.ok) {
           const flowData = await response.json()
           // Load the flow data
-          setNodes(flowData.nodes || [])
+          let loadedNodes = flowData.nodes || []
+          
+          // Sync memory nodes with their subflow data
+          if (loadedNodes.length > 0) {
+            const syncedNodes = await syncMemoryNodes(loadedNodes)
+            loadedNodes = syncedNodes
+          }
+          
+          setNodes(loadedNodes)
           setEdges(flowData.edges || [])
           setCurrentFlowTitle(flowData.title || 'root')
           
@@ -195,7 +277,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
     }
     
     loadFlow()
-  }, [dhId, dhEmail])
+  }, [dhId, dhEmail, syncMemoryNodes])
 
   const handleSave = useCallback(async () => {
     if (!dhId) {
@@ -215,12 +297,12 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
       const pushData = {
         dh_email: dhEmail,
         dh_id: currentFlowId || dhId,  // Save to CURRENT flow, not always root!
-        flow_title: currentFlowTitle,
+        flow_title: isEditingTitle ? editedTitle : currentFlowTitle,  // Use edited title if editing
         nodes: nodes,
         edges: edges
       }
       
-      console.log('Saving flow:', currentFlowTitle, 'with ID:', currentFlowId || dhId)
+      console.log('Saving flow:', isEditingTitle ? editedTitle : currentFlowTitle, 'with ID:', currentFlowId || dhId)
       
       // Get auth token from localStorage
       const token = localStorage.getItem('autodin_token')
@@ -536,7 +618,68 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
           gap: '4px',
           flex: 1
         }}>
-          <Heading size="lg" style={{ margin: 0, lineHeight: 1 }}>{currentFlowTitle}</Heading>
+          {isEditingTitle ? (
+            <Input
+              type="text"
+              value={editedTitle}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedTitle(e.target.value)}
+              onBlur={async () => {
+                if (editedTitle && editedTitle !== currentFlowTitle) {
+                  setCurrentFlowTitle(editedTitle)
+                  // Save immediately after title change
+                  await handleSave()
+                }
+                setIsEditingTitle(false)
+              }}
+              onKeyDown={async (e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === 'Enter') {
+                  if (editedTitle && editedTitle !== currentFlowTitle) {
+                    setCurrentFlowTitle(editedTitle)
+                    // Save immediately after title change
+                    await handleSave()
+                  }
+                  setIsEditingTitle(false)
+                } else if (e.key === 'Escape') {
+                  setEditedTitle(currentFlowTitle)
+                  setIsEditingTitle(false)
+                }
+              }}
+              autoFocus
+              style={{ 
+                fontSize: '24px',
+                fontWeight: 'bold',
+                padding: '4px 8px',
+                background: 'transparent',
+                border: '1px solid #e5e7eb',
+                borderRadius: '4px'
+              }}
+            />
+          ) : (
+            <Heading 
+              size="lg" 
+              style={{ 
+                margin: 0, 
+                lineHeight: 1, 
+                cursor: 'pointer',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                transition: 'background 0.2s'
+              }}
+              onClick={() => {
+                setEditedTitle(currentFlowTitle)
+                setIsEditingTitle(true)
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#f3f4f6'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+              title="Click to edit title"
+            >
+              {currentFlowTitle}
+            </Heading>
+          )}
           {/* Breadcrumb navigation below title */}
           <Breadcrumb
             items={[
