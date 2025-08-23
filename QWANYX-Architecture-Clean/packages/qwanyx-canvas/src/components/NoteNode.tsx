@@ -67,6 +67,11 @@ export const NoteNode: React.FC<NoteNodeProps> = ({
     e.stopPropagation()
   }
 
+  // Stop keyboard events from triggering editor shortcuts
+  const stopKeyPropagation = (e: React.KeyboardEvent) => {
+    e.stopPropagation()
+  }
+
   return (
     <Bag color="#d1d5db" opacity={0.9} blur={false} padding="sm">
       {/* Header with icons */}
@@ -121,6 +126,8 @@ export const NoteNode: React.FC<NoteNodeProps> = ({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   onMouseDown={stopPropagation}
+                  onKeyDown={stopKeyPropagation}
+                  onKeyUp={stopKeyPropagation}
                   placeholder="Note title..."
                   inputSize="sm"
                   style={{ width: '100%' }}
@@ -131,6 +138,8 @@ export const NoteNode: React.FC<NoteNodeProps> = ({
                 value={brief}
                 onChange={(e) => setBrief(e.target.value)}
                 onMouseDown={stopPropagation}
+                onKeyDown={stopKeyPropagation}
+                onKeyUp={stopKeyPropagation}
                 placeholder="Write your note here..."
                 style={{
                   width: '100%',
@@ -189,6 +198,9 @@ export const NoteNode: React.FC<NoteNodeProps> = ({
                 type="text"
                 value={selectedIcon}
                 onChange={(e) => setSelectedIcon(e.target.value)}
+                onMouseDown={stopPropagation}
+                onKeyDown={stopKeyPropagation}
+                onKeyUp={stopKeyPropagation}
                 placeholder="Icon name"
                 inputSize="sm"
                 style={{ flex: 1 }}

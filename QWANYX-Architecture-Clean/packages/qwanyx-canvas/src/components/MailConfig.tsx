@@ -52,6 +52,11 @@ export const MailConfig: React.FC<MailConfigProps> = ({
   dhEmail = '',
   compact = false
 }) => {
+  // Stop propagation helper for inputs
+  const stopPropagation = (e: any) => {
+    e.stopPropagation()
+  }
+
   const [config, setConfig] = useState<MailConfigData>({
     smtp: {
       email: dhEmail || initialConfig?.smtp?.email || '',
@@ -126,6 +131,8 @@ export const MailConfig: React.FC<MailConfigProps> = ({
                       type="email"
                       value={config.smtp.email}
                       onChange={(e) => updateSmtpField('email', e.target.value)}
+                      onKeyDown={stopPropagation}
+                      onKeyUp={stopPropagation}
                       placeholder="dh@example.com"
                       inputSize="sm"
                     />

@@ -7,7 +7,6 @@ import {
   Icon, 
   Card,
   Heading,
-  Badge,
   SearchBar,
   Collapsible,
   Tooltip,
@@ -15,6 +14,96 @@ import {
 } from '@qwanyx/ui'
 import { QFlow } from '@qwanyx/canvas'
 import { NodeRegistry, NodeCategory, NodeDefinition } from '../execution'
+
+// Breadcrumb component - will be moved to @qwanyx/ui later
+interface BreadcrumbItem {
+  label: string
+  href?: string
+  onClick?: () => void
+  active?: boolean
+}
+
+interface BreadcrumbProps {
+  items: BreadcrumbItem[]
+  separator?: string | React.ReactNode
+  size?: 'sm' | 'md' | 'lg'
+  style?: React.CSSProperties
+}
+
+const Breadcrumb: React.FC<BreadcrumbProps> = ({
+  items,
+  separator = '/',
+  size = 'sm',
+  style
+}) => {
+  const fontSize = size === 'sm' ? '13px' : size === 'md' ? '14px' : '16px'
+  const padding = size === 'sm' ? '4px 8px' : size === 'md' ? '6px 10px' : '8px 12px'
+  const textSize = size === 'md' ? 'base' : size // 'sm' and 'lg' are valid, but 'md' needs to be 'base'
+  
+  return (
+    <Flex align="center" gap="sm" style={style}>
+      {items.map((item, index) => (
+        <React.Fragment key={index}>
+          {index > 0 && (
+            <Text 
+              size={textSize as any} 
+              style={{ 
+                color: 'var(--qwanyx-text-tertiary)',
+                margin: '0 4px'
+              }}
+            >
+              {separator}
+            </Text>
+          )}
+          
+          {item.active ? (
+            <Text 
+              size={textSize as any} 
+              weight="semibold" 
+              style={{ 
+                color: 'var(--qwanyx-primary)',
+                fontSize
+              }}
+            >
+              {item.label}
+            </Text>
+          ) : item.href ? (
+            <Button
+              variant="ghost"
+              size={size}
+              onClick={() => {
+                if (item.onClick) {
+                  item.onClick()
+                } else if (item.href) {
+                  window.location.href = item.href
+                }
+              }}
+              style={{ 
+                padding,
+                fontSize,
+                color: 'var(--qwanyx-text-secondary)',
+                minWidth: 'auto',
+                height: 'auto'
+              }}
+            >
+              {item.label}
+            </Button>
+          ) : (
+            <Text 
+              size={textSize as any} 
+              style={{ 
+                color: 'var(--qwanyx-text-secondary)',
+                fontSize
+              }}
+            >
+              {item.label}
+            </Text>
+          )}
+        </React.Fragment>
+      ))}
+    </Flex>
+  )
+}
 
 interface DigitalHumanEditorProps {
   dhId?: string
@@ -35,6 +124,9 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
   const [nodeTypes, setNodeTypes] = useState<Record<string, NodeDefinition[]>>({})
   const [nodes, setNodes] = useState<any[]>([])
   const [edges, setEdges] = useState<any[]>([])
+  const [currentFlowTitle, setCurrentFlowTitle] = useState<string>('root')
+  const [currentFlowId, setCurrentFlowId] = useState<string | undefined>(dhId)
+  const [_flowStack, setFlowStack] = useState<Array<{id: string, title: string}>>([]) // Will be used for navigation breadcrumbs
   
   // No more demo nodes by default - start with empty canvas
   
@@ -70,30 +162,56 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
   // Load existing flow from DH memory
   useEffect(() => {
     const loadFlow = async () => {
-      if (!dhId) return
+      if (!dhId || !dhEmail) return
       
       try {
         const token = localStorage.getItem('token')
-        const response = await fetch(`http://localhost:5002/api/dh/${dhId}/flow`, {
+        const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
+        
+        // Pull flow from memory using new endpoint
+        const response = await fetch('http://localhost:5002/api/dh/pull', {
+          method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'X-Workspace': workspace
+          },
+          body: JSON.stringify({
+            dh_email: dhEmail,
+            dh_id: dhId
+          })
         })
         
         if (response.ok) {
           const flowData = await response.json()
-          if (flowData.nodes && flowData.nodes.length > 0) {
-            setNodes(flowData.nodes)
-            console.log('Loaded flow with', flowData.nodes.length, 'nodes')
+          // Load the flow data
+          setNodes(flowData.nodes || [])
+          setEdges(flowData.edges || [])
+          setCurrentFlowTitle(flowData.title || 'root')
+          
+          if (flowData.exists) {
+            console.log('Loaded existing flow:', flowData.title)
+          } else {
+            console.log('No flow found, starting with empty flow')
           }
+        } else {
+          console.error('Failed to load flow:', response.status)
+          // Start with empty flow
+          setNodes([])
+          setEdges([])
+          setCurrentFlowTitle('root')
         }
       } catch (error) {
         console.error('Error loading flow:', error)
+        // Start with empty flow on error
+        setNodes([])
+        setEdges([])
+        setCurrentFlowTitle('root')
       }
     }
     
     loadFlow()
-  }, [dhId])
+  }, [dhId, dhEmail])
 
   const handleSave = useCallback(async () => {
     if (!dhId) {
@@ -101,29 +219,36 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
       return
     }
     
+    if (!dhEmail) {
+      console.error('No DH email provided')
+      return
+    }
+    
     setIsSaving(true)
     
     try {
-      // Prepare flow data
-      const flowData = {
-        name: 'Main Flow',
-        description: `Flow configuration for ${dhName}`,
+      // Prepare data for push endpoint
+      const pushData = {
+        dh_email: dhEmail,
+        dh_id: dhId,
+        flow_title: currentFlowTitle,
         nodes: nodes,
-        edges: edges,
-        active: true
+        edges: edges
       }
       
       // Get auth token from localStorage
       const token = localStorage.getItem('token')
+      const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
       
-      // Save to API
-      const response = await fetch(`http://localhost:5002/api/dh/${dhId}/flow`, {
+      // Push to memory API
+      const response = await fetch('http://localhost:5002/api/dh/push', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'X-Workspace': workspace
         },
-        body: JSON.stringify(flowData)
+        body: JSON.stringify(pushData)
       })
       
       if (response.ok) {
@@ -140,7 +265,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
     } finally {
       setIsSaving(false)
     }
-  }, [dhId, dhName, nodes, edges])
+  }, [dhId, dhEmail, dhName, nodes, edges, currentFlowTitle])
 
   const handleBack = () => {
     // Navigate directly to DH list (thot tab)
@@ -350,12 +475,12 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
       backgroundColor: 'var(--qwanyx-bg-primary)',
       overflow: 'hidden'
     }}>
-      {/* Slim Header */}
+      {/* Header with title and breadcrumb */}
       <div style={{
-        height: '60px',
+        height: '80px',
         backgroundColor: 'var(--qwanyx-card)',
         borderBottom: '1px solid var(--qwanyx-border)',
-        padding: '0 20px',
+        padding: '10px 20px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -380,20 +505,115 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
           }} />
           
           <UserProfile
-            user={{ name: dhName, email: dhEmail }}
+            user={{ 
+              name: dhFirstName ? `${dhFirstName} ${dhName}` : dhName,
+              email: dhEmail,
+              avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${dhFirstName}${dhName}`
+            }}
             size="sm"
           />
-          
-          <Badge variant="subtle" style={{ marginLeft: '8px' }}>
-            ID: {dhId || 'new'}
-          </Badge>
         </Flex>
 
-        {/* Center - Title */}
-        <Heading size="lg">Configuration DH Brain</Heading>
+        {/* Center - Title with Breadcrumb below */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '4px',
+          flex: 1
+        }}>
+          <Heading size="lg" style={{ margin: 0, lineHeight: 1 }}>{currentFlowTitle}</Heading>
+          {/* Breadcrumb navigation below title */}
+          <Breadcrumb
+            items={[
+              { 
+                label: 'Digital Humans', 
+                href: '/dashboard?tab=thot' 
+              },
+              { 
+                label: dhFirstName ? `${dhFirstName} ${dhName}` : dhName || 'DH',
+                onClick: currentFlowId !== dhId ? async () => {
+                  // Navigate back to root flow - simple pull by ID
+                  console.log('Navigating back to root flow')
+                  await handleSave() // Save current flow first
+                  
+                  const token = localStorage.getItem('token')
+                  const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
+                  
+                  // Pull the root flow
+                  const response = await fetch('http://localhost:5002/api/dh/pull', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${token}`,
+                      'X-Workspace': workspace
+                    },
+                    body: JSON.stringify({
+                      dh_email: dhEmail,
+                      dh_id: dhId  // Root flow ID
+                    })
+                  })
+                  
+                  if (response.ok) {
+                    const flowData = await response.json()
+                    setNodes(flowData.nodes || [])
+                    setEdges(flowData.edges || [])
+                    setCurrentFlowTitle('root')
+                    setCurrentFlowId(dhId)
+                    setFlowStack([])  // Clear the stack when going to root
+                  }
+                } : undefined  // No onClick if already at root
+              },
+              ..._flowStack.map((flow, index) => ({
+                label: flow.title,
+                onClick: async () => {
+                  // Simple navigation - just pull the flow by its ID
+                  console.log(`Navigating to flow: ${flow.title} (${flow.id})`)
+                  await handleSave() // Save current flow first
+                  
+                  const token = localStorage.getItem('token')
+                  const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
+                  
+                  // Pull the target flow
+                  const response = await fetch('http://localhost:5002/api/dh/pull', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${token}`,
+                      'X-Workspace': workspace
+                    },
+                    body: JSON.stringify({
+                      dh_email: dhEmail,
+                      dh_id: flow.id  // Just pull by the flow's ID
+                    })
+                  })
+                  
+                  if (response.ok) {
+                    const flowData = await response.json()
+                    setNodes(flowData.nodes || [])
+                    setEdges(flowData.edges || [])
+                    setCurrentFlowTitle(flow.title)
+                    setCurrentFlowId(flow.id)
+                    // Trim the stack to this point
+                    setFlowStack(prev => prev.slice(0, index))
+                  }
+                }
+              })),
+              // Only show current flow if it's not 'root' or if we're in a sub-flow
+              ...(_flowStack.length > 0 || currentFlowTitle !== 'root' ? [{
+                label: currentFlowTitle, 
+                active: true 
+              }] : [])
+            ]}
+            separator="/"
+            size="sm"
+            style={{ opacity: 0.8 }}
+          />
+        </div>
 
         {/* Right side - Actions */}
-        <Flex align="center" gap="sm">
+        <Flex align="center" gap="md">
           <Tooltip content="Tester le workflow">
             <Button 
               variant="ghost" 
@@ -594,6 +814,139 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
             }}
             onNodesChange={setNodes}
             onEdgesChange={setEdges}
+            onOpenSubFlow={async (node) => {
+              // The node's ID IS the sub-flow ID
+              const nodeIdStr = typeof node._id === 'object' ? node._id.toString() : String(node._id)
+              const subFlowTitle = node.data?.label || 'Sub-flow'
+              
+              console.log('Opening sub-flow for node:', nodeIdStr, subFlowTitle)
+              
+              try {
+                // Save current flow first
+                console.log('Saving current flow before navigation...')
+                const pushData = {
+                  dh_email: dhEmail,
+                  dh_id: currentFlowId || dhId,
+                  flow_title: currentFlowTitle,
+                  nodes: nodes,
+                  edges: edges
+                }
+                
+                const token = localStorage.getItem('token')
+                const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
+                
+                const saveResponse = await fetch('http://localhost:5002/api/dh/push', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'X-Workspace': workspace
+                  },
+                  body: JSON.stringify(pushData)
+                })
+                
+                if (!saveResponse.ok) {
+                  console.error('Failed to save current flow')
+                  return
+                }
+                
+                console.log('Current flow saved, loading sub-flow...')
+                
+                // Try to load the sub-flow using the node's ID
+                const response = await fetch('http://localhost:5002/api/dh/pull', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'X-Workspace': workspace
+                  },
+                  body: JSON.stringify({
+                    dh_email: dhEmail,
+                    dh_id: nodeIdStr  // Use the node's ID as the sub-flow ID
+                  })
+                })
+                
+                if (response.ok) {
+                  const flowData = await response.json()
+                  console.log('Sub-flow data:', flowData)
+                  
+                  // Update navigation stack FIRST (but don't add 'root' to the stack)
+                  if (currentFlowTitle !== 'root') {
+                    setFlowStack(prev => [...prev, { id: currentFlowId || dhId || '', title: currentFlowTitle }])
+                  }
+                  setCurrentFlowId(nodeIdStr)
+                  
+                  if (flowData.exists) {
+                    // Load existing sub-flow
+                    console.log('Loading existing sub-flow')
+                    setNodes(flowData.nodes || [])
+                    setEdges(flowData.edges || [])
+                    setCurrentFlowTitle(flowData.title || subFlowTitle)
+                  } else {
+                    // Create new sub-flow - completely empty, no self-reference!
+                    console.log('Creating new empty sub-flow')
+                    setNodes([])
+                    setEdges([])
+                    setCurrentFlowTitle(subFlowTitle)
+                    
+                    // Save the new empty sub-flow - NO nodes inside!
+                    const newFlowData = {
+                      dh_email: dhEmail,
+                      dh_id: nodeIdStr,
+                      flow_title: subFlowTitle,
+                      nodes: [],  // Empty! The node exists in parent, not here
+                      edges: []
+                    }
+                    
+                    await fetch('http://localhost:5002/api/dh/push', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'X-Workspace': workspace
+                      },
+                      body: JSON.stringify(newFlowData)
+                    })
+                  }
+                  
+                  console.log('Navigation complete. Current flow:', subFlowTitle)
+                } else {
+                  console.error('Failed to load sub-flow:', response.status)
+                }
+              } catch (error) {
+                console.error('Error navigating to sub-flow:', error)
+              }
+            }}
+            onSave={async (nodes, edges) => {
+              // Save to DH memory - use currentFlowId which could be a sub-flow
+              const pushData = {
+                dh_email: dhEmail,
+                dh_id: currentFlowId || dhId,
+                flow_title: currentFlowTitle,
+                nodes: nodes,
+                edges: edges
+              }
+              
+              const token = localStorage.getItem('token')
+              const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
+              
+              const response = await fetch('http://localhost:5002/api/dh/push', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+                  'X-Workspace': workspace
+                },
+                body: JSON.stringify(pushData)
+              })
+              
+              if (!response.ok) {
+                throw new Error(`Failed to save: ${response.statusText}`)
+              }
+              
+              console.log('Flow saved successfully')
+              // QFlow will automatically set hasUnsavedChanges to false after this returns
+            }}
           />
         </div>
 

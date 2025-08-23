@@ -80,7 +80,15 @@ def start_dh(dh_id):
     try:
         from app_v2 import mongo_client, workspace_service
         claims = get_jwt()
-        workspace = claims.get('workspace', 'default')
+        workspace_from_jwt = claims.get('workspace')
+        workspace_from_header = request.headers.get('X-Workspace')
+        
+        # Priority: header > jwt > 'autodin' (default)
+        workspace = workspace_from_header or workspace_from_jwt or 'autodin'
+        
+        print(f"[DH START] JWT workspace: {workspace_from_jwt}")
+        print(f"[DH START] Header workspace: {workspace_from_header}")
+        print(f"[DH START] Final workspace: {workspace}")
         
         # Use workspace service to get the correct database
         db = workspace_service.get_workspace_db(workspace)
@@ -150,7 +158,15 @@ def stop_dh(dh_id):
     try:
         from app_v2 import mongo_client, workspace_service
         claims = get_jwt()
-        workspace = claims.get('workspace', 'default')
+        workspace_from_jwt = claims.get('workspace')
+        workspace_from_header = request.headers.get('X-Workspace')
+        
+        # Priority: header > jwt > 'autodin' (default)
+        workspace = workspace_from_header or workspace_from_jwt or 'autodin'
+        
+        print(f"[DH STOP] JWT workspace: {workspace_from_jwt}")
+        print(f"[DH STOP] Header workspace: {workspace_from_header}")
+        print(f"[DH STOP] Final workspace: {workspace}")
         
         # Use workspace service to get the correct database
         db = workspace_service.get_workspace_db(workspace)
@@ -214,7 +230,15 @@ def get_dh_status(dh_id):
     try:
         from app_v2 import mongo_client, workspace_service
         claims = get_jwt()
-        workspace = claims.get('workspace', 'default')
+        workspace_from_jwt = claims.get('workspace')
+        workspace_from_header = request.headers.get('X-Workspace')
+        
+        # Priority: header > jwt > 'autodin' (default)
+        workspace = workspace_from_header or workspace_from_jwt or 'autodin'
+        
+        print(f"[DH STATUS] JWT workspace: {workspace_from_jwt}")
+        print(f"[DH STATUS] Header workspace: {workspace_from_header}")
+        print(f"[DH STATUS] Final workspace: {workspace}")
         
         # Use workspace service to get the correct database
         db = workspace_service.get_workspace_db(workspace)
@@ -247,7 +271,11 @@ def get_running_dhs():
     """Get all running Digital Humans"""
     try:
         claims = get_jwt()
-        workspace = claims.get('workspace', 'default')
+        workspace_from_jwt = claims.get('workspace')
+        workspace_from_header = request.headers.get('X-Workspace')
+        
+        # Priority: header > jwt > 'autodin' (default)
+        workspace = workspace_from_header or workspace_from_jwt or 'autodin'
         
         running_list = []
         for dh_id, process in running_dhs.items():

@@ -54,6 +54,7 @@ interface QFlowProps {
   onNodesChange?: (nodes: QNode[]) => void
   onEdgesChange?: (edges: QEdge[]) => void
   onSave?: (nodes: QNode[], edges: QEdge[]) => Promise<void> | void
+  onOpenSubFlow?: (node: QNode) => void
   onUnsavedChangesChange?: (hasUnsaved: boolean) => void
   width?: string | number
   height?: string | number
@@ -166,6 +167,7 @@ export const QFlow: React.FC<QFlowProps> = ({
   onNodesChange,
   onEdgesChange,
   onSave,
+  onOpenSubFlow,
   onUnsavedChangesChange,
   width = '100%',
   height = '100%',
@@ -345,12 +347,17 @@ export const QFlow: React.FC<QFlowProps> = ({
   
   // Save function
   const handleSave = useCallback(async () => {
-    if (!onSave) return
+    console.log('handleSave called, onSave:', !!onSave)
+    if (!onSave) {
+      console.log('No onSave handler provided')
+      return
+    }
     
     setIsSaving(true)
     try {
       await onSave(nodes, edges)
       setHasUnsavedChanges(false)
+      console.log('Save successful, unsaved changes cleared')
     } catch (error) {
       console.error('Failed to save flow:', error)
     } finally {
@@ -419,10 +426,20 @@ export const QFlow: React.FC<QFlowProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       // Only handle if QFlow container is focused
       if (!containerRef.current?.contains(document.activeElement)) return
+      
+      // Don't handle if the event target is an input, textarea, or select element
+      const target = e.target as HTMLElement
+      if (target.tagName === 'INPUT' || 
+          target.tagName === 'TEXTAREA' || 
+          target.tagName === 'SELECT' ||
+          target.contentEditable === 'true') {
+        return
+      }
 
       // Ctrl+S - Save
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault()
+        console.log('Ctrl+S pressed, calling handleSave')
         handleSave()
         return
       }
@@ -442,29 +459,86 @@ export const QFlow: React.FC<QFlowProps> = ({
         return
       }
 
-      // Delete key - delete selected nodes AND edges
+      // Delete key - soft delete for nodes with sub-flows
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (selectedNodeIds.size > 0 || selectedEdgeIds.size > 0) {
-          // Delete selected nodes
-          const newNodes = nodes.filter(n => !selectedNodeIds.has(getIdString(n._id)))
+          // Check if any selected nodes have sub-flows
+          const nodesWithSubFlows = nodes.filter(n => 
+            selectedNodeIds.has(getIdString(n._id)) && n.data?.hasSubFlow
+          )
           
-          // Delete selected edges AND edges connected to deleted nodes
-          const newEdges = edges.filter(e => {
-            const edgeId = getIdString(e._id)
-            const sourceId = getIdString(e.s)
-            const targetId = getIdString(e.t)
+          if (nodesWithSubFlows.length > 0) {
+            // Show warning about nodes with sub-flows
+            const nodeNames = nodesWithSubFlows.map(n => n.data?.label || 'Unnamed').join(', ')
+            const confirmDelete = window.confirm(
+              `⚠️ Warning: The following nodes have sub-flows:\n${nodeNames}\n\n` +
+              `They will be moved to trash (hidden) but their sub-flows will be preserved.\n\n` +
+              `Continue?`
+            )
             
-            // Remove if edge is selected OR if its source/target is deleted
-            return !selectedEdgeIds.has(edgeId) && 
-                   !selectedNodeIds.has(sourceId) && 
-                   !selectedNodeIds.has(targetId)
-          })
+            if (!confirmDelete) {
+              return
+            }
+            
+            // Soft delete - mark as deleted instead of removing
+            const newNodes = nodes.map(n => {
+              if (selectedNodeIds.has(getIdString(n._id))) {
+                return {
+                  ...n,
+                  data: {
+                    ...n.data,
+                    deleted: true,
+                    deletedAt: new Date().toISOString()
+                  }
+                }
+              }
+              return n
+            })
+            
+            // Remove edges connected to soft-deleted nodes
+            const deletedNodeIds = new Set(
+              nodes.filter(n => selectedNodeIds.has(getIdString(n._id)))
+                .map(n => getIdString(n._id))
+            )
+            
+            const newEdges = edges.filter(e => {
+              const edgeId = getIdString(e._id)
+              const sourceId = getIdString(e.s)
+              const targetId = getIdString(e.t)
+              
+              return !selectedEdgeIds.has(edgeId) && 
+                     !deletedNodeIds.has(sourceId) && 
+                     !deletedNodeIds.has(targetId)
+            })
+            
+            saveToHistory(newNodes, newEdges)
+            setNodes(newNodes)
+            setEdges(newEdges)
+            onNodesChange?.(newNodes)
+            onEdgesChange?.(newEdges)
+          } else {
+            // No sub-flows, do normal delete
+            const newNodes = nodes.filter(n => !selectedNodeIds.has(getIdString(n._id)))
+            
+            // Delete selected edges AND edges connected to deleted nodes
+            const newEdges = edges.filter(e => {
+              const edgeId = getIdString(e._id)
+              const sourceId = getIdString(e.s)
+              const targetId = getIdString(e.t)
+              
+              // Remove if edge is selected OR if its source/target is deleted
+              return !selectedEdgeIds.has(edgeId) && 
+                     !selectedNodeIds.has(sourceId) && 
+                     !selectedNodeIds.has(targetId)
+            })
+            
+            saveToHistory(newNodes, newEdges)
+            setNodes(newNodes)
+            setEdges(newEdges)
+            onNodesChange?.(newNodes)
+            onEdgesChange?.(newEdges)
+          }
           
-          saveToHistory(newNodes, newEdges)
-          setNodes(newNodes)
-          setEdges(newEdges)
-          onNodesChange?.(newNodes)
-          onEdgesChange?.(newEdges)
           setSelectedNodeIds(new Set())
           setSelectedEdgeIds(new Set())
         }
@@ -1159,12 +1233,50 @@ export const QFlow: React.FC<QFlowProps> = ({
     }
   }, [nodes, edges, pan, zoom, objectIdEquals, getIdString, selectedNodeIds])
   
-  // Handle double-click on nodes - universal expand/collapse
+  // Handle double-click on nodes - expand/collapse or open sub-flow
   const handleNodeDoubleClick = useCallback((e: React.MouseEvent, nodeId: string | ObjectId) => {
     e.stopPropagation()
-    const nodeIdStr = getIdString(nodeId)
     
-    // Toggle expanded state
+    // Don't handle if double-clicking on an input element
+    const target = e.target as HTMLElement
+    if (target.tagName === 'INPUT' || 
+        target.tagName === 'TEXTAREA' || 
+        target.tagName === 'SELECT' ||
+        target.contentEditable === 'true') {
+      return
+    }
+    
+    const nodeIdStr = getIdString(nodeId)
+    const node = nodes.find(n => getIdString(n._id) === nodeIdStr)
+    
+    // Shift+double-click: Open or create sub-flow
+    if (e.shiftKey && node) {
+      console.log('Shift+double-click on node:', nodeIdStr, node.data?.label)
+      
+      // Mark this node as having a sub-flow
+      const updatedNode = {
+        ...node,
+        data: {
+          ...node.data,
+          hasSubFlow: true
+        }
+      }
+      
+      // Update the node to mark it has a sub-flow
+      const updatedNodes = nodes.map(n => 
+        getIdString(n._id) === nodeIdStr ? updatedNode : n
+      )
+      onNodesChange?.(updatedNodes)
+      setHasUnsavedChanges(true)
+      
+      // Call the onOpenSubFlow callback if provided
+      if (onOpenSubFlow) {
+        onOpenSubFlow(node)
+      }
+      return
+    }
+    
+    // Normal double-click: Toggle expanded state
     setExpandedNodes(prev => {
       const newSet = new Set(prev)
       if (newSet.has(nodeIdStr)) {
@@ -1174,7 +1286,7 @@ export const QFlow: React.FC<QFlowProps> = ({
       }
       return newSet
     })
-  }, [getIdString])
+  }, [getIdString, nodes, onOpenSubFlow, onNodesChange])
 
   return (
     <>
@@ -1200,7 +1312,7 @@ export const QFlow: React.FC<QFlowProps> = ({
         onMouseLeave={handleMouseUp}
       >
         {/* Unsaved changes indicator - subtle asterisk */}
-        {hasUnsavedChanges && !isSaving && (
+        {hasUnsavedChanges && (
           <div style={{
             position: 'absolute',
             top: '10px',
@@ -1213,29 +1325,6 @@ export const QFlow: React.FC<QFlowProps> = ({
             userSelect: 'none'
           }} title="Unsaved changes (Ctrl+S to save)">
             *
-          </div>
-        )}
-        
-        {/* Saving indicator */}
-        {isSaving && (
-          <div style={{
-            position: 'absolute',
-            top: '10px',
-            right: '10px',
-            padding: '8px 16px',
-            backgroundColor: 'rgba(59, 130, 246, 0.9)',
-            color: 'white',
-            borderRadius: '6px',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            zIndex: 1000,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-          }}>
-            <Icon name="loader" size="sm" />
-            Saving...
           </div>
         )}
       <div 
@@ -1276,7 +1365,8 @@ export const QFlow: React.FC<QFlowProps> = ({
               return nodeId && edgeTarget && objectIdEquals(nodeId, edgeTarget)
             })
             
-            if (!source || !target) return null
+            // Don't render if either node doesn't exist or is deleted
+            if (!source || !target || source.data?.deleted || target.data?.deleted) return null
             
             return (
               <Edge
@@ -1320,8 +1410,8 @@ export const QFlow: React.FC<QFlowProps> = ({
           })}
         </svg>
 
-        {/* Nodes */}
-        {nodes.map((node, index) => {
+        {/* Nodes - filter out deleted ones */}
+        {nodes.filter(n => !n.data?.deleted).map((node, index) => {
           const nodeId = node._id || (node as any).id
           const nodeIdStr = nodeId ? getIdString(nodeId) : null
           const isExpanded = nodeIdStr ? expandedNodes.has(nodeIdStr) : false
@@ -1444,6 +1534,8 @@ export const QFlow: React.FC<QFlowProps> = ({
                     `
                   }}>
                     {node.data.label}
+                    {node.data.hasData && '*'}
+                    {node.data.hasSubFlow && '>'}
                   </span>
                 </div>
                 

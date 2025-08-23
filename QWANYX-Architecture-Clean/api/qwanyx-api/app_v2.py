@@ -13,6 +13,7 @@ from services import WorkspaceService, DHService, AppService
 from routes import workspaces_bp, init_services as init_route_services
 from routes.dh_flow_routes import dh_flow_bp
 from routes.dh_process_routes import dh_process_bp
+from routes.dh_memory_routes import dh_memory_bp
 
 load_dotenv()
 
@@ -54,6 +55,7 @@ init_route_services(workspace_service, app_service, dh_service)
 app.register_blueprint(workspaces_bp)
 app.register_blueprint(dh_flow_bp)
 app.register_blueprint(dh_process_bp)
+app.register_blueprint(dh_memory_bp)
 
 # Import email functions from original app
 from bson import ObjectId
@@ -433,9 +435,19 @@ def create_user():
 @jwt_required()
 def get_users():
     try:
-        # Get workspace from JWT or query params
+        # Get workspace from JWT, headers, or query params
         claims = get_jwt()
-        workspace_code = claims.get('workspace') or request.args.get('workspace', 'default')
+        workspace_from_jwt = claims.get('workspace')
+        workspace_from_header = request.headers.get('X-Workspace')
+        workspace_from_query = request.args.get('workspace')
+        
+        # Priority: header > query > jwt > default
+        workspace_code = workspace_from_header or workspace_from_query or workspace_from_jwt or 'default'
+        
+        print(f"[GET USERS] JWT workspace: {workspace_from_jwt}")
+        print(f"[GET USERS] Header workspace: {workspace_from_header}")
+        print(f"[GET USERS] Query workspace: {workspace_from_query}")
+        print(f"[GET USERS] Final workspace: {workspace_code}")
         
         workspace_db = workspace_service.get_workspace_db(workspace_code)
         if workspace_db is None:

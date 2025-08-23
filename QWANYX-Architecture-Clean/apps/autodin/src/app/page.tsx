@@ -183,6 +183,7 @@ function AppContent() {
       localStorage.setItem('autodin_user', JSON.stringify(authUser))
       localStorage.setItem('autodin_token', token)
       localStorage.setItem('autodin_token_expiry', expiryTime.toString())
+      localStorage.setItem('autodin_workspace', 'autodin') // Set the workspace explicitly
     }
     
     console.log('Authentication successful:', authUser)

@@ -40,6 +40,20 @@ export const Bag: React.FC<BagProps> = ({
   const bgColor = `rgba(${getRgbColor(color)}, ${opacity})`
   console.log('Bag rendering with color:', bgColor)  // Debug log
   
+  // Stop all keyboard events from propagating to the editor
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation()
+    // Don't prevent default - let inputs handle the keys normally
+  }
+
+  const handleKeyUp = (e: React.KeyboardEvent) => {
+    e.stopPropagation()
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    e.stopPropagation()
+  }
+
   return (
     <div
       style={{
@@ -52,6 +66,9 @@ export const Bag: React.FC<BagProps> = ({
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
         ...style
       }}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
+      onKeyPress={handleKeyPress}
     >
       {children}
     </div>
