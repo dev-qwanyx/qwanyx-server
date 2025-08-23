@@ -84,23 +84,29 @@ export class NeuralInterface {
     this.setupHeartbeat(socket)
   }
   
-  private async handleMessage(connectionId: string, message: NeuralMessage): Promise<void> {
+  private async handleMessage(connectionId: string, message: any): Promise<void> {
     const client = this.connections.get(connectionId)
     if (!client) return
     
     this.logger.debug(`Message from ${connectionId}: ${message.type}`)
     
+    // Handle simple connect message for MVP
+    if (message.type === 'connect' && message.brainId) {
+      await this.handleConnect(client, message.brainId)
+      return
+    }
+    
     switch (message.type) {
       case 'command':
-        await this.handleCommand(client, message)
+        await this.handleCommand(client, message as NeuralMessage)
         break
         
       case 'query':
-        await this.handleQuery(client, message)
+        await this.handleQuery(client, message as NeuralMessage)
         break
         
       case 'stream':
-        await this.handleStream(client, message)
+        await this.handleStream(client, message as NeuralMessage)
         break
         
       default:
@@ -200,6 +206,51 @@ export class NeuralInterface {
       default:
         this.sendError(client.socket, `Unknown stream type: ${payload.stream}`)
     }
+  }
+  
+  private async handleConnect(client: ConnectedClient, brainId: string): Promise<void> {
+    this.logger.info(`Client connecting to brain: ${brainId}`)
+    
+    // Check if brain exists
+    let brain = this.brainManager.getBrain(brainId)
+    
+    if (!brain) {
+      // Create and start the brain if it doesn't exist
+      this.logger.info(`Creating new brain: ${brainId}`)
+      try {
+        brain = await this.brainManager.startBrain(brainId, 'digital-human', {
+          type: 'digital-human',
+          workspace: 'autodin'
+        })
+      } catch (error) {
+        this.sendError(client.socket, `Failed to create brain: ${error}`)
+        return
+      }
+    }
+    
+    // Connect client to brain
+    client.brainId = brainId
+    
+    // Get current brain state
+    const state = await brain.handleCommand({ type: 'get-state' })
+    
+    // Send initial state to client
+    this.sendMessage(client.socket, {
+      id: this.generateMessageId(),
+      type: 'event',
+      brainId,
+      payload: {
+        event: 'state',
+        nodes: state?.nodes || [],
+        edges: state?.edges || []
+      },
+      timestamp: Date.now()
+    })
+    
+    // Subscribe to brain events
+    this.subscribeToBrain(client, brain)
+    
+    this.logger.info(`Client connected to brain ${brainId}`)
   }
   
   private subscribeToBrain(client: ConnectedClient, brain: any): void {

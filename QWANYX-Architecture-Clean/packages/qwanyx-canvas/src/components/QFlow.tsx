@@ -1,13 +1,16 @@
-import React, { useState, useRef, useCallback, useEffect, memo } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { Icon, Modal, Button, Card, Container, Flex, Text } from '@qwanyx/ui'
 import { ObjectId } from 'bson'
 import { DhMainSwitch } from './DhMainSwitch'
 import { MailConfig, MailConfigData } from './MailConfig'
 import { NoteNode } from './NoteNode'
+import { Edge, QEdge } from './Edge'
 import './QFlow.css'
 
+export type { QEdge } from './Edge'
+
 export interface QNode {
-  _id: string | ObjectId  // Accept both for flexibility
+  _id: string | ObjectId  // Accept both for flexibility - SAME ID as memory when it's a memory node
   x: number
   y: number
   type: 'icon' | 'step' | 'decision'
@@ -18,33 +21,8 @@ export interface QNode {
     description?: string
     nodeType?: string  // For special node types like 'start-stop'
     isRunning?: boolean  // For start-stop nodes
+    isMemoryNode?: boolean  // Node that is saved in memory with a subflow (Shift+click creates this)
     [key: string]: any  // Allow additional properties
-  }
-}
-
-export interface QEdge {
-  _id: string | ObjectId  // Accept both for flexibility
-  s: string | ObjectId  // source
-  t: string | ObjectId  // target
-  ty?: 'data' | 'control' | 'temporal' | 'causal' | 'semantic'  // type
-  w?: number  // weight
-  m?: {  // metadata
-    l?: string  // label
-    d?: string  // description
-    c?: string  // condition
-    tr?: string  // transform
-  }
-  tm?: {  // temporal
-    dl?: number  // delay
-    dd?: number  // deadline
-    dc?: number  // decay
-    ls?: number  // lifespan
-  }
-  st?: {  // style
-    c?: string  // color
-    th?: number  // thickness
-    p?: 'solid' | 'dashed' | 'dotted'  // pattern
-    a?: boolean  // animated
   }
 }
 
@@ -61,100 +39,6 @@ interface QFlowProps {
   nodeRenderer?: (node: QNode, context?: any) => React.ReactNode
   context?: any  // DH context (dhId, dhName, dhEmail, etc.)
 }
-
-// Edge Component
-interface EdgeProps {
-  edge: QEdge
-  source: QNode
-  target: QNode
-  getIdString: (id: any) => string
-  isSelected: boolean
-  onClick: (e: React.MouseEvent) => void
-}
-
-const Edge = memo<EdgeProps>(({ edge, source, target, getIdString, isSelected, onClick }) => {
-  const [isHovered, setIsHovered] = useState(false)
-  
-  // Calculate path - nodes are already centered due to transform
-  const sourceX = source.x
-  const sourceY = source.y
-  const targetX = target.x
-  const targetY = target.y
-  
-  const dx = targetX - sourceX
-  const dy = targetY - sourceY
-  const distance = Math.sqrt(dx * dx + dy * dy)
-  
-  // Control points at 33% and 66% of the path
-  // Offset scales with distance (more curve for longer edges)
-  const curveStrength = Math.min(distance * 0.3, 150)
-  
-  let path: string
-  if (Math.abs(dx) > Math.abs(dy)) {
-    // Horizontal dominant - control points offset vertically
-    const cp1x = sourceX + dx * 0.33
-    const cp1y = sourceY
-    const cp2x = sourceX + dx * 0.66
-    const cp2y = targetY
-    path = `M ${sourceX} ${sourceY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${targetX} ${targetY}`
-  } else {
-    // Vertical dominant - control points offset horizontally
-    const cp1x = sourceX
-    const cp1y = sourceY + dy * 0.33
-    const cp2x = targetX
-    const cp2y = sourceY + dy * 0.66
-    path = `M ${sourceX} ${sourceY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${targetX} ${targetY}`
-  }
-  
-  const edgeId = getIdString(edge._id || (edge as any).id)
-  
-  return (
-    <g>
-      {/* Invisible wider path for better hover detection */}
-      <path
-        d={path}
-        stroke="transparent"
-        strokeWidth={20}
-        fill="none"
-        style={{ cursor: 'pointer' }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onMouseDown={(e) => {
-          e.stopPropagation()
-          onClick(e)
-        }}
-      />
-      
-      {/* Visible edge - black when selected */}
-      <path
-        d={path}
-        stroke={isSelected ? '#000000' : (edge.st?.c || '#666')}
-        strokeWidth={isSelected ? 3 : (isHovered ? 3 : (edge.st?.th || 2))}
-        strokeOpacity={isSelected ? 1 : (isHovered ? 0.7 : 0.4)}
-        strokeDasharray={edge.st?.p === 'dashed' ? '5,5' : edge.st?.p === 'dotted' ? '2,2' : undefined}
-        fill="none"
-        style={{
-          filter: isHovered ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : undefined,
-          pointerEvents: 'none'  // Let the invisible path handle clicks
-        }}
-      />
-      
-      {/* Optional label */}
-      {edge.m?.l && (
-        <text
-          x={(sourceX + targetX) / 2}
-          y={(sourceY + targetY) / 2}
-          textAnchor="middle"
-          fill="#666"
-          fontSize="12"
-          opacity={isHovered ? 1 : 0.7}
-        >
-          {edge.m.l}
-        </text>
-      )}
-    </g>
-  )
-})
 
 interface HistoryState {
   nodes: QNode[]
@@ -462,9 +346,9 @@ export const QFlow: React.FC<QFlowProps> = ({
       // Delete key - soft delete for nodes with sub-flows
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (selectedNodeIds.size > 0 || selectedEdgeIds.size > 0) {
-          // Check if any selected nodes have sub-flows
+          // Check if any selected nodes are memory nodes (have sub-flows)
           const nodesWithSubFlows = nodes.filter(n => 
-            selectedNodeIds.has(getIdString(n._id)) && n.data?.hasSubFlow
+            selectedNodeIds.has(getIdString(n._id)) && n.data?.isMemoryNode
           )
           
           if (nodesWithSubFlows.length > 0) {
@@ -1249,29 +1133,29 @@ export const QFlow: React.FC<QFlowProps> = ({
     const nodeIdStr = getIdString(nodeId)
     const node = nodes.find(n => getIdString(n._id) === nodeIdStr)
     
-    // Shift+double-click: Open or create sub-flow
+    // Shift+double-click: Convert to memory node and open sub-flow
     if (e.shiftKey && node) {
-      console.log('Shift+double-click on node:', nodeIdStr, node.data?.label)
+      console.log('Shift+double-click on node:', nodeIdStr, node.data?.label, '- Converting to memory node')
       
-      // Mark this node as having a sub-flow
+      // Mark this node as a memory node (it will be saved to memory)
       const updatedNode = {
         ...node,
         data: {
           ...node.data,
-          hasSubFlow: true
+          isMemoryNode: true
         }
       }
       
-      // Update the node to mark it has a sub-flow
+      // Update the node to mark it as a memory node
       const updatedNodes = nodes.map(n => 
         getIdString(n._id) === nodeIdStr ? updatedNode : n
       )
       onNodesChange?.(updatedNodes)
       setHasUnsavedChanges(true)
       
-      // Call the onOpenSubFlow callback if provided
+      // Call the onOpenSubFlow callback to save to memory and open editor
       if (onOpenSubFlow) {
-        onOpenSubFlow(node)
+        onOpenSubFlow(updatedNode)
       }
       return
     }
@@ -1376,6 +1260,24 @@ export const QFlow: React.FC<QFlowProps> = ({
                 target={target}
                 getIdString={getIdString}
                 isSelected={selectedEdgeIds.has(getIdString(edgeId))}
+                onDataChange={(edgeId: string, data: any) => {
+                  // Update edge metadata when edited
+                  const updatedEdges = edges.map(e => {
+                    if (getIdString(e._id) === edgeId) {
+                      return {
+                        ...e,
+                        m: {
+                          ...e.m,
+                          l: data.label,
+                          d: data.description
+                        }
+                      }
+                    }
+                    return e
+                  })
+                  setEdges(updatedEdges)
+                  onEdgesChange?.(updatedEdges)
+                }}
                 onClick={(e: React.MouseEvent) => {
                   const edgeIdStr = getIdString(edgeId)
                   
@@ -1535,7 +1437,7 @@ export const QFlow: React.FC<QFlowProps> = ({
                   }}>
                     {node.data.label}
                     {node.data.hasData && '*'}
-                    {node.data.hasSubFlow && '>'}
+                    {node.data.isMemoryNode && '>'}
                   </span>
                 </div>
                 

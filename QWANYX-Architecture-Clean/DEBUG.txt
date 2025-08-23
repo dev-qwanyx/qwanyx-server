@@ -1,39 +1,17 @@
-main-app.js?v=1755935314805:1825 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
-index.mjs:12699 Warning: forwardRef render functions accept exactly two parameters: props and ref. Did you forget to use the ref parameter?
+react-dom.development.js:38560 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+app-index.js:33 Warning: forwardRef render functions accept exactly two parameters: props and ref. Did you forget to use the ref parameter?
 window.console.error @ app-index.js:33
-console.error @ hydration-error-info.js:63
-printWarning @ react.development.js:204
-error @ react.development.js:178
-forwardRef @ react.development.js:2292
-eval @ index.mjs:12699
-(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs @ layout.js:83
-options.factory @ webpack.js?v=1755935314805:715
-__webpack_require__ @ webpack.js?v=1755935314805:37
-fn @ webpack.js?v=1755935314805:371
-eval @ providers.tsx:8
-(app-pages-browser)/./src/app/providers.tsx @ layout.js:39
-options.factory @ webpack.js?v=1755935314805:715
-__webpack_require__ @ webpack.js?v=1755935314805:37
-fn @ webpack.js?v=1755935314805:371
-Promise.then
-eval @ next-flight-client-entry-loader.js?modules=%7B%22request%22%3A%22E%3A%5C%5CqwanyxDev%5C%5CQWANYX-Architecture%5C%5CQWANYX-Architecture-Clean%5C%5Capps%5C%5Cautodin%5C%5Csrc%5C%5Capp%5C%5Cproviders.tsx%22%2C%22ids%22%3A%5B%22Providers%22%5D%7D&modules=%7B%22request%22%3A%22E%3A%5C%5CqwanyxDev%5C%5CQWANYX-Architecture%5C%5CQWANYX-Architecture-Clean%5C%5Cpackages%5C%5Cqwanyx-ui%5C%5Cdist%5C%5Cui.css%22%2C%22ids%22%3A%5B%5D%7D&server=false!:1
-(app-pages-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-client-entry-loader.js?modules=%7B%22request%22%3A%22E%3A%5C%5CqwanyxDev%5C%5CQWANYX-Architecture%5C%5CQWANYX-Architecture-Clean%5C%5Capps%5C%5Cautodin%5C%5Csrc%5C%5Capp%5C%5Cproviders.tsx%22%2C%22ids%22%3A%5B%22Providers%22%5D%7D&modules=%7B%22request%22%3A%22E%3A%5C%5CqwanyxDev%5C%5CQWANYX-Architecture%5C%5CQWANYX-Architecture-Clean%5C%5Cpackages%5C%5Cqwanyx-ui%5C%5Cdist%5C%5Cui.css%22%2C%22ids%22%3A%5B%5D%7D&server=false! @ layout.js:17
-options.factory @ webpack.js?v=1755935314805:715
-__webpack_require__ @ webpack.js?v=1755935314805:37
-__webpack_exec__ @ layout.js:89
-(anonymous) @ layout.js:90
-__webpack_require__.O @ webpack.js?v=1755935314805:86
-webpackJsonpCallback @ webpack.js?v=1755935314805:1397
-(anonymous) @ main-app.js?v=1755935314805:9
 config.ts:44 🔌 API Client: LOCAL - http://localhost:5002
-page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
-page.tsx:17 Parsed DH data: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
-page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
-page.tsx:17 Parsed DH data: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
-page.tsx:30 DH Editor props: {dhId: '68a78f51f6ce4441e8752af1', dhName: 'Souverains', dhFirstName: 'Stephen', dhEmail: 'stephen@qwanyx.com'}
-page.tsx:31 DH Data from sessionStorage: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
-page.tsx:30 DH Editor props: {dhId: '68a78f51f6ce4441e8752af1', dhName: 'Souverains', dhFirstName: 'Stephen', dhEmail: 'stephen@qwanyx.com'}
-page.tsx:31 DH Data from sessionStorage: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":true,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:17 Parsed DH data: Object
+page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":true,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:17 Parsed DH data: Object
+page.tsx:30 DH Editor props: Object
+page.tsx:31 DH Data from sessionStorage: Object
+page.tsx:30 DH Editor props: Object
+page.tsx:31 DH Data from sessionStorage: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
 app-index.js:33 Warning: Prop `src` did not match. Server: "https://api.dicebear.com/7.x/avataaars/svg?seed=Digital Human" Client: "https://api.dicebear.com/7.x/avataaars/svg?seed=StephenSouverains"
     at img
     at div
@@ -44,7 +22,7 @@ app-index.js:33 Warning: Prop `src` did not match. Server: "https://api.dicebear
     at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:10373:21)
     at div
     at div
-    at DigitalHumanEditor (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-thot/dist/index.mjs:5846:11)
+    at DigitalHumanEditor (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-thot/dist/index.mjs:6051:11)
     at DigitalHumanEditorPage (webpack-internal:///(app-pages-browser)/./src/app/digital-human-editor/page.tsx:17:90)
     at ClientPageRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/client-page.js:14:11)
     at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)
@@ -89,43 +67,18 @@ app-index.js:33 Warning: Prop `src` did not match. Server: "https://api.dicebear
     at ServerRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:112:27)
     at Root (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:117:11)
 window.console.error @ app-index.js:33
-console.error @ hydration-error-info.js:63
-printWarning @ react-dom.development.js:94
-error @ react-dom.development.js:68
-warnForPropDifference @ react-dom.development.js:32715
-hydrateSanitizedAttribute @ react-dom.development.js:34541
-diffHydratedGenericElement @ react-dom.development.js:34733
-diffHydratedProperties @ react-dom.development.js:35113
-hydrateInstance @ react-dom.development.js:36127
-prepareToHydrateHostInstance @ react-dom.development.js:7246
-completeWork @ react-dom.development.js:19769
-completeUnitOfWork @ react-dom.development.js:25963
-performUnitOfWork @ react-dom.development.js:25759
-workLoopConcurrent @ react-dom.development.js:25734
-renderRootConcurrent @ react-dom.development.js:25690
-performConcurrentWorkOnRoot @ react-dom.development.js:24504
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534
 app-index.js:33 Warning: An error occurred during hydration. The server HTML was replaced with client content in <#document>.
 window.console.error @ app-index.js:33
-console.error @ hydration-error-info.js:63
-printWarning @ react-dom.development.js:94
-error @ react-dom.development.js:68
-errorHydratingContainer @ react-dom.development.js:36301
-recoverFromConcurrentError @ react-dom.development.js:24593
-performConcurrentWorkOnRoot @ react-dom.development.js:24542
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534
-page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
-page.tsx:17 Parsed DH data: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
-page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
-page.tsx:17 Parsed DH data: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
-page.tsx:30 DH Editor props: {dhId: '68a78f51f6ce4441e8752af1', dhName: 'Souverains', dhFirstName: 'Stephen', dhEmail: 'stephen@qwanyx.com'}
-page.tsx:31 DH Data from sessionStorage: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
-page.tsx:30 DH Editor props: {dhId: '68a78f51f6ce4441e8752af1', dhName: 'Souverains', dhFirstName: 'Stephen', dhEmail: 'stephen@qwanyx.com'}
-page.tsx:31 DH Data from sessionStorage: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
+page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":true,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:17 Parsed DH data: Object
+page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":true,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:17 Parsed DH data: Object
+page.tsx:30 DH Editor props: Object
+page.tsx:31 DH Data from sessionStorage: Object
+page.tsx:30 DH Editor props: Object
+page.tsx:31 DH Data from sessionStorage: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
 on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
 See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at checkForUnmatchedText (react-dom.development.js:32797:11)
@@ -141,19 +94,6 @@ See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at workLoop (scheduler.development.js:256:34)
     at flushWork (scheduler.development.js:225:14)
     at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
-checkForUnmatchedText @ react-dom.development.js:32797
-diffHydratedProperties @ react-dom.development.js:35055
-hydrateInstance @ react-dom.development.js:36127
-prepareToHydrateHostInstance @ react-dom.development.js:7246
-completeWork @ react-dom.development.js:19769
-completeUnitOfWork @ react-dom.development.js:25963
-performUnitOfWork @ react-dom.development.js:25759
-workLoopConcurrent @ react-dom.development.js:25734
-renderRootConcurrent @ react-dom.development.js:25690
-performConcurrentWorkOnRoot @ react-dom.development.js:24504
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534
 on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
 See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at checkForUnmatchedText (react-dom.development.js:32797:11)
@@ -169,19 +109,6 @@ See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at workLoop (scheduler.development.js:256:34)
     at flushWork (scheduler.development.js:225:14)
     at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
-checkForUnmatchedText @ react-dom.development.js:32797
-diffHydratedProperties @ react-dom.development.js:35055
-hydrateInstance @ react-dom.development.js:36127
-prepareToHydrateHostInstance @ react-dom.development.js:7246
-completeWork @ react-dom.development.js:19769
-completeUnitOfWork @ react-dom.development.js:25963
-performUnitOfWork @ react-dom.development.js:25759
-workLoopConcurrent @ react-dom.development.js:25734
-renderRootConcurrent @ react-dom.development.js:25690
-performConcurrentWorkOnRoot @ react-dom.development.js:24504
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534
 on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
 See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at checkForUnmatchedText (react-dom.development.js:32797:11)
@@ -197,19 +124,6 @@ See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at workLoop (scheduler.development.js:256:34)
     at flushWork (scheduler.development.js:225:14)
     at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
-checkForUnmatchedText @ react-dom.development.js:32797
-diffHydratedProperties @ react-dom.development.js:35055
-hydrateInstance @ react-dom.development.js:36127
-prepareToHydrateHostInstance @ react-dom.development.js:7246
-completeWork @ react-dom.development.js:19769
-completeUnitOfWork @ react-dom.development.js:25963
-performUnitOfWork @ react-dom.development.js:25759
-workLoopConcurrent @ react-dom.development.js:25734
-renderRootConcurrent @ react-dom.development.js:25690
-performConcurrentWorkOnRoot @ react-dom.development.js:24504
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534
 on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
 See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at checkForUnmatchedText (react-dom.development.js:32797:11)
@@ -225,19 +139,6 @@ See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at workLoop (scheduler.development.js:256:34)
     at flushWork (scheduler.development.js:225:14)
     at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
-checkForUnmatchedText @ react-dom.development.js:32797
-diffHydratedProperties @ react-dom.development.js:35055
-hydrateInstance @ react-dom.development.js:36127
-prepareToHydrateHostInstance @ react-dom.development.js:7246
-completeWork @ react-dom.development.js:19769
-completeUnitOfWork @ react-dom.development.js:25963
-performUnitOfWork @ react-dom.development.js:25759
-workLoopConcurrent @ react-dom.development.js:25734
-renderRootConcurrent @ react-dom.development.js:25690
-performConcurrentWorkOnRoot @ react-dom.development.js:24504
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534
 on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
 See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at checkForUnmatchedText (react-dom.development.js:32797:11)
@@ -253,19 +154,6 @@ See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at workLoop (scheduler.development.js:256:34)
     at flushWork (scheduler.development.js:225:14)
     at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
-checkForUnmatchedText @ react-dom.development.js:32797
-diffHydratedProperties @ react-dom.development.js:35055
-hydrateInstance @ react-dom.development.js:36127
-prepareToHydrateHostInstance @ react-dom.development.js:7246
-completeWork @ react-dom.development.js:19769
-completeUnitOfWork @ react-dom.development.js:25963
-performUnitOfWork @ react-dom.development.js:25759
-workLoopConcurrent @ react-dom.development.js:25734
-renderRootConcurrent @ react-dom.development.js:25690
-performConcurrentWorkOnRoot @ react-dom.development.js:24504
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534
 on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
 See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at checkForUnmatchedText (react-dom.development.js:32797:11)
@@ -281,19 +169,6 @@ See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at workLoop (scheduler.development.js:256:34)
     at flushWork (scheduler.development.js:225:14)
     at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
-checkForUnmatchedText @ react-dom.development.js:32797
-diffHydratedProperties @ react-dom.development.js:35055
-hydrateInstance @ react-dom.development.js:36127
-prepareToHydrateHostInstance @ react-dom.development.js:7246
-completeWork @ react-dom.development.js:19769
-completeUnitOfWork @ react-dom.development.js:25963
-performUnitOfWork @ react-dom.development.js:25759
-workLoopConcurrent @ react-dom.development.js:25734
-renderRootConcurrent @ react-dom.development.js:25690
-performConcurrentWorkOnRoot @ react-dom.development.js:24504
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534
 react-dom.development.js:16571 Uncaught Error: There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root will switch to client rendering.
 See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at updateHostRoot (react-dom.development.js:16571:57)
@@ -307,18 +182,73 @@ See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at workLoop (scheduler.development.js:256:34)
     at flushWork (scheduler.development.js:225:14)
     at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
-updateHostRoot @ react-dom.development.js:16571
-beginWork$1 @ react-dom.development.js:18486
-beginWork @ react-dom.development.js:26927
-performUnitOfWork @ react-dom.development.js:25748
-workLoopSync @ react-dom.development.js:25464
-renderRootSync @ react-dom.development.js:25419
-recoverFromConcurrentError @ react-dom.development.js:24597
-performConcurrentWorkOnRoot @ react-dom.development.js:24542
-workLoop @ scheduler.development.js:256
-flushWork @ scheduler.development.js:225
-performWorkUntilDeadline @ scheduler.development.js:534
-DigitalHumanEditor.tsx:158 Loaded DH from session: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
-DigitalHumanEditor.tsx:158 Loaded DH from session: {_id: '68a78f51f6ce4441e8752af1', active: false, activity: Array(1), auth_method: 'code', created_at: '2025-08-21T21:27:45.753000', …}
-DigitalHumanEditor.tsx:193 Loaded existing flow: root
-DigitalHumanEditor.tsx:193 Loaded existing flow: root
+DigitalHumanEditor.tsx:60 Connecting to brain: stephen-qwanyx-com
+DigitalHumanEditor.tsx:137 Loaded DH from session: Object
+DigitalHumanEditor.tsx:60 Connecting to brain: stephen-qwanyx-com
+DigitalHumanEditor.tsx:137 Loaded DH from session: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:67 Connected to brain server
+DigitalHumanEditor.tsx:67 Connected to brain server
+DigitalHumanEditor.tsx:80 Brain message: Object
+DigitalHumanEditor.tsx:91 Connected to brain server: Neural link established
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:80 Brain message: Object
+DigitalHumanEditor.tsx:91 Connected to brain server: Neural link established
+DigitalHumanEditor.tsx:80 Brain message: Object
+DigitalHumanEditor.tsx:87 Loading brain state: 0 nodes, 0 edges
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:80 Brain message: Object
+DigitalHumanEditor.tsx:87 Loading brain state: 0 nodes, 0 edges
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:172 Loaded existing flow: root
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:172 Loaded existing flow: root
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:80 Brain message: Object
+DigitalHumanEditor.tsx:80 Brain message: Object
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953602936_vo2kw1mi7', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953602936}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953602936_c7fdgb0lw', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953602936}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953604028_8bjr6fegk', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953604028}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953604028_u1w4hulco', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953604028}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953605119_dkhg0yq6h', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953605119}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953605119_em7c36njh', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953605119}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953606214_44qhh8f0m', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953606214}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953606214_l35vzfqwz', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953606214}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953607314_blzivsqwt', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953607314}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953607314_d1ww90fr5', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953607314}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953608412_38vyt4b71', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953608412}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953608413_lwfby4jln', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953608413}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953609503_3ovbh4vpo', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953609503}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953609503_x4kpveni8', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953609503}
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: {dhId: '68a78f51f6ce4441e8752af1', dhEmail: 'stephen@qwanyx.com'}
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: {dhId: '68a78f51f6ce4441e8752af1', dhEmail: 'stephen@qwanyx.com'}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953610599_aa7ebki49', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953610599}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953610599_ff95l5x5o', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953610599}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953611698_azunf8mzr', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953611698}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953611698_1hp3jj7kr', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953611698}
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: {dhId: '68a78f51f6ce4441e8752af1', dhEmail: 'stephen@qwanyx.com'}
+DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: {dhId: '68a78f51f6ce4441e8752af1', dhEmail: 'stephen@qwanyx.com'}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953612797_34ytecq1t', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953612797}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953612797_uxmxnwq8y', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953612797}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953613892_jqror1afl', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953613892}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953613892_mz3dnfvke', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953613892}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953614988_o9uvrfe5p', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953614988}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953614988_hyo8a5nzb', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953614988}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953616084_3oo0z8isf', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953616084}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953616084_wh6v4qzib', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953616084}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953617182_vf8fweeil', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953617182}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953617183_z5fwoa5gd', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953617183}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953618276_586qmt4nm', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953618276}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953618276_809zqkbhr', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953618276}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953619369_9znag6vng', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953619369}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953619369_p05vpdu85', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953619369}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953620462_78xkk767o', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953620462}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953620462_m10gvqpet', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953620462}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953621555_vule21scr', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953621555}
+DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953621555_dlsun4sk3', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953621555}

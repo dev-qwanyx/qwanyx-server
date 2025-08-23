@@ -2,6 +2,10 @@
 export { QFlow } from './components/QFlow';
 export type { QNode, QEdge } from './components/QFlow';
 
+// Edge component for flow connections
+export { Edge } from './components/Edge';
+export type { EdgeProps } from './components/Edge';
+
 // Base Node system
 export { BaseNode } from './components/BaseNode';
 export { NoteNode } from './components/NoteNode';

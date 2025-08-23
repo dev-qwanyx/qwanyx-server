@@ -350,6 +350,23 @@ export class Brain extends EventEmitter {
           stack: this.flowStack
         }
         
+      case 'reset-memory':
+        // Safely reset brain to empty state
+        this.logger.info(`Brain ${this.id} resetting memory`)
+        this.nodes = []
+        this.edges = []
+        this.flowStack = []
+        this.currentFlowTitle = 'root'
+        await this.saveCurrentFlow()
+        this.emit('memory-reset', {
+          brainId: this.id,
+          timestamp: new Date()
+        })
+        return {
+          success: true,
+          message: 'Brain memory reset to clean state'
+        }
+        
       default:
         throw new Error(`Unknown command: ${command.type}`)
     }

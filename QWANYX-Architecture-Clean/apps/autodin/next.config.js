@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@qwanyx/ui', '@qwanyx/auth', '@qwanyx/dashboard', '@qwanyx/dashboard-v2', '@qwanyx/user-management'],
+  transpilePackages: ['@qwanyx/ui', '@qwanyx/auth', '@qwanyx/dashboard', '@qwanyx/dashboard-v2', '@qwanyx/user-management', '@qwanyx/thot', '@qwanyx/canvas'],
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if

@@ -77,9 +77,11 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
     ws.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data)
-        // Only log important messages, not continuous stream messages
+        // FIXED: Only log important messages, not continuous stream messages
         if (message.type !== 'stream') {
-          console.log('Brain message:', message)
+          console.log('Brain message (non-stream):', message)
+        } else {
+          // Stream messages - DON'T LOG
         }
         
         // Handle event messages
@@ -851,16 +853,23 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               const nodeIdStr = typeof node._id === 'object' ? node._id.toString() : String(node._id)
               const subFlowTitle = node.data?.label || 'Sub-flow'
               
-              console.log('Opening sub-flow for node:', nodeIdStr, subFlowTitle)
+              console.log('Opening sub-flow for node:', nodeIdStr, subFlowTitle, '- isMemoryNode:', node.data?.isMemoryNode)
               
               try {
-                // Save current flow first
+                // Save current flow first WITH THE UPDATED NODE (marked as isMemoryNode)
                 console.log('Saving current flow before navigation...')
+                // Update the nodes array with the memory node
+                const updatedNodes = nodes.map(n => 
+                  (typeof n._id === 'object' ? n._id.toString() : String(n._id)) === nodeIdStr 
+                    ? node  // Use the updated node with isMemoryNode flag
+                    : n
+                )
+                
                 const pushData = {
                   dh_email: dhEmail,
                   dh_id: currentFlowId || dhId,
                   flow_title: currentFlowTitle,
-                  nodes: nodes,
+                  nodes: updatedNodes,  // Use updated nodes with memory flag
                   edges: edges
                 }
                 
