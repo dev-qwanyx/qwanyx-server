@@ -1,0 +1,14 @@
+{
+  "phil-qwanyx-com": {
+    "database": "autodin",
+    "collection": "phil-qwanyx-com",
+    "workspace": "autodin",
+    "personality": "personality"
+  },
+  "stephen-qwanyx-com": {
+    "database": "autodin", 
+    "collection": "stephen-qwanyx-com",
+    "workspace": "autodin",
+    "personality": "personality"
+  }
+}

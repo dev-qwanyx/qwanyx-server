@@ -96,6 +96,7 @@ export interface EmailNode {
 export interface MailServiceEvents {
   'email:received': (email: EmailNode) => void
   'email:sent': (email: EmailNode) => void
+  'mail:received': (email: EmailNode) => void
   'contact:created': (contact: ContactNode) => void
   'contact:updated': (contact: ContactNode) => void
   'error': (error: Error) => void

@@ -1,0 +1,40 @@
+{
+  "imap": {
+    "host": "mail.qwanyx.com",
+    "port": 993,
+    "user": "phil@qwanyx.com",
+    "password": "STzWpuuGU6TFFCtCxp9ho",
+    "tls": true,
+    "tlsOptions": {
+      "rejectUnauthorized": false
+    },
+    "authTimeout": 10000
+  },
+  "smtp": {
+    "host": "email-smtp.us-east-1.amazonaws.com",
+    "port": 587,
+    "secure": false,
+    "auth": {
+      "user": "AKIASIUVSCNOIYDDKYUC",
+      "pass": "BI222lL2lNMOLeHvX7+sHZoAyrkPWXozXsiIkwplaXNX"
+    },
+    "from": "Phil QWANYX <phil@qwanyx.com>"
+  },
+  "polling": {
+    "enabled": true,
+    "interval": 60000,
+    "folders": ["INBOX"],
+    "markAsRead": true
+  },
+  "processing": {
+    "batchSize": 10,
+    "compressionEnabled": true,
+    "formMemories": true,
+    "createContacts": true
+  },
+  "ai": {
+    "model": "gpt-4o-mini",
+    "maxTokens": 500,
+    "temperature": 0.7
+  }
+}

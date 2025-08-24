@@ -2,7 +2,7 @@ import { EventEmitter } from 'events'
 import * as Imap from 'imap'
 import { simpleParser, ParsedMail } from 'mailparser'
 import * as nodemailer from 'nodemailer'
-import { Brain } from '../../core/Brain'
+import { Edge } from '../../types'
 import { 
   MailConfig, 
   EmailData, 
@@ -10,27 +10,36 @@ import {
   ContactNode,
   MailServiceEvents 
 } from './types'
+import { SemanticCompression, ProcessedEmail } from './SemanticCompression'
+import { TemporalCompression, CompressionLevel } from './TemporalCompression'
 
 export class MailService extends EventEmitter {
   private brainId: string
-  private brain: Brain
   private config: MailConfig
   private imap: Imap | null = null
   private transporter: nodemailer.Transporter | null = null
   private pollingInterval: NodeJS.Timeout | null = null
   private contacts: Map<string, ContactNode> = new Map()
   private isConnected: boolean = false
+  private compression: SemanticCompression
+  private temporalCompression: TemporalCompression
+  private emailBatch: EmailData[] = []
+  private emailCount: number = 0  // Track position for compression levels
 
   constructor(brainId: string, config: MailConfig) {
     super()
     this.brainId = brainId
     this.config = config
     
-    // Get brain instance
-    this.brain = new Brain(brainId)
+    // Initialize compression systems
+    this.compression = new SemanticCompression()
+    this.temporalCompression = new TemporalCompression()
     
     // Initialize SMTP transporter for sending
     this.initSMTP()
+    
+    // Start batch processing timer
+    this.startBatchProcessor()
   }
 
   // Initialize SMTP for sending emails
@@ -57,6 +66,7 @@ export class MailService extends EventEmitter {
         host: this.config.imap.host,
         port: this.config.imap.port,
         tls: this.config.imap.tls,
+        tlsOptions: this.config.imap.tlsOptions || {},
         authTimeout: this.config.imap.authTimeout || 10000
       })
 
@@ -220,12 +230,13 @@ export class MailService extends EventEmitter {
     })
 
     // Create edge between contact and email
-    await this.brain.createConnection(
-      contact._id!,
-      storedEmail.id,
-      'received_email',
-      { date: emailData.date }
-    )
+    const edge: Edge = {
+      id: `${contact._id}-${storedEmail.id}-${Date.now()}`,
+      source: contact._id!,
+      target: storedEmail.id,
+      type: 'mail'
+    }
+    await this.brain.addEdge(edge)
 
     // Update contact's last contact date and message count
     contact.data.lastContact = emailData.date
@@ -233,6 +244,13 @@ export class MailService extends EventEmitter {
     await this.brain.updateMemory(contact._id!, contact.data)
 
     console.log(`💾 Stored email from ${emailData.from.email}: "${emailData.subject}"`)
+    
+    // Add to batch for semantic processing
+    this.emailBatch.push(emailData)
+    
+    // Process immediately (even if just 1 email)
+    // Later we can optimize to wait for more if we want
+    await this.processBatch()
     
     // Emit event
     this.emit('email:received', { ...emailNode, _id: storedEmail.id })
@@ -408,6 +426,21 @@ export class MailService extends EventEmitter {
     }))
   }
 
+  // Zoom into a specific time period - reconstruct context from compressed memories
+  public async zoomIntoTimeRange(
+    startDate: Date,
+    endDate: Date,
+    detailLevel: 'full' | 'summary' | 'pattern' = 'summary'
+  ) {
+    console.log(`🔍 Zooming into ${startDate.toISOString()} - ${endDate.toISOString()}`)
+    return this.temporalCompression.zoomIntoTimeRange(
+      this.brain,
+      startDate,
+      endDate,
+      detailLevel
+    )
+  }
+  
   // Get emails for a contact
   public async getEmailsForContact(contactId: string): Promise<EmailNode[]> {
     const connections = await this.brain.getConnections(contactId)
@@ -426,8 +459,133 @@ export class MailService extends EventEmitter {
     }))
   }
 
+  // Start batch processor for semantic compression
+  private startBatchProcessor() {
+    // Currently processing immediately on arrival
+    // Keeping this method for future optimization where we might
+    // want to batch multiple emails for efficiency with GPT-5 Nano's 400k context
+    console.log('📧 Email compression enabled - processing on arrival')
+  }
+  
+  // Process email batch with temporal-aware compression
+  private async processBatch() {
+    if (this.emailBatch.length === 0) return
+    
+    const batch = [...this.emailBatch]
+    this.emailBatch = []
+    
+    try {
+      console.log(`🧠 Processing batch of ${batch.length} emails...`)
+      
+      for (const email of batch) {
+        this.emailCount++
+        
+        // Determine compression level based on position
+        const compressionLevel = this.temporalCompression.getCompressionLevel(
+          this.emailCount,
+          0  // Age 0 for new emails
+        )
+        
+        console.log(`📧 Email #${this.emailCount} - Compression level: ${CompressionLevel[compressionLevel]}`)
+        
+        // Compress with appropriate level
+        const compressed = await this.temporalCompression.compressEmail(email, compressionLevel)
+        
+        // Update email node
+        await this.updateEmailWithTemporalCompression(email, compressed)
+      }
+      
+      // Run cascade compression on older emails periodically
+      if (this.emailCount % 10 === 0) {
+        console.log('🌊 Running compression cascade on older emails...')
+        await this.temporalCompression.cascadeCompression(this.brain)
+      }
+      
+      console.log(`✅ Batch processing complete`)
+    } catch (error) {
+      console.error('Batch processing failed:', error)
+      // Re-add to batch for retry
+      this.emailBatch.push(...batch)
+    }
+  }
+  
+  // Update email node with temporal compression
+  private async updateEmailWithTemporalCompression(original: EmailData, compressed: any) {
+    // Find the email node
+    const emails = await this.brain.searchMemories({
+      type: 'email',
+      'content.messageId': original.messageId
+    })
+    
+    if (emails.length > 0) {
+      const emailId = emails[0].id
+      
+      // Update with temporal compression
+      await this.brain.updateMemory(emailId, {
+        ...emails[0].content,
+        compression: compressed
+      })
+      
+      // Create tag edges if we have tags
+      if (compressed.tags) {
+        for (let i = 0; i < compressed.tags.length; i++) {
+          const tagEdge: Edge = {
+            id: `tag-${emailId}-${compressed.tags[i]}`,
+            source: emailId,
+            target: `tag-${compressed.tags[i]}`,
+            type: 'tagged'
+          }
+          await this.brain.addEdge(tagEdge)
+        }
+      }
+    }
+  }
+  
+  // Legacy method for backward compatibility
+  private async updateEmailWithCompression(processed: ProcessedEmail) {
+    const { original, compression } = processed
+    
+    // Find the email node
+    const emails = await this.brain.searchMemories({
+      type: 'email',
+      'content.messageId': original.messageId
+    })
+    
+    if (emails.length > 0) {
+      const emailId = emails[0].id
+      
+      // Update with compression data
+      await this.brain.updateMemory(emailId, {
+        ...emails[0].content,
+        compression: {
+          summary: compression.summary,
+          tags: compression.tags,
+          entities: compression.entities,
+          importance: compression.importance,
+          actions: compression.actions
+        }
+      })
+      
+      // Create tag edges for graph traversal
+      for (const tagIndex of compression.tags) {
+        const tagEdge: Edge = {
+          id: `tag-${emailId}-${tagIndex}`,
+          source: emailId,
+          target: `tag-${tagIndex}`,
+          type: 'tagged'
+        }
+        await this.brain.addEdge(tagEdge)
+      }
+    }
+  }
+
   // Disconnect and cleanup
   public async disconnect() {
+    // Process remaining batch
+    if (this.emailBatch.length > 0) {
+      await this.processBatch()
+    }
+    
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval)
       this.pollingInterval = null

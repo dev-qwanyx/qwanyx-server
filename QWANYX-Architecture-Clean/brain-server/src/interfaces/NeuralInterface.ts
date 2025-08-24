@@ -96,6 +96,12 @@ export class NeuralInterface {
       return
     }
     
+    // Handle monitor subscription
+    if (message.type === 'subscribe' && message.brainId) {
+      await this.handleMonitorSubscription(client, message)
+      return
+    }
+    
     switch (message.type) {
       case 'command':
         await this.handleCommand(client, message as NeuralMessage)
@@ -250,6 +256,23 @@ export class NeuralInterface {
     // Subscribe to brain events
     this.subscribeToBrain(client, brain)
     
+    // Send current brain vitals immediately
+    const vitals = brain.getVitals()
+    this.sendMessage(client.socket, {
+      id: this.generateMessageId(),
+      type: 'stream',
+      brainId,
+      payload: {
+        stream: 'thought',
+        data: {
+          count: vitals.thoughtCount,
+          flowId: vitals.currentFlow,
+          timestamp: vitals.lastThought
+        }
+      },
+      timestamp: Date.now()
+    })
+    
     this.logger.info(`Client connected to brain ${brainId}`)
   }
   
@@ -293,6 +316,103 @@ export class NeuralInterface {
         timestamp: Date.now()
       })
     })
+    
+    brain.on('personality-loaded', (data: any) => {
+      this.sendMessage(client.socket, {
+        id: this.generateMessageId(),
+        type: 'event',
+        brainId: client.brainId,
+        payload: {
+          event: 'personality-loaded',
+          data
+        },
+        timestamp: Date.now()
+      })
+    })
+    
+    // Subscribe to mail service events if brain has mail service
+    if (brain.mailService) {
+      brain.mailService.on('mail:received', (data: any) => {
+        this.sendMessage(client.socket, {
+          id: this.generateMessageId(),
+          type: 'event',
+          brainId: client.brainId,
+          payload: {
+            event: 'mail:received',
+            from: data.data.from.email,
+            subject: data.data.subject
+          },
+          timestamp: Date.now()
+        })
+      })
+      
+      brain.mailService.on('contact:created', (data: any) => {
+        this.sendMessage(client.socket, {
+          id: this.generateMessageId(),
+          type: 'event',
+          brainId: client.brainId,
+          payload: {
+            event: 'contact:created',
+            email: data.data.email
+          },
+          timestamp: Date.now()
+        })
+      })
+      
+      brain.mailService.on('email:sent', (data: any) => {
+        this.sendMessage(client.socket, {
+          id: this.generateMessageId(),
+          type: 'event',
+          brainId: client.brainId,
+          payload: {
+            event: 'mail:sent',
+            to: data.data.to,
+            subject: data.data.subject
+          },
+          timestamp: Date.now()
+        })
+      })
+    }
+  }
+  
+  private async handleMonitorSubscription(client: ConnectedClient, message: any): Promise<void> {
+    const { brainId, channels } = message
+    
+    this.logger.info(`Monitor subscribing to brain ${brainId}, channels: ${channels?.join(', ')}`)
+    
+    // Get brain
+    const brain = this.brainManager.getBrain(brainId)
+    if (!brain) {
+      // Create brain if it doesn't exist
+      try {
+        await this.brainManager.startBrain(brainId, 'digital-human', {
+          type: 'digital-human',
+          workspace: 'autodin'
+        })
+      } catch (error) {
+        this.sendError(client.socket, `Failed to create brain: ${error}`)
+        return
+      }
+    }
+    
+    // Store client subscription
+    client.brainId = brainId
+    
+    // Send confirmation
+    this.sendMessage(client.socket, {
+      id: this.generateMessageId(),
+      type: 'event',
+      payload: {
+        event: 'mail:status',
+        message: 'Monitor connected to brain'
+      },
+      timestamp: Date.now()
+    })
+    
+    // Subscribe to brain events
+    if (brain) {
+      this.subscribeToBrain(client, brain)
+    }
   }
   
   private handleDisconnection(connectionId: string): void {

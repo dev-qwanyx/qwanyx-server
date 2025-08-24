@@ -110,10 +110,27 @@ async function start() {
     
     // Start HTTP/WebSocket server
     const port = process.env.PORT || 3003
-    server.listen(port, () => {
+    server.listen(port, async () => {
       logger.info(`Brain Server running on port ${port}`)
       logger.info('Ready to host consciousness')
       logger.info('WebSocket neural connections available at ws://localhost:' + port + '/neural')
+      
+      // Auto-start Phil's brain
+      try {
+        const brainId = await brainManager.startBrain('phil-qwanyx-com', 'digital-human', {
+          personalityTraits: {
+            curiosity: 0.8,
+            creativity: 0.9,
+            logic: 0.7,
+            emotion: 0.6,
+            memory: 0.8
+          },
+          workspace: 'autodin'
+        })
+        logger.info('✅ Auto-started Phil\'s brain: ' + brainId)
+      } catch (error) {
+        logger.error('Failed to auto-start Phil\'s brain', error)
+      }
     })
     
     // Graceful shutdown

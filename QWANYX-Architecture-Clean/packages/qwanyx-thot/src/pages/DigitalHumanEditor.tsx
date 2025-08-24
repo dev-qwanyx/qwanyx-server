@@ -13,7 +13,7 @@ import {
   Tooltip,
   UserProfile
 } from '@qwanyx/ui'
-import { QFlow } from '@qwanyx/canvas'
+import { QFlow, DHMonitor } from '@qwanyx/canvas'
 import { NodeRegistry, NodeCategory, NodeDefinition } from '../execution'
 import { Breadcrumb } from '../components/Breadcrumb'
 
@@ -43,6 +43,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
   const [_flowStack, setFlowStack] = useState<Array<{id: string, title: string}>>([]) // Will be used for navigation breadcrumbs
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [editedTitle, setEditedTitle] = useState('')
+  const [showMonitor, setShowMonitor] = useState(false)
   
   // No more demo nodes by default - start with empty canvas
   
@@ -839,6 +840,23 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
             </Button>
           </Tooltip>
           
+          <Tooltip content="Monitor Digital Human">
+            <Button 
+              variant={showMonitor ? "primary" : "ghost"}
+              size="md"
+              onClick={() => setShowMonitor(!showMonitor)}
+              style={{
+                padding: '12px',
+                minWidth: 'auto',
+                width: '48px',
+                height: '48px',
+                backgroundColor: showMonitor ? '#8b5cf6' : undefined
+              }}
+            >
+              <Icon name="Activity" size="md" />
+            </Button>
+          </Tooltip>
+          
           <Tooltip content="Reset brain memory (clear all)">
             <Button 
               variant="ghost" 
@@ -1300,6 +1318,14 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
           
         </div>
       </div>
+      
+      {/* DH Monitor Modal */}
+      {showMonitor && (
+        <DHMonitor 
+          brainId={dhEmail?.replace('@', '-').replace('.', '-') || 'stephen-qwanyx-com'}
+          onClose={() => setShowMonitor(false)}
+        />
+      )}
     </div>
   )
 }

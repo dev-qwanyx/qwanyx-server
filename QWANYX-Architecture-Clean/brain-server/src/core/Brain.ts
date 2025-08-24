@@ -12,6 +12,11 @@ import { EventEmitter } from 'events'
 import { Logger } from '../utils/Logger'
 import { FlowManager } from '../memory/FlowManager'
 import { BrainState, BrainConfig, Node, Edge } from '../types'
+import { SimpleMailService } from '../services/mail/SimpleMailService'
+import * as fs from 'fs'
+import * as path from 'path'
+const MemoryFormationService = require('../memory/MemoryFormationService')
+const EmailResponseService = require('../services/mail/EmailResponseService')
 
 export class Brain extends EventEmitter {
   // Identity
@@ -44,6 +49,19 @@ export class Brain extends EventEmitter {
   private thoughtCount: number = 0
   private errorCount: number = 0
   
+  // Services
+  public mailService?: SimpleMailService
+  private memoryFormation?: any  // MemoryFormationService instance
+  private emailResponse?: any    // EmailResponseService instance
+  
+  // Personality traits (loaded from personality flow)
+  private personality: {
+    name?: string
+    tone?: string
+    style?: string
+    traits?: string[]
+  } = {}
+  
   constructor(id: string, type: string, config: BrainConfig) {
     super()
     this.id = id
@@ -52,7 +70,46 @@ export class Brain extends EventEmitter {
     this.logger = Logger.getInstance()
     this.memory = new FlowManager(id, config.workspace || 'default')
     
+    // Initialize memory formation service
+    // Use brain ID as collection name (e.g., phil-qwanyx-com)
+    this.memoryFormation = new MemoryFormationService('autodin', id)
+    
+    // Initialize email response service
+    this.emailResponse = new EmailResponseService(this.memoryFormation)
+    
     this.logger.info(`Brain ${id} created (type: ${type})`)
+    
+    // Initialize mail service if config exists
+    this.initializeMailService()
+  }
+  
+  /**
+   * Initialize mail service from config file
+   */
+  private initializeMailService(): void {
+    try {
+      const configPath = path.join(__dirname, '..', 'mail-config.json')
+      if (fs.existsSync(configPath)) {
+        const mailConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
+        this.mailService = new SimpleMailService(this.id, mailConfig)
+        this.logger.info(`Mail service initialized for brain ${this.id}`)
+        
+        // Forward mail events to brain events
+        this.mailService.on('mail:received', (data: any) => {
+          this.emit('mail:received', data)
+          // Form memory from email
+          this.formEmailMemory(data)
+        })
+        this.mailService.on('email:processed', (data: any) => {
+          this.emit('email:processed', data)
+        })
+        this.mailService.on('contact:created', (data: any) => {
+          this.emit('contact:created', data)
+        })
+      }
+    } catch (error) {
+      this.logger.error('Failed to initialize mail service', error)
+    }
   }
   
   /**
@@ -72,6 +129,23 @@ export class Brain extends EventEmitter {
       // Start the thinking loop
       this.alive = true
       this.startThinking()
+      
+      // Start mail service if configured
+      if (this.mailService) {
+        this.logger.info(`📧 Starting mail service for ${this.id}`)
+        await this.mailService.connect()
+        
+        // Check for emails every 30 seconds
+        setInterval(async () => {
+          if (this.mailService && this.alive) {
+            this.logger.info(`📬 Checking for new emails...`)
+            await this.mailService.checkEmails()
+          }
+        }, 30000) // 30 seconds
+        
+        // Also check immediately
+        await this.mailService.checkEmails()
+      }
       
       this.state = 'active'
       this.emit('state-change', this.state)
@@ -125,13 +199,62 @@ export class Brain extends EventEmitter {
       this.nodes = flow.nodes || []
       this.edges = flow.edges || []
       
-      // The brain has transformed!
-      this.emit('flow-changed', {
-        flowId,
-        title: this.currentFlowTitle,
-        nodeCount: this.nodes.length,
-        edgeCount: this.edges.length
-      })
+      // Check if this is a personality flow
+      if (flowId === 'personality' || flow.title === 'personality') {
+        this.logger.info(`🧠 PERSONALITY FLOW DETECTED! Brain ${this.id} loading personality...`)
+        
+        // Extract personality traits from nodes
+        if (this.nodes.length > 0) {
+          this.logger.info(`🎭 Personality has ${this.nodes.length} traits`)
+          
+          // Extract personality data from nodes
+          this.personality = {}
+          this.nodes.forEach(node => {
+            if (node.data) {
+              // Look for specific personality attributes
+              if (node.data.name) this.personality.name = node.data.name
+              if (node.data.tone) this.personality.tone = node.data.tone
+              if (node.data.style) this.personality.style = node.data.style
+              if (node.data.trait) {
+                if (!this.personality.traits) this.personality.traits = []
+                this.personality.traits.push(node.data.trait)
+              }
+            }
+          })
+          
+          this.logger.info(`🎭 Personality loaded: ${JSON.stringify(this.personality)}`)
+          
+          // Emit special personality event
+          this.emit('personality-loaded', {
+            brainId: this.id,
+            personality: this.personality,
+            traits: this.nodes.map(n => ({
+              id: n.id,
+              type: n.type,
+              data: n.data
+            })),
+            timestamp: new Date()
+          })
+          
+          // Send to connected clients
+          this.emit('flow-changed', {
+            flowId,
+            title: '🎭 PERSONALITY ACTIVE',
+            nodeCount: this.nodes.length,
+            edgeCount: this.edges.length,
+            isPersonality: true,
+            personality: this.personality
+          })
+        }
+      } else {
+        // Normal flow change
+        this.emit('flow-changed', {
+          flowId,
+          title: this.currentFlowTitle,
+          nodeCount: this.nodes.length,
+          edgeCount: this.edges.length
+        })
+      }
       
       this.logger.info(`Brain ${this.id} is now thinking as ${this.currentFlowTitle}`)
     } else {
@@ -215,11 +338,13 @@ export class Brain extends EventEmitter {
       
       // Emit thought for monitoring
       if (this.thoughtCount % 10 === 0) { // Every 10 thoughts
-        this.emit('thought', {
+        const thoughtData = {
           count: this.thoughtCount,
           flowId: this.currentFlowId,
           timestamp: this.lastThought
-        })
+        }
+        this.logger.debug(`Emitting thought event: ${this.thoughtCount}`)
+        this.emit('thought', thoughtData)
       }
       
     } catch (error) {
@@ -304,6 +429,190 @@ export class Brain extends EventEmitter {
   }
   
   /**
+   * Form a memory from an email using the MemoryFormationService
+   */
+  private async formEmailMemory(emailData: any): Promise<void> {
+    try {
+      // Use the memory formation service to properly save the email
+      const memory = await this.memoryFormation.formMemory('email', emailData)
+      
+      this.logger.info(`📧 Formed memory from email: ${emailData.subject} (ID: ${memory._id})`)
+      
+      // Also check if we need to create/update contact
+      const fromEmail = emailData.from?.text || emailData.from
+      if (fromEmail && fromEmail !== 'Unknown') {
+        // Parse the email address
+        const email = typeof fromEmail === 'string' 
+          ? fromEmail.toLowerCase()
+          : fromEmail.address?.toLowerCase()
+          
+        if (email) {
+          // Check if contact exists
+          const contacts = await this.memoryFormation.col.find({ 
+            type: 'contact',
+            email: email 
+          }).toArray()
+          
+          if (contacts.length === 0) {
+            // Create new contact
+            const contactMemory = await this.memoryFormation.formMemory('contact', {
+              email: email,
+              name: emailData.from?.name || ''
+            })
+            
+            // Create edge from contact to email
+            await this.memoryFormation.createLink(contactMemory._id, memory._id, 'sent')
+            
+            this.logger.info(`📇 Created new contact: ${email}`)
+            this.emit('contact:created', { email, id: contactMemory._id })
+          } else {
+            // Update existing contact
+            const contact = contacts[0]
+            await this.memoryFormation.col.updateOne(
+              { _id: contact._id },
+              { 
+                $inc: { messageCount: 1 },
+                $set: { lastSeen: new Date(), updatedAt: new Date() }
+              }
+            )
+            
+            // Create edge from contact to email
+            await this.memoryFormation.createLink(contact._id, memory._id, 'sent')
+            
+            this.logger.info(`📇 Updated contact: ${email}`)
+          }
+        }
+      }
+      
+      // Generate AI-powered response using EmailResponseService
+      let aiResponseGenerated = false
+      try {
+        // Get or update contact for this email
+        const contactEmail = typeof emailData.from === 'string' 
+          ? emailData.from.toLowerCase()
+          : emailData.from?.address?.toLowerCase() || emailData.from?.text?.match(/<(.+)>/)?.[1]?.toLowerCase();
+          
+        const contact = await this.memoryFormation.col.findOne({ 
+          type: 'contact',
+          email: contactEmail 
+        });
+        
+        if (contact && this.emailResponse) {
+          // Use AI to generate response and update qualification
+          const result = await this.emailResponse.processEmailAndRespond(memory, contact)
+          
+          this.logger.info(`🤖 AI Response generated - Stage: ${result.qualification.stage}, Readiness: ${result.qualification.readiness}%`)
+          
+          aiResponseGenerated = true
+          
+          // Send the actual email response via SMTP
+          if (this.mailService) {
+            try {
+              const recipientEmail = typeof emailData.from === 'string' 
+                ? emailData.from 
+                : emailData.from?.address || emailData.from?.text?.match(/<(.+)>/)?.[1]
+                
+              await this.mailService.sendEmail(
+                recipientEmail,
+                `Re: ${emailData.subject}`,
+                result.emailResponse,
+                emailData.messageId
+              )
+              
+              this.logger.info(`📤 Email response sent to ${recipientEmail}`)
+            } catch (error) {
+              this.logger.error('Failed to send email response', error)
+            }
+          }
+          
+          // Emit the event
+          this.emit('email:response-generated', {
+            to: emailData.from,
+            subject: `Re: ${emailData.subject}`,
+            body: result.emailResponse,
+            qualification: result.qualification,
+            recommendation: result.recommendation
+          })
+        } else {
+          this.logger.info('No contact found or EmailResponseService not initialized')
+        }
+      } catch (error) {
+        this.logger.error('Failed to generate AI response', error)
+      }
+      
+      // Emit memory formation event
+      this.emit('memory:formed', {
+        memoryId: memory._id.toString(),
+        type: 'email',
+        from: emailData.from,
+        subject: emailData.subject,
+        responseGenerated: aiResponseGenerated
+      })
+      
+      // Increment thought count
+      this.thoughtCount++
+      
+    } catch (error) {
+      this.logger.error('Failed to form email memory', error)
+    }
+  }
+  
+  /**
+   * Generate an email response based on personality
+   */
+  private generateEmailResponse(emailData: any): string | null {
+    // Check if we have personality loaded
+    if (!this.personality || Object.keys(this.personality).length === 0) {
+      this.logger.info('No personality loaded, skipping response generation')
+      return null
+    }
+    
+    const { name = 'Phil', tone = 'professional', style = 'concise' } = this.personality
+    
+    // Simple response generation based on personality
+    let response = ''
+    
+    // Opening based on tone
+    if (tone === 'friendly') {
+      response = `Hi there!\n\n`
+    } else if (tone === 'formal') {
+      response = `Dear Sender,\n\n`
+    } else {
+      response = `Hello,\n\n`
+    }
+    
+    // Body based on style
+    if (style === 'verbose') {
+      response += `Thank you so much for your email regarding "${emailData.subject}". `
+      response += `I have received your message and have carefully reviewed its contents. `
+      response += `This information has been processed and stored in my memory system for future reference. `
+    } else if (style === 'concise') {
+      response += `Thanks for your email about "${emailData.subject}". `
+      response += `Message received and noted. `
+    } else {
+      response += `I've received your email regarding "${emailData.subject}". `
+    }
+    
+    // Add personality traits
+    if (this.personality.traits && this.personality.traits.length > 0) {
+      response += `\n\n`
+      if (this.personality.traits.includes('helpful')) {
+        response += `Is there anything else I can help you with? `
+      }
+      if (this.personality.traits.includes('curious')) {
+        response += `I'd love to learn more about this topic. `
+      }
+    }
+    
+    // Closing
+    response += `\n\nBest regards,\n${name}`
+    
+    this.logger.info(`📝 Generated response: ${response.substring(0, 100)}...`)
+    
+    return response
+  }
+
+  /**
    * Get brain vitals for monitoring
    */
   getVitals(): any {
@@ -329,6 +638,17 @@ export class Brain extends EventEmitter {
       case 'navigate':
         await this.navigateToFlow(command.flowId)
         break
+        
+      case 'load-personality':
+        // Special command to load personality flow
+        this.logger.info('🎭 Loading personality flow on request...')
+        await this.becomeFlow('personality')
+        return {
+          success: true,
+          message: 'Personality flow loaded',
+          currentFlow: this.currentFlowId,
+          nodeCount: this.nodes.length
+        }
         
       case 'save':
         await this.saveCurrentFlow()
@@ -366,6 +686,20 @@ export class Brain extends EventEmitter {
           success: true,
           message: 'Brain memory reset to clean state'
         }
+        
+      case 'startMailService':
+        if (this.mailService) {
+          await this.mailService.connect()
+          return { success: true, message: 'Mail service started' }
+        }
+        return { success: false, message: 'Mail service not configured' }
+        
+      case 'stopMailService':
+        if (this.mailService) {
+          await this.mailService.disconnect()
+          return { success: true, message: 'Mail service stopped' }
+        }
+        return { success: false, message: 'Mail service not configured' }
         
       default:
         throw new Error(`Unknown command: ${command.type}`)
