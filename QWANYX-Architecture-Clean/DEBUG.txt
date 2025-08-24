@@ -2,17 +2,17 @@ react-dom.development.js:38560 Download the React DevTools for a better developm
 app-index.js:33 Warning: forwardRef render functions accept exactly two parameters: props and ref. Did you forget to use the ref parameter?
 window.console.error @ app-index.js:33
 config.ts:44 🔌 API Client: LOCAL - http://localhost:5002
-page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":true,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:14 Stored DH data: {"_id":"68aa1eb0626efcb566f11981","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Sat, 23 Aug 2025 20:04:00 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-23T20:04:00.137000","email":"phil@qwanyx.com","firstName":"Philippe","first_name":"Philippe","id":"68aa1eb0626efcb566f11981","is_active":true,"last_login":null,"last_name":"Qwanyx","name":"Qwanyx","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"status":"stopped","stopped_at":"Sat, 23 Aug 2025 20:24:02 GMT"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-23T20:24:00.976000","created":"2025-08-23T18:04:00.137Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
 page.tsx:17 Parsed DH data: Object
-page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":true,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:14 Stored DH data: {"_id":"68aa1eb0626efcb566f11981","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Sat, 23 Aug 2025 20:04:00 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-23T20:04:00.137000","email":"phil@qwanyx.com","firstName":"Philippe","first_name":"Philippe","id":"68aa1eb0626efcb566f11981","is_active":true,"last_login":null,"last_name":"Qwanyx","name":"Qwanyx","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"status":"stopped","stopped_at":"Sat, 23 Aug 2025 20:24:02 GMT"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-23T20:24:00.976000","created":"2025-08-23T18:04:00.137Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
 page.tsx:17 Parsed DH data: Object
 page.tsx:30 DH Editor props: Object
 page.tsx:31 DH Data from sessionStorage: Object
 page.tsx:30 DH Editor props: Object
 page.tsx:31 DH Data from sessionStorage: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-app-index.js:33 Warning: Prop `src` did not match. Server: "https://api.dicebear.com/7.x/avataaars/svg?seed=Digital Human" Client: "https://api.dicebear.com/7.x/avataaars/svg?seed=StephenSouverains"
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+app-index.js:33 Warning: Prop `src` did not match. Server: "https://api.dicebear.com/7.x/avataaars/svg?seed=Digital Human" Client: "https://api.dicebear.com/7.x/avataaars/svg?seed=PhilippeQwanyx"
     at img
     at div
     at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:11376:16)
@@ -22,7 +22,7 @@ app-index.js:33 Warning: Prop `src` did not match. Server: "https://api.dicebear
     at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:10373:21)
     at div
     at div
-    at DigitalHumanEditor (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-thot/dist/index.mjs:6051:11)
+    at DigitalHumanEditor (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-thot/dist/index.mjs:6088:11)
     at DigitalHumanEditorPage (webpack-internal:///(app-pages-browser)/./src/app/digital-human-editor/page.tsx:17:90)
     at ClientPageRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/client-page.js:14:11)
     at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)
@@ -69,16 +69,16 @@ app-index.js:33 Warning: Prop `src` did not match. Server: "https://api.dicebear
 window.console.error @ app-index.js:33
 app-index.js:33 Warning: An error occurred during hydration. The server HTML was replaced with client content in <#document>.
 window.console.error @ app-index.js:33
-page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":true,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:14 Stored DH data: {"_id":"68aa1eb0626efcb566f11981","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Sat, 23 Aug 2025 20:04:00 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-23T20:04:00.137000","email":"phil@qwanyx.com","firstName":"Philippe","first_name":"Philippe","id":"68aa1eb0626efcb566f11981","is_active":true,"last_login":null,"last_name":"Qwanyx","name":"Qwanyx","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"status":"stopped","stopped_at":"Sat, 23 Aug 2025 20:24:02 GMT"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-23T20:24:00.976000","created":"2025-08-23T18:04:00.137Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
 page.tsx:17 Parsed DH data: Object
-page.tsx:14 Stored DH data: {"_id":"68a78f51f6ce4441e8752af1","active":true,"activity":[{"ip":"127.0.0.1","timestamp":"Thu, 21 Aug 2025 21:27:45 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-21T21:27:45.753000","email":"stephen@qwanyx.com","firstName":"Stephen","first_name":"Stephen","id":"68a78f51f6ce4441e8752af1","is_active":true,"last_login":null,"last_name":"Souverains","name":"Souverains","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"pid":6700,"started_at":"Fri, 22 Aug 2025 13:51:24 GMT","status":"running"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-22T13:51:24.620000","created":"2025-08-21T19:27:45.753Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
+page.tsx:14 Stored DH data: {"_id":"68aa1eb0626efcb566f11981","active":false,"activity":[{"ip":"127.0.0.1","timestamp":"Sat, 23 Aug 2025 20:04:00 GMT","type":"registration","user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"}],"auth_method":"code","created_at":"2025-08-23T20:04:00.137000","email":"phil@qwanyx.com","firstName":"Philippe","first_name":"Philippe","id":"68aa1eb0626efcb566f11981","is_active":true,"last_login":null,"last_name":"Qwanyx","name":"Qwanyx","permissions":["email:read","email:send","memory:read","memory:write"],"role":"user","runtime":{"status":"stopped","stopped_at":"Sat, 23 Aug 2025 20:24:02 GMT"},"status":"active","system":"THOT","type":"DH","updated_at":"2025-08-23T20:24:00.976000","created":"2025-08-23T18:04:00.137Z","stats":{"emailsProcessed":0,"avgResponseTime":0,"satisfactionRate":0}}
 page.tsx:17 Parsed DH data: Object
 page.tsx:30 DH Editor props: Object
 page.tsx:31 DH Data from sessionStorage: Object
 page.tsx:30 DH Editor props: Object
 page.tsx:31 DH Data from sessionStorage: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
 on-recoverable-error.js:20 Uncaught Error: Text content does not match server-rendered HTML.
 See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at checkForUnmatchedText (react-dom.development.js:32797:11)
@@ -182,73 +182,157 @@ See more info here: https://nextjs.org/docs/messages/react-hydration-error
     at workLoop (scheduler.development.js:256:34)
     at flushWork (scheduler.development.js:225:14)
     at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
-DigitalHumanEditor.tsx:60 Connecting to brain: stephen-qwanyx-com
-DigitalHumanEditor.tsx:137 Loaded DH from session: Object
-DigitalHumanEditor.tsx:60 Connecting to brain: stephen-qwanyx-com
-DigitalHumanEditor.tsx:137 Loaded DH from session: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:67 Connected to brain server
-DigitalHumanEditor.tsx:67 Connected to brain server
-DigitalHumanEditor.tsx:80 Brain message: Object
-DigitalHumanEditor.tsx:91 Connected to brain server: Neural link established
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:80 Brain message: Object
-DigitalHumanEditor.tsx:91 Connected to brain server: Neural link established
-DigitalHumanEditor.tsx:80 Brain message: Object
-DigitalHumanEditor.tsx:87 Loading brain state: 0 nodes, 0 edges
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:80 Brain message: Object
-DigitalHumanEditor.tsx:87 Loading brain state: 0 nodes, 0 edges
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:172 Loaded existing flow: root
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:172 Loaded existing flow: root
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: Object
-DigitalHumanEditor.tsx:80 Brain message: Object
-DigitalHumanEditor.tsx:80 Brain message: Object
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953602936_vo2kw1mi7', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953602936}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953602936_c7fdgb0lw', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953602936}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953604028_8bjr6fegk', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953604028}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953604028_u1w4hulco', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953604028}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953605119_dkhg0yq6h', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953605119}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953605119_em7c36njh', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953605119}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953606214_44qhh8f0m', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953606214}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953606214_l35vzfqwz', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953606214}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953607314_blzivsqwt', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953607314}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953607314_d1ww90fr5', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953607314}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953608412_38vyt4b71', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953608412}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953608413_lwfby4jln', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953608413}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953609503_3ovbh4vpo', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953609503}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953609503_x4kpveni8', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953609503}
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: {dhId: '68a78f51f6ce4441e8752af1', dhEmail: 'stephen@qwanyx.com'}
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: {dhId: '68a78f51f6ce4441e8752af1', dhEmail: 'stephen@qwanyx.com'}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953610599_aa7ebki49', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953610599}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953610599_ff95l5x5o', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953610599}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953611698_azunf8mzr', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953611698}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953611698_1hp3jj7kr', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953611698}
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: {dhId: '68a78f51f6ce4441e8752af1', dhEmail: 'stephen@qwanyx.com'}
-DigitalHumanEditor.tsx:33 🧠 DigitalHumanEditor mounted with: {dhId: '68a78f51f6ce4441e8752af1', dhEmail: 'stephen@qwanyx.com'}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953612797_34ytecq1t', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953612797}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953612797_uxmxnwq8y', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953612797}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953613892_jqror1afl', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953613892}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953613892_mz3dnfvke', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953613892}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953614988_o9uvrfe5p', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953614988}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953614988_hyo8a5nzb', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953614988}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953616084_3oo0z8isf', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953616084}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953616084_wh6v4qzib', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953616084}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953617182_vf8fweeil', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953617182}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953617183_z5fwoa5gd', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953617183}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953618276_586qmt4nm', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953618276}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953618276_809zqkbhr', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953618276}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953619369_9znag6vng', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953619369}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953619369_p05vpdu85', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953619369}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953620462_78xkk767o', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953620462}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953620462_m10gvqpet', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953620462}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953621555_vule21scr', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953621555}
-DigitalHumanEditor.tsx:80 Brain message: {id: 'msg_1755953621555_dlsun4sk3', type: 'stream', brainId: 'stephen-qwanyx-com', payload: {…}, timestamp: 1755953621555}
+DigitalHumanEditor.tsx:64 Connecting to brain: phil-qwanyx-com
+DigitalHumanEditor.tsx:146 Loaded DH from session: Object
+DigitalHumanEditor.tsx:64 Connecting to brain: phil-qwanyx-com
+DigitalHumanEditor.tsx:146 Loaded DH from session: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:71 Connected to brain server
+DigitalHumanEditor.tsx:71 Connected to brain server
+DigitalHumanEditor.tsx:86 Brain message (non-stream): Object
+DigitalHumanEditor.tsx:100 Connected to brain server: Neural link established
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:86 Brain message (non-stream): Object
+DigitalHumanEditor.tsx:100 Connected to brain server: Neural link established
+DigitalHumanEditor.tsx:86 Brain message (non-stream): Object
+DigitalHumanEditor.tsx:96 Loading brain state: 0 nodes, 0 edges
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:86 Brain message (non-stream): Object
+DigitalHumanEditor.tsx:96 Loading brain state: 0 nodes, 0 edges
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:260 Loaded existing flow: root
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:260 Loaded existing flow: root
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+app-index.js:33 Warning: In HTML, <p> cannot be a descendant of <p>.
+This will cause a hydration error.
+    at p
+    at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:10166:21)
+    at p
+    at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:10166:21)
+    at div
+    at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:10373:21)
+    at div
+    at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:10234:21)
+    at div
+    at eval (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:7817:21)
+    at div
+    at div
+    at div
+    at div
+    at div
+    at QFlow (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-canvas/dist/index.mjs:2474:18)
+    at div
+    at div
+    at div
+    at DigitalHumanEditor (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-thot/dist/index.mjs:6088:11)
+    at DigitalHumanEditorPage (webpack-internal:///(app-pages-browser)/./src/app/digital-human-editor/page.tsx:17:90)
+    at ClientPageRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/client-page.js:14:11)
+    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)
+    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
+    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
+    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:349:11)
+    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at OuterLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:370:11)
+    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)
+    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
+    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
+    at NotFoundErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:349:11)
+    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at OuterLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:370:11)
+    at Ue (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-auth/dist/index.mjs:696:21)
+    at zC (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:1110:21)
+    at $C (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:7647:21)
+    at Providers (webpack-internal:///(app-pages-browser)/./src/app/providers.tsx:39:11)
+    at body
+    at html
+    at RootLayout (Server)
+    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
+    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
+    at NotFoundErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at DevRootNotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/dev-root-not-found-boundary.js:33:11)
+    at ReactDevOverlay (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/ReactDevOverlay.js:87:9)
+    at HotReload (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:321:11)
+    at Router (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:207:11)
+    at ErrorBoundaryHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:113:9)
+    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
+    at AppRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:585:13)
+    at ServerRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:112:27)
+    at Root (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:117:11)
+window.console.error @ app-index.js:33
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+MonitorNode.tsx:109 WebSocket connection to 'ws://localhost:3003/neural' failed: WebSocket is closed before the connection is established.
+eval @ MonitorNode.tsx:109
+MonitorNode.tsx:95 📡 Monitor node connected to brain server
+MonitorNode.tsx:121 Brain event received: Object
+MonitorNode.tsx:121 Brain event received: Object
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+DigitalHumanEditor.tsx:34 🧠 DigitalHumanEditor mounted with: Object
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+MonitorNode.tsx:121 Brain event received: Object
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)
+Bag.tsx:41 Bag rendering with color: rgba(31, 41, 55, 0.95)

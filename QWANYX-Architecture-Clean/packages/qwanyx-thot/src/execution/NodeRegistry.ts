@@ -286,6 +286,41 @@ export class NodeRegistry {
         contentType: 'application/json'
       }
     })
+    
+    // DH Monitor Node
+    this.register({
+      type: 'monitor',
+      category: NodeCategory.DATA,
+      name: 'DH Monitor',
+      description: 'Monitor Digital Human brain activity in real-time',
+      icon: 'Biotech',
+      color: '#8B5CF6',
+      factory: (data) => ({
+        id: data.id,
+        type: 'monitor',
+        position: data.position,
+        data: {
+          ...data.data,
+          nodeType: 'monitor',
+          label: 'DH Monitor',
+          icon: 'Biotech',
+          color: '#8B5CF6'
+        },
+        execute: async () => ({ success: true }),
+        validate: () => ({ valid: true }),
+        getInputSchema: () => undefined,
+        getOutputSchema: () => undefined,
+        getConfigSchema: () => undefined
+      }),
+      defaultData: {
+        nodeType: 'monitor',
+        label: 'DH Monitor',
+        icon: 'Biotech',
+        color: '#8B5CF6',
+        title: 'DH Monitor',
+        brainId: 'stephen-qwanyx-com'
+      }
+    })
   }
   
   register(definition: NodeDefinition) {

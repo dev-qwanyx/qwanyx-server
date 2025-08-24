@@ -13,6 +13,7 @@ import dotenv from 'dotenv'
 import { createServer } from 'http'
 import { BrainManager } from './core/BrainManager'
 import { Logger } from './utils/Logger'
+import { cleanupPort, handlePortError } from './utils/portCleanup'
 import { MongoMemory } from './memory/MongoMemory'
 import { NeuralInterface } from './interfaces/NeuralInterface'
 
@@ -108,8 +109,11 @@ async function start() {
     neuralInterface.start()
     logger.info('Neural interface activated')
     
+    // Clean up the port before starting
+    const port = Number(process.env.PORT || 3003)
+    await cleanupPort(port)
+    
     // Start HTTP/WebSocket server
-    const port = process.env.PORT || 3003
     server.listen(port, async () => {
       logger.info(`Brain Server running on port ${port}`)
       logger.info('Ready to host consciousness')
@@ -131,6 +135,8 @@ async function start() {
       } catch (error) {
         logger.error('Failed to auto-start Phil\'s brain', error)
       }
+    }).on('error', (error: any) => {
+      handlePortError(error, port)
     })
     
     // Graceful shutdown

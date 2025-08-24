@@ -1,22 +1,22 @@
-// API Configuration - Easy switch between local and remote
-// Change USE_LOCAL to false to use production server
+// API Configuration - Controlled by environment variable
+// Set NEXT_PUBLIC_API_URL in .env.local for development
+// Set NEXT_PUBLIC_API_URL in .env.production for production
 
-const USE_LOCAL = true  // <-- CHANGE THIS TO SWITCH BETWEEN LOCAL AND REMOTE
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'
+const IS_LOCAL = API_URL.includes('localhost')
 
 export const API_CONFIG = {
   // API URLs
-  API_URL: USE_LOCAL 
-    ? 'http://localhost:5002' 
-    : 'http://135.181.72.183:5002',
+  API_URL: API_URL,
     
   // Display which environment we're using
-  ENVIRONMENT: USE_LOCAL ? 'LOCAL' : 'REMOTE',
+  ENVIRONMENT: IS_LOCAL ? 'LOCAL' : 'REMOTE',
   
   // You can add more environment-specific settings here
-  DEBUG: USE_LOCAL,
+  DEBUG: IS_LOCAL,
   
   // Timeouts
-  TIMEOUT: USE_LOCAL ? 30000 : 10000,
+  TIMEOUT: IS_LOCAL ? 30000 : 10000,
 }
 
 // Helper function to get API URL

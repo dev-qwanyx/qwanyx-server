@@ -126,9 +126,9 @@ export class Brain extends EventEmitter {
       // Load root flow (the brain's base configuration)
       await this.loadRootFlow()
       
-      // Start the thinking loop
+      // Start the thinking loop - DISABLED for performance
       this.alive = true
-      this.startThinking()
+      // this.startThinking() // Disabled - was thinking 10x per second!
       
       // Start mail service if configured
       if (this.mailService) {
@@ -309,12 +309,16 @@ export class Brain extends EventEmitter {
   
   /**
    * The thinking loop - the brain's consciousness
+   * DISABLED: Too resource intensive for current needs
    */
   private startThinking(): void {
-    // Think every 100ms (10 thoughts per second)
+    // DISABLED - We don't need continuous thinking for email & flows
+    // Was thinking every 100ms (10 thoughts per second) - too much!
+    /*
     this.thinkingInterval = setInterval(() => {
       this.think()
     }, 100)
+    */
   }
   
   /**

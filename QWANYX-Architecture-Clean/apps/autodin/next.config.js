@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@qwanyx/ui', '@qwanyx/auth', '@qwanyx/dashboard', '@qwanyx/dashboard-v2', '@qwanyx/user-management', '@qwanyx/thot', '@qwanyx/canvas'],
+  output: 'standalone', // Creates minimal production build
+  transpilePackages: ['@qwanyx/ui', '@qwanyx/auth', '@qwanyx/dashboard', '@qwanyx/dashboard-v2', '@qwanyx/user-management', '@qwanyx/thot'],
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
@@ -12,7 +13,7 @@ const nextConfig = {
   
   // Optimisations pour production
   images: {
-    domains: ['localhost', 'autodin.be'],
+    domains: ['localhost', 'autodin.be', '135.181.72.183'],
     formats: ['image/avif', 'image/webp'],
   },
   

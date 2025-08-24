@@ -4,6 +4,7 @@ import { ObjectId } from 'bson'
 import { DhMainSwitch } from './DhMainSwitch'
 import { MailConfig, MailConfigData } from './MailConfig'
 import { NoteNode } from './NoteNode'
+import { MonitorNode } from './MonitorNode'
 import { Edge, QEdge } from './Edge'
 import './QFlow.css'
 
@@ -1498,6 +1499,27 @@ export const QFlow: React.FC<QFlowProps> = ({
                       <NoteNode
                         nodeId={nodeIdStr || ''}
                         initialData={node.data}
+                        onChange={(data) => {
+                          const currentNodeId = node._id || (node as any).id
+                          const newNodes = nodes.map(n => {
+                            const nId = n._id || (n as any).id
+                            return (nId && getIdString(nId) === getIdString(currentNodeId))
+                              ? { ...n, data: { ...n.data, ...data } }
+                              : n
+                          })
+                          setNodes(newNodes)
+                          onNodesChange?.(newNodes)
+                        }}
+                      />
+                    ) : node.data.nodeType === 'monitor' ? (
+                      // Monitor Node Component
+                      <MonitorNode
+                        nodeId={nodeIdStr || ''}
+                        initialData={{
+                          title: node.data.title || node.data.label || 'DH Monitor',
+                          brainId: node.data.brainId || 'stephen-qwanyx-com',
+                          isLocked: node.data.isLocked || false
+                        }}
                         onChange={(data) => {
                           const currentNodeId = node._id || (node as any).id
                           const newNodes = nodes.map(n => {
