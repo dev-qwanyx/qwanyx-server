@@ -12,8 +12,10 @@ use base64::Engine;
 
 mod api;
 mod auth;
+mod email;
 use api::dh_memory::{push_memory, pull_memory};
 use auth::{AuthService, RegisterRequest, LoginRequest, VerifyCodeRequest};
+use email::EmailService;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -66,6 +68,30 @@ async fn main() -> std::io::Result<()> {
     
     // Initialize AuthService
     let auth_service = Arc::new(AuthService::new(mongo_client.clone()));
+    
+    // Initialize EmailService and start monitoring
+    let email_service = EmailService::new(mongo_client.clone());
+    
+    // Test IMAP connection
+    match email_service.connect_imap() {
+        Ok(_) => {
+            info!("Successfully connected to IMAP server");
+            
+            // Start email monitoring in background task
+            let email_service_arc = Arc::new(email_service);
+            let monitoring_service = email_service_arc.clone();
+            tokio::spawn(async move {
+                monitoring_service.start_monitoring().await;
+            });
+            
+            info!("Email monitoring started");
+        }
+        Err(e) => {
+            error!("Failed to connect to IMAP: {}", e);
+            // Following Jidoka principle - fail visibly, no silent failures
+            panic!("Cannot start without email monitoring: {}", e);
+        }
+    }
     
     // TODO: Connect to Redis
     
