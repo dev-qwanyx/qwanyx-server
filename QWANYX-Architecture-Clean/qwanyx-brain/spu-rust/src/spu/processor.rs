@@ -150,7 +150,7 @@ impl SemanticProcessor {
         let compressed = self.compress(email, Some(0.5), Some(500)).await?;
         
         // Parallel analysis using rayon
-        let (urgency, sentiment, category) = rayon::join(
+        let (urgency, sentiment_category) = rayon::join(
             || self.analyze_urgency(&compressed),
             || rayon::join(
                 || self.analyze_sentiment(&compressed),
@@ -158,7 +158,7 @@ impl SemanticProcessor {
             ),
         );
         
-        let (sentiment, category) = sentiment;
+        let (sentiment, category) = sentiment_category;
         
         Ok(EmailAnalysis {
             urgency: urgency?,

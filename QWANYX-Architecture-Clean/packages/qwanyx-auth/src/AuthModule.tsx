@@ -321,13 +321,21 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
       
       // API call
       const endpoint = mode === 'register' ? '/auth/register' : '/auth/login'
-      const response = await fetch(`${apiUrl}${endpoint}`, {
+      // Ensure no double slash in URL
+      const baseUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl
+      const fullUrl = `${baseUrl}${endpoint}`
+      console.log('AuthModule: Making API call to:', fullUrl)
+      console.log('AuthModule: Data being sent:', dataToSend)
+      
+      const response = await fetch(fullUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
       })
       
       const data = await response.json()
+      console.log('AuthModule: Response status:', response.status)
+      console.log('AuthModule: Response data:', data)
       
       if (response.ok) {
         if (passwordless && (mode === 'register' || !data.token)) {
@@ -361,6 +369,7 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
         if (onError) onError(error)
       }
     } catch (err) {
+      console.error('AuthModule: Error during API call:', err)
       const error = t.connectionError
       setMessage(error)
       if (onError) onError(error)
@@ -380,7 +389,8 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
     setMessage('')
     
     try {
-      const response = await fetch(`${apiUrl}/auth/verify-code`, {
+      const baseUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl
+      const response = await fetch(`${baseUrl}/auth/verify-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

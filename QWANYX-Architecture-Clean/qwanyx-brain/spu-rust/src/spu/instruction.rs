@@ -197,7 +197,7 @@ impl InstructionExecutor {
         space: &Arc<RwLock<SemanticSpace>>,
     ) -> Result<Vec<u8>> {
         let mut pc = 0; // Program counter
-        let mut parallel_tasks = Vec::new();
+        let mut parallel_tasks: Vec<Instruction> = Vec::new();
         let mut in_parallel = false;
         
         while pc < program.instructions.len() {

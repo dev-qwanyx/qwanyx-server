@@ -1,6 +1,6 @@
 //! QWANYX SPU - Main entry point
 
-use actix_web::{web, App, HttpServer, middleware};
+use actix_web::{web, App, HttpServer, middleware, HttpRequest};
 use actix_cors::Cors;
 use tracing::{info, error};
 use tracing_subscriber::EnvFilter;
@@ -8,15 +8,25 @@ use std::sync::Arc;
 
 use qwanyx_spu::{Config, SemanticProcessor};
 use mongodb::Client as MongoClient;
+use base64::Engine;
 
 mod api;
+mod auth;
 use api::dh_memory::{push_memory, pull_memory};
+use auth::{AuthService, RegisterRequest, LoginRequest, VerifyCodeRequest};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    // Load .env file from qwanyx-brain directory
+    dotenv::from_filename("../../.env").ok();
+    dotenv::dotenv().ok();
+    
     // Initialize tracing
     tracing_subscriber::fmt()
-        .with_env_filter(EnvFilter::from_default_env())
+        .with_env_filter(
+            EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| EnvFilter::new("info"))
+        )
         .init();
     
     info!("Starting QWANYX SPU v{}", qwanyx_spu::VERSION);
@@ -40,12 +50,22 @@ async fn main() -> std::io::Result<()> {
     
     // Initialize database connections
     let mongo_uri = std::env::var("MONGO_URI")
-        .unwrap_or_else(|_| "mongodb://localhost:27017".to_string());
+        .unwrap_or_else(|_| "mongodb://localhost:27017/?serverSelectionTimeoutMS=5000".to_string());
     
     info!("Connecting to MongoDB at {}", mongo_uri);
-    let mongo_client = MongoClient::with_uri_str(&mongo_uri)
-        .await
-        .expect("Failed to connect to MongoDB");
+    let mongo_client = match MongoClient::with_uri_str(&mongo_uri).await {
+        Ok(client) => {
+            info!("Successfully connected to MongoDB");
+            Arc::new(client)
+        }
+        Err(e) => {
+            error!("Failed to connect to MongoDB: {}", e);
+            panic!("Cannot start without MongoDB connection");
+        }
+    };
+    
+    // Initialize AuthService
+    let auth_service = Arc::new(AuthService::new(mongo_client.clone()));
     
     // TODO: Connect to Redis
     
@@ -67,11 +87,18 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(spu.clone()))
             .app_data(web::Data::new(config.clone()))
             .app_data(web::Data::new(mongo_client.clone()))
+            .app_data(web::Data::new(auth_service.clone()))
             .wrap(cors)
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
             // Health check
             .route("/health", web::get().to(health_check))
+            // Authentication endpoints
+            .route("/auth/register", web::post().to(auth_register))
+            .route("/auth/request-code", web::post().to(auth_request_code))
+            .route("/auth/login", web::post().to(auth_request_code)) // Alias
+            .route("/auth/verify-code", web::post().to(auth_verify_code))
+            .route("/auth/verify", web::get().to(auth_verify_token))
             // SPU endpoints
             .route("/compress", web::post().to(compress_text))
             .route("/analyze", web::post().to(analyze_email))
@@ -103,7 +130,7 @@ async fn compress_text(
     match spu.compress(&body.text, body.precision, body.max_chars).await {
         Ok(compressed) => {
             actix_web::HttpResponse::Ok().json(serde_json::json!({
-                "compressed": base64::encode(&compressed),
+                "compressed": base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &compressed),
                 "original_length": body.text.len(),
                 "compressed_length": compressed.len(),
                 "ratio": body.text.len() as f32 / compressed.len() as f32,
@@ -138,7 +165,7 @@ async fn execute_spu(
     match spu.execute(&body.code).await {
         Ok(result) => {
             actix_web::HttpResponse::Ok().json(serde_json::json!({
-                "result": base64::encode(&result),
+                "result": base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &result),
             }))
         }
         Err(e) => {
@@ -166,6 +193,42 @@ struct AnalyzeRequest {
 #[derive(serde::Deserialize)]
 struct ExecuteRequest {
     code: String,
+}
+
+// Auth handler functions
+
+async fn auth_register(
+    auth: web::Data<Arc<AuthService>>,
+    req: web::Json<RegisterRequest>,
+) -> impl actix_web::Responder {
+    auth.register(req.into_inner()).await
+}
+
+async fn auth_request_code(
+    auth: web::Data<Arc<AuthService>>,
+    req: web::Json<LoginRequest>,
+) -> impl actix_web::Responder {
+    auth.request_code(req.into_inner()).await
+}
+
+async fn auth_verify_code(
+    auth: web::Data<Arc<AuthService>>,
+    req: web::Json<VerifyCodeRequest>,
+) -> impl actix_web::Responder {
+    auth.verify_code(req.into_inner()).await
+}
+
+async fn auth_verify_token(
+    auth: web::Data<Arc<AuthService>>,
+    req: HttpRequest,
+) -> impl actix_web::Responder {
+    let token = req.headers()
+        .get("Authorization")
+        .and_then(|h| h.to_str().ok())
+        .and_then(|h| h.strip_prefix("Bearer "))
+        .unwrap_or("");
+    
+    auth.verify_token(token).await
 }
 
 // Add missing dependencies

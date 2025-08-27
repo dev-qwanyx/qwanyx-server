@@ -43,6 +43,118 @@ Production Server (135.181.72.183):
 - Works but inefficient (rebuilds everything)
 - To optimize next week with smart rebuilding
 
+## 🔴 PRIMARY DIRECTIVE: JIDOKA (自働化) - NO TOLERANCE FOR FAILURES
+
+### The Andon Principle - Stop Everything When Something Goes Wrong
+
+**FUNDAMENTAL RULE:** When a system fails, EVERYTHING must fail visibly. No fallbacks, no workarounds, no "continuing anyway".
+
+**Toyota Production System (TPS) Principle:**
+- **Anomaly detected** → Immediate line stoppage
+- **Problem visible** → Alarms, red lights, impossible to ignore
+- **Mandatory resolution** → No restart until completely fixed
+- **No bypassing** → Problem MUST be solved, not hidden
+
+**Code Application:**
+```javascript
+// ❌ FORBIDDEN - Silent fallback
+try {
+  await sendEmail();
+} catch (e) {
+  console.warn("Email failed, continuing anyway");
+  // Continue without email
+}
+
+// ✅ MANDATORY - Total and visible failure
+await sendEmail().catch(e => {
+  console.error("CRITICAL FAILURE:", e);
+  throw new Error("Operation failed: Email required");
+});
+```
+
+**Why This is CRITICAL:**
+1. **Hidden problems become catastrophes** - One unsent email today = 1000 lost users tomorrow
+2. **Fallbacks create technical debt** - Every "temporary solution" becomes permanent
+3. **Quality demands transparency** - If it doesn't work, the client must know IMMEDIATELY
+4. **Visible errors get fixed quickly** - Pain forces action
+
+**Real Examples We've Experienced:**
+- Auth that "works" but doesn't send emails → Weeks of confusion
+- MongoDB that "connects" but silently times out → Impossible debugging
+- TypeScript errors ignored with `as any` → Production crashes
+- Email service "continuing anyway" → Users never receive codes but system says "success"
+
+**The Jidoka Rule for Claude:**
+- If email fails → Request fails
+- If DB fails → Server doesn't start
+- If external API fails → Visible error to user
+- If validation fails → Operation cancelled
+- NEVER use try/catch that hides the error
+- NEVER use fallback "just in case"
+- NEVER "log and continue"
+
+**Implementation Example from Our Code:**
+```rust
+// qwanyx-brain/spu-rust/src/auth/mod.rs
+// Send email - NO FALLBACKS, NO CLEANUP, JUST FAIL
+self.send_auth_email(&req.email, &code, workspace).await.map_err(|e| {
+    error!("EMAIL SEND FAILED: {} - {}", req.email, e);
+    actix_web::error::ErrorInternalServerError(format!("Email sending failed: {}", e))
+})?;
+```
+
+This is not error handling, it's a quality philosophy. Every error is a chance to improve the system, not hide the problem.
+
+### The 5 Whys Method - Root Cause Analysis (必須)
+
+**MANDATORY:** For ANY bug or problem, apply the 5 Whys before attempting a fix.
+
+**Real Example - SMTP Windows Error (Solved in 5 minutes after 1 hour of attempts):**
+
+```
+PROBLEM: "The token supplied to the function is invalid (os error -2146893048)"
+
+Why 1: Why does SMTP fail with "invalid token" error?
+→ Because Windows is having issues with the TLS handshake when connecting to AWS SES
+
+Why 2: Why is the TLS handshake failing?
+→ Because the Rust lettre library is using native-tls which relies on Windows' Schannel
+
+Why 3: Why is Schannel rejecting the connection?
+→ Because AWS SES requires STARTTLS on port 587, which needs specific TLS configuration
+
+Why 4: Why isn't the TLS configuration correct?
+→ Because we're not explicitly configuring TLS mode in the SMTP transport builder
+
+Why 5: Why aren't we configuring TLS properly?
+→ Because the code assumes default TLS settings will work, but Windows needs explicit STARTTLS
+
+ROOT CAUSE: Using SmtpTransport::relay() instead of SmtpTransport::starttls_relay() for port 587
+
+SOLUTION: 
+// Before (wrong for port 587):
+SmtpTransport::relay(&host)?
+
+// After (correct for AWS SES port 587):
+SmtpTransport::starttls_relay(&host)?
+```
+
+**Result:** After 1 hour of trying random fixes, the 5 Whys method found the root cause in 5 minutes.
+
+**Other Problems Solved with 5 Whys in This Session:**
+- **TypeScript "validate" error** → Found hidden qwanyx-ui.d.ts file overriding types
+- **Rust compilation errors** → Found tuple destructuring mismatch with rayon::join
+- **MongoDB hanging** → Found missing connection timeout parameter
+
+**The 5 Whys Rule for Claude:**
+1. STOP when you encounter an error
+2. Ask "Why?" 5 times to drill down to root cause
+3. Fix the ROOT CAUSE, not the symptom
+4. Document the analysis for future reference
+5. NEVER apply a fix without understanding WHY it works
+
+This is not error handling, it's a quality philosophy. Every error is a chance to improve the system, not hide the problem.
+
 ## 🚨 CRITICAL: ZERO-TOLERANCE RULES
 
 ### 1. TypeScript - NEVER Bypass Errors

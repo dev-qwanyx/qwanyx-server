@@ -31,7 +31,8 @@ impl Position3D {
             return Position3D::new(0.0, 0.0, 0.0);
         }
         
-        let weights = weights.unwrap_or(&vec![1.0; positions.len()]);
+        let default_weights = vec![1.0; positions.len()];
+        let weights = weights.unwrap_or(&default_weights);
         let total_weight: f32 = weights.iter().sum();
         
         let mut x = 0.0;
@@ -152,14 +153,20 @@ impl SemanticSpace {
             let position = sphere.position;
             let neighbors = self.find_in_radius(&position, 50.0);
             
-            // Propagate activation
-            for neighbor in neighbors {
-                let distance = position.distance(&neighbor.position);
-                let decay = 1.0 / (1.0 + distance * 0.1);
-                let new_activation = initial_activation * decay;
-                
-                // Update neighbor activation
-                if let Some(neighbor_mut) = self.spheres.get_mut(&neighbor.id) {
+            // Collect neighbor updates
+            let updates: Vec<(uuid::Uuid, f32)> = neighbors
+                .into_iter()
+                .map(|neighbor| {
+                    let distance = position.distance(&neighbor.position);
+                    let decay = 1.0 / (1.0 + distance * 0.1);
+                    let new_activation = initial_activation * decay;
+                    (neighbor.id, new_activation)
+                })
+                .collect();
+            
+            // Apply updates
+            for (neighbor_id, new_activation) in updates {
+                if let Some(neighbor_mut) = self.spheres.get_mut(&neighbor_id) {
                     neighbor_mut.activation = neighbor_mut.activation.max(new_activation);
                 }
             }
