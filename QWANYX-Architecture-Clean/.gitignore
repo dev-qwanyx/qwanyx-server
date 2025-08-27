@@ -56,3 +56,6 @@ Thumbs.db
 *.temp
 tmp/
 temp/
+
+# Trash folder - old code moved here
+_trash/

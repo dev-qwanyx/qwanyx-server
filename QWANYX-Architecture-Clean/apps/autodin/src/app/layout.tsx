@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Providers } from './providers'
-import '@qwanyx/ui/dist/ui.css'
+import '@qwanyx/ui/dist/index.css'
 
 export const metadata: Metadata = {
   title: 'Autodin - Pièces Auto Belgique',

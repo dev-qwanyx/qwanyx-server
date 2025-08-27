@@ -2,16 +2,20 @@
 
 use qwanyx_spu::{SemanticProcessor, Config};
 
-#[tokio::test]
-async fn test_processor_creation() {
-    let config = qwanyx_spu::config::SPUConfig {
+fn test_config() -> qwanyx_spu::config::SPUConfig {
+    qwanyx_spu::config::SPUConfig {
         max_brains: 100,
         default_compression_precision: 0.5,
         enable_continuous_thinking: false,
         thinking_interval_ms: 100,
         cache_size_mb: 10,
         enable_gpu: false,
-    };
+    }
+}
+
+#[tokio::test]
+async fn test_processor_creation() {
+    let config = test_config();
     
     let processor = SemanticProcessor::new(config).unwrap();
     assert!(!processor.id.is_nil());
@@ -19,7 +23,7 @@ async fn test_processor_creation() {
 
 #[tokio::test]
 async fn test_basic_compression() {
-    let config = Default::default();
+    let config = test_config();
     let processor = SemanticProcessor::new(config).unwrap();
     
     let text = "This is an urgent meeting request";
@@ -31,7 +35,7 @@ async fn test_basic_compression() {
 
 #[tokio::test]
 async fn test_compression_with_precision() {
-    let config = Default::default();
+    let config = test_config();
     let processor = SemanticProcessor::new(config).unwrap();
     
     let text = "Important deadline tomorrow for project alpha beta gamma delta";
@@ -47,7 +51,7 @@ async fn test_compression_with_precision() {
 
 #[tokio::test]
 async fn test_compression_with_max_chars() {
-    let config = Default::default();
+    let config = test_config();
     let processor = SemanticProcessor::new(config).unwrap();
     
     let text = "This is a very long text with many important concepts that should be compressed into a small representation";
@@ -60,7 +64,7 @@ async fn test_compression_with_max_chars() {
 
 #[tokio::test]
 async fn test_email_analysis() {
-    let config = Default::default();
+    let config = test_config();
     let processor = SemanticProcessor::new(config).unwrap();
     
     let email = "Subject: URGENT: Server is down!\n\nThe production server is not responding. We need immediate action.";
@@ -76,7 +80,7 @@ async fn test_email_analysis() {
 
 #[tokio::test]
 async fn test_spu_execution() {
-    let config = Default::default();
+    let config = test_config();
     let processor = SemanticProcessor::new(config).unwrap();
     
     let code = r#"
@@ -91,7 +95,7 @@ async fn test_spu_execution() {
 
 #[tokio::test]
 async fn test_cache_functionality() {
-    let config = Default::default();
+    let config = test_config();
     let processor = SemanticProcessor::new(config).unwrap();
     
     let text = "Cacheable text";
@@ -114,7 +118,7 @@ async fn test_cache_functionality() {
 
 #[tokio::test]
 async fn test_parallel_analysis() {
-    let config = Default::default();
+    let config = test_config();
     let processor = SemanticProcessor::new(config).unwrap();
     
     let emails = vec![

@@ -218,7 +218,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   
   // Build button styles - IMPORTANT: position and overflow must be set for ripple to work
   const buttonStyles = {
-    ...sizes[size],
+    ...(sizes[size as keyof typeof sizes] || sizes.md),
     ...getVariantStyles(),
     display: 'inline-flex',
     alignItems: 'center',
@@ -353,14 +353,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     none: {}
   };
 
-  const currentAnimation = animationVariants[animationType] || animationVariants.default;
+  const currentAnimation = animationVariants[animationType as keyof typeof animationVariants] || animationVariants.default;
   
   // Loading spinner with inline styles
+  const currentSize = sizes[size as keyof typeof sizes] || sizes.md;
   const spinner = (
     <span style={{
       display: 'inline-block',
-      width: sizes[size].spinnerSize,
-      height: sizes[size].spinnerSize,
+      width: currentSize.spinnerSize,
+      height: currentSize.spinnerSize,
       animation: 'spin 1s linear infinite'
     }}>
       <svg 

@@ -1010,7 +1010,7 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
               flexDirection: 'column',
             }}
             className={dropdownClassName}
-            onWheel={(e) => {
+            onWheel={(e: React.WheelEvent) => {
               // Prevent page scroll when dropdown is open
               e.preventDefault();
               e.stopPropagation();
@@ -1052,10 +1052,10 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
                     color: 'rgb(var(--text-secondary))',
                     transition: 'color 0.2s',
                   }}
-                  onMouseEnter={(e) => {
+                  onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
                     e.currentTarget.style.color = 'rgb(var(--text))';
                   }}
-                  onMouseLeave={(e) => {
+                  onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
                     e.currentTarget.style.color = 'rgb(var(--text-secondary))';
                   }}
                 >
@@ -1138,7 +1138,7 @@ export const SuperDropdown: React.FC<SuperDropdownProps> = ({
                   WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
                   overscrollBehavior: 'contain', // Prevent scroll chaining
                 }}
-                onWheel={(e) => {
+                onWheel={(e: React.WheelEvent) => {
                   // Prevent scroll from propagating to parent
                   e.stopPropagation();
                   

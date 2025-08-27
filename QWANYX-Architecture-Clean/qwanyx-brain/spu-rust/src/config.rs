@@ -29,7 +29,7 @@ pub struct DatabaseConfig {
     pub connection_pool_size: u32,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct SPUConfig {
     /// Maximum number of brains per server
     pub max_brains: usize,

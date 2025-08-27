@@ -9,8 +9,9 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite build --watch",
-    "build": "tsc && vite build",
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "type-check": "tsc --noEmit",
     "clean": "rimraf dist"
   },
   "dependencies": {

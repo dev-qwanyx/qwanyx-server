@@ -20,3 +20,6 @@ pub use spu::SemanticProcessor;
 
 /// Version of the SPU
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+#[cfg(test)]
+mod tests;

@@ -2,9 +2,9 @@
   "name": "@qwanyx/form",
   "version": "0.1.0",
   "description": "Intelligent form generator for QWANYX applications",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsup",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist node_modules"
   },
@@ -39,8 +39,7 @@
     "react-dom": "^18.0.0"
   },
   "files": [
-    "dist",
-    "README.md"
+    "dist"
   ],
   "keywords": [
     "qwanyx",

@@ -16,6 +16,7 @@ import { Logger } from './utils/Logger'
 import { cleanupPort, handlePortError } from './utils/portCleanup'
 import { MongoMemory } from './memory/MongoMemory'
 import { NeuralInterface } from './interfaces/NeuralInterface'
+import authRoutes from './routes/auth.routes'
 
 // Load environment variables
 dotenv.config()
@@ -45,6 +46,29 @@ const mongoMemory = MongoMemory.getInstance()
 
 // Initialize Neural Interface
 const neuralInterface = new NeuralInterface(wss, brainManager)
+
+// Add authentication routes
+app.use(authRoutes)
+
+// Root endpoint
+app.get('/', (_req, res) => {
+  res.json({
+    name: 'QWANYX Brain Server',
+    version: '1.0.0',
+    status: 'operational',
+    description: 'Consciousness as a Service',
+    endpoints: {
+      health: '/health',
+      auth: {
+        login: '/auth/login',
+        register: '/auth/register',
+        verify: '/auth/verify'
+      },
+      brains: '/brains',
+      users: '/users'
+    }
+  })
+})
 
 // Health check endpoint
 app.get('/health', (_req, res) => {

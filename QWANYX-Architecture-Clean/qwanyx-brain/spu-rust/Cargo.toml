@@ -67,6 +67,7 @@ num_cpus = "1.16"
 [dev-dependencies]
 # Testing utilities
 tokio-test = "0.4"
+actix-rt = "2.9"
 pretty_assertions = "1.4"
 mockall = "0.12"
 proptest = "1.4"
