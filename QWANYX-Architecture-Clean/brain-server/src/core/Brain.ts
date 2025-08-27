@@ -512,9 +512,15 @@ export class Brain extends EventEmitter {
           // Send the actual email response via SMTP
           if (this.mailService) {
             try {
-              const recipientEmail = typeof emailData.from === 'string' 
-                ? emailData.from 
-                : emailData.from?.address || emailData.from?.text?.match(/<(.+)>/)?.[1]
+              // Extract email address from various formats
+              let recipientEmail = ''
+              if (typeof emailData.from === 'string') {
+                // Extract from "Name <email>" format
+                const match = emailData.from.match(/<(.+)>/)
+                recipientEmail = match ? match[1] : emailData.from
+              } else {
+                recipientEmail = emailData.from?.address || emailData.from?.text?.match(/<(.+)>/)?.[1]
+              }
                 
               await this.mailService.sendEmail(
                 recipientEmail,

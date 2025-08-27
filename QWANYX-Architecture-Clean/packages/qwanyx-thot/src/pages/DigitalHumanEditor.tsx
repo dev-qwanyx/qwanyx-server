@@ -47,6 +47,21 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
   
   // No more demo nodes by default - start with empty canvas
   
+  // Determine API and WebSocket URLs based on environment
+  const getApiUrl = () => {
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      return `http://${window.location.hostname}:5002`
+    }
+    return 'http://localhost:5002'
+  }
+  
+  const getWsUrl = () => {
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      return `ws://${window.location.hostname}:3003`
+    }
+    return 'ws://localhost:3003'
+  }
+  
   // Get workspace and user info from localStorage
   const [workspace, setWorkspace] = useState('autodin')
   const [currentUser, setCurrentUser] = useState<any>(null)
@@ -64,7 +79,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
     console.log('Connecting to brain:', brainId)
     
     // Connect to brain server
-    const ws = new WebSocket('ws://localhost:3003/neural')
+    const ws = new WebSocket(`${getWsUrl()}/neural`)
     wsRef.current = ws
     
     ws.onopen = () => {
@@ -165,7 +180,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
       const nodeIdStr = typeof node._id === 'object' ? node._id.toString() : String(node._id)
       
       try {
-        const response = await fetch('http://localhost:5002/api/dh/pull', {
+        const response = await fetch(`${getApiUrl()}/api/dh/pull`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -228,7 +243,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
         const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
         
         // Pull flow from memory using new endpoint
-        const response = await fetch('http://localhost:5002/api/dh/pull', {
+        const response = await fetch(`${getApiUrl()}/api/dh/pull`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -310,7 +325,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
       const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
       
       // Push to memory API
-      const response = await fetch('http://localhost:5002/api/dh/push', {
+      const response = await fetch(`${getApiUrl()}/api/dh/push`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -703,7 +718,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                   const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
                   
                   // Pull the root flow
-                  const response = await fetch('http://localhost:5002/api/dh/pull', {
+                  const response = await fetch(`${getApiUrl()}/api/dh/pull`, {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
@@ -737,7 +752,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                   const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
                   
                   // Pull the target flow
-                  const response = await fetch('http://localhost:5002/api/dh/pull', {
+                  const response = await fetch(`${getApiUrl()}/api/dh/pull`, {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
@@ -1037,7 +1052,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                 const token = localStorage.getItem('autodin_token')
                 const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
                 
-                const saveResponse = await fetch('http://localhost:5002/api/dh/push', {
+                const saveResponse = await fetch(`${getApiUrl()}/api/dh/push`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -1055,7 +1070,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                 console.log('Current flow saved, loading sub-flow...')
                 
                 // Try to load the sub-flow using the node's ID
-                const response = await fetch('http://localhost:5002/api/dh/pull', {
+                const response = await fetch(`${getApiUrl()}/api/dh/pull`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -1100,7 +1115,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
                       edges: []
                     }
                     
-                    await fetch('http://localhost:5002/api/dh/push', {
+                    await fetch(`${getApiUrl()}/api/dh/push`, {
                       method: 'POST',
                       headers: {
                         'Content-Type': 'application/json',
@@ -1132,7 +1147,7 @@ export const DigitalHumanEditor: React.FC<DigitalHumanEditorProps> = ({
               const token = localStorage.getItem('autodin_token')
               const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
               
-              const response = await fetch('http://localhost:5002/api/dh/push', {
+              const response = await fetch(`${getApiUrl()}/api/dh/push`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',

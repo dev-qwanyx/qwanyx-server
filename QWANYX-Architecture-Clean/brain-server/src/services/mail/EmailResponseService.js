@@ -32,6 +32,11 @@ class EmailResponseService {
     // Get conversation history (up to 10 emails to get 5 exchanges)
     const previousEmails = await this.getConversationHistory(contactMemory.email);
     
+    console.log(`📧 Found ${previousEmails.length} previous emails for ${contactMemory.email}`);
+    previousEmails.forEach(email => {
+      console.log(`  - ${email.type}: ${email.subject || 'No subject'} (${email.date || 'No date'})`);
+    });
+    
     // Build messages array for GPT
     const messages = [
       // System messages
@@ -57,9 +62,9 @@ class EmailResponseService {
 
     // Call GPT with full conversation context
     const response = await this.client.chat.completions.create({
-      model: 'gpt-5-nano',
+      model: 'gpt-4o',  // Using GPT-4o for email responses
       messages: messages,
-      // temperature: 0.7, // GPT-5 Nano only supports default (1)
+      // temperature: 0.7,  // GPT-5 doesn't support custom temperature either
       response_format: { type: "json_object" } // Force JSON response
     });
 
@@ -83,6 +88,7 @@ class EmailResponseService {
       from: 'phil@qwanyx.com',
       subject: `Re: ${emailMemory.subject}`,
       body: aiOutput.response,
+      date: new Date(),  // Add date for conversation history sorting
       inReplyTo: emailMemory.messageId,
       stage: aiOutput.stage,
       readiness: aiOutput.readiness

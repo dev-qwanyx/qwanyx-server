@@ -339,8 +339,8 @@ export class NeuralInterface {
           brainId: client.brainId,
           payload: {
             event: 'mail:received',
-            from: data.data.from.email,
-            subject: data.data.subject
+            from: data.from || data.data?.from?.email || 'unknown',
+            subject: data.subject || data.data?.subject || 'No subject'
           },
           timestamp: Date.now()
         })

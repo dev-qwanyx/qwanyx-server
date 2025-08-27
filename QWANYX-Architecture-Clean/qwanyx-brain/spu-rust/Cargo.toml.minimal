@@ -1,0 +1,8 @@
+[package]
+name = "qwanyx-spu"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# On commence avec RIEN !
+# On ajoutera une par une

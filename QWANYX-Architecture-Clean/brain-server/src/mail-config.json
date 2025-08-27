@@ -22,7 +22,7 @@
   },
   "polling": {
     "enabled": true,
-    "interval": 60000,
+    "interval": 30000,
     "folders": ["INBOX"],
     "markAsRead": true
   },
