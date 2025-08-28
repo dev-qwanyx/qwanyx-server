@@ -6,8 +6,9 @@ import { Dashboard, createMarketplaceDashboard } from '@qwanyx/dashboard-v2'
 import type { DashboardConfig, DashboardStat, DashboardActivity } from '@qwanyx/dashboard-v2'
 import { Container, Text, Card, CardContent, Grid, Button, Badge } from '@qwanyx/ui'
 import { ThotManagement, DigitalHumansPage } from '@qwanyx/thot'
+import { RequestManagement } from '@autodin/request-management'
 import UsersContent from './UsersContent'
-import { getApiUrl } from '@/config/api.config'
+import { getApiUrl, API_CONFIG } from '@/config/api.config'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -182,6 +183,15 @@ export default function DashboardPage() {
     'users': (
       <UsersContent />
     ),
+    'requests': (
+      <RequestManagement config={{
+        apiUrl: API_CONFIG.API_URL,
+        workspace: 'autodin',
+        userRole: currentUserRole,
+        currentUserId: user?.id || user?._id,
+        allowAdd: true
+      }} />
+    ),
     'thot': (
       <DigitalHumansPage />
     ),
@@ -314,8 +324,14 @@ export default function DashboardPage() {
       })
     }
     
-    // Continue with other items that everyone can see
+    // Requests management - visible to all users
     items.push(
+      {
+        id: 'requests',
+        label: 'Demandes de pièces',
+        icon: 'Build',
+        badge: 'NEW'
+      },
       {
         id: 'listings',
         label: 'Mes annonces',
