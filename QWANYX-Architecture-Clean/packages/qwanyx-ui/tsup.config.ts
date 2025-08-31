@@ -12,5 +12,7 @@ export default defineConfig({
   treeshake: true,
   esbuildOptions(options) {
     options.jsx = 'automatic'
-  }
+  },
+  // PostCSS will process @import statements
+  postcss: true
 })
