@@ -1,7 +1,5 @@
-/* Import animate.css from node_modules */
-@import 'animate.css/animate.min.css';
-
-/* Import QWANYX UI styles - we'll copy the content here to avoid the @import issue */
+/* Animate.css will be imported separately in layout.tsx if needed */
+/* For now, we include only the essential QWANYX UI styles */
 /* This is a temporary fix until we resolve the build process */
 
 /* QWANYX CSS Variables */
