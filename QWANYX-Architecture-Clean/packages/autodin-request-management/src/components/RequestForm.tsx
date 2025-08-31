@@ -90,10 +90,16 @@ export function RequestForm({ isOpen, onClose, request, onSubmit, mode = 'add' }
 
     setLoading(true)
     try {
-      await onSubmit(formData)
-      onClose()
+      // For edit mode, include the original request ID and all fields
+      const dataToSubmit = mode === 'edit' && request 
+        ? { ...request, ...formData }
+        : formData
+      
+      await onSubmit(dataToSubmit)
+      // Parent component will handle closing the modal
     } catch (error) {
       console.error('Error submitting request:', error)
+      // Keep modal open on error so user can retry
     } finally {
       setLoading(false)
     }

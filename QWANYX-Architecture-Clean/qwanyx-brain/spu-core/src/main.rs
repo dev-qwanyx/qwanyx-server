@@ -135,6 +135,7 @@ async fn main() -> std::io::Result<()> {
             .route("/data/{collection}", web::get().to(retrieve_data))
             .route("/data/{collection}/{id}", web::get().to(get_data_by_id))
             .route("/data/{collection}/{id}", web::put().to(update_data))
+            .route("/data/{collection}/{id}", web::delete().to(delete_data))
     })
     .bind((host, port))?
     .run()
@@ -860,46 +861,39 @@ async fn update_data(
     let (collection, id) = path.into_inner();
     info!("Updating document {} in collection: {} workspace: {}", id, collection, request.workspace);
     
+    // Merge the request data with updatedAt timestamp
+    let mut update_data = request.data.as_object()
+        .map(|o| o.clone())
+        .unwrap_or_else(|| serde_json::Map::new());
+    update_data.insert("updatedAt".to_string(), serde_json::Value::String(chrono::Utc::now().to_rfc3339()));
+    
     let script = format!(r#"
         # Update Document
         INSTANTIATE database db
         
-        # Add update timestamp
-        SET update_data {}
-        SET update_data.updatedAt "{}"
-        SET update_data.workspace "{}"
-        
-        # Update in database
+        # Create the complete params object in one go
         SET params {{
             "collection": "{}",
             "workspace": "{}",
             "filter": {{"_id": "{}"}},
-            "update": $update_data
+            "update": {}
         }}
         
-        TRY
-            CALL db update $params result
-            TRACE "Document updated successfully"
-            SET response {{
-                "success": true,
-                "id": "{}",
-                "result": $result
-            }}
-        CATCH DatabaseError
-            SET response {{
-                "success": false,
-                "error": "Failed to update document"
-            }}
+        CALL db update $params result
+        TRACE "Document updated successfully"
+        
+        SET response {{
+            "success": true,
+            "id": "{}"
+        }}
         
         DESTROY db
         RETURN $response
     "#,
-        request.data.to_string(),
-        chrono::Utc::now().to_rfc3339(),
-        request.workspace,
         collection,
         request.workspace,
         id,
+        serde_json::Value::Object(update_data).to_string(),
         id
     );
     
@@ -921,6 +915,98 @@ async fn update_data(
             HttpResponse::InternalServerError().json(json!({
                 "success": false,
                 "error": format!("Failed to update document: {}", e)
+            }))
+        }
+    }
+}
+
+async fn delete_data(
+    runtime: web::Data<Arc<SPURuntime>>,
+    path: web::Path<(String, String)>,
+    req: actix_web::HttpRequest,
+) -> HttpResponse {
+    let (collection, id) = path.into_inner();
+    
+    // Get workspace from query params or headers
+    let query_params: web::Query<std::collections::HashMap<String, String>> = 
+        web::Query::from_query(req.query_string()).unwrap_or_else(|_| {
+            web::Query(std::collections::HashMap::new())
+        });
+    
+    let workspace = query_params.get("workspace")
+        .map(|s| s.as_str())
+        .or_else(|| req.headers()
+            .get("X-Workspace")
+            .and_then(|v| v.to_str().ok()))
+        .unwrap_or("autodin")
+        .to_string();
+    
+    info!("Deleting document {} from collection: {} in workspace: {}", id, collection, workspace);
+    
+    let script = format!(r#"
+        # Delete Document
+        INSTANTIATE database db
+        
+        # Delete from database
+        SET params {{
+            "collection": "{}",
+            "workspace": "{}",
+            "filter": {{"_id": "{}"}}
+        }}
+        
+        CALL db delete $params result
+        GET result.deleted_count count
+        
+        IF $count > 0
+            TRACE "Document deleted successfully"
+            SET response {{
+                "success": true,
+                "id": "{}",
+                "deleted": true,
+                "count": $count
+            }}
+        ELSE
+            SET response {{
+                "success": false,
+                "error": "Document not found",
+                "deleted": false
+            }}
+        ENDIF
+        
+        DESTROY db
+        RETURN $response
+    "#,
+        collection,
+        workspace,
+        id,
+        id
+    );
+    
+    match runtime.execute(&script).await {
+        Ok(result) => {
+            match &result {
+                Data::Object(obj) => {
+                    if let Some(Data::Bool(true)) = obj.get("success") {
+                        HttpResponse::Ok().json(data_to_json(&result))
+                    } else if let Some(Data::String(error)) = obj.get("error") {
+                        if error.contains("not found") {
+                            HttpResponse::NotFound().json(data_to_json(&result))
+                        } else {
+                            HttpResponse::InternalServerError().json(data_to_json(&result))
+                        }
+                    } else {
+                        HttpResponse::InternalServerError().json(data_to_json(&result))
+                    }
+                }
+                _ => HttpResponse::Ok().json(data_to_json(&result))
+            }
+        }
+        Err(e) => {
+            error!("Failed to delete document: {}", e);
+            HttpResponse::InternalServerError().json(json!({
+                "success": false,
+                "error": format!("Failed to delete document: {}", e),
+                "deleted": false
             }))
         }
     }

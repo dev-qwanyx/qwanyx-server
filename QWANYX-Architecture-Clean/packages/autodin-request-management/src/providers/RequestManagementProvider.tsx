@@ -201,6 +201,9 @@ export function RequestManagementProvider({ children, config = {} }: RequestMana
           workspace,
           data: {
             ...request,
+            userId: config.currentUserId || 'anonymous',
+            userEmail: config.currentUserEmail || 'anonymous@autodin.be',
+            userName: config.currentUserName || 'Anonymous',
             status: request.status || 'open',
             createdAt: new Date().toISOString(),
             proposals: request.proposals || []
@@ -213,9 +216,10 @@ export function RequestManagementProvider({ children, config = {} }: RequestMana
       }
       
       const result = await response.json()
-      // SPU returns data in { success: true, data: {...} } format
-      if (result.success && result.data) {
-        dispatch({ type: 'ADD_REQUEST', payload: result.data })
+      // SPU returns { success: true, id: "..." } format
+      if (result.success) {
+        // Reload the full list to get the new request with all data
+        await loadRequests()
       }
     }
   }, [config, loadRequests])
@@ -245,8 +249,9 @@ export function RequestManagementProvider({ children, config = {} }: RequestMana
       
       const result = await response.json()
       // SPU returns data in { success: true, data: {...} } format
-      if (result.success && result.data) {
-        dispatch({ type: 'UPDATE_REQUEST', payload: result.data })
+      if (result.success) {
+        // Reload the full list to ensure consistency with database
+        await loadRequests()
       }
     }
   }, [config, loadRequests])

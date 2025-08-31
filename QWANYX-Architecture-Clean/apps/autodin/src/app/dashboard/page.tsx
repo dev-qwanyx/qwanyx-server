@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Dashboard, createMarketplaceDashboard } from '@qwanyx/dashboard-v2'
 import type { DashboardConfig, DashboardStat, DashboardActivity } from '@qwanyx/dashboard-v2'
 import { Container, Text, Card, CardContent, Grid, Button, Badge } from '@qwanyx/ui'
-import { ThotManagement, DigitalHumansPage } from '@qwanyx/thot'
 import { RequestManagement } from '@autodin/request-management'
 // import { GTDDashboard } from '@qwanyx/gtd'
 import UsersContent from './UsersContent'
@@ -197,42 +196,17 @@ export default function DashboardPage() {
         apiUrl: 'http://localhost:5002',  // SPU API endpoint
         workspace: 'autodin',
         userRole: currentUserRole,
-        currentUserId: user?.id || user?._id,
+        currentUserId: user?.id || user?._id || user?.email,
+        currentUserEmail: user?.email,
+        currentUserName: user?.name || user?.email?.split('@')[0],
         allowAdd: true
       }} />
     ),
     'thot': (
-      <DigitalHumansPage />
-    ),
-    'thot-configuration': (
-      <ThotManagement config={{
-        apiUrl: 'http://135.181.72.183:5002/api',
-        workspace: 'autodin'
-      }} />
-    ),
-    'thot-templates': (
-      <ThotManagement config={{
-        apiUrl: 'http://135.181.72.183:5002/api',
-        workspace: 'autodin'
-      }} />
-    ),
-    'thot-prompts': (
-      <ThotManagement config={{
-        apiUrl: 'http://135.181.72.183:5002/api',
-        workspace: 'autodin'
-      }} />
-    ),
-    'thot-inbox': (
-      <ThotManagement config={{
-        apiUrl: 'http://135.181.72.183:5002/api',
-        workspace: 'autodin'
-      }} />
-    ),
-    'thot-logs': (
-      <ThotManagement config={{
-        apiUrl: 'http://135.181.72.183:5002/api',
-        workspace: 'autodin'
-      }} />
+      <Container>
+        <Text size="2xl" weight="bold">Digital Humans</Text>
+        <Text size="sm" color="secondary">Digital Human management temporarily unavailable</Text>
+      </Container>
     ),
     'listings': (
       <Container>

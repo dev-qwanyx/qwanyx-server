@@ -5,8 +5,7 @@
 
 use crate::{Coprocessor, CoprocessorError, Data, Health, MethodSignature};
 use async_trait::async_trait;
-use mongodb::{Client as MongoClient, Collection, bson::{doc, Document, Bson}};
-use mongodb::bson::oid::ObjectId;
+use mongodb::{Client as MongoClient, Collection, bson::{doc, Document, Bson, oid::ObjectId}};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tracing::{error, info};
@@ -396,7 +395,7 @@ impl DatabaseCoprocessor {
     }
     
     async fn update_data(&self, args: Data) -> Result<Data, CoprocessorError> {
-        let (_collection_name, _filter, _update) = match args {
+        let (collection_name, filter, update, workspace) = match args {
             Data::Object(ref obj) => {
                 let collection = match obj.get("collection") {
                     Some(Data::String(s)) => s.clone(),
@@ -425,7 +424,13 @@ impl DatabaseCoprocessor {
                     }
                 };
                 
-                (collection, filter, update)
+                // Get workspace from args (default to autodin)
+                let workspace = match obj.get("workspace") {
+                    Some(Data::String(s)) => s.clone(),
+                    _ => "autodin".to_string(),
+                };
+                
+                (collection, filter, update, workspace)
             }
             _ => {
                 return Err(CoprocessorError::InvalidArguments(
@@ -434,16 +439,52 @@ impl DatabaseCoprocessor {
             }
         };
         
-        // Mock response
-        let mut response = HashMap::new();
-        response.insert("matched".to_string(), Data::Number(0.0));
-        response.insert("modified".to_string(), Data::Number(0.0));
+        // Use workspace-specific database
+        let client = self.client.as_ref()
+            .ok_or_else(|| CoprocessorError::ExecutionError("Database not connected".to_string()))?;
         
-        Ok(Data::Object(response))
+        let db = client.database(&workspace);
+        let collection = db.collection::<Document>(&collection_name);
+        
+        // Convert filter to MongoDB document
+        let filter_doc = self.data_to_document(&filter)
+            .map_err(|e| CoprocessorError::ExecutionError(format!("Failed to convert filter: {}", e)))?;
+        
+        // Convert update data to MongoDB document
+        let update_doc = self.data_to_document(&update)
+            .map_err(|e| CoprocessorError::ExecutionError(format!("Failed to convert update: {}", e)))?;
+        
+        // Create the update operation with $set
+        let update_operation = doc! {
+            "$set": update_doc
+        };
+        
+        // Execute update
+        match collection.update_one(filter_doc, update_operation, None).await {
+            Ok(result) => {
+                let mut response = HashMap::new();
+                response.insert("matched".to_string(), Data::Number(result.matched_count as f64));
+                response.insert("modified".to_string(), Data::Number(result.modified_count as f64));
+                response.insert("success".to_string(), Data::Bool(true));
+                
+                info!("Updated {} documents in {}", result.modified_count, collection_name);
+                Ok(Data::Object(response))
+            }
+            Err(e) => {
+                error!("Failed to update documents: {}", e);
+                let mut response = HashMap::new();
+                response.insert("matched".to_string(), Data::Number(0.0));
+                response.insert("modified".to_string(), Data::Number(0.0));
+                response.insert("success".to_string(), Data::Bool(false));
+                response.insert("error".to_string(), Data::String(format!("Update failed: {}", e)));
+                
+                Ok(Data::Object(response))
+            }
+        }
     }
     
     async fn delete_data(&self, args: Data) -> Result<Data, CoprocessorError> {
-        let (_collection_name, _filter) = match args {
+        let (collection_name, filter, workspace) = match args {
             Data::Object(ref obj) => {
                 let collection = match obj.get("collection") {
                     Some(Data::String(s)) => s.clone(),
@@ -463,7 +504,13 @@ impl DatabaseCoprocessor {
                     }
                 };
                 
-                (collection, filter)
+                // Get workspace from args (default to autodin)
+                let workspace = match obj.get("workspace") {
+                    Some(Data::String(s)) => s.clone(),
+                    _ => "autodin".to_string(),
+                };
+                
+                (collection, filter, workspace)
             }
             _ => {
                 return Err(CoprocessorError::InvalidArguments(
@@ -472,11 +519,37 @@ impl DatabaseCoprocessor {
             }
         };
         
-        // Mock response
-        let mut response = HashMap::new();
-        response.insert("deleted".to_string(), Data::Number(0.0));
+        // Use workspace-specific database
+        let client = self.client.as_ref()
+            .ok_or_else(|| CoprocessorError::ExecutionError("Database not connected".to_string()))?;
         
-        Ok(Data::Object(response))
+        let db = client.database(&workspace);
+        let collection = db.collection::<Document>(&collection_name);
+        
+        // Convert filter to MongoDB document
+        let filter_doc = self.data_to_document(&filter)
+            .map_err(|e| CoprocessorError::ExecutionError(format!("Failed to convert filter: {}", e)))?;
+        
+        // Execute delete
+        match collection.delete_many(filter_doc, None).await {
+            Ok(result) => {
+                let mut response = HashMap::new();
+                response.insert("deleted_count".to_string(), Data::Number(result.deleted_count as f64));
+                response.insert("success".to_string(), Data::Bool(true));
+                
+                info!("Deleted {} documents from {}", result.deleted_count, collection_name);
+                Ok(Data::Object(response))
+            }
+            Err(e) => {
+                error!("Failed to delete documents: {}", e);
+                let mut response = HashMap::new();
+                response.insert("deleted_count".to_string(), Data::Number(0.0));
+                response.insert("success".to_string(), Data::Bool(false));
+                response.insert("error".to_string(), Data::String(format!("Delete failed: {}", e)));
+                
+                Ok(Data::Object(response))
+            }
+        }
     }
     
     fn data_to_document(&self, data: &HashMap<String, Data>) -> Result<Document, String> {
@@ -485,7 +558,20 @@ impl DatabaseCoprocessor {
         for (key, value) in data.iter() {
             match value {
                 Data::String(s) => {
-                    doc.insert(key.clone(), s.clone());
+                    // Special handling for _id field - convert to ObjectId
+                    if key == "_id" {
+                        match ObjectId::parse_str(s) {
+                            Ok(oid) => {
+                                doc.insert(key.clone(), oid);
+                            }
+                            Err(_) => {
+                                // If it's not a valid ObjectId, treat as string
+                                doc.insert(key.clone(), s.clone());
+                            }
+                        }
+                    } else {
+                        doc.insert(key.clone(), s.clone());
+                    }
                 }
                 Data::Number(n) => {
                     doc.insert(key.clone(), *n);

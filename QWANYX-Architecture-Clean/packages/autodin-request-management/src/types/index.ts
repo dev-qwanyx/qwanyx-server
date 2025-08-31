@@ -44,6 +44,9 @@ export interface RequestManagementConfig {
   apiUrl?: string
   workspace?: string
   userRole?: string // 'particulier' | 'professionnel' | 'admin'
+  currentUserId?: string
+  currentUserEmail?: string
+  currentUserName?: string
   columns?: RequestTableColumn[]
   actions?: RequestAction[]
   allowAdd?: boolean

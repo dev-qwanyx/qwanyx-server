@@ -103,13 +103,21 @@ export function RequestList() {
   }
 
   const handleFormSubmit = async (data: Partial<PartRequest>) => {
-    if (editingRequest) {
-      await editRequest({ ...editingRequest, ...data })
-    } else {
-      await addRequest(data)
+    try {
+      if (editingRequest) {
+        // data already contains the full request from RequestForm
+        await editRequest(data as PartRequest)
+      } else {
+        await addRequest(data)
+      }
+      // Close the modal only after successful submission
+      setIsFormOpen(false)
+      setEditingRequest(null)
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      // Keep modal open on error so user can see what happened
+      // You might want to show an error message here
     }
-    setIsFormOpen(false)
-    setEditingRequest(null)
   }
 
   const handleProposalSubmit = async (proposal: any) => {
@@ -438,14 +446,62 @@ export function RequestList() {
                         <Text size="sm">{request.userName || request.userEmail}</Text>
                       </td>
                       <td className="qwanyx-p-2">
-                        <Badge color={getStatusBadgeColor(request.status)}>
-                          {getStatusLabel(request.status)}
-                        </Badge>
+                        {canEdit ? (
+                          <select
+                            value={request.status}
+                            onChange={async (e) => {
+                              const updatedRequest = { ...request, status: e.target.value as RequestStatus }
+                              await editRequest(updatedRequest)
+                            }}
+                            style={{
+                              padding: '0.25rem 0.5rem',
+                              borderRadius: '0.375rem',
+                              border: '1px solid #e5e7eb',
+                              fontSize: '0.875rem',
+                              backgroundColor: getStatusBadgeColor(request.status) === 'success' ? '#e8f5e9' :
+                                              getStatusBadgeColor(request.status) === 'error' ? '#ffebee' :
+                                              getStatusBadgeColor(request.status) === 'warning' ? '#fff3e0' :
+                                              '#f5f5f5'
+                            }}
+                          >
+                            <option value="open">Ouvert</option>
+                            <option value="closed">Fermé</option>
+                            <option value="fulfilled">Satisfait</option>
+                            <option value="cancelled">Annulé</option>
+                          </select>
+                        ) : (
+                          <Badge color={getStatusBadgeColor(request.status)}>
+                            {getStatusLabel(request.status)}
+                          </Badge>
+                        )}
                       </td>
                       <td className="qwanyx-p-2">
-                        <Badge color={getUrgencyBadgeColor(request.urgency)}>
-                          {getUrgencyLabel(request.urgency)}
-                        </Badge>
+                        {canEdit ? (
+                          <select
+                            value={request.urgency}
+                            onChange={async (e) => {
+                              const updatedRequest = { ...request, urgency: e.target.value }
+                              await editRequest(updatedRequest)
+                            }}
+                            style={{
+                              padding: '0.25rem 0.5rem',
+                              borderRadius: '0.375rem',
+                              border: '1px solid #e5e7eb',
+                              fontSize: '0.875rem',
+                              backgroundColor: getUrgencyBadgeColor(request.urgency) === 'error' ? '#ffebee' :
+                                              getUrgencyBadgeColor(request.urgency) === 'warning' ? '#fff3e0' :
+                                              '#e8f5e9'
+                            }}
+                          >
+                            <option value="low">Faible</option>
+                            <option value="medium">Moyenne</option>
+                            <option value="high">Urgente</option>
+                          </select>
+                        ) : (
+                          <Badge color={getUrgencyBadgeColor(request.urgency)}>
+                            {getUrgencyLabel(request.urgency)}
+                          </Badge>
+                        )}
                       </td>
                       <td className="qwanyx-p-2">
                         {request.proposals && request.proposals.length > 0 ? (
