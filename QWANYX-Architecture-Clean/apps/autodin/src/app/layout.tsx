@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Providers } from './providers'
-import '../styles/globals.css'
+// CSS import temporarily removed due to Next.js parsing issue
+// import '../styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'Autodin - Pièces Auto Belgique',
@@ -41,6 +42,26 @@ export default function RootLayout({
           rel="stylesheet" 
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&family=Material+Symbols+Filled:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
         />
+        <style dangerouslySetInnerHTML={{ __html: `
+          * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+          }
+          
+          html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+            background-color: rgb(var(--background, 249, 250, 251));
+            color: rgb(var(--text, 44, 62, 80));
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          }
+          
+          a {
+            color: inherit;
+            text-decoration: none;
+          }
+        `}} />
       </head>
       <body style={{ margin: 0, padding: 0 }}>
         <Providers>
