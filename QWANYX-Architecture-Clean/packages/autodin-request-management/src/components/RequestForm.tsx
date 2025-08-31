@@ -108,73 +108,75 @@ export function RequestForm({ isOpen, onClose, request, onSubmit, mode = 'add' }
       </ModalHeader>
       
       <ModalBody>
-        <Grid cols={1} style={{ gap: '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div>
+            <Text size="sm" style={{ marginBottom: '0.25rem' }}>Nom de la pièce *</Text>
+            <Input
+              value={formData.partName}
+              onChange={(e) => handleChange('partName', e.target.value)}
+              placeholder="Ex: Phare avant"
+              size="sm"
+              error={errors.partName}
+            />
+          </div>
+
+          <div>
+            <Text size="sm" style={{ marginBottom: '0.25rem' }}>Marque *</Text>
+            <Input
+              value={formData.carBrand}
+              onChange={(e) => handleChange('carBrand', e.target.value)}
+              placeholder="Ex: Volkswagen"
+              size="sm"
+              error={errors.carBrand}
+            />
+          </div>
+          
+          <div>
+            <Text size="sm" style={{ marginBottom: '0.25rem' }}>Modèle *</Text>
+            <Input
+              value={formData.carModel}
+              onChange={(e) => handleChange('carModel', e.target.value)}
+              placeholder="Ex: Golf"
+              size="sm"
+              error={errors.carModel}
+            />
+          </div>
+          
+          <div>
+            <Text size="sm" style={{ marginBottom: '0.25rem' }}>Année</Text>
+            <Input
+              value={formData.year}
+              onChange={(e) => handleChange('year', e.target.value)}
+              placeholder="Ex: 2015"
+              size="sm"
+              type="text"
+            />
+          </div>
+
           <div>
             <Text size="sm" style={{ marginBottom: '0.25rem' }}>Titre de la demande *</Text>
             <Input
               value={formData.title}
               onChange={(e) => handleChange('title', e.target.value)}
               placeholder="Ex: Recherche phare avant gauche"
+              size="sm"
               error={errors.title}
             />
           </div>
-
-          <Grid cols={2} style={{ gap: '1rem' }}>
-            <div>
-              <Text size="sm" style={{ marginBottom: '0.25rem' }}>Nom de la pièce *</Text>
-              <Input
-                value={formData.partName}
-                onChange={(e) => handleChange('partName', e.target.value)}
-                placeholder="Ex: Phare avant"
-                error={errors.partName}
-              />
-            </div>
-            
-            <div>
-              <Text size="sm" style={{ marginBottom: '0.25rem' }}>Urgence</Text>
-              <Select
-                value={formData.urgency}
-                onChange={(e) => handleChange('urgency', e.target.value)}
-                options={[
-                  { value: 'low', label: 'Faible' },
-                  { value: 'medium', label: 'Moyenne' },
-                  { value: 'high', label: 'Urgente' }
-                ]}
-              />
-            </div>
-          </Grid>
-
-          <Grid cols={3} style={{ gap: '1rem' }}>
-            <div>
-              <Text size="sm" style={{ marginBottom: '0.25rem' }}>Marque *</Text>
-              <Input
-                value={formData.carBrand}
-                onChange={(e) => handleChange('carBrand', e.target.value)}
-                placeholder="Ex: Volkswagen"
-                error={errors.carBrand}
-              />
-            </div>
-            
-            <div>
-              <Text size="sm" style={{ marginBottom: '0.25rem' }}>Modèle *</Text>
-              <Input
-                value={formData.carModel}
-                onChange={(e) => handleChange('carModel', e.target.value)}
-                placeholder="Ex: Golf"
-                error={errors.carModel}
-              />
-            </div>
-            
-            <div>
-              <Text size="sm" style={{ marginBottom: '0.25rem' }}>Année</Text>
-              <Input
-                value={formData.year}
-                onChange={(e) => handleChange('year', e.target.value)}
-                placeholder="Ex: 2015"
-                type="text"
-              />
-            </div>
-          </Grid>
+          
+          <div>
+            <Text size="sm" style={{ marginBottom: '0.25rem' }}>Urgence</Text>
+            <Select
+              value={formData.urgency}
+              onChange={(e) => handleChange('urgency', e.target.value)}
+              size="sm"
+              options={[
+                { value: 'low', label: 'Faible' },
+                { value: 'medium', label: 'Moyenne' },
+                { value: 'high', label: 'Urgente' }
+              ]}
+            />
+          </div>
 
           <div>
             <Text size="sm" style={{ marginBottom: '0.25rem' }}>Description détaillée *</Text>
@@ -193,6 +195,7 @@ export function RequestForm({ isOpen, onClose, request, onSubmit, mode = 'add' }
               <Select
                 value={formData.status}
                 onChange={(e) => handleChange('status', e.target.value)}
+                size="sm"
                 options={[
                   { value: 'open', label: 'Ouverte' },
                   { value: 'closed', label: 'Fermée' },
@@ -202,7 +205,7 @@ export function RequestForm({ isOpen, onClose, request, onSubmit, mode = 'add' }
               />
             </div>
           )}
-        </Grid>
+        </div>
       </ModalBody>
 
       <ModalFooter>

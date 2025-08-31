@@ -16,6 +16,7 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
   color = 'primary',
   align = 'left',
   className = '',
+  style,
   ...props
 }, ref) => {
   // Auto-size based on heading level if not specified
@@ -28,57 +29,51 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
     h6: 'base'
   }[Component] as HeadingProps['size'];
   
-  const sizeClasses = {
-    '5xl': 'text-5xl',
-    '4xl': 'text-4xl',
-    '3xl': 'text-3xl',
-    '2xl': 'text-2xl',
-    'xl': 'text-xl',
-    'lg': 'text-lg',
-    'md': 'text-base',
-    'base': 'text-base',
-    'sm': 'text-sm',
-    'xs': 'text-xs'
+  const sizeMap = {
+    '5xl': '3rem',
+    '4xl': '2.25rem',
+    '3xl': '1.875rem',
+    '2xl': '1.5rem',
+    'xl': '1.25rem',
+    'lg': '1.125rem',
+    'md': '1rem',
+    'base': '1rem',
+    'sm': '0.875rem',
+    'xs': '0.75rem'
   };
   
-  const weightClasses = {
-    light: 'font-light',
-    normal: 'font-normal',
-    medium: 'font-medium',
-    semibold: 'font-semibold',
-    bold: 'font-bold',
-    extrabold: 'font-extrabold'
+  const weightMap = {
+    light: '300',
+    normal: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700',
+    extrabold: '800'
   };
   
-  const colorClasses = {
-    primary: 'text-text-primary',
-    secondary: 'text-text-secondary',
-    muted: 'text-text-muted',
-    accent: 'text-accent',
-    success: 'text-success',
-    warning: 'text-warning',
-    error: 'text-error',
-    info: 'text-info'
+  const colorMap = {
+    primary: 'rgb(var(--foreground))',
+    secondary: 'rgb(var(--foreground) / 0.7)',
+    muted: 'rgb(var(--foreground) / 0.5)',
+    accent: 'rgb(var(--primary))',
+    success: 'rgb(var(--success))',
+    warning: 'rgb(var(--warning))',
+    error: 'rgb(var(--error))',
+    info: 'rgb(var(--info))'
   };
   
-  const alignClasses = {
-    left: 'text-left',
-    center: 'text-center',
-    right: 'text-right',
-    justify: 'text-justify'
+  const headingStyle: React.CSSProperties = {
+    fontSize: sizeMap[autoSize!],
+    fontWeight: weightMap[weight],
+    color: colorMap[color],
+    textAlign: align,
+    fontFamily: 'var(--font-heading, var(--font-sans))',
+    lineHeight: '1.2',
+    ...style
   };
-  
-  const combinedClassName = [
-    sizeClasses[autoSize!],
-    weightClasses[weight],
-    colorClasses[color],
-    alignClasses[align],
-    'font-heading',
-    className
-  ].filter(Boolean).join(' ');
   
   return (
-    <Component ref={ref as any} className={combinedClassName} {...props}>
+    <Component ref={ref as any} className={className} style={headingStyle} {...props}>
       {children}
     </Component>
   );

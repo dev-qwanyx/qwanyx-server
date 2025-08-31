@@ -871,3 +871,73 @@ Apps → @qwanyx/app-core → Business Packages → @qwanyx/ui
 - One codebase serves multiple clients
 
 **When in doubt:** Follow the chain, use semantic props, validate everything.
+
+## 📦 QWANYX-UI STUDIO-V2 WORKFLOW (CRITICAL FOR NEXT SESSION)
+
+### 🚀 How to Start Studio-v2
+```bash
+cd packages/qwanyx-ui
+npx vite dev --host
+```
+Then open: **http://localhost:PORT/studio-v2.html** (NOT the root URL! Use /studio-v2.html)
+
+### 🔄 Component Validation Workflow (One at a Time)
+1. **Review** component for CSS variable usage
+2. **Clean up** - Remove Tailwind classes, use inline styles with CSS variables
+3. **Add tests** to `test/components-suite.test.tsx`
+4. **Run tests**: `npx vitest run test/components-suite.test.tsx`
+5. **Create showcase** in `studio-v2/showcases/ComponentShowcase.tsx`
+6. **Add TypeScript API** - Show REAL interface, not custom API
+7. **Map in** `studio-v2/components/ComponentShowcase.tsx`
+
+### ✅ Validated Components (Ready to Use)
+- **Button** - 18 tests passing, full configurator with API
+- **Input** - 18 tests passing, full configurator with API
+- **Textarea** - Validated, separate showcase page with API
+
+### 📐 Showcase Template
+```typescript
+const componentAPI = {
+  name: 'ComponentName',
+  description: 'Brief description',
+  interface: `export interface ComponentProps extends React.HTMLAttributes<HTMLElement> {
+    // REAL TypeScript interface here
+  }`,
+  props: [
+    {
+      name: 'variant',
+      type: 'select',
+      options: ['default', 'primary'],
+      defaultValue: 'default',
+      description: 'Visual variant'
+    }
+  ],
+  examples: [
+    { name: 'Default', config: { variant: 'default' } }
+  ]
+};
+
+export const ComponentShowcase = () => {
+  return <ComponentConfigurator component={Component} api={componentAPI} />;
+};
+```
+
+### 🎨 CSS Variables Rule (NO EXCEPTIONS)
+```typescript
+// ✅ CORRECT - Uses CSS variables
+color: 'rgb(var(--primary))'
+backgroundColor: 'rgb(var(--surface))'
+border: '1px solid rgb(var(--border))'
+
+// ❌ WRONG - Hardcoded colors or Tailwind
+color: '#3b82f6'
+className="text-blue-500"
+backgroundColor: 'white'
+```
+
+### 📝 Critical Session Notes
+- **Two Studios**: Old at `/` (ignore), New at `/studio-v2.html` (use this)
+- **Grouped Components**: Some share files (Input + Textarea in Input.tsx)
+- **Real TypeScript**: Show actual interface, not simplified version
+- **Test Philosophy**: Stops at first failure, fix immediately
+- **Component Status**: Track in `COMPONENT_VALIDATION_STATUS.md`

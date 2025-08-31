@@ -121,140 +121,33 @@ export function RequestManagementProvider({ children, config = {} }: RequestMana
       if (config.fetchRequests) {
         requests = await config.fetchRequests()
       } else if (config.apiUrl) {
-        // MOCK DATA pour le moment - à remplacer par l'API SPU plus tard
-        requests = [
-          {
-            _id: '1',
-            userId: 'user1',
-            userEmail: 'jean.dupont@gmail.com',
-            userName: 'Jean Dupont',
-            title: 'Phare avant Golf 5',
-            description: 'Recherche phare avant droit pour Golf 5 année 2008',
-            partName: 'Phare avant droit',
-            carBrand: 'Volkswagen',
-            carModel: 'Golf 5',
-            year: '2008',
-            status: 'open',
-            createdAt: new Date('2024-03-15').toISOString(),
-            urgency: 'high',
-            proposals: [
-              {
-                _id: 'p1',
-                requestId: '1',
-                professionalId: 'pro1',
-                professionalName: 'Auto Parts Pro',
-                professionalEmail: 'contact@autopartspro.be',
-                price: 120,
-                description: 'Phare neuf, garantie 2 ans',
-                availability: 'En stock',
-                condition: 'new',
-                warranty: '2 ans',
-                createdAt: new Date('2024-03-16').toISOString(),
-                status: 'pending'
-              }
-            ]
-          },
-          {
-            _id: '2',
-            userId: 'user2',
-            userEmail: 'marie.martin@hotmail.com',
-            userName: 'Marie Martin',
-            title: 'Rétroviseur Clio 3',
-            description: 'Cherche rétroviseur gauche électrique pour Renault Clio 3',
-            partName: 'Rétroviseur gauche',
-            carBrand: 'Renault',
-            carModel: 'Clio 3',
-            year: '2010',
-            status: 'open',
-            createdAt: new Date('2024-03-14').toISOString(),
-            urgency: 'medium',
-            proposals: []
-          },
-          {
-            _id: '3',
-            userId: 'user1',
-            userEmail: 'jean.dupont@gmail.com',
-            userName: 'Jean Dupont',
-            title: 'Pare-choc arrière 206',
-            description: 'Recherche pare-choc arrière pour Peugeot 206, couleur gris métallisé si possible',
-            partName: 'Pare-choc arrière',
-            carBrand: 'Peugeot',
-            carModel: '206',
-            year: '2005',
-            status: 'fulfilled',
-            createdAt: new Date('2024-03-10').toISOString(),
-            urgency: 'low',
-            proposals: [
-              {
-                _id: 'p2',
-                requestId: '3',
-                professionalId: 'pro2',
-                professionalName: 'Casse Auto Bruxelles',
-                professionalEmail: 'info@casseauto.be',
-                price: 85,
-                description: 'Pare-choc d\'occasion en bon état',
-                availability: 'Disponible',
-                condition: 'used',
-                warranty: '3 mois',
-                createdAt: new Date('2024-03-11').toISOString(),
-                status: 'accepted'
-              }
-            ]
-          },
-          {
-            _id: '4',
-            userId: 'user3',
-            userEmail: 'pierre.bernard@yahoo.fr',
-            userName: 'Pierre Bernard',
-            title: 'Jantes alu 17 pouces',
-            description: 'Recherche jantes aluminium 17 pouces 5 trous pour Audi A4',
-            partName: 'Jantes aluminium',
-            carBrand: 'Audi',
-            carModel: 'A4',
-            year: '2015',
-            status: 'open',
-            createdAt: new Date('2024-03-16').toISOString(),
-            urgency: 'low',
-            proposals: [
-              {
-                _id: 'p3',
-                requestId: '4',
-                professionalId: 'pro1',
-                professionalName: 'Auto Parts Pro',
-                professionalEmail: 'contact@autopartspro.be',
-                price: 450,
-                description: 'Set de 4 jantes neuves',
-                availability: 'Sur commande (5 jours)',
-                condition: 'new',
-                warranty: '3 ans',
-                createdAt: new Date('2024-03-17').toISOString(),
-                status: 'pending'
-              },
-              {
-                _id: 'p4',
-                requestId: '4',
-                professionalId: 'pro3',
-                professionalName: 'Garage Central',
-                professionalEmail: 'garage.central@gmail.com',
-                price: 280,
-                description: 'Jantes d\'occasion révisées',
-                availability: 'En stock',
-                condition: 'refurbished',
-                warranty: '6 mois',
-                createdAt: new Date('2024-03-17').toISOString(),
-                status: 'pending'
-              }
-            ]
+        // Fetch data from SPU endpoint
+        const workspace = config.workspace || 'autodin'
+        const response = await fetch(`${config.apiUrl}/data/requests?workspace=${workspace}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('autodin_token')}`
           }
-        ]
+        })
         
-        // Simuler un délai réseau
-        await new Promise(resolve => setTimeout(resolve, 300))
+        if (!response.ok) {
+          // JIDOKA: Fail visibly - no fallbacks!
+          const errorText = await response.text()
+          throw new Error(`SPU endpoint failed (${response.status}): ${errorText}`)
+        }
+        
+        const data = await response.json()
+        // SPU returns array directly now
+        requests = Array.isArray(data) ? data : []
       }
       
       dispatch({ type: 'SET_REQUESTS', payload: requests })
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to load requests' })
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load requests'
+      console.error('🔴 CRITICAL FAILURE - RequestManagement:', errorMessage)
+      dispatch({ type: 'SET_ERROR', payload: errorMessage })
+      // JIDOKA: Error is now in state and will be displayed
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false })
     }
@@ -297,21 +190,33 @@ export function RequestManagementProvider({ children, config = {} }: RequestMana
       await config.onRequestAdd(request)
       await loadRequests()
     } else if (config.apiUrl) {
-      const response = await fetch(`${config.apiUrl}/requests`, {
+      const workspace = config.workspace || 'autodin'
+      const response = await fetch(`${config.apiUrl}/data/requests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('autodin_token')}`
         },
-        body: JSON.stringify({ ...request, workspace: config.workspace })
+        body: JSON.stringify({ 
+          workspace,
+          data: {
+            ...request,
+            status: request.status || 'open',
+            createdAt: new Date().toISOString(),
+            proposals: request.proposals || []
+          }
+        })
       })
       
       if (!response.ok) {
         throw new Error('Failed to add request')
       }
       
-      const newRequest = await response.json()
-      dispatch({ type: 'ADD_REQUEST', payload: newRequest })
+      const result = await response.json()
+      // SPU returns data in { success: true, data: {...} } format
+      if (result.success && result.data) {
+        dispatch({ type: 'ADD_REQUEST', payload: result.data })
+      }
     }
   }, [config, loadRequests])
 
@@ -321,21 +226,28 @@ export function RequestManagementProvider({ children, config = {} }: RequestMana
       await loadRequests()
     } else if (config.apiUrl) {
       const requestId = request._id || request.id
-      const response = await fetch(`${config.apiUrl}/requests/${requestId}`, {
+      const workspace = config.workspace || 'autodin'
+      const response = await fetch(`${config.apiUrl}/data/requests/${requestId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('autodin_token')}`
         },
-        body: JSON.stringify(request)
+        body: JSON.stringify({
+          workspace,
+          data: request
+        })
       })
       
       if (!response.ok) {
         throw new Error('Failed to update request')
       }
       
-      const updatedRequest = await response.json()
-      dispatch({ type: 'UPDATE_REQUEST', payload: updatedRequest })
+      const result = await response.json()
+      // SPU returns data in { success: true, data: {...} } format
+      if (result.success && result.data) {
+        dispatch({ type: 'UPDATE_REQUEST', payload: result.data })
+      }
     }
   }, [config, loadRequests])
 
@@ -344,7 +256,8 @@ export function RequestManagementProvider({ children, config = {} }: RequestMana
       await config.onRequestDelete(requestId)
       await loadRequests()
     } else if (config.apiUrl) {
-      const response = await fetch(`${config.apiUrl}/requests/${requestId}`, {
+      const workspace = config.workspace || 'autodin'
+      const response = await fetch(`${config.apiUrl}/data/requests/${requestId}?workspace=${workspace}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('autodin_token')}`
@@ -370,13 +283,21 @@ export function RequestManagementProvider({ children, config = {} }: RequestMana
       await config.onProposalAdd(proposal)
       await loadRequests()
     } else if (config.apiUrl) {
-      const response = await fetch(`${config.apiUrl}/proposals`, {
+      const workspace = config.workspace || 'autodin'
+      const response = await fetch(`${config.apiUrl}/data/proposals`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('autodin_token')}`
         },
-        body: JSON.stringify({ ...proposal, workspace: config.workspace })
+        body: JSON.stringify({ 
+          workspace,
+          data: {
+            ...proposal,
+            createdAt: new Date().toISOString(),
+            status: proposal.status || 'pending'
+          }
+        })
       })
       
       if (!response.ok) {

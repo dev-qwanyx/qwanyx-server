@@ -1,109 +1,31 @@
-import React, { useState } from 'react';
-import { Container, Heading, Text, Card, Tabs, TabsList, TabsTrigger, TabsContent } from '@qwanyx/ui';
-import { QwanyxFlowStandalone, defaultNodes, defaultEdges } from '../../../qwanyx-canvas/src/index';
+import React from 'react';
+import { Container, Heading, Text, Card, Alert } from '../../src';
 
 export default function CanvasShowcase() {
-  const [workflow, setWorkflow] = useState<any>(null);
-
-  const handleExport = (nodes: any, edges: any) => {
-    const exported = {
-      nodes,
-      edges,
-      timestamp: new Date().toISOString(),
-    };
-    setWorkflow(exported);
-    console.log('Workflow exported:', exported);
-  };
-
   return (
     <Container style={{ padding: '2rem' }}>
       <Heading size="3xl" style={{ marginBottom: '1rem' }}>
         QwanyxFlow - Visual Workflow Editor
       </Heading>
       
-      <Text style={{ marginBottom: '2rem', color: 'var(--qwanyx-text-secondary)' }}>
-        Éditeur visuel de workflows avec ReactFlow et composants QWANYX
+      <Text style={{ marginBottom: '2rem', color: 'var(--text-secondary)' }}>
+        Canvas component is currently being refactored
       </Text>
 
-      <Tabs defaultValue="demo" fullWidth>
-        <TabsList fullWidth>
-          <TabsTrigger value="demo">Démo Interactive</TabsTrigger>
-          <TabsTrigger value="empty">Canvas Vide</TabsTrigger>
-          <TabsTrigger value="readonly">Lecture Seule</TabsTrigger>
-          <TabsTrigger value="export">Export JSON</TabsTrigger>
-        </TabsList>
+      <Alert variant="warning">
+        The Canvas showcase is temporarily disabled while we refactor the QwanyxFlow component.
+        Please check back later or explore other components in the studio.
+      </Alert>
 
-        <TabsContent value="demo">
-          <Card style={{ padding: '0', overflow: 'hidden', height: '600px' }}>
-            <QwanyxFlowStandalone
-              initialNodes={defaultNodes}
-              initialEdges={defaultEdges}
-              height="600px"
-              showToolbar={true}
-              onNodesChange={(nodes) => console.log('Nodes changed:', nodes)}
-              onEdgesChange={(edges) => console.log('Edges changed:', edges)}
-            />
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="empty">
-          <Card style={{ padding: '0', overflow: 'hidden', height: '600px' }}>
-            <QwanyxFlowStandalone
-              initialNodes={[]}
-              initialEdges={[]}
-              height="600px"
-              showToolbar={true}
-            />
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="readonly">
-          <Card style={{ padding: '0', overflow: 'hidden', height: '600px' }}>
-            <QwanyxFlowStandalone
-              initialNodes={defaultNodes}
-              initialEdges={defaultEdges}
-              height="600px"
-              showToolbar={false}
-              readOnly={true}
-            />
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="export">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', height: '600px' }}>
-            <Card style={{ padding: '0', overflow: 'hidden' }}>
-              <QwanyxFlowStandalone
-                initialNodes={defaultNodes}
-                initialEdges={defaultEdges}
-                height="100%"
-                showToolbar={true}
-                onExport={() => handleExport(defaultNodes, defaultEdges)}
-              />
-            </Card>
-            
-            <Card style={{ padding: '1rem', overflow: 'auto' }}>
-              <Heading size="lg" style={{ marginBottom: '1rem' }}>
-                Workflow Export
-              </Heading>
-              {workflow ? (
-                <pre style={{
-                  backgroundColor: '#f3f4f6',
-                  padding: '1rem',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  overflow: 'auto',
-                }}>
-                  {JSON.stringify(workflow, null, 2)}
-                </pre>
-              ) : (
-                <Text style={{ color: 'var(--qwanyx-text-secondary)' }}>
-                  Cliquez sur "Export" dans la toolbar pour voir le JSON
-                </Text>
-              )}
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+      <Card style={{ padding: '2rem', marginTop: '2rem' }}>
+        <Heading size="lg" style={{ marginBottom: '1rem' }}>
+          Coming Soon
+        </Heading>
+        <Text>
+          The visual workflow editor with drag-and-drop nodes, custom styling, and AI-ready export formats
+          will be available once the refactoring is complete.
+        </Text>
+      </Card>
 
       <div style={{ marginTop: '2rem' }}>
         <Heading size="xl" style={{ marginBottom: '1rem' }}>

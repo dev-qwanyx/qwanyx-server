@@ -1,0 +1,111 @@
+# SPU 1.0 Complete Demo Script
+# Demonstrates all 25 instructions working together
+
+# Define a function for request processing
+FUNCTION process_request(request_data, user_role)
+    INSTANTIATE database db
+    INSTANTIATE email mailer
+    
+    # Check user permissions
+    IF $user_role == "professionnel"
+        SET can_view_all true
+    ELSE
+        SET can_view_all false
+    ENDIF
+    
+    # Store the request
+    TRY
+        CALL db store $request_data stored_id
+        TRACE "Request stored with ID: $stored_id"
+    CATCH DatabaseError
+        THROW PersistenceError "Failed to store request"
+    
+    # Process urgency
+    EXPR "$request_data.urgency == 'high'" is_urgent
+    
+    IF $is_urgent
+        # Async notification for urgent requests
+        ASYNC mailer send_urgent $request_data email_handle
+        TRACE "Urgent notification sent"
+    ENDIF
+    
+    # Get all similar requests
+    SET query {"type": "$request_data.type"}
+    CALL db retrieve $query similar_requests
+    LEN $similar_requests count
+    
+    # Process each similar request
+    SET i 0
+    WHILE $i < $count
+        GET similar_requests[$i] current
+        TRACE "Processing similar request: $current.id"
+        EXPR "$i + 1" i
+    ENDWHILE
+    
+    # Wait for async operations
+    AWAIT email_handle email_result
+    
+    RETURN $stored_id
+ENDFUNCTION
+
+# Main execution
+TRACE "=== SPU 1.0 Demo Starting ==="
+
+# Create test data
+SET request {
+    "title": "Phare avant Golf 5",
+    "partName": "Phare avant",
+    "carBrand": "Volkswagen",
+    "urgency": "high",
+    "type": "lighting"
+}
+
+# Process the request
+CALL_FN process_request $request "professionnel" result
+
+# Parallel operations for notifications
+PARALLEL notifications
+    CALL email notify_team $result r1
+    |
+    CALL sms alert_manager $result r2
+    |
+    CALL slack post_channel $result r3
+ENDPARALLEL
+
+# Check methods available
+GET_METHODS db available_methods
+
+# Iterate through a list
+SET items ["item1", "item2", "item3"]
+FOREACH item IN $items
+    TRACE "Processing: $item"
+    
+    # Demonstrate BREAK and CONTINUE
+    IF $item == "item2"
+        CONTINUE
+    ENDIF
+    
+    IF $item == "item4"
+        BREAK
+    ENDIF
+ENDFOREACH
+
+# Race condition example
+RACE fastest_api
+    CALL api1 fetch data1
+    |
+    CALL api2 fetch data2
+    |
+    CALL api3 fetch data3
+ENDRACE
+
+# Cleanup
+DESTROY db
+DESTROY mailer
+
+# Final operations
+NOP  # No operation placeholder
+RETURN "Demo completed successfully"
+
+# This would normally HALT but we RETURN instead
+# HALT

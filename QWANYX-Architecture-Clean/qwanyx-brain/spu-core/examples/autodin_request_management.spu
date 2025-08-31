@@ -1,0 +1,229 @@
+# Autodin Request Management System
+# SPU 1.0 Script for real request persistence and processing
+
+# Define a function to validate request data
+FUNCTION validate_request(request_data)
+    # Check required fields
+    GET request_data.title title
+    GET request_data.partName part
+    GET request_data.carBrand brand
+    
+    IF $title == ""
+        THROW ValidationError "Title is required"
+    ENDIF
+    
+    IF $part == ""
+        THROW ValidationError "Part name is required"
+    ENDIF
+    
+    IF $brand == ""
+        THROW ValidationError "Car brand is required"
+    ENDIF
+    
+    RETURN true
+ENDFUNCTION
+
+# Define function to process requests based on urgency
+FUNCTION process_by_urgency(request, user_role)
+    INSTANTIATE email mailer
+    
+    GET request.urgency urgency_level
+    GET request.userId user_id
+    
+    IF $urgency_level == "high"
+        # Send immediate notification for high priority
+        SET notification {
+            "to": "urgence@autodin.be",
+            "subject": "Demande urgente reçue",
+            "body": "Une nouvelle demande urgente a été créée"
+        }
+        
+        ASYNC mailer send $notification email_handle
+        TRACE "Notification urgente envoyée"
+        
+        # Set processing deadline
+        EXPR "24" deadline_hours
+    ELSE
+        IF $urgency_level == "medium"
+            EXPR "72" deadline_hours
+        ELSE
+            EXPR "168" deadline_hours  # 1 week for low priority
+        ENDIF
+    ENDIF
+    
+    # Check user role for special handling
+    IF $user_role == "professionnel"
+        SET request.priority "premium"
+        TRACE "Traitement premium pour professionnel"
+    ELSE
+        SET request.priority "standard"
+    ENDIF
+    
+    # Wait for email if sent
+    IF $urgency_level == "high"
+        AWAIT email_handle email_result
+    ENDIF
+    
+    DESTROY mailer
+    RETURN $deadline_hours
+ENDFUNCTION
+
+# Main execution starts here
+TRACE "=== Autodin Request Management System ==="
+TRACE "Starting request processing..."
+
+# Initialize coprocessors
+INSTANTIATE database db
+INSTANTIATE auth auth_sys
+
+# Create a new request
+SET new_request {
+    "title": "Phare avant Golf 5 2008",
+    "partName": "Phare avant",
+    "carBrand": "Volkswagen",
+    "carModel": "Golf 5",
+    "year": 2008,
+    "urgency": "high",
+    "description": "Recherche phare avant gauche pour Golf 5 de 2008",
+    "status": "open",
+    "userId": "user_123",
+    "createdAt": "2024-12-20T10:00:00Z"
+}
+
+# Validate the request
+TRY
+    CALL_FN validate_request $new_request validation_result
+    TRACE "Request validated successfully"
+CATCH ValidationError
+    TRACE "Validation failed - aborting"
+    HALT
+
+# Store the request in database
+SET store_params {
+    "collection": "requests",
+    "workspace": "autodin",
+    "data": $new_request
+}
+
+TRY
+    CALL db store $store_params stored_result
+    GET stored_result.id request_id
+    TRACE "Request stored with ID: $request_id"
+CATCH DatabaseError
+    THROW PersistenceError "Failed to store request in database"
+
+# Process based on urgency
+CALL_FN process_by_urgency $new_request "professionnel" deadline
+
+# Find similar requests for matching
+SET search_params {
+    "collection": "requests",
+    "workspace": "autodin",
+    "filter": {
+        "partName": "Phare avant",
+        "carBrand": "Volkswagen",
+        "status": "open"
+    }
+}
+
+CALL db retrieve $search_params similar_requests
+LEN $similar_requests.data request_count
+
+TRACE "Found $request_count similar requests"
+
+# Process each similar request
+SET matches []
+FOREACH request IN $similar_requests.data
+    GET request.id other_id
+    
+    # Skip if it's the same request
+    IF $other_id != $request_id
+        GET request.year other_year
+        
+        # Check if years are compatible (within 2 years)
+        EXPR "$other_year - 2008" year_diff
+        
+        IF $year_diff >= -2
+            IF $year_diff <= 2
+                # Add to matches
+                SET match_info {
+                    "requestId": $other_id,
+                    "title": $request.title,
+                    "year": $other_year
+                }
+                # In real implementation, would append to matches array
+                TRACE "Found potential match: $other_id"
+            ENDIF
+        ENDIF
+    ENDIF
+ENDFOREACH
+
+# Update request with processing info
+SET update_params {
+    "collection": "requests",
+    "workspace": "autodin",
+    "filter": {"_id": $request_id},
+    "update": {
+        "processedAt": "2024-12-20T10:05:00Z",
+        "deadline": $deadline,
+        "matchCount": $request_count
+    }
+}
+
+CALL db update $update_params update_result
+
+# Send notifications in parallel
+PARALLEL notifications
+    # Email to user
+    INSTANTIATE email email1
+    SET user_email {
+        "to": "user@example.com",
+        "subject": "Votre demande a été enregistrée",
+        "body": "Votre demande #$request_id a été créée avec succès"
+    }
+    CALL email1 send $user_email r1
+    DESTROY email1
+    |
+    # SMS notification
+    INSTANTIATE sms sms1
+    SET sms_msg {
+        "to": "+32123456789",
+        "message": "Demande #$request_id créée"
+    }
+    CALL sms1 send $sms_msg r2
+    DESTROY sms1
+    |
+    # Update dashboard
+    INSTANTIATE dashboard dash1
+    SET dash_update {
+        "type": "new_request",
+        "requestId": $request_id,
+        "urgency": "high"
+    }
+    CALL dash1 notify $dash_update r3
+    DESTROY dash1
+ENDPARALLEL
+
+# Check health of all systems
+GETHEALTH db db_health
+TRACE "Database health: $db_health"
+
+# Get available methods for introspection
+GET_METHODS db available_methods
+TRACE "Database methods available: $available_methods"
+
+# Cleanup
+DESTROY db
+DESTROY auth_sys
+
+# Final summary
+SET summary {
+    "requestId": $request_id,
+    "status": "processed",
+    "matches": $request_count,
+    "deadline": $deadline,
+    "priority": "premium"
+}
+
+TRACE "=== Request Processing Complete ==="
+RETURN $summary

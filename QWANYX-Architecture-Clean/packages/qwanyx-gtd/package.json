@@ -1,0 +1,32 @@
+{
+  "name": "@qwanyx/gtd",
+  "version": "1.0.0",
+  "description": "Getting Things Done (GTD) management system powered by SPU-Core intelligence for QWANYX applications",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsup",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@qwanyx/ui": "file:../qwanyx-ui",
+    "@qwanyx/spu-core": "file:../../qwanyx-brain/spu-core"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vite-plugin-dts": "^3.9.0"
+  }
+}

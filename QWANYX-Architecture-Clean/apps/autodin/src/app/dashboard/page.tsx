@@ -7,6 +7,7 @@ import type { DashboardConfig, DashboardStat, DashboardActivity } from '@qwanyx/
 import { Container, Text, Card, CardContent, Grid, Button, Badge } from '@qwanyx/ui'
 import { ThotManagement, DigitalHumansPage } from '@qwanyx/thot'
 import { RequestManagement } from '@autodin/request-management'
+// import { GTDDashboard } from '@qwanyx/gtd'
 import UsersContent from './UsersContent'
 import { getApiUrl, API_CONFIG } from '@/config/api.config'
 
@@ -183,9 +184,17 @@ export default function DashboardPage() {
     'users': (
       <UsersContent />
     ),
+    'gtd': (
+      <Container>
+        <Text size="2xl" weight="bold">Productivité (GTD)</Text>
+        <Text size="sm" color="secondary" style={{ marginBottom: '2rem' }}>
+          Module en cours de développement
+        </Text>
+      </Container>
+    ),
     'requests': (
       <RequestManagement config={{
-        apiUrl: API_CONFIG.API_URL,
+        apiUrl: 'http://localhost:5002',  // SPU API endpoint
         workspace: 'autodin',
         userRole: currentUserRole,
         currentUserId: user?.id || user?._id,
@@ -323,6 +332,16 @@ export default function DashboardPage() {
         badge: dhCount !== null ? dhCount.toString() : undefined
       })
     }
+    
+    // GTD/Productivity - visible to all users (commented out for now)
+    // items.push(
+    //   {
+    //     id: 'gtd',
+    //     label: 'Productivité',
+    //     icon: 'TaskAlt',
+    //     badge: '12'  // Number of inbox items
+    //   }
+    // )
     
     // Requests management - visible to all users
     items.push(

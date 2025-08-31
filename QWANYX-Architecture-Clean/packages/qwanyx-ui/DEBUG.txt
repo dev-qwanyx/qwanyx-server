@@ -1,0 +1,510 @@
+chunk-QIKCSS5Q.js?v=bf63ecbe:21609 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+chunk-7DWSU7EN.js?v=bf63ecbe:136 Warning: forwardRef render functions accept exactly two parameters: props and ref. Did you forget to use the ref parameter?
+printWarning @ chunk-7DWSU7EN.js?v=bf63ecbe:136
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+Icon.tsx:265 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at HTMLUnknownElement.callCallback2 (chunk-QIKCSS5Q.js?v=bf63ecbe:3680:22)
+    at Object.invokeGuardedCallbackDev (chunk-QIKCSS5Q.js?v=bf63ecbe:3705:24)
+    at invokeGuardedCallback (chunk-QIKCSS5Q.js?v=bf63ecbe:3739:39)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19818:15)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at div
+    at div
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at div
+    at div
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at button
+    at div
+    at nav
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at button
+    at div
+    at nav
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at button
+    at div
+    at nav
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at button
+    at div
+    at nav
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at button
+    at div
+    at nav
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at button
+    at div
+    at nav
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at button
+    at div
+    at nav
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at button
+    at div
+    at nav
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at button
+    at div
+    at nav
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at span
+    at button
+    at MotionDOMComponent (http://localhost:3333/node_modules/.vite/deps/framer-motion.js?v=6a9c0dc1:5366:40)
+    at http://localhost:3333/src/components/Button.tsx:21:3
+    at div
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:14080 The above error occurred in the <Icon> component:
+
+    at Icon (http://localhost:3333/src/components/Icon.tsx:186:3)
+    at span
+    at button
+    at MotionDOMComponent (http://localhost:3333/node_modules/.vite/deps/framer-motion.js?v=6a9c0dc1:5366:40)
+    at http://localhost:3333/src/components/Button.tsx:21:3
+    at div
+    at aside
+    at div
+    at StudioLayout (http://localhost:3333/studio-v2/layouts/StudioLayout.tsx:21:3)
+    at WorkspaceProvider (http://localhost:3333/src/providers/WorkspaceProvider.tsx:22:3)
+    at ThemeProvider (http://localhost:3333/src/providers/ThemeProvider.tsx:169:3)
+    at App (http://localhost:3333/studio-v2/App.tsx:26:53)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-QIKCSS5Q.js?v=bf63ecbe:14080
+chunk-QIKCSS5Q.js?v=bf63ecbe:19466 Uncaught TypeError: Cannot read properties of undefined (reading 'fontSize')
+    at Icon (Icon.tsx:265:27)
+    at renderWithHooks (chunk-QIKCSS5Q.js?v=bf63ecbe:11596:26)
+    at mountIndeterminateComponent (chunk-QIKCSS5Q.js?v=bf63ecbe:14974:21)
+    at beginWork (chunk-QIKCSS5Q.js?v=bf63ecbe:15962:22)
+    at beginWork$1 (chunk-QIKCSS5Q.js?v=bf63ecbe:19806:22)
+    at performUnitOfWork (chunk-QIKCSS5Q.js?v=bf63ecbe:19251:20)
+    at workLoopSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19190:13)
+    at renderRootSync (chunk-QIKCSS5Q.js?v=bf63ecbe:19169:15)
+    at recoverFromConcurrentError (chunk-QIKCSS5Q.js?v=bf63ecbe:18786:28)
+    at performConcurrentWorkOnRoot (chunk-QIKCSS5Q.js?v=bf63ecbe:18734:30)

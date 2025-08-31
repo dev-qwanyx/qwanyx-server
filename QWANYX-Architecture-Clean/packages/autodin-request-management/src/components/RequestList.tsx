@@ -171,9 +171,20 @@ export function RequestList() {
 
   if (error) {
     return (
-      <Card>
+      <Card style={{ border: '3px solid red', backgroundColor: '#ffeeee' }}>
         <CardContent>
-          <Text color="error">Erreur: {error}</Text>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ fontSize: '2rem' }}>🔴</span>
+            <div>
+              <Text size="lg" weight="bold" color="error">CRITICAL FAILURE - JIDOKA ALERT</Text>
+              <Text color="error" style={{ marginTop: '0.5rem' }}>
+                {error}
+              </Text>
+              <Text size="sm" style={{ marginTop: '1rem', fontStyle: 'italic' }}>
+                System halted. Fix the issue before continuing.
+              </Text>
+            </div>
+          </div>
         </CardContent>
       </Card>
     )
