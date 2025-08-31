@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Switch, UserProfile } from '@qwanyx/ui'
-import { DhApi } from '@qwanyx/api-client'
+import { DhApi } from '../api/mock-dh-api'
 
 interface DhMainSwitchProps {
   dhId: string

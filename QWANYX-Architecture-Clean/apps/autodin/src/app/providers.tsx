@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { ThemeProvider, WorkspaceProvider } from '@qwanyx/ui'
+// @ts-ignore - TypeScript declarations temporarily disabled in package
 import { AuthProvider } from '@qwanyx/auth'
 
 // Autodin theme configuration

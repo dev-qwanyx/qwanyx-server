@@ -567,32 +567,67 @@ async fn get_users(
 async fn update_user(
     runtime: web::Data<Arc<SPURuntime>>,
     path: web::Path<String>,
+    req: actix_web::HttpRequest,
     user_data: web::Json<serde_json::Value>,
 ) -> HttpResponse {
     let user_id = path.into_inner();
-    info!("Updating user: {}", user_id);
     
-    // Create assembly script to update user (single-line JSON)
+    // Get workspace from headers or default
+    let workspace = req.headers()
+        .get("X-Workspace")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("autodin")
+        .to_string();
+    
+    info!("Updating user: {} in workspace: {}", user_id, workspace);
+    
+    // Create the complete params object in one go (this is what fixed the requests UPDATE)
     let script = format!(r#"
-        # Update User Assembly Script
-        INSTANTIATE database db1
+        # Update User
+        INSTANTIATE database db
         
-        # Update user in database  
-        SET update_params {{"collection": "users", "id": "{}", "data": {}}}
-        CALL db1 update $update_params update_result
+        # Create the complete params object in one go
+        SET params {{
+            "collection": "users",
+            "workspace": "{}",
+            "filter": {{"_id": "{}"}},
+            "update": {}
+        }}
         
-        # Return the updated user
-        SET result $update_result
-    "#, user_id, user_data.to_string());
+        CALL db update $params result
+        TRACE "User updated successfully"
+        
+        SET response {{
+            "success": true,
+            "id": "{}"
+        }}
+        
+        DESTROY db
+        RETURN $response
+    "#,
+        workspace,
+        user_id,
+        user_data.to_string(),
+        user_id
+    );
     
-    // Execute the assembly script
     match runtime.execute(&script).await {
         Ok(result) => {
-            HttpResponse::Ok().json(data_to_json(&result))
+            match &result {
+                Data::Object(obj) => {
+                    if let Some(Data::Bool(true)) = obj.get("success") {
+                        HttpResponse::Ok().json(data_to_json(&result))
+                    } else {
+                        HttpResponse::InternalServerError().json(data_to_json(&result))
+                    }
+                }
+                _ => HttpResponse::Ok().json(data_to_json(&result))
+            }
         }
         Err(e) => {
             error!("Failed to update user: {}", e);
             HttpResponse::InternalServerError().json(json!({
+                "success": false,
                 "error": format!("Failed to update user: {}", e)
             }))
         }

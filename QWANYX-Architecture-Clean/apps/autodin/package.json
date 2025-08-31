@@ -14,7 +14,6 @@
     "@qwanyx/dashboard": "file:../../packages/qwanyx-dashboard",
     "@qwanyx/dashboard-v2": "file:../../packages/qwanyx-dashboard-v2",
     "@qwanyx/gtd": "file:../../packages/qwanyx-gtd",
-    "@qwanyx/thot": "file:../../packages/qwanyx-thot",
     "@qwanyx/ui": "file:../../packages/qwanyx-ui",
     "@qwanyx/user-management": "file:../../packages/qwanyx-user-management",
     "critters": "^0.0.23",

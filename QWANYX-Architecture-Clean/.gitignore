@@ -59,3 +59,5 @@ temp/
 
 # Trash folder - old code moved here
 _trash/
+trash/
+trash-python-api/

@@ -56,7 +56,14 @@ export function RequestList() {
   // Filtrer les demandes selon l'onglet actif
   const tabFilteredRequests = useMemo(() => {
     if (activeTab === 'my-requests') {
-      return requests.filter(r => r.userId === currentUserId)
+      // Filtrer par userId OU userEmail pour être sûr de trouver les demandes
+      console.log('Filtering requests for user:', currentUserId, config.currentUserEmail)
+      console.log('Requests:', requests.map(r => ({ id: r._id, userId: r.userId, userEmail: r.userEmail })))
+      return requests.filter(r => 
+        r.userId === currentUserId || 
+        r.userEmail === config.currentUserEmail ||
+        r.userId === config.currentUserEmail // Au cas où userId contient l'email
+      )
     }
     // "all-requests" visible seulement pour pro, admin et superuser
     if (userRole === 'professionnel' || userRole === 'admin' || userRole === 'superuser') {

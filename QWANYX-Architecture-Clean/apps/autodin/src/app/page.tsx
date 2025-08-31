@@ -15,6 +15,7 @@ import {
   ContactFormSection,
   detailedContactFields
 } from '@qwanyx/ui'
+// @ts-ignore - TypeScript declarations temporarily disabled in package
 import { AuthModule } from '@qwanyx/auth'
 import { getApiUrl } from '@/config/api.config'
 

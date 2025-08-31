@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone', // Creates minimal production build
-  transpilePackages: ['@qwanyx/ui', '@qwanyx/auth', '@qwanyx/dashboard', '@qwanyx/dashboard-v2', '@qwanyx/user-management', '@qwanyx/thot'],
+  transpilePackages: ['@qwanyx/ui', '@qwanyx/auth', '@qwanyx/dashboard', '@qwanyx/dashboard-v2', '@qwanyx/user-management'],
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if

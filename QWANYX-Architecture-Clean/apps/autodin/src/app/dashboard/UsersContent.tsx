@@ -65,7 +65,8 @@ export default function UsersContent() {
       console.log('Fetching users with token:', token ? 'Present' : 'Missing')
       console.log('Using workspace:', workspace)
       
-      const response = await fetch(getApiUrl('/users'), {
+      // Use SPU generic CRUD endpoint for users collection
+      const response = await fetch(`http://localhost:5002/data/users?workspace=${workspace}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -236,14 +237,19 @@ export default function UsersContent() {
       const token = localStorage.getItem('autodin_token')
       const newStatus = user.status === 'blocked' ? 'active' : 'blocked'
       
-      const response = await fetch(getApiUrl(`/users/${user.id}`), {
+      // Use SPU generic CRUD endpoint
+      const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
+      const response = await fetch(`http://localhost:5002/data/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'X-Workspace': localStorage.getItem('autodin_workspace') || 'autodin'
+          'X-Workspace': workspace
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ 
+          workspace: workspace,
+          data: { status: newStatus }
+        })
       })
 
       if (response.ok) {
@@ -270,11 +276,13 @@ export default function UsersContent() {
     try {
       const token = localStorage.getItem('autodin_token')
       
-      const response = await fetch(`http://localhost:5002/api/users/${selectedUser.id}`, {
+      const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
+      const response = await fetch(`http://localhost:5002/data/users/${selectedUser.id}?workspace=${workspace}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Workspace': workspace
         }
       })
 
@@ -305,33 +313,38 @@ export default function UsersContent() {
         : u
     ))
 
-    // Then send to database in background
+    // Then send to SPU backend in background
     try {
       const token = localStorage.getItem('autodin_token')
       const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
       
       console.log('Updating role for user:', userId, 'to:', newRole)
       
-      const response = await fetch(getApiUrl(`/users/${userId}`), {
+      // Use SPU generic CRUD endpoint for updating user
+      const response = await fetch(`http://localhost:5002/data/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
           'X-Workspace': workspace
         },
-        body: JSON.stringify({ role: newRole })
+        body: JSON.stringify({ 
+          workspace: workspace,
+          data: { role: newRole }
+        })
       })
 
       if (!response.ok) {
-        // If failed, rollback the change (optional - you said it's ok if it doesn't match)
         console.error('Failed to update role in database:', response.status)
-        // Not reverting since user said "c'est pas grave si ça n'a pas vraiment matché"
+        const errorText = await response.text()
+        console.error('Error response:', errorText)
       } else {
         console.log('Role updated successfully in database')
+        const result = await response.json()
+        console.log('Update result:', result)
       }
     } catch (error) {
       console.error('Error updating user role in database:', error)
-      // Not reverting since user said "c'est pas grave si ça n'a pas vraiment matché"
     }
   }
 
