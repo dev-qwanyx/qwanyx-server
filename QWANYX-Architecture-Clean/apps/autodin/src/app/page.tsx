@@ -18,6 +18,7 @@ import {
 // @ts-ignore - TypeScript declarations temporarily disabled in package
 import { AuthModule } from '@qwanyx/auth'
 import { getApiUrl } from '@/config/api.config'
+import { SPU_CONFIG } from '@/config/spu.config'
 
 function AppContent() {
   const [activeSection, setActiveSection] = useState<string>('details')
@@ -460,7 +461,7 @@ function AppContent() {
       <AuthModule
         key={`auth-${authMode}-${showAuth}`}
         workspace="autodin"
-        apiUrl={getApiUrl()}
+        apiUrl={SPU_CONFIG.baseUrl}
         locale="fr"
         initialMode={authMode}
         allowModeSwitch={true}

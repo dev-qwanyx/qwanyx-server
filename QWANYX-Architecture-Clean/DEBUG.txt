@@ -1,57 +1,287 @@
-react-dom.development.js:29890 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
-index.js:627 Uncaught Error: Module not found: Can't resolve '@qwanyx/auth'
-  16 |   detailedContactFields
-  17 | } from '@qwanyx/ui'
-> 18 | import { AuthModule } from '@qwanyx/auth'
-     | ^
-  19 | import { getApiUrl } from '@/config/api.config'
-  20 |
-  21 | function AppContent() {
-
-https://nextjs.org/docs/messages/module-not-found
-
-    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
-    at getNotFoundError (file:///opt/qwanyx/production/QWANYX-Architecture-Clean/apps/autodin/node_modules/next/dist/build/webpack/plugins/wellknown-errors-plugin/parseNotFoundError.js:124:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async getModuleBuildError (file:///opt/qwanyx/production/QWANYX-Architecture-Clean/apps/autodin/node_modules/next/dist/build/webpack/plugins/wellknown-errors-plugin/webpackModuleError.js:104:27)
-    at async (file:///opt/qwanyx/production/QWANYX-Architecture-Clean/apps/autodin/node_modules/next/dist/build/webpack/plugins/wellknown-errors-plugin/index.js:29:49)
-    at async (file:///opt/qwanyx/production/QWANYX-Architecture-Clean/apps/autodin/node_modules/next/dist/build/webpack/plugins/wellknown-errors-plugin/index.js:27:21)
-websocket.js:46 [HMR] connected
-hydration-error-info.js:63 ./src/app/page.tsx:18:1
-Module not found: Can't resolve '@qwanyx/auth'
-  16 |   detailedContactFields
-  17 | } from '@qwanyx/ui'
-> 18 | import { AuthModule } from '@qwanyx/auth'
-     | ^
-  19 | import { getApiUrl } from '@/config/api.config'
-  20 |
-  21 | function AppContent() {
-
-https://nextjs.org/docs/messages/module-not-found
-console.error @ hydration-error-info.js:63
-hydration-error-info.js:63 ./src/app/providers.tsx:5:1
-Module not found: Can't resolve '@qwanyx/auth'
-  3 | import { useEffect } from 'react'
-  4 | import { ThemeProvider, WorkspaceProvider } from '@qwanyx/ui'
-> 5 | import { AuthProvider } from '@qwanyx/auth'
-    | ^
-  6 |
-  7 | // Autodin theme configuration
-  8 | const autodinTheme = {
-
-https://nextjs.org/docs/messages/module-not-found
-console.error @ hydration-error-info.js:63
-hydration-error-info.js:63 ./src/styles/globals.css
-Module parse failed: Unexpected token (6:0)
-| 
-| /* Autodin Brand Colors - Overriding QWANYX defaults */
-> :root {
-|   --primary: 230, 126, 34;    /* Autodin Orange */
-|   --secondary: 52, 73, 94;
-console.error @ hydration-error-info.js:63
-hydration-error-info.js:63 ../../packages/qwanyx-ui/dist/index.css
-Module parse failed: Unexpected character '@' (1:0)
-> @charset "UTF-8";
-| 
-| /* src/styles.css */
-console.error @ hydration-error-info.js:63
+react-dom.development.js:38560 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+app-index.js:33 Warning: forwardRef render functions accept exactly two parameters: props and ref. Did you forget to use the ref parameter?
+window.console.error @ app-index.js:33
+api.config.ts:32 🔌 API Environment: LOCAL - http://localhost:5002
+page.tsx:282 Building sidebar with role: particulier
+page.tsx:282 Building sidebar with role: particulier
+app-index.js:33 Warning: Expected server HTML to contain a matching <div> in <body>.
+    at div
+    at HolyGrailLayoutDashboard (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:9254:11)
+    at DashboardLayout
+    at Dashboard (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-dashboard-v2/dist/index.mjs:18:11)
+    at DashboardPage (webpack-internal:///(app-pages-browser)/./src/app/dashboard/page.tsx:29:78)
+    at ClientPageRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/client-page.js:14:11)
+    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)
+    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
+    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
+    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:349:11)
+    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at OuterLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:370:11)
+    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)
+    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
+    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
+    at NotFoundErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:349:11)
+    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at OuterLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:370:11)
+    at AuthProvider (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-auth/dist/index.mjs:832:11)
+    at ThemeProvider (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:615:11)
+    at WorkspaceProvider (webpack-internal:///(app-pages-browser)/../../packages/qwanyx-ui/dist/index.mjs:1548:11)
+    at Providers (webpack-internal:///(app-pages-browser)/./src/app/providers.tsx:40:11)
+    at body
+    at html
+    at RootLayout (Server)
+    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)
+    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)
+    at NotFoundErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at DevRootNotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/dev-root-not-found-boundary.js:33:11)
+    at ReactDevOverlay (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/ReactDevOverlay.js:87:9)
+    at HotReload (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:321:11)
+    at Router (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:207:11)
+    at ErrorBoundaryHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:113:9)
+    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)
+    at AppRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:585:13)
+    at ServerRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:112:27)
+    at Root (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:117:11)
+window.console.error @ app-index.js:33
+react-dom.development.js:6981 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at throwOnHydrationMismatch (react-dom.development.js:6981:9)
+    at tryToClaimNextHydratableInstance (react-dom.development.js:7040:7)
+    at updateHostComponent$1 (react-dom.development.js:16621:5)
+    at beginWork$1 (react-dom.development.js:18503:14)
+    at HTMLUnknownElement.callCallback (react-dom.development.js:20565:14)
+    at Object.invokeGuardedCallbackImpl (react-dom.development.js:20614:16)
+    at invokeGuardedCallback (react-dom.development.js:20689:29)
+    at beginWork (react-dom.development.js:26949:7)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+app-index.js:33 Warning: An error occurred during hydration. The server HTML was replaced with client content in <#document>.
+window.console.error @ app-index.js:33
+page.tsx:282 Building sidebar with role: particulier
+page.tsx:282 Building sidebar with role: particulier
+on-recoverable-error.js:20 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at throwOnHydrationMismatch (react-dom.development.js:6981:9)
+    at tryToClaimNextHydratableInstance (react-dom.development.js:7040:7)
+    at updateHostComponent$1 (react-dom.development.js:16621:5)
+    at beginWork$1 (react-dom.development.js:18503:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+on-recoverable-error.js:20 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at throwOnHydrationMismatch (react-dom.development.js:6981:9)
+    at tryToClaimNextHydratableInstance (react-dom.development.js:7040:7)
+    at updateHostComponent$1 (react-dom.development.js:16621:5)
+    at beginWork$1 (react-dom.development.js:18503:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+on-recoverable-error.js:20 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at throwOnHydrationMismatch (react-dom.development.js:6981:9)
+    at tryToClaimNextHydratableInstance (react-dom.development.js:7040:7)
+    at updateHostComponent$1 (react-dom.development.js:16621:5)
+    at beginWork$1 (react-dom.development.js:18503:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+on-recoverable-error.js:20 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at throwOnHydrationMismatch (react-dom.development.js:6981:9)
+    at tryToClaimNextHydratableInstance (react-dom.development.js:7040:7)
+    at updateHostComponent$1 (react-dom.development.js:16621:5)
+    at beginWork$1 (react-dom.development.js:18503:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+on-recoverable-error.js:20 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at throwOnHydrationMismatch (react-dom.development.js:6981:9)
+    at tryToClaimNextHydratableInstance (react-dom.development.js:7040:7)
+    at updateHostComponent$1 (react-dom.development.js:16621:5)
+    at beginWork$1 (react-dom.development.js:18503:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+on-recoverable-error.js:20 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at throwOnHydrationMismatch (react-dom.development.js:6981:9)
+    at tryToClaimNextHydratableInstance (react-dom.development.js:7040:7)
+    at updateHostComponent$1 (react-dom.development.js:16621:5)
+    at beginWork$1 (react-dom.development.js:18503:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+react-dom.development.js:16571 Uncaught Error: There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root will switch to client rendering.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at updateHostRoot (react-dom.development.js:16571:57)
+    at beginWork$1 (react-dom.development.js:18486:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopSync (react-dom.development.js:25464:5)
+    at renderRootSync (react-dom.development.js:25419:7)
+    at recoverFromConcurrentError (react-dom.development.js:24597:20)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24542:26)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+page.tsx:38 Dashboard useEffect triggered
+page.tsx:62 Fetching user count...
+page.tsx:38 Dashboard useEffect triggered
+page.tsx:62 Fetching user count...
+page.tsx:71 Response status: 200
+page.tsx:75 Users data: Array(9)
+page.tsx:80 Regular users count: 7
+page.tsx:81 Digital Humans count: 2
+page.tsx:91 Current user role: superuser
+page.tsx:71 Response status: 200
+page.tsx:282 Building sidebar with role: superuser
+page.tsx:282 Building sidebar with role: superuser
+page.tsx:75 Users data: Array(9)
+page.tsx:80 Regular users count: 7
+page.tsx:81 Digital Humans count: 2
+page.tsx:91 Current user role: superuser
+page.tsx:282 Building sidebar with role: superuser
+page.tsx:282 Building sidebar with role: superuser
+page.tsx:282 Building sidebar with role: superuser
+page.tsx:282 Building sidebar with role: superuser
+UsersContent.tsx:66 Fetching users with token: Present
+UsersContent.tsx:67 Using workspace: autodin
+UsersContent.tsx:66 Fetching users with token: Present
+UsersContent.tsx:67 Using workspace: autodin
+dashboard:1 Access to fetch at 'http://135.181.72.183:5002/data/users?workspace=autodin' from origin 'http://135.181.72.183:3002' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
+:5002/data/users?workspace=autodin:1  Failed to load resource: net::ERR_FAILED
+app-index.js:33 Error fetching users: TypeError: Failed to fetch
+    at fetchUsers (UsersContent.tsx:70:30)
+    at eval (UsersContent.tsx:52:5)
+    at commitHookEffectListMount (react-dom.development.js:21102:23)
+    at commitHookPassiveMountEffects (react-dom.development.js:23154:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23259:11)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23370:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23370:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23370:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23370:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23370:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23370:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23370:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23370:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23370:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+    at commitPassiveMountOnFiber (react-dom.development.js:23256:9)
+    at recursivelyTraversePassiveMountEffects (react-dom.development.js:23237:7)
+window.console.error @ app-index.js:33
+dashboard:1 Access to fetch at 'http://135.181.72.183:5002/data/users?workspace=autodin' from origin 'http://135.181.72.183:3002' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
+:5002/data/users?workspace=autodin:1  Failed to load resource: net::ERR_FAILED
+app-index.js:33 Error fetching users: TypeError: Failed to fetch
+    at fetchUsers (UsersContent.tsx:70:30)
+    at eval (UsersContent.tsx:52:5)
+    at commitHookEffectListMount (react-dom.development.js:21102:23)
+    at invokePassiveEffectMountInDEV (react-dom.development.js:23980:13)
+    at invokeEffectsInDev (react-dom.development.js:26852:9)
+    at legacyCommitDoubleInvokeEffectsInDEV (react-dom.development.js:26835:5)
+    at commitDoubleInvokeEffectsInDEV (react-dom.development.js:26816:7)
+    at flushPassiveEffectsImpl (react-dom.development.js:26514:5)
+    at flushPassiveEffects (react-dom.development.js:26438:14)
+    at commitRootImpl (react-dom.development.js:26337:5)
+    at commitRoot (react-dom.development.js:26077:5)
+    at performSyncWorkOnRoot (react-dom.development.js:24925:3)
+    at flushSyncWorkAcrossRoots_impl (react-dom.development.js:7758:13)
+    at flushSyncWorkOnAllRoots (react-dom.development.js:7718:3)
+    at processRootScheduleInMicrotask (react-dom.development.js:7863:3)
+    at eval (react-dom.development.js:8034:7)
+window.console.error @ app-index.js:33
+page.tsx:282 Building sidebar with role: superuser
+page.tsx:282 Building sidebar with role: superuser
+RequestList.tsx:60 Filtering requests for user: phil@pixanima.com phil@pixanima.com
+RequestList.tsx:61 Requests: Array(0)
+RequestList.tsx:60 Filtering requests for user: phil@pixanima.com phil@pixanima.com
+RequestList.tsx:61 Requests: Array(0)
+dashboard:1 Access to fetch at 'http://135.181.72.183:5002/data/requests?workspace=autodin' from origin 'http://135.181.72.183:3002' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
+:5002/data/requests?workspace=autodin:1  Failed to load resource: net::ERR_FAILED
+app-index.js:33 🔴 CRITICAL FAILURE - RequestManagement: Failed to fetch
+window.console.error @ app-index.js:33
+dashboard:1 Access to fetch at 'http://135.181.72.183:5002/data/requests?workspace=autodin' from origin 'http://135.181.72.183:3002' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: It does not have HTTP ok status.
+:5002/data/requests?workspace=autodin:1  Failed to load resource: net::ERR_FAILED
+app-index.js:33 🔴 CRITICAL FAILURE - RequestManagement: Failed to fetch
+window.console.error @ app-index.js:33
+hot-reloader-client.js:187 [Fast Refresh] rebuilding
+hot-reloader-client.js:44 [Fast Refresh] done in 423ms

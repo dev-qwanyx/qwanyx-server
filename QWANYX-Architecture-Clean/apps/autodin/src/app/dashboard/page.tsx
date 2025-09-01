@@ -1,5 +1,6 @@
 'use client'
 
+// Version: 1.0.1 - Testing smart deployment
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Dashboard, createMarketplaceDashboard } from '@qwanyx/dashboard-v2'

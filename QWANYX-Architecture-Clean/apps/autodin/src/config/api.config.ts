@@ -2,7 +2,15 @@
 // Set NEXT_PUBLIC_API_URL in .env.local for development
 // Set NEXT_PUBLIC_API_URL in .env.production for production
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002'
+// Detect if we're running locally or in production
+const isLocalHost = typeof window !== 'undefined' && 
+  (window.location.hostname === 'localhost' || 
+   window.location.hostname === '127.0.0.1')
+
+// Use production URL unless explicitly on localhost
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 
+  (isLocalHost ? 'http://localhost:5002' : 'http://135.181.72.183:5002')
+
 const IS_LOCAL = API_URL.includes('localhost')
 
 export const API_CONFIG = {
