@@ -8,6 +8,7 @@ import {
   UserProfile, Icon
 } from '@qwanyx/ui'
 import { getApiUrl } from '@/config/api.config'
+import { getSpuUrl, getCollectionUrl } from '@/config/spu.config'
 
 interface User {
   id: string
@@ -66,7 +67,7 @@ export default function UsersContent() {
       console.log('Using workspace:', workspace)
       
       // Use SPU generic CRUD endpoint for users collection
-      const response = await fetch(`http://localhost:5002/data/users?workspace=${workspace}`, {
+      const response = await fetch(getCollectionUrl('users', undefined, workspace), {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -239,7 +240,7 @@ export default function UsersContent() {
       
       // Use SPU generic CRUD endpoint
       const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
-      const response = await fetch(`http://localhost:5002/data/users/${user.id}`, {
+      const response = await fetch(getSpuUrl(`/data/users/${user.id}`), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -277,7 +278,7 @@ export default function UsersContent() {
       const token = localStorage.getItem('autodin_token')
       
       const workspace = localStorage.getItem('autodin_workspace') || 'autodin'
-      const response = await fetch(`http://localhost:5002/data/users/${selectedUser.id}?workspace=${workspace}`, {
+      const response = await fetch(getCollectionUrl('users', selectedUser.id, workspace), {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -321,7 +322,7 @@ export default function UsersContent() {
       console.log('Updating role for user:', userId, 'to:', newRole)
       
       // Use SPU generic CRUD endpoint for updating user
-      const response = await fetch(`http://localhost:5002/data/users/${userId}`, {
+      const response = await fetch(getSpuUrl(`/data/users/${userId}`), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
