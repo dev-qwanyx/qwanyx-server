@@ -25,66 +25,29 @@ git pull origin main
 echo "✅ Code mis à jour (serveur synchronisé avec GitHub)"
 echo ""
 
-# ========== BUILD DES PACKAGES ==========
-echo "📦 BUILD DES PACKAGES MONOREPO"
+# ========== INSTALLATION MONOREPO ==========
+echo "📦 INSTALLATION DU MONOREPO"
 echo "--------------------------------------------"
 
-# Build qwanyx-ui
-echo "🎨 Build @qwanyx/ui..."
-cd packages/qwanyx-ui
-npm install
-npm run build
-echo "✅ @qwanyx/ui prêt"
+# Retour à la racine du projet
+cd /opt/qwanyx/QWANYX-Architecture-Clean
 
-# Build qwanyx-auth - CRITICAL pour login/auth
+# Installation des dépendances du monorepo (crée les symlinks)
+echo "📦 Installation des dépendances du monorepo..."
+npm install
+
+echo "✅ Monorepo installé avec tous les symlinks"
+
+# ========== BUILD DES PACKAGES ==========
 echo ""
-echo "🔐 Build @qwanyx/auth..."
-cd ../qwanyx-auth
-npm install
-# Vérifier si le build existe
-if [ ! -f "tsup.config.ts" ]; then
-    echo "⚠️ Pas de tsup.config.ts, utilisation de tsc..."
-    npx tsc || echo "⚠️ Erreur tsc ignorée"
-else
-    npm run build
-fi
-echo "✅ @qwanyx/auth prêt"
+echo "🔨 BUILD DE TOUS LES PACKAGES"
+echo "--------------------------------------------"
 
-# Build autodin-request-management  
-echo ""
-echo "📋 Build @autodin/request-management..."
-cd ../autodin-request-management
-npm install
-npm run build
-echo "✅ @autodin/request-management prêt"
+# Build tous les packages avec Turbo (respecte les dépendances)
+echo "🚀 Build avec Turbo..."
+npm run build:packages
 
-# Build autres packages si nécessaire
-echo ""
-echo "📦 Build autres packages..."
-cd ../qwanyx-dashboard-v2
-npm install
-npm run build
-echo "✅ @qwanyx/dashboard-v2 prêt"
-
-cd ../qwanyx-app-core
-npm install
-npm run build
-echo "✅ @qwanyx/app-core prêt"
-
-cd ../qwanyx-form
-npm install
-npm run build
-echo "✅ @qwanyx/form prêt"
-
-cd ../qwanyx-user-management
-npm install
-npm run build
-echo "✅ @qwanyx/user-management prêt"
-
-cd ../qwanyx-dashboard
-npm install
-npm run build
-echo "✅ @qwanyx/dashboard prêt"
+echo "✅ Tous les packages sont prêts"
 
 # ========== DÉPLOIEMENT AUTODIN NEXT.JS ==========
 echo ""
@@ -93,10 +56,7 @@ echo "--------------------------------------------"
 
 cd /opt/qwanyx/QWANYX-Architecture-Clean/apps/autodin
 
-# Installation des dépendances
-echo "📦 Installation des dépendances..."
-npm install
-
+# Les dépendances sont déjà installées via le monorepo
 # Build de production
 echo "🔨 Build de production..."
 npm run build
