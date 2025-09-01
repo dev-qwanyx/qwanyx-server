@@ -81,21 +81,29 @@ pm2 save
 
 echo "✅ Autodin Next.js déployé sur port 3002"
 
-# ========== API PYTHON (toujours active) ==========
+# ========== SPU RUST (nouveau backend) ==========
 echo ""
-echo "🐍 VÉRIFICATION API PYTHON"
+echo "🦀 DÉPLOIEMENT SPU RUST"
 echo "--------------------------------------------"
 
-# Arrêt de l'ancienne API si nécessaire
+# Arrêt de l'ancienne API Python et du SPU
 pkill -f "python3.*app_v2.py" || true
+pkill -f "spu-core" || true
 sleep 2
 
-# Redémarrage de l'API (dans le bon dossier de la nouvelle architecture)
-cd /opt/qwanyx/QWANYX-Architecture-Clean/api/qwanyx-api
-nohup python3 app_v2.py > /tmp/qwanyx-api.log 2>&1 &
-sleep 3
-
-echo "✅ API Python redémarrée sur port 5002"
+# Build et démarrage du SPU Rust
+cd /opt/qwanyx/QWANYX-Architecture-Clean/qwanyx-brain/spu-core
+echo "🔨 Build du SPU Core..."
+cargo build --release
+if [ $? -eq 0 ]; then
+    echo "✅ Build SPU réussi"
+    # Démarrage du SPU
+    nohup ./target/release/spu-core > /tmp/spu.log 2>&1 &
+    sleep 3
+    echo "✅ SPU démarré sur port 5002"
+else
+    echo "❌ Erreur lors du build SPU"
+fi
 
 # ========== VÉRIFICATION DES SERVICES ==========
 echo ""
@@ -105,7 +113,7 @@ sleep 5
 
 # Test des endpoints
 curl -s -o /dev/null -w "Autodin Next.js (3002): %{http_code}\n" http://localhost:3002 || echo "❌ Autodin Next.js: ERREUR"
-curl -s -o /dev/null -w "API QWANYX (5002): %{http_code}\n" http://localhost:5002/health || echo "❌ API QWANYX: ERREUR"
+curl -s -o /dev/null -w "SPU Core (5002): %{http_code}\n" http://localhost:5002/health || echo "❌ SPU Core: ERREUR"
 
 # ========== RÉSUMÉ ==========
 echo ""
@@ -114,11 +122,11 @@ echo "============================================"
 echo ""
 echo "📝 Logs disponibles:"
 echo "  - PM2: pm2 logs autodin-next"
-echo "  - API: /tmp/qwanyx-api.log"
+echo "  - SPU: /tmp/spu.log"
 echo ""
 echo "🌐 URLs publiques:"
 echo "  - http://135.181.72.183:3002 (Autodin Next.js)"
-echo "  - http://135.181.72.183:5002 (API QWANYX)"
+echo "  - http://135.181.72.183:5002 (SPU Core Backend)"
 echo ""
 echo "💡 Commandes utiles:"
 echo "  - pm2 status           # Voir l'état des services"
