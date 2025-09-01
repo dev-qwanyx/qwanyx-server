@@ -65,6 +65,21 @@ npm install
 npm run build
 echo "✅ @qwanyx/app-core prêt"
 
+cd ../qwanyx-form
+npm install
+npm run build
+echo "✅ @qwanyx/form prêt"
+
+cd ../qwanyx-user-management
+npm install
+npm run build
+echo "✅ @qwanyx/user-management prêt"
+
+cd ../qwanyx-dashboard
+npm install
+npm run build
+echo "✅ @qwanyx/dashboard prêt"
+
 # ========== DÉPLOIEMENT AUTODIN NEXT.JS ==========
 echo ""
 echo "🚗 DÉPLOIEMENT AUTODIN NEXT.JS"
@@ -79,6 +94,12 @@ npm install
 # Build de production
 echo "🔨 Build de production..."
 npm run build
+if [ $? -ne 0 ]; then
+    echo "❌ Erreur lors du build Next.js"
+    echo "Essai de nettoyer le cache..."
+    rm -rf .next
+    npm run build
+fi
 
 # Redémarrage avec PM2
 echo "🔄 Redémarrage du service..."
@@ -87,7 +108,12 @@ pm2 delete autodin-next 2>/dev/null || true
 PORT=3002 pm2 start npm --name "autodin-next" -- start
 pm2 save
 
+# Vérifier que le service est bien démarré
+sleep 5
+pm2 status autodin-next
+
 echo "✅ Autodin Next.js déployé sur port 3002"
+echo "📝 Pour voir les logs: pm2 logs autodin-next"
 
 # ========== SPU RUST (nouveau backend) ==========
 echo ""
