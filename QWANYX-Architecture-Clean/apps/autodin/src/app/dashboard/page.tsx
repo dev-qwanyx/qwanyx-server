@@ -7,7 +7,7 @@ import { Dashboard, createMarketplaceDashboard } from '@qwanyx/dashboard-v2'
 import type { DashboardConfig, DashboardStat, DashboardActivity } from '@qwanyx/dashboard-v2'
 import { Container, Text, Card, CardContent, Grid, Button, Badge } from '@qwanyx/ui'
 import { RequestManagement } from '@autodin/request-management'
-// import { GTDDashboard } from '@qwanyx/gtd'
+// Productivity module will be imported here when ready
 import UsersContent from './UsersContent'
 import { getApiUrl, API_CONFIG } from '@/config/api.config'
 import { SPU_CONFIG } from '@/config/spu.config'
@@ -185,11 +185,11 @@ export default function DashboardPage() {
     'users': (
       <UsersContent />
     ),
-    'gtd': (
+    'productivity': (
       <Container>
-        <Text size="2xl" weight="bold">Productivité (GTD)</Text>
+        <Text size="2xl" weight="bold">Suite de Productivité</Text>
         <Text size="sm" color="secondary" style={{ marginBottom: '2rem' }}>
-          Module en cours de développement
+          Module de productivité avancée avec IA et capacités computationnelles
         </Text>
       </Container>
     ),
@@ -299,25 +299,13 @@ export default function DashboardPage() {
       })
     }
     
-    // Digital Team - only for superuser and admin
-    if (currentUserRole === 'superuser' || currentUserRole === 'admin') {
-      items.push({
-        id: 'thot',
-        label: 'Digital Team',
-        icon: 'SmartToy',
-        badge: dhCount !== null ? dhCount.toString() : undefined
-      })
-    }
-    
-    // GTD/Productivity - visible to all users (commented out for now)
-    // items.push(
-    //   {
-    //     id: 'gtd',
-    //     label: 'Productivité',
-    //     icon: 'TaskAlt',
-    //     badge: '12'  // Number of inbox items
-    //   }
-    // )
+    // Productivity - visible to all users
+    items.push({
+      id: 'productivity',
+      label: 'Productivité',
+      icon: 'TaskAlt',
+      badge: 'NEW'  // Show as new feature
+    })
     
     // Requests management - visible to all users
     items.push(

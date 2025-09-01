@@ -4,14 +4,17 @@
  * - Production: Server IP:5002 (for browser access)
  */
 
-// Detect if we're in production based on the URL
-const isProduction = typeof window !== 'undefined' && 
+// Detect if we're in production based on the URL being accessed
+// If you're accessing the production server URL, use the production SPU
+const isProductionAccess = typeof window !== 'undefined' && 
   (window.location.hostname === '135.181.72.183' || 
-   window.location.hostname.includes('autodin'));
+   window.location.hostname.includes('autodin') ||
+   window.location.hostname.includes('.be') ||
+   window.location.hostname.includes('.com'));
 
 export const SPU_CONFIG = {
-  // Use server IP in production, localhost in dev
-  baseUrl: isProduction ? 'http://135.181.72.183:5002' : 'http://localhost:5002',
+  // Use server SPU when accessing production URL, local SPU for localhost
+  baseUrl: isProductionAccess ? 'http://135.181.72.183:5002' : 'http://localhost:5002',
   
   // Generic CRUD endpoints pattern
   endpoints: {

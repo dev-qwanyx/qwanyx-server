@@ -108,7 +108,7 @@ const validators = {
 
 export const AuthModule: React.FC<AuthModuleProps> = ({
   workspace,
-  apiUrl = 'http://localhost:5002',
+  apiUrl,  // NO DEFAULT - MUST be provided explicitly
   locale = 'fr',
   fields,
   loginFields,
@@ -131,6 +131,11 @@ export const AuthModule: React.FC<AuthModuleProps> = ({
   buttonSize = 'md',
   buttonClassName = ''
 }) => {
+  // JIDOKA PRINCIPLE: FAIL LOUDLY if critical prop missing
+  if (!apiUrl) {
+    throw new Error('CRITICAL: AuthModule requires apiUrl prop. No fallbacks allowed per JIDOKA principle.')
+  }
+  
   const t = getTranslation(locale);
   
   // Default fields with translations
