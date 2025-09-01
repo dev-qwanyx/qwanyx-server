@@ -36,13 +36,21 @@ npm install
 npm run build
 echo "✅ @qwanyx/ui prêt"
 
-# Build qwanyx-thot
+# Build qwanyx-auth
 echo ""
-echo "🤖 Build @qwanyx/thot..."
-cd ../qwanyx-thot
+echo "🔐 Build @qwanyx/auth..."
+cd ../qwanyx-auth
 npm install
 npm run build
-echo "✅ @qwanyx/thot prêt"
+echo "✅ @qwanyx/auth prêt"
+
+# Build autodin-request-management  
+echo ""
+echo "📋 Build @autodin/request-management..."
+cd ../autodin-request-management
+npm install
+npm run build
+echo "✅ @autodin/request-management prêt"
 
 # Build autres packages si nécessaire
 echo ""
