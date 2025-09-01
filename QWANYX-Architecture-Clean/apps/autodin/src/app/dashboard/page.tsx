@@ -9,6 +9,7 @@ import { RequestManagement } from '@autodin/request-management'
 // import { GTDDashboard } from '@qwanyx/gtd'
 import UsersContent from './UsersContent'
 import { getApiUrl, API_CONFIG } from '@/config/api.config'
+import { SPU_CONFIG } from '@/config/spu.config'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -193,7 +194,7 @@ export default function DashboardPage() {
     ),
     'requests': (
       <RequestManagement config={{
-        apiUrl: 'http://localhost:5002',  // SPU always on localhost:5002 (dev and prod)
+        apiUrl: SPU_CONFIG.baseUrl,  // Use dynamic SPU URL (localhost in dev, server IP in prod)
         workspace: 'autodin',
         userRole: currentUserRole,
         currentUserId: user?.id || user?._id || user?.email,

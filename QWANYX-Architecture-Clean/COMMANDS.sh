@@ -95,22 +95,41 @@ echo "🦀 DÉPLOIEMENT SPU RUST"
 echo "--------------------------------------------"
 
 # Arrêt de l'ancienne API Python et du SPU
+echo "🔄 Arrêt des services existants..."
 pkill -f "python3.*app_v2.py" || true
 pkill -f "spu-core" || true
 sleep 2
 
 # Build et démarrage du SPU Rust
 cd /opt/qwanyx/QWANYX-Architecture-Clean/qwanyx-brain/spu-core
+
+# Vérifier si cargo est installé
+if ! command -v cargo &> /dev/null; then
+    echo "❌ Cargo n'est pas installé. Installation de Rust..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    source $HOME/.cargo/env
+fi
+
 echo "🔨 Build du SPU Core..."
 cargo build --release
 if [ $? -eq 0 ]; then
     echo "✅ Build SPU réussi"
-    # Démarrage du SPU
+    # Démarrage du SPU avec les bonnes variables d'environnement
+    export MONGODB_URI="mongodb://qwanyx:Iwb35TnYj#Vf@localhost:27017/?authSource=admin"
+    export SPU_PORT=5002
     nohup ./target/release/spu-core > /tmp/spu.log 2>&1 &
     sleep 3
-    echo "✅ SPU démarré sur port 5002"
+    
+    # Vérifier que le SPU est bien démarré
+    if pgrep -f "spu-core" > /dev/null; then
+        echo "✅ SPU démarré sur port 5002"
+    else
+        echo "❌ SPU n'a pas démarré. Vérification des logs..."
+        tail -20 /tmp/spu.log
+    fi
 else
     echo "❌ Erreur lors du build SPU"
+    echo "Vérification des logs de compilation..."
 fi
 
 # ========== VÉRIFICATION DES SERVICES ==========
