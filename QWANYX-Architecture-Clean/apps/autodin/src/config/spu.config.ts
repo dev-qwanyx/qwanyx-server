@@ -1,12 +1,17 @@
 /**
  * SPU Backend Configuration
- * The SPU always runs on localhost:5002 both in dev and production
- * This ensures consistency and simplicity
+ * - Development: localhost:5002
+ * - Production: Server IP:5002 (for browser access)
  */
 
+// Detect if we're in production based on the URL
+const isProduction = typeof window !== 'undefined' && 
+  (window.location.hostname === '135.181.72.183' || 
+   window.location.hostname.includes('autodin'));
+
 export const SPU_CONFIG = {
-  // SPU is always on localhost:5002 (both dev and prod)
-  baseUrl: 'http://localhost:5002',
+  // Use server IP in production, localhost in dev
+  baseUrl: isProduction ? 'http://135.181.72.183:5002' : 'http://localhost:5002',
   
   // Generic CRUD endpoints pattern
   endpoints: {
