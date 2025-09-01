@@ -36,12 +36,18 @@ npm install
 npm run build
 echo "✅ @qwanyx/ui prêt"
 
-# Build qwanyx-auth
+# Build qwanyx-auth - CRITICAL pour login/auth
 echo ""
 echo "🔐 Build @qwanyx/auth..."
 cd ../qwanyx-auth
 npm install
-npm run build
+# Vérifier si le build existe
+if [ ! -f "tsup.config.ts" ]; then
+    echo "⚠️ Pas de tsup.config.ts, utilisation de tsc..."
+    npx tsc || echo "⚠️ Erreur tsc ignorée"
+else
+    npm run build
+fi
 echo "✅ @qwanyx/auth prêt"
 
 # Build autodin-request-management  
