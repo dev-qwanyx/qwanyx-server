@@ -20,13 +20,7 @@ export default function DashboardPage() {
   const [userCount, setUserCount] = useState<number | null>(0)
   const [dhCount, setDhCount] = useState<number | null>(0)
   const [currentUserRole, setCurrentUserRole] = useState<string>('particulier')
-  
-  // Get user directly from localStorage - no loading state needed
-  const storedUser = typeof window !== 'undefined' ? localStorage.getItem('autodin_user') : null
-  const storedToken = typeof window !== 'undefined' ? localStorage.getItem('autodin_token') : null
-  const tokenExpiry = typeof window !== 'undefined' ? localStorage.getItem('autodin_token_expiry') : null
-  
-  const [user] = useState<any>(storedUser ? JSON.parse(storedUser) : null)
+  const [user, setUser] = useState<any>(null)
 
   // Update currentView when URL changes
   useEffect(() => {
@@ -37,6 +31,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     console.log('Dashboard useEffect triggered')
+    
+    // Read from localStorage only on client side
+    const storedUser = localStorage.getItem('autodin_user')
+    const storedToken = localStorage.getItem('autodin_token')
+    const tokenExpiry = localStorage.getItem('autodin_token_expiry')
+    
     // Check if user is logged in
     if (!storedUser || !storedToken || !tokenExpiry) {
       // Not logged in, redirect to home
@@ -55,6 +55,12 @@ export default function DashboardPage() {
       router.push('/')
       return
     }
+    
+    // Set user data from localStorage (email only, no role!)
+    const userData = JSON.parse(storedUser)
+    console.log('User data from localStorage:', userData)
+    setUser(userData)  // Temporary, will be replaced with full data from DB
+    // Don't set role from localStorage - wait for database!
     
     // Fetch user count
     const fetchUserCount = async () => {
@@ -83,13 +89,21 @@ export default function DashboardPage() {
           setUserCount(regularUsers.length)
           setDhCount(dhUsers.length)
           
-          // Find current user's role
-          const userEmail = user?.email
+          // Find current user's FULL data from database
+          const userEmail = userData.email  // Use userData from localStorage
+          console.log('Looking for user with email:', userEmail)
           if (userEmail) {
             const currentUser = usersArray.find((u: any) => u.email === userEmail)
             if (currentUser) {
+              console.log('Found user in database:', currentUser)
+              console.log('User role from DB:', currentUser.role)
+              
+              // Update with FULL user data from database
+              setUser(currentUser)
               setCurrentUserRole(currentUser.role || 'particulier')
-              console.log('Current user role:', currentUser.role)
+            } else {
+              console.log('ERROR: User not found in database!')
+              // This is a problem - user logged in but not in DB
             }
           }
         } else {
@@ -105,7 +119,7 @@ export default function DashboardPage() {
     }
     
     fetchUserCount()
-  }, [router, storedUser, storedToken, tokenExpiry, user])
+  }, [router])
 
   const handleLogout = () => {
     localStorage.removeItem('autodin_user')
@@ -116,6 +130,7 @@ export default function DashboardPage() {
     router.push('/')
   }
 
+  // Don't show loading screen - dashboard handles it internally
   if (!user) {
     return null
   }
@@ -281,6 +296,7 @@ export default function DashboardPage() {
   // Build sidebar items based on user role
   const buildSidebarItems = () => {
     console.log('Building sidebar with role:', currentUserRole)
+    console.log('User object:', user)
     const items = [
       {
         id: 'overview',
